@@ -1,4 +1,4 @@
-import type { Config } from "tailwindcss";
+import type { Config } from "tailwindcss"
 
 const config: Config = {
   darkMode: ["class", ".dark"],
@@ -6,6 +6,7 @@ const config: Config = {
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/sections/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
+    "*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
     container: {
@@ -83,8 +84,12 @@ const config: Config = {
           ring: "hsl(var(--sidebar-ring))",
         },
       },
+      fontFamily: {
+        bilo: ["Bilo", "sans-serif"], // Added Bilo to your font families
+      },
     },
   },
   plugins: [require("tailwindcss-animate")],
-};
-export default config;
+}
+export default config
+
