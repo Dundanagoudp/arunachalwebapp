@@ -11,14 +11,15 @@ export default function AdminLayoutWrapper({
 }) {
   const pathname = usePathname();
   const isAdminRoute = pathname.startsWith('/admin');
+  const isLoginPage = pathname === '/login';
 
   return (
     <div className="flex flex-col min-h-screen">
-      {!isAdminRoute && <Header />}
+      {!isAdminRoute && !isLoginPage && <Header />}
       <main className="flex-grow">
         {children}
       </main>
-      {!isAdminRoute && <Footer />}
+      {!isAdminRoute && !isLoginPage && <Footer />}
     </div>
   );
 } 

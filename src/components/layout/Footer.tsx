@@ -2,7 +2,7 @@ import Link from 'next/link';
 
 const Footer = () => {
   return (
-    <footer className="bg-gray-800 text-white">
+    <footer className=" text-black">
       Footer
     </footer>
   );
