@@ -6,9 +6,9 @@ import { ChevronRight, ChevronLeft, ArrowUpRight } from "lucide-react"
 import { motion } from "framer-motion"
 import { SkeletonCard } from "@/components/skeleton-card"
 
-export default function Home() {
+export default function Carousel() {
   const [currentIndex, setCurrentIndex] = useState(0)
-  const [isLoading, setIsLoading] = useState(true) // New loading state
+  const [isLoading, setIsLoading] = useState(true) 
 
   const workshops = [
     {
