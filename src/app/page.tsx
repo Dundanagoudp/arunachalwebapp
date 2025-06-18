@@ -1,9 +1,11 @@
-import Image from "next/image";
+import HeroSection from "@/components/homecomponents/modules/herosection"
+import FestivalInfo from "@/components/homecomponents/modules/welcome-section"
 
 export default function Home() {
   return (
-    <div className="min-h-screen">
-      home pages 
+    <div>
+      <HeroSection />
+      <FestivalInfo />
     </div>
-  );
+  )
 }
