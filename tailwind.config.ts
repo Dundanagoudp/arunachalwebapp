@@ -88,7 +88,7 @@ const config: Config = {
         // Custom colors from previous requests
         "title-color": "var(--title-color)",
         "tab-color": "var(--tab-color)",
-        "bg-color": "var(--bg-color)",
+        "custom-yellow": "#FFD76B",
       },
       borderRadius: {
         lg: "var(--radius)",
