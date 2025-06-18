@@ -38,7 +38,15 @@ export default function Schedule() {
   }
 
   return (
-    <div className="relative min-h-screen bg-[#FFD76B] overflow-hidden flex flex-col items-center pt-0 pb-20">
+    <div
+      className="relative min-h-screen bg-[#FFD76B] overflow-hidden flex flex-col items-center pb-20"
+      style={{
+        backgroundImage: `url('/schedule/diamond-pattern.png'), url('/schedule/diamond-pattern.png'), url('/schedule/arch-pattern.png')`,
+        backgroundPosition: '4% 8%, 96% 16%, 98% 100%',
+        backgroundRepeat: 'no-repeat, no-repeat, no-repeat',
+        backgroundSize: '60px 60px, 60px 60px, 250px 500px',
+      }}
+    >
       {/* Top Illustration with matching #fdf8f0 blur effect */}
       <div className="relative w-full h-[320px] md:h-[400px] lg:h-[420px] overflow-hidden flex justify-center items-center">
         <Image
@@ -52,37 +60,14 @@ export default function Schedule() {
         <div className="absolute top-0 left-0 w-full h-24 bg-gradient-to-b from-[#fdf8f0] via-[#fdf8f0]/80 to-transparent z-20" />
       </div>
 
-      {/* Decorative elements - diamond and arch patterns as background */}
-      <Image
-        src="/schedule/diamond-pattern.png"
-        alt="Decorative diamond left"
-        width={60}
-        height={60}
-        className="absolute top-[8%] left-[4%] z-0 opacity-30 pointer-events-none select-none"
-      />
-      <Image
-        src="/schedule/diamond-pattern.png"
-        alt="Decorative diamond right"
-        width={60}
-        height={60}
-        className="absolute top-[16%] right-[4%] z-0 opacity-30 pointer-events-none select-none"
-      />
-      <Image
-        src="/schedule/arch-pattern.png"
-        alt="Decorative arch"
-        width={250}
-        height={500}
-        className="absolute bottom-0 right-0 z-0 opacity-40 pointer-events-none select-none"
-      />
-
       {/* Main Content */}
       <div className="relative z-10 flex flex-col items-center mt-[-100px] w-full max-w-4xl px-4">
         {/* Header */}
         <div className="text-center mb-4 mt-18">
-          <h1 className="text-[#6A1B1A] text-2xl md:text-3xl lg:text-4xl font-bold tracking-wider mb-2 font-serif">
+          <h1 className="text-[#6A1B1A] text-2xl md:text-3xl lg:text-3xl font-bold tracking-wider mb-2 font-serif">
             ARUNACHAL LITERATURE FESTIVAL
           </h1>
-          <h2 className="text-[#6A1B1A] text-xl md:text-2xl lg:text-3xl font-bold font-serif">SCHEDULE 2025</h2>
+          <h2 className="text-[#6A1B1A] text-xl md:text-2xl lg:text-4xl font-bold font-serif">SCHEDULE 2025</h2>
         </div>
 
         {/* View All Button */}
