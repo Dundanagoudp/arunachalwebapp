@@ -27,7 +27,7 @@ const Header = () => {
         <Image
           src="/logo.png"
           alt="Arunachal Lit-Fest Logo"
-          className="h-12 md:h-14 w-auto object-contain"
+          className="h-12 md:h-16 w-auto object-contain"
           width={0}
           height={0}
           sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
