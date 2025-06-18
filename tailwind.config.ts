@@ -89,6 +89,13 @@ const config: Config = {
         "title-color": "var(--title-color)",
         "tab-color": "var(--tab-color)",
         "custom-yellow": "#FFD76B",
+        // Additional colors used in schedule component
+        "schedule-yellow": "#FFD76B",
+        "schedule-brown": "#6A1B1A",
+        "schedule-blue": "#1A3FA9",
+        "schedule-light-blue": "#e6eaff",
+        "schedule-cream": "#fdf8f0",
+        "schedule-gray": "#e0e0e0",
       },
       borderRadius: {
         lg: "var(--radius)",
