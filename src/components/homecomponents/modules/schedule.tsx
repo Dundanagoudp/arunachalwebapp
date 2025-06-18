@@ -61,7 +61,7 @@ export default function Schedule() {
       </div>
 
       {/* Main Content */}
-      <div className="relative z-10 flex flex-col items-center mt-[-100px] w-full max-w-4xl px-4">
+      <div className="relative z-10 flex flex-col items-center mt-[-100px] w-full max-w-6xl px-4">
         {/* Header */}
         <div className="text-center mb-4 mt-18">
           <h1 className="text-[#6A1B1A] text-2xl md:text-3xl lg:text-3xl font-bold tracking-wider mb-2 font-serif">
@@ -120,7 +120,7 @@ export default function Schedule() {
           </div>
 
           {/* Schedule Table Card */}
-          <div className="relative flex-1 bg-white rounded-2xl shadow-2xl p-6 md:p-8 overflow-hidden border border-[#e0e0e0]">
+          <div className="relative flex-1 bg-white rounded-2xl shadow-2xl p-6 md:p-8 overflow-hidden border border-[#e0e0e0] max-w-7xl mx-auto w-full">
             <div className="max-h-[400px] md:max-h-[500px] overflow-y-auto pr-4 relative">
               {scheduleData[activeDay as keyof typeof scheduleData].map((item, index) => (
                 <div key={index} className="grid grid-cols-[110px_1fr] gap-4 py-4 border-b last:border-b-0">
