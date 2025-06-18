@@ -86,7 +86,7 @@ export default function Carousel() {
   }, [])
 
   return (
-    <main className="min-h-screen bg-[#fdf6e9] relative overflow-hidden">
+    <main className="min-h-screen bg-[#fdf8f0] relative overflow-hidden">
       {/* Decorative Sun Elements - Using placeholder.svg */}
       <div className="absolute top-24 left-12">
         <Image src="/images/sun.gif" alt="Sun" width={60} height={60} />
@@ -101,7 +101,7 @@ export default function Carousel() {
         <Image src="/images/sun.gif" alt="Sun" width={60} height={60} />
       </div>
       <div className="absolute bottom-1/2 left-1/2 transform -translate-x-1/2 translate-y-114">
-        <Image src="/images/sun.gif" alt="Sun" width={40} height={40} />
+        <Image src="/images/sun.gif" alt="Sun" width={40} height={35} />
       </div>
 
       <div className="container mx-auto px-4 py-12">

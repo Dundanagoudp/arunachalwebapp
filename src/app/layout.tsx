@@ -1,9 +1,14 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import { Inter, DM_Serif_Display } from "next/font/google";
 import "./globals.css";
 import AdminLayoutWrapper from "@/components/AdminLayoutWrapper";
 
 const inter = Inter({ subsets: ["latin"] });
+const dmSerifDisplay = DM_Serif_Display({ 
+  weight: "400",
+  subsets: ["latin"],
+  variable: "--font-dm-serif-display"
+});
 
 export const metadata: Metadata = {
   title: "Arunachal Literature",
@@ -17,7 +22,7 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <body className={inter.className}>
+      <body className={`${inter.className} ${dmSerifDisplay.variable}`}>
         <AdminLayoutWrapper>
           {children}
         </AdminLayoutWrapper>

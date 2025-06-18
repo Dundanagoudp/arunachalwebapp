@@ -6,6 +6,10 @@ const config: Config = {
     "./src/app/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/sections/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
+    "./pages/**/*.{ts,tsx}", // Keep existing paths for v0 compatibility
+    "./components/**/*.{ts,tsx}",
+    "./app/**/*.{ts,tsx}",
+    "./src/**/*.{ts,tsx}",
     "*.{js,ts,jsx,tsx,mdx}",
   ],
   theme: {
@@ -19,6 +23,7 @@ const config: Config = {
         sm: "375px",
         md: "768px",
         lg: "1200px",
+        "2xl": "1400px", // Keep 2xl for consistency if needed
       },
     },
     screens: {
@@ -80,6 +85,10 @@ const config: Config = {
         },
         "footer-blue": "#1A3FA9",
         "footer-heading": "#F5A623",
+        // Custom colors from previous requests
+        "title-color": "var(--title-color)",
+        "tab-color": "var(--tab-color)",
+        "bg-color": "var(--bg-color)",
       },
       borderRadius: {
         lg: "var(--radius)",
@@ -110,7 +119,7 @@ const config: Config = {
       },
       fontFamily: {
         bilo: ["Bilo", "sans-serif"],
-        "dm-serif-display": ["DM Serif Display", "serif"],
+        "dm-serif-display": ["var(--font-dm-serif-display)", "serif"],
       },
     },
   },

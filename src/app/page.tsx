@@ -1,5 +1,6 @@
 import Carousel from "@/components/homecomponents/modules/carousel"
 import HeroSection from "@/components/homecomponents/modules/herosection"
+import Schedule from "@/components/homecomponents/modules/schedule"
 import FestivalInfo from "@/components/homecomponents/modules/welcome-section"
 
 export default function Home() {
@@ -8,6 +9,7 @@ export default function Home() {
       <HeroSection />
       <FestivalInfo />
       <Carousel/>
+      <Schedule/>
     </div>
   )
 }
