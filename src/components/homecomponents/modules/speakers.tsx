@@ -27,7 +27,7 @@ export default function Speakers() {
   ]
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#FFF8E7] to-[#FFFAEE] relative overflow-hidden">
+    <div className=" bg-gradient-to-b from-[#FFF8E7] to-[#FFFAEE] relative overflow-hidden">
     {/* Decorative diamond patterns - 10 positions */}
     <div className="absolute top-2 left-2 w-10 h-10 md:w-16 md:h-16 z-0 opacity-80">
       <Image src="/schedule/diamond-pattern.png" alt="Diamond Pattern" fill style={{ objectFit: "contain" }} />
