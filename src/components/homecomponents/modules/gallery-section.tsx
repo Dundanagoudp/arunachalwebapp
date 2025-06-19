@@ -6,6 +6,7 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
 import { ArrowRight, ArrowUpRight, ChevronLeft, ChevronRight, X } from "lucide-react"
+import { SkeletonCard } from "@/components/skeleton-card"
 
 export default function GallerySection() {
   const gallery = [
@@ -15,10 +16,13 @@ export default function GallerySection() {
     { src: "/gallery/gallery4.png", alt: "Speaker 4" },
     { src: "/gallery/gallery5.png", alt: "Speaker 5" },
     { src: "/gallery/gallery6.png", alt: "Speaker 6" },
+    
+    
   ]
 
   const [isLightboxOpen, setIsLightboxOpen] = useState(false)
   const [currentIndex, setCurrentIndex] = useState(0)
+  const [isLoading, setIsLoading] = useState(true)
 
   const openLightbox = (index: number) => {
     setCurrentIndex(index)
@@ -61,6 +65,12 @@ export default function GallerySection() {
     }
   }, [isLightboxOpen, handleKeyDown])
 
+  useEffect(() => {
+    // Simulate loading for 1.5 seconds
+    const timer = setTimeout(() => setIsLoading(false), 1500)
+    return () => clearTimeout(timer)
+  }, [])
+
   const currentImage = gallery[currentIndex]
 
   return (
@@ -90,84 +100,107 @@ export default function GallerySection() {
             className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 hidden md:block"
           />
 
-          <p className="text-base md:text-xl font-bold text-[#1A3FA9] font-serif tracking-wide text-3xl sm:text-4xl md:text-5xl lg:text-4xl">Arunachal Literature Festival</p>
-          <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-[#1A3FA9] font-serif tracking-wide">GALLERY</h2>
-          <button className="group relative flex items-center justify-center mt-4 focus:outline-none">
-            <span className="bg-[#1A3FA9] text-white px-6 py-3 pr-12 rounded-full text-base sm:text-lg md:text-xl font-medium">
-              View All
-            </span>
-     <span className="absolute right-0 left-32 translate-x-1/2 bg-[#1A3FA9] w-10 h-10 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 group-hover:translate-x-6 group-hover:rotate-12">
-                <ArrowUpRight className="w-4 h-4 text-white transition-transform duration-300 group-hover:rotate-45" />
-              </span>
-          </button>
+          {isLoading ? (
+            <>
+              {/* Skeleton for header text */}
+              <div className="h-8 w-64 bg-gray-200 rounded animate-pulse mx-auto" />
+              <div className="h-12 w-80 bg-gray-200 rounded animate-pulse mx-auto" />
+              {/* Skeleton for button */}
+              <div className="h-12 w-40 bg-gray-200 rounded-full animate-pulse mx-auto mt-4" />
+            </>
+          ) : (
+            <>
+              <p className="text-base md:text-xl font-bold text-[#1A3FA9] font-serif tracking-wide text-3xl sm:text-4xl md:text-5xl lg:text-4xl">Arunachal Literature Festival</p>
+              <h2 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-[#1A3FA9] font-serif tracking-wide">GALLERY</h2>
+              <Link href="/archive" className="group relative flex items-center justify-center mt-4 focus:outline-none">
+                <span className="bg-[#1A3FA9] text-white px-6 py-3 pr-12 rounded-full text-base sm:text-lg md:text-xl font-medium">
+                  View All
+                </span>
+                <span className="absolute right-0 left-32 translate-x-1/2 bg-[#1A3FA9] w-10 h-10 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 group-hover:translate-x-6 group-hover:rotate-12">
+                  <ArrowUpRight className="w-4 h-4 text-white transition-transform duration-300 group-hover:rotate-45" />
+                </span>
+              </Link>
+            </>
+          )}
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {gallery.map((image, index) => (
-            <div
-              key={index}
-              className="rounded-lg overflow-hidden shadow-md cursor-pointer hover:opacity-90 transition-opacity"
-              onClick={() => openLightbox(index)}
-              role="button"
-              tabIndex={0}
-              onKeyDown={(e) => {
-                if (e.key === "Enter" || e.key === " ") {
-                  openLightbox(index)
-                }
-              }}
-            >
-              <Image
-                src={image.src || "/placeholder.svg"}
-                alt={image.alt}
-                width={600}
-                height={400}
-                className="w-full h-auto object-cover aspect-[3/2]"
-              />
-            </div>
-          ))}
+          {isLoading
+            ? Array.from({ length: 6 }).map((_, idx) => (
+                <div
+                  key={idx}
+                  className="rounded-lg overflow-hidden shadow-md bg-gray-200 animate-pulse aspect-[3/2] flex items-center justify-center"
+                >
+                  {/* Image area shimmer only, no text */}
+                </div>
+              ))
+            : gallery.slice(0, 6).map((image, index) => (
+                <div
+                  key={index}
+                  className="rounded-lg overflow-hidden shadow-md cursor-pointer hover:opacity-90 transition-opacity aspect-[3/2] flex items-center justify-center bg-white"
+                  onClick={() => openLightbox(index)}
+                  role="button"
+                  tabIndex={0}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      openLightbox(index)
+                    }
+                  }}
+                >
+                  <Image
+                    src={image.src || "/placeholder.svg"}
+                    alt={image.alt}
+                    width={600}
+                    height={400}
+                    className="w-full h-full object-cover rounded-lg"
+                  />
+                </div>
+              ))}
         </div>
       </div>
 
       {/* Integrated Image Lightbox */}
-      <Dialog open={isLightboxOpen} onOpenChange={closeLightbox}>
-        <DialogContent className="max-w-4xl w-full h-full flex flex-col items-center justify-center p-4 bg-transparent border-none shadow-none">
-          <DialogTitle className="sr-only">Image Lightbox</DialogTitle>
-          <Button
-            onClick={closeLightbox}
-            className="absolute top-4 right-4 z-50 bg-white text-black hover:bg-gray-200 rounded-full p-2"
-            aria-label="Close lightbox"
-          >
-            <X className="h-6 w-6" />
-          </Button>
+      {!isLoading && (
+        <Dialog open={isLightboxOpen} onOpenChange={closeLightbox}>
+          <DialogContent className="max-w-4xl w-full h-full flex flex-col items-center justify-center p-4 bg-transparent border-none shadow-none">
+            <DialogTitle className="sr-only">Image Lightbox</DialogTitle>
+            <Button
+              onClick={closeLightbox}
+              className="absolute top-4 right-4 z-50 bg-white text-black hover:bg-gray-200 rounded-full p-2"
+              aria-label="Close lightbox"
+            >
+              <X className="h-6 w-6" />
+            </Button>
 
-          <div className="relative w-full h-full flex items-center justify-center">
-            {currentImage && (
-              <Image
-                src={currentImage.src || "/placeholder.svg"}
-                alt={currentImage.alt}
-                layout="fill"
-                objectFit="contain"
-                className="rounded-lg"
-              />
-            )}
-          </div>
+            <div className="relative w-full h-full flex items-center justify-center">
+              {currentImage && (
+                <Image
+                  src={currentImage.src || "/placeholder.svg"}
+                  alt={currentImage.alt}
+                  layout="fill"
+                  objectFit="contain"
+                  className="rounded-lg"
+                />
+              )}
+            </div>
 
-          <Button
-            onClick={goToPrev}
-            className="absolute left-4 top-1/2 -translate-y-1/2 z-50 bg-white text-black hover:bg-gray-200 rounded-full p-2"
-            aria-label="Previous image"
-          >
-            <ChevronLeft className="h-6 w-6" />
-          </Button>
-          <Button
-            onClick={goToNext}
-            className="absolute right-4 top-1/2 -translate-y-1/2 z-50 bg-white text-black hover:bg-gray-200 rounded-full p-2"
-            aria-label="Next image"
-          >
-            <ChevronRight className="h-6 w-6" />
-          </Button>
-        </DialogContent>
-      </Dialog>
+            <Button
+              onClick={goToPrev}
+              className="absolute left-4 top-1/2 -translate-y-1/2 z-50 bg-white text-black hover:bg-gray-200 rounded-full p-2"
+              aria-label="Previous image"
+            >
+              <ChevronLeft className="h-6 w-6" />
+            </Button>
+            <Button
+              onClick={goToNext}
+              className="absolute right-4 top-1/2 -translate-y-1/2 z-50 bg-white text-black hover:bg-gray-200 rounded-full p-2"
+              aria-label="Next image"
+            >
+              <ChevronRight className="h-6 w-6" />
+            </Button>
+          </DialogContent>
+        </Dialog>
+      )}
     </section>
   )
 }
