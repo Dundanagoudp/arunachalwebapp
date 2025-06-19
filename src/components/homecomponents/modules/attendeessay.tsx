@@ -45,19 +45,9 @@ const testimonials: Testimonial[] = [
 ]
 
 export default function Attendeessay() {
-  const colors = {
-    darkBlue: "#1A3FA9",
-    lightBlue: "#214FD5",
-    goldenYellow: "#FDB813",
-  }
-
   return (
     <div 
-      className="relative min-h-screen overflow-hidden"
-      style={{
-        backgroundColor: colors.darkBlue,
-        color: 'white'
-      }}
+      className="relative min-h-screen overflow-hidden bg-blue-900 text-white"
     >
       {/* Top Blurred Image */}
       <div className="absolute top-0 left-0 w-full h-[200px] md:h-[300px] lg:h-[400px] overflow-hidden">
@@ -74,45 +64,41 @@ export default function Attendeessay() {
         <div className="text-center mb-12 max-w-4xl mx-auto">
           <div className="flex items-center justify-center gap-2 mb-4">
             <span 
-              className="w-2 h-2 rounded-full" 
-              style={{ backgroundColor: colors.goldenYellow }}
+              className="w-2 h-2 rounded-full bg-yellow-400"
             />
             <h2 
-              className="text-lg md:text-xl font-semibold tracking-wider uppercase"
-              style={{ color: colors.goldenYellow }}
+              className="text-lg md:text-xl font-semibold tracking-wider uppercase text-yellow-400"
             >
               Arunachal Literature Festival
             </h2>
             <span 
-              className="w-2 h-2 rounded-full" 
-              style={{ backgroundColor: colors.goldenYellow }}
+              className="w-2 h-2 rounded-full bg-yellow-400"
             />
           </div>
           <h1 
-            className="text-3xl md:text-5xl font-bold mb-6"
-            style={{ color: colors.goldenYellow }}
+            className="text-3xl md:text-5xl font-bold mb-6 text-yellow-400"
           >
             WHAT OUR ATTENDEES SAY
           </h1>
-          <div className="w-20 h-1 mx-auto" style={{ backgroundColor: colors.goldenYellow }}></div>
+          <div className="w-20 h-1 mx-auto bg-yellow-400"></div>
         </div>
 
         {/* Testimonial Cards Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-6xl mx-auto w-full">
           {/* Left Column */}
           <div className="flex flex-col gap-6">
-            <TestimonialCard {...testimonials[0]} colors={colors} />
-            <TestimonialCard {...testimonials[3]} colors={colors} />
+            <TestimonialCard {...testimonials[0]} />
+            <TestimonialCard {...testimonials[3]} />
           </div>
           
           {/* Center Column - Large Card */}
           <div className="flex justify-center">
-            <TestimonialCard {...testimonials[1]} isLarge={true} colors={colors} />
+            <TestimonialCard {...testimonials[1]} isLarge={true} />
           </div>
           
           {/* Right Column */}
           <div className="flex flex-col gap-6">
-            <TestimonialCard {...testimonials[2]} colors={colors} />
+            <TestimonialCard {...testimonials[2]} />
           </div>
         </div>
       </div>
@@ -130,23 +116,18 @@ export default function Attendeessay() {
   )
 }
 
-function TestimonialCard({ name, title, quote, avatar, isLarge, colors }: Testimonial & { colors: any }) {
+function TestimonialCard({ name, title, quote, avatar, isLarge }: Testimonial) {
   return (
     <Card
       className={`rounded-xl shadow-lg p-6 relative ${
         isLarge ? "lg:p-8 h-full" : "h-auto"
-      } flex flex-col transition-all hover:scale-[1.02]`}
-      style={{
-        backgroundColor: colors.lightBlue,
-        color: 'white',
-        border: `1px solid ${colors.goldenYellow}`
-      }}
+      } flex flex-col transition-all hover:scale-[1.02] bg-blue-800 text-white border border-yellow-400`}
     >
       <CardContent className="p-0 flex flex-col h-full">
         <div className="flex items-start gap-4 mb-4">
-          <Avatar className="w-12 h-12 border" style={{ borderColor: colors.goldenYellow }}>
+          <Avatar className="w-12 h-12 border border-yellow-400">
             <AvatarImage src={avatar || "/placeholder.svg"} alt={`${name}'s avatar`} />
-            <AvatarFallback className="font-bold" style={{ color: colors.darkBlue }}>
+            <AvatarFallback className="font-bold text-blue-900">
               {name.charAt(0)}
             </AvatarFallback>
           </Avatar>
@@ -169,15 +150,13 @@ function TestimonialCard({ name, title, quote, avatar, isLarge, colors }: Testim
         
         <div className="relative flex-grow">
           <Quote 
-            className="absolute -top-2 left-0 w-8 h-8 opacity-50" 
-            style={{ color: colors.goldenYellow }}
+            className="absolute -top-2 left-0 w-8 h-8 opacity-50 text-yellow-400" 
           />
           <p className={`text-base leading-relaxed pl-8 pr-2 pt-2 pb-4 ${isLarge ? 'text-lg' : ''}`}>
             {quote}
           </p>
           <Quote 
-            className="absolute bottom-0 right-0 w-8 h-8 opacity-50 rotate-180" 
-            style={{ color: colors.goldenYellow }}
+            className="absolute bottom-0 right-0 w-8 h-8 opacity-50 rotate-180 text-yellow-400" 
           />
         </div>
       </CardContent>

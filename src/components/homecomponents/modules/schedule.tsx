@@ -157,62 +157,38 @@ export default function Schedule() {
   return (
 <div
   className="relative min-h-screen bg-[#FFD76B] overflow-hidden flex flex-col items-center pb-20"
-  style={{
-    backgroundImage: `
-      url('/schedule/diamond-pattern.png'), 
-      url('/schedule/diamond-pattern.png'), 
-      url('/schedule/diamond-pattern.png'), 
-      url('/schedule/diamond-pattern.png'), 
-      url('/schedule/arch-pattern.png')
-    `,
-    backgroundPosition: `
-      4% 8%,      /* top-left */
-      96% 8%,     /* top-right */
-      4% 92%,     /* bottom-left */
-      96% 92%,    /* bottom-right */
-      90% 80%     /* arch pattern */
-    `,
-    backgroundRepeat: "no-repeat, no-repeat, no-repeat, no-repeat, no-repeat",
-    backgroundSize: `
-      60px 60px, 
-      60px 60px, 
-      60px 60px, 
-      60px 60px, 
-      400px 650px
-    `,
-  }}
 >
 
       {/* Diamond patterns - 10 positions, like speakers section */}
       <div className="absolute top-2 left-2 w-10 h-10 md:w-16 md:h-16 z-0 opacity-80 pointer-events-none">
-        <Image src="/schedule/diamond-pattern.png" alt="Diamond Pattern" fill style={{ objectFit: "contain" }} />
+        <Image src="/schedule/diamond-pattern.png" alt="Diamond Pattern" fill className="object-contain" />
       </div>
       <div className="absolute top-2 right-2 w-10 h-10 md:w-16 md:h-16 z-0 opacity-80 pointer-events-none">
-        <Image src="/schedule/diamond-pattern.png" alt="Diamond Pattern" fill style={{ objectFit: "contain" }} />
+        <Image src="/schedule/diamond-pattern.png" alt="Diamond Pattern" fill className="object-contain" />
       </div>
       <div className="absolute bottom-2 left-2 w-10 h-10 md:w-16 md:h-16 z-0 opacity-80 pointer-events-none">
-        <Image src="/schedule/diamond-pattern.png" alt="Diamond Pattern" fill style={{ objectFit: "contain" }} />
+        <Image src="/schedule/diamond-pattern.png" alt="Diamond Pattern" fill className="object-contain" />
       </div>
       <div className="absolute bottom-2 right-2 w-10 h-10 md:w-16 md:h-16 z-0 opacity-80 pointer-events-none">
-        <Image src="/schedule/diamond-pattern.png" alt="Diamond Pattern" fill style={{ objectFit: "contain" }} />
+        <Image src="/schedule/diamond-pattern.png" alt="Diamond Pattern" fill className="object-contain" />
       </div>
       <div className="absolute top-1/2 left-0 -translate-y-1/2 w-8 h-8 md:w-12 md:h-12 z-0 opacity-60 pointer-events-none">
-        <Image src="/schedule/diamond-pattern.png" alt="Diamond Pattern" fill style={{ objectFit: "contain" }} />
+        <Image src="/schedule/diamond-pattern.png" alt="Diamond Pattern" fill className="object-contain" />
       </div>
       <div className="absolute top-1/2 right-0 -translate-y-1/2 w-8 h-8 md:w-12 md:h-12 z-0 opacity-60 pointer-events-none">
-        <Image src="/schedule/diamond-pattern.png" alt="Diamond Pattern" fill style={{ objectFit: "contain" }} />
+        <Image src="/schedule/diamond-pattern.png" alt="Diamond Pattern" fill className="object-contain" />
       </div>
       <div className="absolute top-1/4 left-10 w-8 h-8 md:w-12 md:h-12 z-0 opacity-70 pointer-events-none">
-        <Image src="/schedule/diamond-pattern.png" alt="Diamond Pattern" fill style={{ objectFit: "contain" }} />
+        <Image src="/schedule/diamond-pattern.png" alt="Diamond Pattern" fill className="object-contain" />
       </div>
       <div className="absolute top-1/4 right-10 w-8 h-8 md:w-12 md:h-12 z-0 opacity-70 pointer-events-none">
-        <Image src="/schedule/diamond-pattern.png" alt="Diamond Pattern" fill style={{ objectFit: "contain" }} />
+        <Image src="/schedule/diamond-pattern.png" alt="Diamond Pattern" fill className="object-contain" />
       </div>
       <div className="absolute bottom-1/4 left-10 w-8 h-8 md:w-12 md:h-12 z-0 opacity-70 pointer-events-none">
-        <Image src="/schedule/diamond-pattern.png" alt="Diamond Pattern" fill style={{ objectFit: "contain" }} />
+        <Image src="/schedule/diamond-pattern.png" alt="Diamond Pattern" fill className="object-contain" />
       </div>
       <div className="absolute bottom-1/4 right-10 w-8 h-8 md:w-12 md:h-12 z-0 opacity-70 pointer-events-none">
-        <Image src="/schedule/diamond-pattern.png" alt="Diamond Pattern" fill style={{ objectFit: "contain" }} />
+        <Image src="/schedule/diamond-pattern.png" alt="Diamond Pattern" fill className="object-contain" />
       </div>
 
       {/* Top Illustration with matching #fdf8f0 blur effect */}

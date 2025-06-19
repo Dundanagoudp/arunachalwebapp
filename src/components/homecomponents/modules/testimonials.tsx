@@ -66,7 +66,7 @@ export default function Testimonials() {
                           : "bottom-1/4 right-10 w-8 h-8 md:w-12 md:h-12"
           }`}
         >
-          <Image src="/testimonials/background-pattern.png" alt="Pattern" fill style={{ objectFit: "contain" }} />
+          <Image src="/testimonials/background-pattern.png" alt="Pattern" fill className="object-contain" />
         </div>
       ))}
 

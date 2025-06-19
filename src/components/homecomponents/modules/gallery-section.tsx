@@ -174,13 +174,14 @@ export default function GallerySection() {
 
             <div className="relative w-full h-full flex items-center justify-center">
               {currentImage && (
-                <Image
-                  src={currentImage.src || "/placeholder.svg"}
-                  alt={currentImage.alt}
-                  layout="fill"
-                  objectFit="contain"
-                  className="rounded-lg"
-                />
+                <div className="absolute inset-0 flex items-center justify-center">
+                  <Image
+                    src={currentImage.src || "/placeholder.svg"}
+                    alt={currentImage.alt}
+                    fill
+                    className="object-contain rounded-lg"
+                  />
+                </div>
               )}
             </div>
 

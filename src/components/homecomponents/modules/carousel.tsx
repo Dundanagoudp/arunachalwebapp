@@ -150,11 +150,10 @@ export default function Carousel() {
           <div className="flex items-center justify-center">
             <motion.button
               onClick={prevSlide}
-              className="absolute left-[-48px] top-1/2 -translate-y-1/2 z-20 bg-[#e67e22] rounded-full p-3 flex items-center justify-center shadow-lg border-4 border-white md:border-4 md:bg-[#e67e22] md:shadow-lg md:flex md:items-center md:justify-center md:rounded-full md:p-3 md:z-20 md:absolute md:left-[-48px] md:top-1/2 md:-translate-y-1/2 md:block"
+              className={`absolute left-[-48px] top-1/2 -translate-y-1/2 z-20 bg-[#e67e22] rounded-full p-3 flex items-center justify-center shadow-lg border-4 border-white md:border-4 md:bg-[#e67e22] md:shadow-lg md:flex md:items-center md:justify-center md:rounded-full md:p-3 md:z-20 md:absolute md:left-[-48px] md:top-1/2 md:-translate-y-1/2 md:block ${isLoading ? 'opacity-50' : 'opacity-100'}`}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
               disabled={isLoading}
-              style={{ opacity: isLoading ? 0.5 : 1 }}
             >
               <span className="block md:hidden bg-black bg-opacity-30 rounded-full p-2">
                 <ChevronLeft className="h-5 w-5 text-white" />
@@ -165,8 +164,7 @@ export default function Carousel() {
             </motion.button>
 
             <div
-              className="carousel-container flex space-x-6 overflow-x-auto w-full justify-start md:justify-center scrollbar-hide pb-4"
-              style={{ scrollBehavior: "smooth" }}
+              className="carousel-container flex space-x-6 overflow-x-auto w-full justify-start md:justify-center scrollbar-hide pb-4 scroll-smooth"
             >
               {isLoading
                 ? // Render skeletons while loading
@@ -210,11 +208,10 @@ export default function Carousel() {
 
             <motion.button
               onClick={nextSlide}
-              className="absolute right-[-48px] top-1/2 -translate-y-1/2 z-20 bg-[#e67e22] rounded-full p-3 flex items-center justify-center shadow-lg border-4 border-white md:border-4 md:bg-[#e67e22] md:shadow-lg md:flex md:items-center md:justify-center md:rounded-full md:p-3 md:z-20 md:absolute md:right-[-48px] md:top-1/2 md:-translate-y-1/2 md:block"
+              className={`absolute right-[-48px] top-1/2 -translate-y-1/2 z-20 bg-[#e67e22] rounded-full p-3 flex items-center justify-center shadow-lg border-4 border-white md:border-4 md:bg-[#e67e22] md:shadow-lg md:flex md:items-center md:justify-center md:rounded-full md:p-3 md:z-20 md:absolute md:right-[-48px] md:top-1/2 md:-translate-y-1/2 md:block ${isLoading ? 'opacity-50' : 'opacity-100'}`}
               whileHover={{ scale: 1.1 }}
               whileTap={{ scale: 0.9 }}
               disabled={isLoading}
-              style={{ opacity: isLoading ? 0.5 : 1 }}
             >
               <span className="block md:hidden bg-black bg-opacity-30 rounded-full p-2">
                 <ChevronRight className="h-5 w-5 text-white" />
