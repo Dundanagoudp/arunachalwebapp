@@ -260,4 +260,59 @@ body {
   display: none;             /* Chrome, Safari, Opera */
 }
 
+swiper-button-prev,
+.swiper-button-next {
+  color: #e67e22 !important; /* Orange color for arrows */
+  background-color: rgba(255, 255, 255, 0.8); /* Semi-transparent white background */
+  border-radius: 9999px; /* Full circle */
+  width: 40px !important;
+  height: 40px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+.swiper-button-prev:hover,
+.swiper-button-next:hover {
+  background-color: rgba(255, 255, 255, 1); /* Solid white on hover */
+  box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15); /* More prominent shadow on hover */
+}
+
+.swiper-button-prev::after,
+.swiper-button-next::after {
+  font-size: 20px !important; /* Adjust arrow icon size */
+}
+
+/* Custom Swiper pagination dots styling */
+.swiper-pagination-bullet {
+  background-color: #e67e22 !important; /* Orange color for dots */
+  opacity: 0.5 !important;
+  transition: opacity 0.3s ease;
+}
+
+.swiper-pagination-bullet-active {
+  opacity: 1 !important;
+}
+
+/* Ensure the Swiper container has relative positioning for navigation arrows */
+.speaker-swiper {
+  padding-bottom: 40px; /* Space for pagination dots */
+}
+
+/* Adjust slide positioning for the staggered effect */
+.swiper-slide {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end; /* Align items to the bottom for staggered effect */
+}
+
+/* Hide default Swiper navigation on mobile if you prefer custom buttons */
+@media (max-width: 767px) {
+  .swiper-button-prev,
+  .swiper-button-next {
+    display: none !important;
+  }
+}
 
