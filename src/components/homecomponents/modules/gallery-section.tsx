@@ -81,22 +81,22 @@ export default function GallerySection() {
           <Image
             src="/gallery/diamond-pattern.png"
             alt="Decorative diamond pattern"
-            width={60}
-            height={60}
+            width={72}
+            height={72}
             className="absolute top-0 left-1/4 -translate-x-1/2 -translate-y-1/2 hidden md:block "
           />
           <Image
             src="/gallery/diamond-pattern.png"
             alt="Decorative diamond pattern"
-            width={48}
-            height={48}
+            width={72}
+            height={72}
             className="absolute top-0 right-1/4 translate-x-1/2 -translate-y-1/2 hidden md:block"
           />
           <Image
             src="/gallery/diamond-pattern.png"
             alt="Decorative diamond pattern"
-            width={48}
-            height={48}
+            width={72}
+            height={72}
             className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 hidden md:block"
           />
 
