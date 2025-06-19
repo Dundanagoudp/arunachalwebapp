@@ -65,7 +65,7 @@ export default function Speakers() {
             <h1 className="text-5xl md:text-7xl font-bold text-[#E67E22] font-serif tracking-wide">SPEAKERS</h1>
             <div className="w-3 h-3 bg-[#E67E22] rounded-full" />
           </div>
-         <div className="mt-8 flex justify-center mb-8">
+         <div className="mt-8 flex justify-center mb-2">
           <button className="group relative flex items-center hover:scale-105 transition-transform duration-300 focus:outline-none">
             <span className="bg-[#E67E22] text-white px-6 py-3 pr-12 rounded-full text-lg font-medium">
               View All
@@ -103,7 +103,7 @@ export default function Speakers() {
 
           {/* Middle Speaker (Large and elevated) */}
           <div className="relative flex flex-col items-center order-1 lg:order-2 lg:-mt-24">
-            <div className="relative group">
+            <div className="relative group mt-12 mb-15">
               <div className="absolute -inset-3 bg-gradient-to-r from-yellow-400 via-orange-400 to-yellow-400 rounded-lg opacity-75 group-hover:opacity-100 transition duration-300 animate-pulse"></div>
               <div className="relative bg-white p-1 rounded-lg">
                 <div className="w-[280px] h-[380px] md:w-[320px] md:h-[420px] overflow-hidden rounded-lg shadow-2xl transition-transform duration-300 group-hover:scale-105">
