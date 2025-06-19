@@ -1,4 +1,5 @@
 import Carousel from "@/components/homecomponents/modules/carousel"
+import GallerySection from "@/components/homecomponents/modules/gallery-section"
 import HeroSection from "@/components/homecomponents/modules/herosection"
 import Schedule from "@/components/homecomponents/modules/schedule"
 import Speakers from "@/components/homecomponents/modules/speakers"
@@ -14,6 +15,7 @@ export default function Home() {
       <Schedule/>
       <Speakers/>
       <Testimonials/>
+      <GallerySection/>
     </div>
   )
 }
