@@ -100,7 +100,7 @@ export default function Carousel() {
       <div className="absolute bottom-24 right-12">
         <Image src="/images/sun.gif" alt="Sun" width={60} height={60} />
       </div>
-      <div className="absolute bottom-1/2 left-1/2 transform -translate-x-1/2 translate-y-114">
+      <div className="absolute bottom-1/2 left-1/2 transform -translate-x-1/2 translate-y-124">
         <Image src="/images/sun.gif" alt="Sun" width={40} height={35} />
       </div>
 
@@ -186,7 +186,7 @@ export default function Carousel() {
                         },
                       }}
                     >
-                      <div className="overflow-hidden rounded-lg w-64 h-80 shadow-md">
+                      <div className="overflow-hidden rounded-lg w-64 h-100 shadow-md">
                         <motion.div
                           className="carousel-card-actual w-full h-full" // Changed class name for differentiation
                           whileHover={{

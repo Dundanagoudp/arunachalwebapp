@@ -263,7 +263,7 @@ export default function Schedule() {
             </div>
 
             {/* Schedule Table Card */}
-            <div className="relative flex-1 bg-white rounded-2xl shadow-2xl p-6 md:p-8 overflow-hidden border border-[#e0e0e0] max-w-7xl mx-auto w-full">
+            <div className="relative flex-1 bg-white rounded-2xl shadow-2xl p-6 md:p-8 overflow-hidden border border-[#e0e0e0] max-w-7xl mx-auto w-full mb-15">
               <div className="max-h-[400px] md:max-h-[500px] overflow-y-auto pr-4 relative">
                 {scheduleData.days
                   .find(day => day.day === activeDay)
@@ -289,6 +289,9 @@ export default function Schedule() {
           </div>
         ) : null}
       </div>
+
+      {/* #fdf8f0 blur overlay at the bottom */}
+      <div className="absolute bottom-0 left-0 w-full h-24 bg-gradient-to-t from-[#fdf8f0] via-[#fdf8f0]/80 to-transparent z-20" />
     </div>
   )
 }
