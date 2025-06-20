@@ -7,6 +7,31 @@ import { BlogCardSkeleton } from "@/components/blog-card-skeleton" // Import the
 export default function Blogs() {
   const isLoading = false // For demonstration, set to false. In a real app, this would come from data fetching.
 
+  // Blog data array
+  const blogs = [
+    {
+      image: "/blogs/blog1.png",
+      alt: "Arunachal Literature Festival 2022",
+      title: "The Rise of Indigenous Literature in Arunachal Pradesh",
+      date: "30 October 2023",
+      link: "#",
+    },
+    {
+      image: "/blogs/blog2.png",
+      alt: "Literary Icons",
+      title: "Meet the Literary Icons Gracing This Year's Festival",
+      date: "30 October 2023",
+      link: "#",
+    },
+    {
+      image: "/blogs/blog3.png",
+      alt: "Arunachal Literature Festival 2019",
+      title: "5 Must-Attend Sessions at This Year's Festival",
+      date: "30 October 2023",
+      link: "#",
+    },
+  ];
+
   return (
     <div className="min-h-screen bg-[#FDF6E9] p-8 relative overflow-hidden">
       {/* Decorative Sun Icons */}
@@ -16,12 +41,12 @@ export default function Blogs() {
       <div className="absolute top-10 right-10 z-0">
         <Image src="/blogs/sun.gif" alt="Decorative sun" width={50} height={50} />
       </div>
-      <div className="absolute top-1/2 -translate-y-1/2 left-0 -ml-4 z-0">
+      <div className="absolute top-1/2 -translate-y-1/2 left-65 -ml-0 -0 z-0 lg:-ml-4">
         {" "}
         {/* New sun icon */}
         <Image src="/blogs/sun.gif" alt="Decorative sun" width={50} height={50} />
       </div>
-      <div className="absolute top-1/2 -translate-y-1/2 right-0 -mr-4 z-0">
+      <div className="absolute top-1/2 -translate-y-1/2 right-45 right-0 -mr-4 z-0">
         {" "}
         {/* New sun icon */}
         <Image src="/blogs/sun.gif" alt="Decorative sun" width={50} height={50} />
@@ -62,76 +87,27 @@ export default function Blogs() {
           </>
         ) : (
           <>
-            {/* Card 1 */}
-            <div className="bg-white rounded-xl overflow-hidden shadow-md group">
-              {" "}
-              {/* Changed to rounded-xl, added group */}
-              <div className="p-4">
-                <div className="relative h-56 w-full">
-                  <Image
-                    src="/blogs/blog1.png"
-                    alt="Arunachal Literature Festival 2022"
-                    fill
-                    className="object-cover rounded-t-xl" // Changed to rounded-t-xl
-                  />
-                </div>
-                <h3 className="text-xl font-bold mt-4 mb-2">The Rise of Indigenous Literature in Arunachal Pradesh</h3>
-                <div className="flex justify-between items-center mt-4">
-                  <p className="text-gray-500">30 October 2023</p>
-                  <Link href="#" className="text-[#4F8049] font-medium hover:underline group-hover:text-[#3A6035]">
-                    Read More
-                  </Link>{" "}
-                  {/* Changed to Link, added hover */}
+            {blogs.map((blog, idx) => (
+              <div key={idx} className="bg-white rounded-xl overflow-hidden shadow-md group">
+                <div className="p-2">
+                  <div className="relative h-56 w-full">
+                    <Image
+                      src={blog.image}
+                      alt={blog.alt}
+                      fill
+                      className="object-cover rounded-t-xl"
+                    />
+                  </div>
+                  <h3 className="text-xl font-bold mt-4 mb-2">{blog.title}</h3>
+                  <div className="flex justify-between items-center mt-4">
+                    <p className="text-gray-500">{blog.date}</p>
+                    <Link href={blog.link} className="text-[#4F8049] font-medium hover:underline group-hover:text-[#3A6035]">
+                      Read More
+                    </Link>
+                  </div>
                 </div>
               </div>
-            </div>
-
-            {/* Card 2 */}
-            <div className="bg-white rounded-xl overflow-hidden shadow-md group">
-              {" "}
-              {/* Changed to rounded-xl, added group */}
-              <div className="p-4">
-                <div className="relative h-56 w-full">
-                  <Image
-                    src="/blogs/blog2.png"
-                    alt="Literary Icons"
-                    fill
-                    className="object-cover rounded-t-xl" // Changed to rounded-t-xl
-                  />
-                </div>
-                <h3 className="text-xl font-bold mt-4 mb-2">Meet the Literary Icons Gracing This Year's Festival</h3>
-                <div className="flex justify-between items-center mt-4">
-                  <p className="text-gray-500">30 October 2023</p>
-                  <Link href="#" className="text-[#4F8049] font-medium hover:underline group-hover:text-[#3A6035]">
-                    Read More
-                  </Link>{" "}
-                  {/* Changed to Link, added hover */}
-                </div>
-              </div>
-            </div>
-
-            {/* Card 3 */}
-            <div className="bg-white rounded-xl overflow-hidden shadow-md group">
-              {" "}
-              {/* Changed to rounded-xl, added group */}
-              <div className="p-4">
-                <div className="relative h-56 w-full">
-                  <Image
-                    src="/blogs/blog3.png"
-                    alt="Arunachal Literature Festival 2019"
-                    fill
-                    className="object-cover rounded-t-xl" // Changed to rounded-t-xl
-                  />
-                </div>
-                <h3 className="text-xl font-bold mt-4 mb-2">5 Must-Attend Sessions at This Year's Festival</h3>
-                <div className="flex justify-between items-center mt-4">
-                  <p className="text-gray-500">30 October 2023</p>
-                  <Link href="#" className="text-[#4F8049] font-medium hover:underline group-hover:text-[#3A6035]">
-                    Read More
-                  </Link>{" "}
-                </div>
-              </div>
-            </div>
+            ))}
           </>
         )}
       </div>
