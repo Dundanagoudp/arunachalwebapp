@@ -3,6 +3,7 @@ import Image from "next/image"
 import Link from "next/link" // Import Link
 import { ArrowRight, ArrowUpRight } from "lucide-react" // Change to ArrowRight
 import { BlogCardSkeleton } from "@/components/blog-card-skeleton" // Import the new skeleton component
+import SunIcon from "@/components/archive/sun-icon"
 
 export default function Blogs() {
   const isLoading = false // For demonstration, set to false. In a real app, this would come from data fetching.
@@ -36,20 +37,16 @@ export default function Blogs() {
     <div className="min-h-screen bg-[#FDF6E9] p-8 relative overflow-hidden">
       {/* Decorative Sun Icons */}
       <div className="absolute top-10 left-10 z-0">
-        <Image src="/blogs/sun.gif" alt="Decorative sun" width={50} height={50} />
+        <SunIcon size={50} src="/blogs/sun.gif" />
       </div>
       <div className="absolute top-10 right-10 z-0">
-        <Image src="/blogs/sun.gif" alt="Decorative sun" width={50} height={50} />
+        <SunIcon size={50} src="/blogs/sun.gif" />
       </div>
       <div className="absolute top-1/2 -translate-y-1/2 left-65 -ml-0 -0 z-0 lg:-ml-4">
-        {" "}
-        {/* New sun icon */}
-        <Image src="/blogs/sun.gif" alt="Decorative sun" width={50} height={50} />
+        <SunIcon size={50} src="/blogs/sun.gif" />
       </div>
       <div className="absolute top-1/2 -translate-y-1/2 right-45 right-0 -mr-4 z-0">
-        {" "}
-        {/* New sun icon */}
-        <Image src="/blogs/sun.gif" alt="Decorative sun" width={50} height={50} />
+        <SunIcon size={50} src="/blogs/sun.gif" />
       </div>
 
       {/* Header */}
@@ -119,15 +116,13 @@ export default function Blogs() {
       {/* More Decorative Sun Icons */}
       <div className="relative mt-16">
         <div className="absolute bottom-10 left-10 z-0">
-          <Image src="/blogs/sun.gif" alt="Decorative sun" width={50} height={50} />
+          <SunIcon size={50} src="/blogs/sun.gif" />
         </div>
         <div className="absolute bottom-10 right-10 z-0">
-          <Image src="/blogs/sun.gif" alt="Decorative sun" width={50} height={50} />
+          <SunIcon size={50} src="/blogs/sun.gif" />
         </div>
         <div className="flex justify-center pt-10 relative z-10">
-          {" "}
-          {/* Added pt-10 for spacing */}
-          <Image src="/blogs/sun.gif" alt="Decorative sun" width={40} height={40} />
+          <SunIcon size={40} src="/blogs/sun.gif" />
         </div>
       </div>
     </div>

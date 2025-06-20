@@ -5,6 +5,7 @@ import Image from "next/image"
 import { ChevronRight, ChevronLeft, ArrowUpRight } from "lucide-react"
 import { motion } from "framer-motion"
 import { SkeletonCard } from "@/components/skeleton-card"
+import SunIcon from "@/components/archive/sun-icon"
 
 export default function Carousel() {
   const [currentIndex, setCurrentIndex] = useState(0)
@@ -89,19 +90,19 @@ export default function Carousel() {
     <main className="min-h-screen bg-[#fdf8f0] relative overflow-hidden">
       {/* Decorative Sun Elements - Using placeholder.svg */}
       <div className="absolute top-24 left-12">
-        <Image src="/images/sun.gif" alt="Sun" width={60} height={60} />
+        <SunIcon size={60} src="/images/sun.gif" />
       </div>
       <div className="absolute top-24 right-12">
-        <Image src="/images/sun.gif" alt="Sun" width={60} height={60} />
+        <SunIcon size={60} src="/images/sun.gif" />
       </div>
       <div className="absolute bottom-24 left-12">
-        <Image src="/images/sun.gif" alt="Sun" width={60} height={60} />
+        <SunIcon size={60} src="/images/sun.gif" />
       </div>
       <div className="absolute bottom-24 right-12">
-        <Image src="/images/sun.gif" alt="Sun" width={60} height={60} />
+        <SunIcon size={60} src="/images/sun.gif" />
       </div>
       <div className="absolute bottom-1/2 left-1/2 transform -translate-x-1/2 translate-y-124">
-        <Image src="/images/sun.gif" alt="Sun" width={40} height={35} />
+        <SunIcon size={40} src="/images/sun.gif" />
       </div>
 
       <div className="container mx-auto px-4 py-12">
