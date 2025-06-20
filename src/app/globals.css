@@ -1,7 +1,10 @@
-@import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Bilo:wght@400;700&family=DM+Serif+Display:ital,wght@0,400;1,400&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+@import "tailwindcss";
 
 @layer base {
   :root {
@@ -398,5 +401,12 @@ swiper-button-prev,
   .swiper-button-next {
     display: none !important;
   }
+}
+
+.font-dm-serif {
+  font-family: 'DM Serif Display', serif;
+}
+.font-bilo {
+  font-family: 'Bilo', sans-serif;
 }
 
