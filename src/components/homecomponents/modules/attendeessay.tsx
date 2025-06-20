@@ -49,17 +49,20 @@ export default function Attendeessay() {
     <div 
       className="relative min-h-screen overflow-hidden bg-blue-900 text-white"
     >
+      
       {/* Top Blurred Image */}
-      <div className="absolute top-0 left-0 w-full h-[200px] md:h-[300px] lg:h-[400px] overflow-hidden">
-        <Image
-          src="/attendeessay/topblur.png"
+       <div className="absolute top-0 left-0 w-full h-[200px] md:h-[300px] lg:h-[420px] overflow-hidden">
+       <Image
+          src="/attendeessay/b3.png"
           alt="Blurred sky with clouds"
           fill
           className="object-cover object-top"
         />
+        {/* #fdf8f0 blur overlay at the top */}
+        <div className="absolute top-0 left-0 w-full h-24 bg-gradient-to-b from-[#fdf8f0] via-[#fdf8f0]/80 to-transparent z-20" />
       </div>
 
-      <div className="relative z-10 pt-20 pb-10 md:pt-32 md:pb-20 lg:pt-40 lg:pb-24 flex flex-col items-center px-4">
+      <div className="relative z-10 pt-[200px] md:pt-[300px] lg:pt-[400px] pb-10 md:pb-20 lg:pb-24 flex flex-col items-center px-4">
         {/* Header Text */}
         <div className="text-center mb-12 max-w-4xl mx-auto">
           <div className="flex items-center justify-center gap-2 mb-4">
