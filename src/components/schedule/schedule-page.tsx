@@ -96,7 +96,7 @@ export default function Schedulepage() {
           <h1 className="text-[#1A3FA9] text-4xl font-bold text-center font-dm-serif">SCHEDULE</h1>
         </header>
         <div className="flex justify-center mb-8">
-          <button className="flex items-center gap-2 text-[#1A3FA9] hover:text-[#D95E1E] transition-colors">
+          <button className="flex items-center gap-2 text-[#000000] hover:text-[#D95E1E] transition-colors">
             Download Schedule
             <Download className="w-5 h-5" />
           </button>
