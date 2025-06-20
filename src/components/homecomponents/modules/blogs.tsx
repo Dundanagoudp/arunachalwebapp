@@ -54,11 +54,15 @@ export default function Blogs() {
 
       {/* Header */}
       <div className="text-center mt-16 mb-12 relative z-10">
-        <h1 className="text-[#4F8049] text-3xl font-medium mb-2">ARUNACHAL LITERATURE FESTIVAL</h1>
-        <div className="flex justify-center items-center gap-4">
-          <div className="w-4 h-4 rounded-full bg-[#4F8049]"></div> {/* Increased size */}
-          <h2 className="text-[#4F8049] text-4xl font-bold">BLOGS AND MEDIA</h2>
-          <div className="w-4 h-4 rounded-full bg-[#4F8049]"></div> {/* Increased size */}
+        <h1 className="text-[#4F8049] text-xl md:text4xl lg:text-4xl font-serif font-medium uppercase tracking-wide mb-1">
+          ARUNACHAL LITERATURE FESTIVAL
+        </h1>
+        <div className="flex justify-center items-center gap-6">
+          <div className="w-4 h-4 rounded-full bg-[#4F8049]"></div>
+          <h2 className="text-[#4F8049] text-3xl md:text-4xl lg:text-5xl font-serif font-bold uppercase font-serif tracking-wide">
+            BLOGS AND MEDIA
+          </h2>
+          <div className="w-4 h-4 rounded-full bg-[#4F8049]"></div>
         </div>
       </div>
 
@@ -87,27 +91,27 @@ export default function Blogs() {
           </>
         ) : (
           <>
-            {blogs.map((blog, idx) => (
-              <div key={idx} className="bg-white rounded-xl overflow-hidden shadow-md group">
-                <div className="p-2">
-                  <div className="relative h-56 w-full">
-                    <Image
-                      src={blog.image}
-                      alt={blog.alt}
-                      fill
-                      className="object-cover rounded-t-xl"
-                    />
-                  </div>
-                  <h3 className="text-xl font-bold mt-4 mb-2">{blog.title}</h3>
-                  <div className="flex justify-between items-center mt-4">
-                    <p className="text-gray-500">{blog.date}</p>
-                    <Link href={blog.link} className="text-[#4F8049] font-medium hover:underline group-hover:text-[#3A6035]">
-                      Read More
-                    </Link>
-                  </div>
-                </div>
-              </div>
-            ))}
+{blogs.map((blog, idx) => (
+  <div key={idx} className="bg-white rounded-xl overflow-hidden shadow-md lg:h-[450px] group"> {/* Changed from 500px to 600px */}
+    <div className="p-2">
+      <div className="relative w-full h-72 mb-4 flex-shrink-0 overflow-hidden rounded-xl">
+        <Image
+          src={blog.image}
+          alt={blog.alt}
+          fill
+          className="object-cover"
+        />
+      </div>
+      <h3 className="text-xl font-bold mt-4 mb-2">{blog.title}</h3>
+      <div className="flex justify-between items-center mt-9">
+        <p className="text-gray-500">{blog.date}</p>
+        <Link href={blog.link} className="text-[#4F8049] font-medium hover:underline group-hover:text-[#3A6035]">
+          Read More
+        </Link>
+      </div>
+    </div>
+  </div>
+))}
           </>
         )}
       </div>

@@ -6,7 +6,7 @@ import { useState } from "react"
 import { Menu } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
+import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet"
 import { motion } from "framer-motion"
 
 const Header = () => {
@@ -73,6 +73,7 @@ const Header = () => {
               e.preventDefault()
             }}
           >
+            <SheetTitle className="sr-only">Main Navigation</SheetTitle>
             <motion.div
               initial={{ x: 300 }}
               animate={{ x: 0 }}
