@@ -91,7 +91,7 @@ export default function Attendeessay() {
         {/* Testimonial Cards Layout */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-6xl mx-auto w-full relative mb-80">
           {/* Book Image Floating Above Center Card */}
-          <div className="hidden lg:flex absolute left-1/2 -translate-x-1/2 -top-16 z-20 justify-center w-full pointer-events-none">
+          <div className="hidden lg:flex absolute left-1/2 -translate-x-1/2 -top-16 z-20 justify-center w-full pointer-events-none mt-8">
             <Image
               src="/attendeessay/book.png"
               alt="Stack of books"
