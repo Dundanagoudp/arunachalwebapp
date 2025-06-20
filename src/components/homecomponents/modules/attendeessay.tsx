@@ -48,7 +48,7 @@ const testimonials: Testimonial[] = [
 export default function Attendeessay() {
   return (
     <div 
-      className="relative min-h-screen overflow-hidden bg-blue-900 text-white"
+      className="relative min-h-screen overflow-hidden bg-blue-900 text-white pb-12"
     >
       
       {/* Top Blurred Image */}
@@ -122,7 +122,7 @@ export default function Attendeessay() {
       {/* Bottom Blurred Image */}
       <div className="absolute bottom-0 left-0 w-full h-[150px] md:h-[250px] lg:h-[380px] overflow-hidden">
         <Image
-          src="/attendeessay/bottom.png"
+          src="/attendeessay/bottom2.png"
           alt="Blurred forest trees"
           fill
           className="object-cover object-bottom"
