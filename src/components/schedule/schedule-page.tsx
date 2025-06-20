@@ -72,7 +72,7 @@ export default function Schedulepage() {
     <div className="min-h-screen bg-[#FFFAEE] p-8 relative overflow-hidden">
       {/* Decorative sun icons */}
       <div className="absolute top-24 right-20">
-        <Image src="/blogs/sun.gif" alt="Sun" width={24} height={24} />
+        <Image src="/blogs/sun.gif" alt="Sun" width={40} height={24} />
       </div>
       <div className="absolute top-40 right-4">
         <Image src="/blogs/sun.gif" alt="Sun" width={32} height={32} />
@@ -81,17 +81,15 @@ export default function Schedulepage() {
         <Image src="/blogs/sun.gif" alt="Sun" width={40} height={40} />
       </div>
       <div className="absolute bottom-20 right-24">
-        <Image src="/blogs/sun.gif" alt="Sun" width={24} height={24} />
+        <Image src="/blogs/sun.gif" alt="Sun" width={45} height={24} />
       </div>
       <div className="absolute top-60 left-4">
-        <Image src="/blogs/sun.gif" alt="Sun" width={28} height={28} />
+        <Image src="/blogs/sun.gif" alt="Sun" width={35} height={28} />
       </div>
       <div className="absolute bottom-60 right-8">
         <Image src="/blogs/sun.gif" alt="Sun" width={36} height={36} />
       </div>
-      <div className="absolute bottom-1/4 left-1/4">
-        <Image src="/blogs/sun.gif" alt="Sun" width={20} height={20} />
-      </div>
+ 
 
       <div className="max-w-3xl mx-auto">
         <header className="flex items-center justify-center mb-6">
@@ -127,8 +125,8 @@ export default function Schedulepage() {
             <div className="max-h-[500px] overflow-y-auto pr-4 relative">
               {events.map((event, index) => (
                 <div key={event.id} className="grid grid-cols-[110px_1fr] gap-4 py-4 border-b last:border-b-0">
-                  <div className="text-[#1A3FA9] font-bold text-base md:text-lg font-dm-serif">{event.time}</div>
-                  <div className="text-[#6A1B1A] font-bilo font-semibold text-base md:text-lg">
+                  <div className="text-[#000000] font-bold text-base md:text-lg font-dm-serif">{event.time}</div>
+                  <div className="text-[#000000] font-bilo font-semibold text-base md:text-lg">
                     {event.name}
                     {event.speaker && (
                       <span className="block text-sm text-gray-600 font-normal mt-1 font-bilo">

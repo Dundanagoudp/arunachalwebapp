@@ -26,9 +26,9 @@ function ScheduleSkeleton() {
       {[...Array(3)].map((_, i) => (
         <div
           key={i}
-          className="py-4 flex gap-4 items-start mb-4 last:mb-0 bg-white rounded-xl shadow-md border border-gray-200"
+          className="py-4 flex flex-col sm:flex-row gap-4 items-start mb-4 last:mb-0 bg-white rounded-xl shadow-md border border-gray-200"
         >
-          <div className="w-24 h-6 bg-gray-200 rounded-full" />
+          <div className="w-24 h-6 bg-gray-200 rounded-full mb-2 sm:mb-0" />
           <div className="flex-1">
             <div className="h-5 w-1/2 bg-gray-200 rounded-full mb-2" />
             <div className="h-4 w-1/3 bg-gray-100 rounded-full" />
@@ -56,11 +56,11 @@ export function ScheduleContent({ activeDay }: { activeDay: ScheduleDay }) {
       {events.map((event, index) => (
         <div
           key={index}
-          className={`py-4 flex gap-4 items-start mb-4 last:mb-0 bg-white rounded-xl shadow-md border border-gray-200`}
+          className="py-4 flex flex-col sm:flex-row gap-4 items-start mb-4 last:mb-0 bg-white rounded-xl shadow-md border border-gray-200"
         >
-          <div className="w-24 font-medium text-gray-700 font-dm-serif text-lg">{event.time}</div>
+          <div className="w-24 font-medium text-[#000000-700 font-dm-serif text-base sm:text-lg mb-2 sm:mb-0">{event.time}</div>
           <div className="flex-1">
-            <div className="font-bilo text-base text-[#6A1B1A]">{event.name}</div>
+            <div className="font-bilo text-base text-[#000000]">{event.name}</div>
             {event.description && <div className="text-sm text-gray-500 mt-1 font-bilo">{event.description}</div>}
           </div>
         </div>
