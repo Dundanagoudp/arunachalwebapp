@@ -13,16 +13,16 @@ const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
 
   const navLinks = [
-    { href: "#speakers", label: "Speakers" },
-    { href: "#schedule", label: "Schedule" },
-    { href: "#registration", label: "Registration" },
-    { href: "#archive", label: "Archive" },
-    { href: "#in-the-news", label: "In the news" },
-    { href: "#contact-us", label: "Contact Us" },
+    { href: "/speakers", label: "Speakers" },
+    { href: "/schedule", label: "Schedule" },
+    { href: "/registration", label: "Registration" },
+    { href: "/archive", label: "Archive" },
+    { href: "/inthenews", label: "In the news" },
+    { href: "/contactus", label: "Contact Us" },
   ]
 
   return (
-    <header className="w-full py-4 px-6 flex items-center justify-between" style={{ backgroundColor: "#FFFAEE" }}>
+    <header className="w-full py-4 px-6 flex items-center justify-between font-bilo" style={{ backgroundColor: "#FFFAEE" }}>
       <Link href="/" className="flex items-center">
         <Image
           src="/logo.png"
@@ -35,7 +35,7 @@ const Header = () => {
       </Link>
 
       {/* Desktop Navigation */}
-      <nav className="hidden md:flex items-center space-x-8 text-lg font-medium font-bilo">
+      <nav className="hidden md:flex items-center space-x-8 text-lg font-medium">
         {navLinks.map((link) => (
           <Link
             key={link.href}
@@ -92,7 +92,7 @@ const Header = () => {
                   >
                     <Link
                       href={link.href}
-                      className="text-lg font-medium text-black hover:text-gray-600 transition-colors duration-300 block py-2"
+                      className="text-lg font-medium text-black hover:text-gray-600 transition-colors duration-300 block py-2 font-bilo"
                       onClick={() => setIsMenuOpen(false)}
                     >
                       {link.label}

@@ -5,7 +5,7 @@ import { Linkedin, Instagram, Facebook } from "lucide-react"
 export default function Footer() {
   return (
     <footer
-      className="bg-[#1A3FA9] text-white py-12 px-4 md:px-6 lg:px-8 relative overflow-hidden"
+      className="bg-[#1A3FA9] text-white py-12 px-4 md:px-6 lg:px-8 relative overflow-hidden font-bilo"
       style={{
         // backgroundImage: "url('/images/Footer.png')",
         // backgroundRepeat: "",
@@ -34,30 +34,30 @@ export default function Footer() {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 text-center md:text-left">
           {/* Navigate Section */}
           <div>
-            <h3 className="text-xl font-semibold mb-4 text-[#FF9900]">Navigate</h3>
+            <h3 className="text-xl font-semibold mb-4 text-[#FF9900] font-bilo">Navigate</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="#" className="hover:underline">
+                <Link href="/registration" className="hover:underline">
                   Register
                 </Link>
               </li>
               <li>
-                <Link href="#" className="hover:underline">
+                <Link href="/schedule" className="hover:underline">
                   Schedule
                 </Link>
               </li>
               <li>
-                <Link href="#" className="hover:underline">
+                <Link href="/gallery" className="hover:underline">
                   Gallery
                 </Link>
               </li>
               <li>
-                <Link href="#" className="hover:underline">
+                <Link href="/workshop" className="hover:underline">
                   Workshop
                 </Link>
               </li>
               <li>
-                <Link href="#" className="hover:underline">
+                <Link href="/about" className="hover:underline">
                   About
                 </Link>
               </li>
@@ -66,15 +66,15 @@ export default function Footer() {
 
           {/* Assistance Section */}
           <div>
-            <h3 className="text-xl font-semibold mb-4 text-[#FF9900]">Assistance</h3>
+            <h3 className="text-xl font-semibold mb-4 text-[#FF9900] font-bilo">Assistance</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="#" className="hover:underline">
+                <Link href="/contactus" className="hover:underline">
                   Contact
                 </Link>
               </li>
               <li>
-                <Link href="#" className="hover:underline">
+                <Link href="/privacy-policy" className="hover:underline">
                   Privacy Policy
                 </Link>
               </li>
@@ -85,7 +85,7 @@ export default function Footer() {
           <div className="flex flex-col gap-8">
             {/* Socials Section */}
             <div>
-              <h3 className="text-xl font-semibold mb-4 text-[#FF9900]">Socials</h3>
+              <h3 className="text-xl font-semibold mb-4 text-[#FF9900] font-bilo">Socials</h3>
               <div className="flex justify-center md:justify-start space-x-4">
                 <Link href="#" aria-label="LinkedIn" className="hover:text-gray-300">
                   <Linkedin className="size-6" />
@@ -101,7 +101,7 @@ export default function Footer() {
 
             {/* Office Address Section */}
             <div>
-              <h3 className="text-xl font-semibold mb-4 text-[#FF9900]">Office Address</h3>
+              <h3 className="text-xl font-semibold mb-4 text-[#FF9900] font-bilo">Office Address</h3>
               <p className="text-sm leading-relaxed">
                 Directorate of Information and Public Relations (Soochna bhawan), papu nallah, Naharlagun, Arunachal
                 Pradesh Pin - 791110
