@@ -1,4 +1,5 @@
 import Attendeessay from "@/components/homecomponents/modules/attendeessay"
+import Blogs from "@/components/homecomponents/modules/blogs"
 import Carousel from "@/components/homecomponents/modules/carousel"
 import GallerySection from "@/components/homecomponents/modules/gallery-section"
 import HeroSection from "@/components/homecomponents/modules/herosection"
@@ -18,6 +19,7 @@ export default function Home() {
       <Testimonials/>
       <GallerySection/>
       <Attendeessay/>
+      <Blogs/>
     </div>
   )
 }

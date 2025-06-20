@@ -21,6 +21,7 @@ const testimonials: Testimonial[] = [
     avatar: "/placeholder.svg?height=40&width=40",
     isLarge: false,
   },
+  
   {
     name: "Damodar Mauzo",
     title: "Jnanpith Award Recipient 2022",
@@ -51,6 +52,7 @@ export default function Attendeessay() {
     >
       
       {/* Top Blurred Image */}
+
        <div className="absolute top-0 left-0 w-full h-[200px] md:h-[300px] lg:h-[420px] overflow-hidden">
        <Image
           src="/attendeessay/b3.png"
@@ -87,7 +89,17 @@ export default function Attendeessay() {
         </div>
 
         {/* Testimonial Cards Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-6xl mx-auto w-full">
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-6xl mx-auto w-full relative mb-80">
+          {/* Book Image Floating Above Center Card */}
+          <div className="hidden lg:flex absolute left-1/2 -translate-x-1/2 -top-16 z-20 justify-center w-full pointer-events-none">
+            <Image
+              src="/attendeessay/book.png"
+              alt="Stack of books"
+              width={90}
+              height={90}
+              className="object-contain drop-shadow-lg"
+            />
+          </div>
           {/* Left Column */}
           <div className="flex flex-col gap-6">
             <TestimonialCard {...testimonials[0]} />
@@ -102,12 +114,13 @@ export default function Attendeessay() {
           {/* Right Column */}
           <div className="flex flex-col gap-6">
             <TestimonialCard {...testimonials[2]} />
+            <TestimonialCard {...testimonials[0]} />
           </div>
         </div>
       </div>
 
       {/* Bottom Blurred Image */}
-      <div className="absolute bottom-0 left-0 w-full h-[150px] md:h-[250px] lg:h-[350px] overflow-hidden">
+      <div className="absolute bottom-0 left-0 w-full h-[150px] md:h-[250px] lg:h-[380px] overflow-hidden">
         <Image
           src="/attendeessay/bottom.png"
           alt="Blurred forest trees"
@@ -138,17 +151,6 @@ function TestimonialCard({ name, title, quote, avatar, isLarge }: Testimonial) {
             <h3 className="font-bold text-lg">{name}</h3>
             <p className="text-sm opacity-80">{title}</p>
           </div>
-          {isLarge && (
-            <div className="hidden md:block ml-4">
-              <Image
-                src="/attendeessay/book.png" 
-                alt="Stack of books"
-                width={80}
-                height={80}
-                className="object-contain"
-              />
-            </div>
-          )}
         </div>
         
         <div className="relative flex-grow">
