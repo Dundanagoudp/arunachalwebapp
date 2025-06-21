@@ -7,6 +7,7 @@ import { BlogCardSkeleton } from "@/components/blog-card-skeleton" // Import the
 import SunIcon from "@/components/archive/sun-icon"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { Skeleton } from "@/components/ui/skeleton"
 import {
   Pagination,
   PaginationContent,
@@ -17,14 +18,74 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination"
 
+// Shimmer effect component
+const ShimmerEffect = ({ className }: { className?: string }) => (
+  <div className={`relative overflow-hidden ${className}`}>
+    <div className="bg-gradient-to-r from-gray-300 via-gray-100 to-gray-300 bg-[length:200%_100%] animate-shimmer rounded h-full w-full"></div>
+    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent animate-shimmer rounded h-full w-full"></div>
+  </div>
+)
+
+// Blog Card Shimmer Component
+const BlogCardShimmer = () => (
+  <div className="bg-white rounded-xl overflow-hidden shadow-md">
+    <div className="p-3 sm:p-4">
+      {/* Image Placeholder with Shimmer */}
+      <div className="relative w-full h-48 sm:h-56 lg:h-64 mb-3 sm:mb-4 overflow-hidden rounded-lg">
+        <ShimmerEffect className="w-full h-full" />
+      </div>
+      {/* Title with Shimmer */}
+      <div className="space-y-3 mb-4">
+        <ShimmerEffect className="h-6 sm:h-7 w-4/5" />
+        <ShimmerEffect className="h-6 sm:h-7 w-3/5" />
+      </div>
+      {/* Date and Read More with Shimmer */}
+      <div className="flex justify-between items-center mt-4 sm:mt-6">
+        <ShimmerEffect className="h-4 sm:h-5 w-1/3" />
+        <ShimmerEffect className="h-4 sm:h-5 w-1/4" />
+      </div>
+    </div>
+  </div>
+)
+
+// Header Shimmer Component
+const HeaderShimmer = () => (
+  <div className="text-center my-8 sm:my-12 lg:my-16 relative z-10">
+    <ShimmerEffect className="h-12 sm:h-16 lg:h-20 w-32 sm:w-48 lg:w-56 mx-auto rounded-xl" />
+  </div>
+)
+
+// Search Bar Shimmer Component
+const SearchBarShimmer = () => (
+  <div className="max-w-lg mx-auto mb-8 sm:mb-12 lg:mb-16 relative z-10 flex flex-col items-center px-4">
+    <ShimmerEffect className="w-full h-12 sm:h-14 lg:h-16 rounded-xl mb-4 sm:mb-6" />
+    <div className="mt-4 sm:mt-6 flex items-center">
+      <ShimmerEffect className="h-10 sm:h-12 lg:h-14 w-24 sm:w-32 lg:w-36 rounded-full" />
+    </div>
+  </div>
+)
+
+// Section Title Shimmer Component
+const SectionTitleShimmer = () => (
+  <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 mb-6 sm:mb-8 relative z-10 text-center">
+    <ShimmerEffect className="h-6 sm:h-8 lg:h-10 w-40 sm:w-56 lg:w-64 mx-auto rounded-xl" />
+  </div>
+)
+
 export default function BlogLayout() {
   const [mounted, setMounted] = useState(false)
-  const isLoading = false // For demonstration, set to false. In a real app, this would come from data fetching.
+  const [isLoading, setIsLoading] = useState(true) // Changed to true for demonstration
   const [currentPage, setCurrentPage] = useState(1)
   const blogsPerPage = 9
 
   useEffect(() => {
     setMounted(true)
+    // Simulate loading time
+    const timer = setTimeout(() => {
+      setIsLoading(false)
+    }, 2000) // Show shimmer for 2 seconds
+
+    return () => clearTimeout(timer)
   }, [])
 
   // Blog data array
@@ -115,61 +176,77 @@ export default function BlogLayout() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FFFAEE] p-8 relative overflow-hidden">
-      {/* Decorative Sun Icons */}
-      <div className="absolute top-10 left-10 z-0">
-        <SunIcon size={50} src="/blogs/sun.gif" />
+    <div className="min-h-screen bg-[#FFFAEE] p-4 sm:p-6 lg:p-8 relative overflow-hidden">
+      {/* Decorative Sun Icons - Responsive positioning */}
+      <div className="absolute top-4 left-4 sm:top-6 sm:left-6 lg:top-10 lg:left-10 z-0">
+        <SunIcon size={30} className="sm:w-10 sm:h-10 lg:w-12 lg:h-12" src="/blogs/sun.gif" />
       </div>
-      <div className="absolute top-10 right-10 z-0">
-        <SunIcon size={50} src="/blogs/sun.gif" />
+      <div className="absolute top-4 right-4 sm:top-6 sm:right-6 lg:top-10 lg:right-10 z-0">
+        <SunIcon size={30} className="sm:w-10 sm:h-10 lg:w-12 lg:h-12" src="/blogs/sun.gif" />
       </div>
-      <div className="absolute top-1/2 -translate-y-1/2 left-65 -ml-0 -0 z-0 lg:-ml-4">
-        <SunIcon size={50} src="/blogs/sun.gif" />
+      <div className="hidden md:block absolute top-1/2 -translate-y-1/2 left-4 lg:left-10 z-0">
+        <SunIcon size={40} className="lg:w-12 lg:h-12" src="/blogs/sun.gif" />
       </div>
-      <div className="absolute top-1/2 -translate-y-1/2 right-45 right-0 -mr-4 z-0">
-        <SunIcon size={50} src="/blogs/sun.gif" />
+      <div className="hidden md:block absolute top-1/2 -translate-y-1/2 right-4 lg:right-10 z-0">
+        <SunIcon size={40} className="lg:w-12 lg:h-12" src="/blogs/sun.gif" />
       </div>
 
       {/* Header */}
-      <div className="text-center my-16 relative z-10">
-        <h1 className="text-blue-900 text-6xl font-bold font-serif">BLOGS</h1>
-      </div>
+      {isLoading ? (
+        <HeaderShimmer />
+      ) : (
+        <div className="text-center my-8 sm:my-12 lg:my-16 relative z-10">
+          <h1 className="text-blue-900 text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold font-serif">BLOGS</h1>
+        </div>
+      )}
 
       {/* Search Bar */}
-      <div className="max-w-lg mx-auto mb-16 relative z-10 flex flex-col items-center">
-        <Input
-          type="text"
-          placeholder="Search by Blog Name"
-          className="w-full pl-4 pr-4 py-7 border-2 border-gray-300 rounded-xl focus:ring-orange-500 focus:border-orange-500 text-lg bg-transparent"
-        />
-        <div className="mt-6 flex items-center">
-          <button className="group relative flex items-center hover:scale-105 transition-transform duration-300 focus:outline-none">
-            <span className="bg-[#D96D34] text-white px-6 py-3 pr-12 rounded-full text-lg font-medium">
-              Search
-            </span>
-            <span className="absolute right-0 left-30 translate-x-1/2 bg-[#D96D34] w-10 h-10 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 group-hover:translate-x-6 group-hover:rotate-12">
-              <ArrowUpRight className="w-4 h-4 text-white transition-transform duration-300 group-hover:rotate-45" />
-            </span>
-          </button>
+      {isLoading ? (
+        <SearchBarShimmer />
+      ) : (
+        <div className="max-w-lg mx-auto mb-8 sm:mb-12 lg:mb-16 relative z-10 flex flex-col items-center px-4">
+          <Input
+            type="text"
+            placeholder="Search by Blog Name"
+            className="w-full pl-4 pr-4 py-4 sm:py-6 lg:py-7 border-2 border-gray-300 rounded-xl focus:ring-orange-500 focus:border-orange-500 text-base sm:text-lg bg-transparent"
+          />
+          <div className="mt-4 sm:mt-6 flex items-center">
+            <button className="group relative flex items-center hover:scale-105 transition-transform duration-300 focus:outline-none">
+              <span className="bg-[#D96D34] text-white px-4 sm:px-6 py-2 sm:py-3 pr-8 sm:pr-12 rounded-full text-sm sm:text-lg font-medium">
+                Search
+              </span>
+              <span className="absolute right-0 left-20 sm:left-30 translate-x-1/2 bg-[#D96D34] w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 group-hover:translate-x-4 sm:group-hover:translate-x-6 group-hover:rotate-12">
+                <ArrowUpRight className="w-3 h-3 sm:w-4 sm:h-4 text-white transition-transform duration-300 group-hover:rotate-45" />
+              </span>
+            </button>
+          </div>
         </div>
-      </div>
+      )}
 
-      <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 mb-8 relative z-10 text-center">
-        <h2 className="text-3xl font-bold text-gray-800">Recent Blogs</h2>
-      </div>
+      {/* Section Title */}
+      {isLoading ? (
+        <SectionTitleShimmer />
+      ) : (
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 mb-6 sm:mb-8 relative z-10 text-center">
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-800">Recent Blogs</h2>
+        </div>
+      )}
 
-      {/* Blog Cards or Skeletons */}
+      {/* Blog Cards or Shimmer Skeletons */}
       <div
-        className="grid grid-cols-1 gap-8 max-w-[1200px] mx-auto px-4 sm:grid-cols-2 lg:grid-cols-3 sm:px-6 lg:px-8 relative z-10"
+        className="grid grid-cols-1 gap-4 sm:gap-6 lg:gap-8 max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10 sm:grid-cols-2 lg:grid-cols-3"
       >
         {isLoading ? (
           <>
-            <BlogCardSkeleton />
-            <BlogCardSkeleton />
-            <BlogCardSkeleton />
-            <BlogCardSkeleton />
-            <BlogCardSkeleton />
-            <BlogCardSkeleton />
+            <BlogCardShimmer />
+            <BlogCardShimmer />
+            <BlogCardShimmer />
+            <BlogCardShimmer />
+            <BlogCardShimmer />
+            <BlogCardShimmer />
+            <BlogCardShimmer />
+            <BlogCardShimmer />
+            <BlogCardShimmer />
           </>
         ) : (
           <>
@@ -178,10 +255,8 @@ export default function BlogLayout() {
                 key={idx}
                 className="bg-white rounded-xl overflow-hidden shadow-md transition-shadow duration-300 hover:shadow-xl"
               >
-                {" "}
-                {/* Changed from 500px to 600px */}
-                <div className="p-4">
-                  <div className="relative w-full h-64 mb-4 overflow-hidden rounded-lg">
+                <div className="p-3 sm:p-4">
+                  <div className="relative w-full h-48 sm:h-56 lg:h-64 mb-3 sm:mb-4 overflow-hidden rounded-lg">
                     <Image
                       src={blog.image}
                       alt={blog.alt}
@@ -189,14 +264,14 @@ export default function BlogLayout() {
                       className="object-cover transition-transform duration-300 group-hover:scale-105"
                     />
                   </div>
-                  <h3 className="text-xl font-bold mt-4 mb-2 h-16">
+                  <h3 className="text-lg sm:text-xl font-bold mt-3 sm:mt-4 mb-2 min-h-[3rem] sm:min-h-[4rem] lg:min-h-[5rem] line-clamp-2">
                     {blog.title}
                   </h3>
-                  <div className="flex justify-between items-center mt-6">
-                    <p className="text-gray-500 text-sm">{blog.date}</p>
+                  <div className="flex justify-between items-center mt-4 sm:mt-6">
+                    <p className="text-gray-500 text-xs sm:text-sm">{blog.date}</p>
                     <Link
                       href={blog.link}
-                      className="text-[#D96D34] font-semibold hover:underline"
+                      className="text-[#D96D34] font-semibold hover:underline text-sm sm:text-base"
                     >
                       Read More
                     </Link>
@@ -209,58 +284,63 @@ export default function BlogLayout() {
       </div>
 
       {/* Pagination */}
-      <div className="mt-16">
-        <Pagination>
-          <PaginationContent>
-            <PaginationItem>
-              <PaginationPrevious
-                href="#"
-                onClick={(e) => {
-                  e.preventDefault()
-                  handlePageChange(currentPage > 1 ? currentPage - 1 : 1)
-                }}
-              />
-            </PaginationItem>
-            {[...Array(totalPages)].map((_, i) => (
-              <PaginationItem key={i}>
-                <PaginationLink
+      {!isLoading && (
+        <div className="mt-8 sm:mt-12 lg:mt-16 px-4">
+          <Pagination>
+            <PaginationContent className="flex flex-wrap justify-center gap-1 sm:gap-2">
+              <PaginationItem>
+                <PaginationPrevious
                   href="#"
-                  isActive={currentPage === i + 1}
                   onClick={(e) => {
                     e.preventDefault()
-                    handlePageChange(i + 1)
+                    handlePageChange(currentPage > 1 ? currentPage - 1 : 1)
                   }}
-                >
-                  {i + 1}
-                </PaginationLink>
+                  className="text-sm sm:text-base"
+                />
               </PaginationItem>
-            ))}
+              {[...Array(totalPages)].map((_, i) => (
+                <PaginationItem key={i}>
+                  <PaginationLink
+                    href="#"
+                    isActive={currentPage === i + 1}
+                    onClick={(e) => {
+                      e.preventDefault()
+                      handlePageChange(i + 1)
+                    }}
+                    className="text-sm sm:text-base min-w-[2rem] sm:min-w-[2.5rem]"
+                  >
+                    {i + 1}
+                  </PaginationLink>
+                </PaginationItem>
+              ))}
 
-            <PaginationItem>
-              <PaginationNext
-                href="#"
-                onClick={(e) => {
-                  e.preventDefault()
-                  handlePageChange(
-                    currentPage < totalPages ? currentPage + 1 : totalPages
-                  )
-                }}
-              />
-            </PaginationItem>
-          </PaginationContent>
-        </Pagination>
-      </div>
+              <PaginationItem>
+                <PaginationNext
+                  href="#"
+                  onClick={(e) => {
+                    e.preventDefault()
+                    handlePageChange(
+                      currentPage < totalPages ? currentPage + 1 : totalPages
+                    )
+                  }}
+                  className="text-sm sm:text-base"
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        </div>
+      )}
 
-      {/* More Decorative Sun Icons */}
-      <div className="relative mt-16">
-        <div className="absolute bottom-10 left-10 z-0">
-          <SunIcon size={50} src="/blogs/sun.gif" />
+      {/* More Decorative Sun Icons - Responsive */}
+      <div className="relative mt-8 sm:mt-12 lg:mt-16">
+        <div className="absolute bottom-4 left-4 sm:bottom-6 sm:left-6 lg:bottom-10 lg:left-10 z-0">
+          <SunIcon size={30} className="sm:w-10 sm:h-10 lg:w-12 lg:h-12" src="/blogs/sun.gif" />
         </div>
-        <div className="absolute bottom-10 right-10 z-0">
-          <SunIcon size={50} src="/blogs/sun.gif" />
+        <div className="absolute bottom-4 right-4 sm:bottom-6 sm:right-6 lg:bottom-10 lg:right-10 z-0">
+          <SunIcon size={30} className="sm:w-10 sm:h-10 lg:w-12 lg:h-12" src="/blogs/sun.gif" />
         </div>
-        <div className="flex justify-center pt-10 relative z-10">
-          <SunIcon size={40} src="/blogs/sun.gif" />
+        <div className="flex justify-center pt-6 sm:pt-8 lg:pt-10 relative z-10">
+          <SunIcon size={30} className="sm:w-10 sm:h-10 lg:w-12 lg:h-12" src="/blogs/sun.gif" />
         </div>
       </div>
     </div>
