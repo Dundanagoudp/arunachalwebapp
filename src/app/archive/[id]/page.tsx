@@ -5,6 +5,15 @@ import Image from "next/image"
 import { ArrowLeft, Download, X } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
 import SunIcon from "@/components/archive/sun-icon"
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination"
 
 // Modal component for image popup
 function ImageModal({
@@ -73,14 +82,22 @@ function ImageModal({
 export default function GalleryPage({ params }: { params: { year: string } }) {
   const { year } = params
   const [selectedImage, setSelectedImage] = useState<{ src: string; alt: string } | null>(null)
+  const [currentPage, setCurrentPage] = useState(1)
+  const imagesPerPage = 12
 
-  // Create an array of 16 images for the gallery
-  const images = Array.from({ length: 16 }, (_, i) => {
+  // Create an array of 48 images for the gallery
+  const images = Array.from({ length: 48 }, (_, i) => {
     // Alternate between the two sample images
     return i % 2 === 0
       ? "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Frame%202095585096-X2btxoeKDnI6VIlmtlCzWFN1ELtjwR.png"
       : "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Frame%202095585095-tkfzydTnu1GHwrL6TbaTaVVX8Mfudq.png"
   })
+
+  // Calculate pagination
+  const totalPages = Math.ceil(images.length / imagesPerPage)
+  const startIndex = (currentPage - 1) * imagesPerPage
+  const endIndex = startIndex + imagesPerPage
+  const currentImages = images.slice(startIndex, endIndex)
 
   // Function to handle image download
   const handleDownload = async () => {
@@ -103,6 +120,42 @@ export default function GalleryPage({ params }: { params: { year: string } }) {
   const handleAlbumDownload = () => {
     alert(`Downloading all images from ${year} album...`)
     // In a real application, this would trigger a zip download of all images
+  }
+
+  // Function to generate pagination items
+  const generatePaginationItems = () => {
+    const items = []
+    const maxVisiblePages = 5
+
+    if (totalPages <= maxVisiblePages) {
+      for (let i = 1; i <= totalPages; i++) {
+        items.push(i)
+      }
+    } else {
+      if (currentPage <= 3) {
+        for (let i = 1; i <= 4; i++) {
+          items.push(i)
+        }
+        items.push('ellipsis')
+        items.push(totalPages)
+      } else if (currentPage >= totalPages - 2) {
+        items.push(1)
+        items.push('ellipsis')
+        for (let i = totalPages - 3; i <= totalPages; i++) {
+          items.push(i)
+        }
+      } else {
+        items.push(1)
+        items.push('ellipsis')
+        for (let i = currentPage - 1; i <= currentPage + 1; i++) {
+          items.push(i)
+        }
+        items.push('ellipsis')
+        items.push(totalPages)
+      }
+    }
+
+    return items
   }
 
   return (
@@ -146,7 +199,7 @@ export default function GalleryPage({ params }: { params: { year: string } }) {
             initial="hidden"
             animate="show"
           >
-            {images.map((src, index) => (
+            {currentImages.map((src, index) => (
               <motion.div
                 key={index}
                 className="aspect-[4/3] rounded-lg overflow-hidden cursor-pointer"
@@ -168,6 +221,54 @@ export default function GalleryPage({ params }: { params: { year: string } }) {
               </motion.div>
             ))}
           </motion.div>
+
+          {/* Pagination */}
+          {totalPages > 1 && (
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+              className="mt-8"
+            >
+              <Pagination>
+                <PaginationContent>
+                  <PaginationItem>
+                    <PaginationPrevious 
+                      onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                      className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                    />
+                  </PaginationItem>
+                  
+                  {generatePaginationItems().map((item, index) => (
+                    <PaginationItem key={index}>
+                      {item === 'ellipsis' ? (
+                        <PaginationEllipsis />
+                      ) : (
+                        <PaginationLink
+                          isActive={currentPage === item}
+                          onClick={() => setCurrentPage(item as number)}
+                          className="cursor-pointer"
+                        >
+                          {item}
+                        </PaginationLink>
+                      )}
+                    </PaginationItem>
+                  ))}
+                  
+                  <PaginationItem>
+                    <PaginationNext 
+                      onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                      className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                    />
+                  </PaginationItem>
+                </PaginationContent>
+              </Pagination>
+              
+              <div className="text-center mt-4 text-sm text-gray-600">
+                Page {currentPage} of {totalPages} • Showing {startIndex + 1}-{Math.min(endIndex, images.length)} of {images.length} images
+              </div>
+            </motion.div>
+          )}
         </motion.div>
       </main>
 
