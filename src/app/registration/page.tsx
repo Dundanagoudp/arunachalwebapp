@@ -1,11 +1,12 @@
 'use client';
 
+import RegistrationSection from '@/components/registration/modules/registration-section';
 import React from 'react';
 
-export default function Registration() {
+export default function Registrationpage() {
   return (
-    <div className="container mx-auto px-4 py-8">
-      Registration
+    <div >
+      <RegistrationSection/>
     </div>
   );
 } 
