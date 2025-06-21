@@ -17,7 +17,7 @@ const Header = () => {
     { href: "/schedule", label: "Schedule" },
     { href: "/registration", label: "Registration" },
     { href: "/archive", label: "Archive" },
-    { href: "/inthenews", label: "In the news" },
+    { href: "/Inthenews", label: "In the news" },
     { href: "/blog", label: "Blogs" },
     { href: "/contactus", label: "Contact Us" },
   ]
