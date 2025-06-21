@@ -1,5 +1,5 @@
 "use client"
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Link from "next/link"
 import Image from "next/image"
 import { ArrowLeft, Download, X } from "lucide-react"
@@ -14,6 +14,38 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination"
+
+// Shimmer effect component
+const ShimmerEffect = ({ className }: { className?: string }) => (
+  <div className={`relative overflow-hidden ${className}`}>
+    <div className="bg-gradient-to-r from-gray-300 via-gray-100 to-gray-300 bg-[length:200%_100%] animate-shimmer rounded h-full w-full"></div>
+    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent animate-shimmer rounded h-full w-full"></div>
+  </div>
+)
+
+// Gallery Image Shimmer Component
+const GalleryImageShimmer = () => (
+  <div className="aspect-[4/3] rounded-lg overflow-hidden">
+    <ShimmerEffect className="w-full h-full" />
+  </div>
+)
+
+// Header Shimmer Component
+const HeaderShimmer = () => (
+  <header className="container mx-auto px-4 py-6 flex items-center justify-between relative">
+    <ShimmerEffect className="h-6 w-16" />
+    <ShimmerEffect className="h-8 w-20" />
+    <ShimmerEffect className="h-7 w-7 rounded-full" />
+  </header>
+)
+
+// Title Shimmer Component
+const TitleShimmer = () => (
+  <div className="text-center mb-8">
+    <ShimmerEffect className="h-10 w-48 mx-auto mb-4" />
+    <ShimmerEffect className="h-8 w-40 mx-auto" />
+  </div>
+)
 
 // Modal component for image popup
 function ImageModal({
@@ -83,7 +115,17 @@ export default function GalleryPage({ params }: { params: { year: string } }) {
   const { year } = params
   const [selectedImage, setSelectedImage] = useState<{ src: string; alt: string } | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
+  const [isLoading, setIsLoading] = useState(true)
   const imagesPerPage = 12
+
+  useEffect(() => {
+    // Simulate loading time
+    const timer = setTimeout(() => {
+      setIsLoading(false)
+    }, 2000) // Show shimmer for 2 seconds
+
+    return () => clearTimeout(timer)
+  }, [])
 
   // Create an array of 48 images for the gallery
   const images = Array.from({ length: 48 }, (_, i) => {
@@ -160,116 +202,154 @@ export default function GalleryPage({ params }: { params: { year: string } }) {
 
   return (
     <div className="min-h-screen bg-[#FFFAEE]">
-      <header className="container mx-auto px-4 py-6 flex items-center justify-between relative">
-        <Link href="/" className="flex items-center text-gray-700 hover:text-blue-700" aria-label="Back to archive">
-          <ArrowLeft size={20} className="mr-1" />
-          <span>Back</span>
-        </Link>
+      {/* Header */}
+      {isLoading ? (
+        <HeaderShimmer />
+      ) : (
+        <header className="container mx-auto px-4 py-6 flex items-center justify-between relative">
+          <Link href="/" className="flex items-center text-gray-700 hover:text-blue-700" aria-label="Back to archive">
+            <ArrowLeft size={20} className="mr-1" />
+            <span>Back</span>
+          </Link>
 
-        <h1 className="text-2xl font-bold text-blue-700 absolute left-1/2 transform -translate-x-1/2">{year}</h1>
+          <h1 className="text-2xl font-bold text-blue-700 absolute left-1/2 transform -translate-x-1/2">{year}</h1>
 
-        <SunIcon size={28} className="" />
-      </header>
+          <SunIcon size={28} className="" />
+        </header>
+      )}
 
       <main className="container mx-auto px-4 py-8 relative">
         <SunIcon size={24} className="absolute top-4 left-4" />
         <SunIcon size={24} className="absolute bottom-4 right-4" />
 
-        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-          <h2 className="text-4xl font-bold text-center text-amber-800 mb-2">GALLERY {year}</h2>
-
-          <div className="flex justify-center mb-8">
-            <button className="flex items-center px-4 py-2 text-gray-700 hover:text-blue-700">
-              <span>Download {year} Album</span>
-              <Download size={18} className="ml-2" />
-            </button>
-          </div>
-
-          <motion.div
-            className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"
-            variants={{
-              hidden: { opacity: 0 },
-              show: {
-                opacity: 1,
-                transition: {
-                  staggerChildren: 0.1,
-                },
-              },
-            }}
-            initial="hidden"
-            animate="show"
-          >
-            {currentImages.map((src, index) => (
-              <motion.div
-                key={index}
-                className="aspect-[4/3] rounded-lg overflow-hidden cursor-pointer"
-                variants={{
-                  hidden: { opacity: 0, y: 20 },
-                  show: { opacity: 1, y: 0 },
-                }}
-                whileHover={{ scale: 1.05 }}
-                transition={{ type: "spring", stiffness: 300 }}
-                onClick={() => setSelectedImage({ src, alt: `Gallery image ${index + 1}` })}
-              >
-                <Image
-                  src={src || "/placeholder.svg"}
-                  alt={`Gallery image ${index + 1}`}
-                  width={300}
-                  height={225}
-                  className="w-full h-full object-cover"
-                />
-              </motion.div>
-            ))}
-          </motion.div>
-
-          {/* Pagination */}
-          {totalPages > 1 && (
+        {isLoading ? (
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+            <TitleShimmer />
+            
             <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: 0.3 }}
-              className="mt-8"
+              className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"
+              variants={{
+                hidden: { opacity: 0 },
+                show: {
+                  opacity: 1,
+                  transition: {
+                    staggerChildren: 0.1,
+                  },
+                },
+              }}
+              initial="hidden"
+              animate="show"
             >
-              <Pagination>
-                <PaginationContent>
-                  <PaginationItem>
-                    <PaginationPrevious 
-                      onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
-                      className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
-                    />
-                  </PaginationItem>
-                  
-                  {generatePaginationItems().map((item, index) => (
-                    <PaginationItem key={index}>
-                      {item === 'ellipsis' ? (
-                        <PaginationEllipsis />
-                      ) : (
-                        <PaginationLink
-                          isActive={currentPage === item}
-                          onClick={() => setCurrentPage(item as number)}
-                          className="cursor-pointer"
-                        >
-                          {item}
-                        </PaginationLink>
-                      )}
-                    </PaginationItem>
-                  ))}
-                  
-                  <PaginationItem>
-                    <PaginationNext 
-                      onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
-                      className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
-                    />
-                  </PaginationItem>
-                </PaginationContent>
-              </Pagination>
-              
-              <div className="text-center mt-4 text-sm text-gray-600">
-                Page {currentPage} of {totalPages} • Showing {startIndex + 1}-{Math.min(endIndex, images.length)} of {images.length} images
-              </div>
+              {Array.from({ length: 12 }, (_, index) => (
+                <motion.div
+                  key={index}
+                  variants={{
+                    hidden: { opacity: 0, y: 20 },
+                    show: { opacity: 1, y: 0 },
+                  }}
+                >
+                  <GalleryImageShimmer />
+                </motion.div>
+              ))}
             </motion.div>
-          )}
-        </motion.div>
+          </motion.div>
+        ) : (
+          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
+            <h2 className="text-4xl font-bold text-center text-amber-800 mb-2">GALLERY {year}</h2>
+
+            <div className="flex justify-center mb-8">
+              <button className="flex items-center px-4 py-2 text-gray-700 hover:text-blue-700">
+                <span>Download {year} Album</span>
+                <Download size={18} className="ml-2" />
+              </button>
+            </div>
+
+            <motion.div
+              className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"
+              variants={{
+                hidden: { opacity: 0 },
+                show: {
+                  opacity: 1,
+                  transition: {
+                    staggerChildren: 0.1,
+                  },
+                },
+              }}
+              initial="hidden"
+              animate="show"
+            >
+              {currentImages.map((src, index) => (
+                <motion.div
+                  key={index}
+                  className="aspect-[4/3] rounded-lg overflow-hidden cursor-pointer"
+                  variants={{
+                    hidden: { opacity: 0, y: 20 },
+                    show: { opacity: 1, y: 0 },
+                  }}
+                  whileHover={{ scale: 1.05 }}
+                  transition={{ type: "spring", stiffness: 300 }}
+                  onClick={() => setSelectedImage({ src, alt: `Gallery image ${index + 1}` })}
+                >
+                  <Image
+                    src={src || "/placeholder.svg"}
+                    alt={`Gallery image ${index + 1}`}
+                    width={300}
+                    height={225}
+                    className="w-full h-full object-cover"
+                  />
+                </motion.div>
+              ))}
+            </motion.div>
+
+            {/* Pagination */}
+            {totalPages > 1 && (
+              <motion.div
+                initial={{ opacity: 0, y: 20 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+                className="mt-8"
+              >
+                <Pagination>
+                  <PaginationContent>
+                    <PaginationItem>
+                      <PaginationPrevious 
+                        onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                        className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                      />
+                    </PaginationItem>
+                    
+                    {generatePaginationItems().map((item, index) => (
+                      <PaginationItem key={index}>
+                        {item === 'ellipsis' ? (
+                          <PaginationEllipsis />
+                        ) : (
+                          <PaginationLink
+                            isActive={currentPage === item}
+                            onClick={() => setCurrentPage(item as number)}
+                            className="cursor-pointer"
+                          >
+                            {item}
+                          </PaginationLink>
+                        )}
+                      </PaginationItem>
+                    ))}
+                    
+                    <PaginationItem>
+                      <PaginationNext 
+                        onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                        className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                      />
+                    </PaginationItem>
+                  </PaginationContent>
+                </Pagination>
+                
+                <div className="text-center mt-4 text-sm text-gray-600">
+                  Page {currentPage} of {totalPages} • Showing {startIndex + 1}-{Math.min(endIndex, images.length)} of {images.length} images
+                </div>
+              </motion.div>
+            )}
+          </motion.div>
+        )}
       </main>
 
       {/* Image Modal */}
