@@ -4,7 +4,6 @@ import Link from "next/link" // Import Link
 import { useState, useEffect } from "react"
 import { ArrowUpRight } from "lucide-react" // Change to ArrowRight
 import { BlogCardSkeleton } from "@/components/blog-card-skeleton" // Import the new skeleton component
-import SunIcon from "@/components/archive/sun-icon"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -179,16 +178,16 @@ export default function Inthenews() {
     <div className="min-h-screen bg-[#FFFAEE] p-4 sm:p-6 lg:p-8 relative overflow-hidden">
       {/* Decorative Sun Icons - Responsive positioning */}
       <div className="absolute top-4 left-4 sm:top-6 sm:left-6 lg:top-10 lg:left-10 z-0">
-        <SunIcon size={30} className="sm:w-10 sm:h-10 lg:w-12 lg:h-12" src="/blogs/sun.gif" />
+        <Image src="/blogs/sun.gif" alt="Sun" width={30} height={30} className="sm:w-10 sm:h-10 lg:w-12 lg:h-12" />
       </div>
       <div className="absolute top-4 right-4 sm:top-6 sm:right-6 lg:top-10 lg:right-10 z-0">
-        <SunIcon size={30} className="sm:w-10 sm:h-10 lg:w-12 lg:h-12" src="/blogs/sun.gif" />
+        <Image src="/blogs/sun.gif" alt="Sun" width={30} height={30} className="sm:w-10 sm:h-10 lg:w-12 lg:h-12" />
       </div>
       <div className="hidden md:block absolute top-1/2 -translate-y-1/2 left-4 lg:left-10 z-0">
-        <SunIcon size={40} className="lg:w-12 lg:h-12" src="/blogs/sun.gif" />
+        <Image src="/blogs/sun.gif" alt="Sun" width={40} height={40} className="lg:w-12 lg:h-12" />
       </div>
       <div className="hidden md:block absolute top-1/2 -translate-y-1/2 right-4 lg:right-10 z-0">
-        <SunIcon size={40} className="lg:w-12 lg:h-12" src="/blogs/sun.gif" />
+        <Image src="/blogs/sun.gif" alt="Sun" width={40} height={40} className="lg:w-12 lg:h-12" />
       </div>
 
       {/* Header */}
@@ -311,13 +310,13 @@ export default function Inthenews() {
       {/* More Decorative Sun Icons - Responsive */}
       <div className="relative mt-8 sm:mt-12 lg:mt-16">
         <div className="absolute bottom-4 left-4 sm:bottom-6 sm:left-6 lg:bottom-10 lg:left-10 z-0">
-          <SunIcon size={30} className="sm:w-10 sm:h-10 lg:w-12 lg:h-12" src="/blogs/sun.gif" />
+          <Image src="/blogs/sun.gif" alt="Sun" width={30} height={30} className="sm:w-10 sm:h-10 lg:w-12 lg:h-12" />
         </div>
         <div className="absolute bottom-4 right-4 sm:bottom-6 sm:right-6 lg:bottom-10 lg:right-10 z-0">
-          <SunIcon size={30} className="sm:w-10 sm:h-10 lg:w-12 lg:h-12" src="/blogs/sun.gif" />
+          <Image src="/blogs/sun.gif" alt="Sun" width={30} height={30} className="sm:w-10 sm:h-10 lg:w-12 lg:h-12" />
         </div>
         <div className="flex justify-center pt-6 sm:pt-8 lg:pt-10 relative z-10">
-          <SunIcon size={30} className="sm:w-10 sm:h-10 lg:w-12 lg:h-12" src="/blogs/sun.gif" />
+          <Image src="/blogs/sun.gif" alt="Sun" width={30} height={30} className="sm:w-10 sm:h-10 lg:w-12 lg:h-12" />
         </div>
       </div>
     </div>
