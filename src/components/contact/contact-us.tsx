@@ -41,7 +41,7 @@ export default function ContactUsPage() {
         />
 
         {/* Left Column: Contact Form */}
-        <div className="bg-white p-10 rounded-lg shadow-lg border border-black flex flex-col gap-10 relative z-10">
+        <div className="bg-white p-10 rounded-lg shadow-lg border border-[#1A3FA9] flex flex-col gap-10 relative z-10">
           <div className={inputWrapperClass}>
             <Input
               id="fullName"
