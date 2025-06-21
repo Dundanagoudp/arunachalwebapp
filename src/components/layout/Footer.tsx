@@ -61,6 +61,16 @@ export default function Footer() {
                   About
                 </Link>
               </li>
+              <li>
+                <Link href="/inthenews" className="hover:underline">
+                  In the news
+                </Link>
+              </li>
+              <li>
+                <Link href="/blog" className="hover:underline">
+                  Blog
+                </Link>
+              </li>
             </ul>
           </div>
 
