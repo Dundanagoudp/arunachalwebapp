@@ -206,6 +206,16 @@ export default function Schedule() {
 
       {/* Main Content */}
       <div className="relative z-10 flex flex-col items-center mt-[-100px] w-full max-w-6xl px-4">
+        {/* Arc image beside event box */}
+        <div className="absolute right-[-180px] top-1/2 -translate-y-1/2 z-0 pointer-events-none hidden md:block">
+          <Image
+            src="/schedule/arch-pattern.png"
+            alt="Arc Pattern"
+            width={350}
+            height={500}
+            className="object-contain opacity-70 select-none"
+          />
+        </div>
         {/* Header */}
         <div className="text-center mb-4 mt-18">
           <h1 className="text-[#6A1B1A] text-2xl md:text-3xl lg:text-3xl font-bold tracking-wider mb-2 font-serif">
@@ -271,8 +281,8 @@ export default function Schedule() {
             </div>
 
             {/* Schedule Table Card */}
-            <div className="relative flex-1 bg-white rounded-2xl shadow-2xl p-6 md:p-8 overflow-hidden border border-[#e0e0e0] max-w-7xl mx-auto w-full mb-15">
-              <div className="max-h-[400px] md:max-h-[500px] overflow-y-auto pr-4 relative">
+            <div className="relative flex-1 bg-white rounded-2xl shadow-2xl p-6 md:p-8 overflow-hidden border border-[#e0e0e0] max-w-7xl mx-auto w-full mb-15 z-10">
+              <div className="max-h-[400px] md:max-h-[500px] overflow-y-auto pr-4 relative z-10">
                 {scheduleData.days
                   .find(day => day.day === activeDay)
                   ?.events.map((item, index) => (
