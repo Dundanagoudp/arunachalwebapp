@@ -120,27 +120,27 @@ const adminData = {
       items: [
         {
           title: "Blogs",
-          url: "/admin/blogs",
+          url: "/admin/dashboard/blogs",
         },
         {
           title: "Courses",
-          url: "/admin/courses",
+          url: "/admin/dashboard/courses",
         },
         {
           title: "Events",
-          url: "/admin/events",
+          url: "/admin/dashboard/events",
         },
         {
           title: "Speakers",
-          url: "/admin/speakers",
+          url: "/admin/dashboard/speakers",
         },
         {
           title: "Gallery",
-          url: "/admin/gallery",
+          url: "/admin/dashboard/gallery",
         },
         {
           title: "Testimonials",
-          url: "/admin/testimonials",
+          url: "/admin/dashboard/testimonials",
         },
       ],
     },
@@ -151,19 +151,19 @@ const adminData = {
       items: [
         {
           title: "All Users",
-          url: "/admin/users",
+          url: "/admin/dashboard/users",
         },
         {
           title: "User Roles",
-          url: "/admin/users/roles",
+          url: "/admin/dashboard/users/roles",
         },
         {
           title: "User Permissions",
-          url: "/admin/users/permissions",
+          url: "/admin/dashboard/users/permissions",
         },
         {
           title: "User Activity",
-          url: "/admin/users/activity",
+          url: "/admin/dashboard/users/activity",
         },
       ],
     },
@@ -174,23 +174,23 @@ const adminData = {
       items: [
         {
           title: "Overview",
-          url: "/admin/analytics",
+          url: "/admin/dashboard/analytics",
         },
         {
           title: "Blog Analytics",
-          url: "/admin/analytics/blogs",
+          url: "/admin/dashboard/analytics/blogs",
         },
         {
           title: "Course Analytics",
-          url: "/admin/analytics/courses",
+          url: "/admin/dashboard/analytics/courses",
         },
         {
           title: "User Analytics",
-          url: "/admin/analytics/users",
+          url: "/admin/dashboard/analytics/users",
         },
         {
           title: "Traffic Sources",
-          url: "/admin/analytics/traffic",
+          url: "/admin/dashboard/analytics/traffic",
         },
       ],
     },
@@ -201,27 +201,27 @@ const adminData = {
       items: [
         {
           title: "General",
-          url: "/admin/settings/general",
+          url: "/admin/dashboard/settings/general",
         },
         {
           title: "Appearance",
-          url: "/admin/settings/appearance",
+          url: "/admin/dashboard/settings/appearance",
         },
         {
           title: "Email",
-          url: "/admin/settings/email",
+          url: "/admin/dashboard/settings/email",
         },
         {
           title: "Security",
-          url: "/admin/settings/security",
+          url: "/admin/dashboard/settings/security",
         },
         {
           title: "Backup",
-          url: "/admin/settings/backup",
+          url: "/admin/dashboard/settings/backup",
         },
         {
           title: "API Keys",
-          url: "/admin/settings/api",
+          url: "/admin/dashboard/settings/api",
         },
       ],
     },
