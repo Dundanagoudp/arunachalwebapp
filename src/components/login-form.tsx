@@ -8,7 +8,7 @@ import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { toast } from "sonner";
 import { setCookie } from "@/lib/cookies";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { getCookie } from "@/lib/cookies";
 
 type LoginFormValues = {
@@ -26,8 +26,10 @@ export function LoginForm({
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<LoginFormValues>();
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     // Check if user is already logged in
     const userRole = getCookie("userRole");
     console.log("[LoginForm] userRole from cookie:", userRole); // Debug log
@@ -42,6 +44,8 @@ export function LoginForm({
       }
     }
   }, [router]);
+
+  if (!mounted) return null; // Prevent hydration mismatch
 
   const onSubmit = async (data: LoginFormValues) => {
     try {
