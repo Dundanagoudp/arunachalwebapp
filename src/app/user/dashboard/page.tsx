@@ -1,6 +1,5 @@
 "use client"
 
-import { AppSidebar } from "@/components/app-sidebar"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -30,6 +29,7 @@ import {
   Eye
 } from "lucide-react"
 import Link from "next/link"
+import { UserSidebar } from "@/components/user-dashboard/user-sidebar"
 
 export default function AdminDashboard() {
   // Mock data - replace with actual data from your backend
@@ -104,7 +104,7 @@ export default function AdminDashboard() {
 
   return (
     <SidebarProvider>
-      <AppSidebar />
+      <UserSidebar />
       <SidebarInset>
         <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
           <div className="flex items-center gap-2 px-4">
@@ -117,7 +117,7 @@ export default function AdminDashboard() {
               <BreadcrumbList>
                 <BreadcrumbItem className="hidden md:block">
                   <BreadcrumbLink href="/admin">
-                    Admin Panel
+                    User Panel
                   </BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
@@ -131,9 +131,9 @@ export default function AdminDashboard() {
         
         <div className="flex flex-1 flex-col gap-6 p-6 pt-0">
           {/* Welcome Section */}
-          <div className="flex items-center justify-between">
+          {/* <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold tracking-tight">Admin Dashboard</h1>
+              <h1 className="text-3xl font-bold tracking-tight">User Dashboard</h1>
               <p className="text-muted-foreground">
                 Welcome back! Here's what's happening with your Arunachal Literature platform.
               </p>
@@ -146,10 +146,10 @@ export default function AdminDashboard() {
                 </Link>
               </Button>
             </div>
-          </div>
+          </div> */}
 
           {/* Stats Cards */}
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+          {/* <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
             {stats.map((stat, index) => (
               <Card key={index}>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -166,69 +166,13 @@ export default function AdminDashboard() {
                 </CardContent>
               </Card>
             ))}
-          </div>
+          </div> */}
 
           {/* Content Management Section */}
-          <div className="grid gap-6 md:grid-cols-2">
-            {/* Recent Blogs */}
-            <Card>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle>Recent Blogs</CardTitle>
-                    <CardDescription>
-                      Latest blog posts and their performance
-                    </CardDescription>
-                  </div>
-                  <Button variant="outline" size="sm" asChild>
-                    <Link href="/admin/blogs">
-                      View All
-                    </Link>
-                  </Button>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {recentBlogs.map((blog) => (
-                    <div key={blog.id} className="flex items-center justify-between">
-                      <div className="space-y-1">
-                        <p className="text-sm font-medium leading-none">
-                          {blog.title}
-                        </p>
-                        <div className="flex items-center gap-2">
-                          <Badge variant={blog.status === 'published' ? 'default' : 'secondary'}>
-                            {blog.status}
-                          </Badge>
-                          <span className="text-xs text-muted-foreground">
-                            {blog.date}
-                          </span>
-                        </div>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span className="text-xs text-muted-foreground">
-                          {blog.views} views
-                        </span>
-                        <div className="flex gap-1">
-                          <Button variant="ghost" size="sm">
-                            <Eye className="h-3 w-3" />
-                          </Button>
-                          <Button variant="ghost" size="sm">
-                            <Edit className="h-3 w-3" />
-                          </Button>
-                          <Button variant="ghost" size="sm">
-                            <Trash2 className="h-3 w-3" />
-                          </Button>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
-          </div>
+     
 
           {/* Quick Actions */}
-          <Card>
+          {/* <Card>
             <CardHeader>
               <CardTitle>Quick Actions</CardTitle>
               <CardDescription>
@@ -251,7 +195,7 @@ export default function AdminDashboard() {
                 </Button>
               </div>
             </CardContent>
-          </Card>
+          </Card> */}
         </div>
       </SidebarInset>
     </SidebarProvider>

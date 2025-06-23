@@ -13,6 +13,7 @@ const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
   const [isMobile, setIsMobile] = useState(false)
+  const [mounted, setMounted] = useState(false)
 
   const navLinks = [
     { href: "/speakers", label: "Speakers" },
@@ -21,6 +22,7 @@ const Header = () => {
     { href: "/archive", label: "Archive" },
     { href: "/Inthenews", label: "In the news" },
     { href: "/blog", label: "Blogs" },
+    { href: "/videos", label: "Videos" },
     { href: "/contactus", label: "Contact Us" },
   ]
 
@@ -44,13 +46,17 @@ const Header = () => {
     return () => window.removeEventListener("resize", checkMobile)
   }, [])
 
+  useEffect(() => {
+    setMounted(true)
+  }, [])
+
   const handleLinkClick = () => {
     setIsMenuOpen(false)
   }
 
   return (
     <>
-      {isMobile ? (
+      {mounted && isMobile ? (
         <motion.header
           className={`fixed top-0 left-0 right-0 z-50 w-full py-4 px-6 flex items-center justify-between font-bilo transition-all duration-500 ${
             isScrolled ? "bg-[#FFFAEE]/95 backdrop-blur-md border-b border-amber-200/50" : "bg-[#FFFAEE]"
