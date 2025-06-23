@@ -10,7 +10,6 @@ import { toast } from "sonner";
 import { setCookie } from "@/lib/cookies";
 import { useEffect, useState } from "react";
 import { getCookie } from "@/lib/cookies";
-import { loginUser } from "../service/authService";
 
 type LoginFormValues = {
   email: string;
@@ -50,9 +49,26 @@ export function LoginForm({
 
   const onSubmit = async (data: LoginFormValues) => {
     try {
-      const result = await loginUser(data);
+      const response = await fetch(
+        "http://localhost:8000/api/v1/onboarding/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(data),
+          credentials: "include", 
+        }
+      );
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        throw new Error(result.message || "Login failed");
+      }
 
       console.log("[LoginForm] Account type from backend:", result.data.user.accountType); // Debug log
+      // Use the imported setCookie function with the correct signature
       setCookie("userRole", result.data.user.role, { days: 1 });
       setCookie("token", result.token, { days: 1 });
 
@@ -66,8 +82,8 @@ export function LoginForm({
         default:
           router.replace("/user/dashboard");
       }
-    } catch (error: any) {
-      toast.error(error?.response?.data?.message || error.message || "Login failed");
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : "Login failed");
     }
   };
 

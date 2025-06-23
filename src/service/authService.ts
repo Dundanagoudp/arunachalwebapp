@@ -1,5 +1,5 @@
 import apiClient from "../apiClient";
-import { LoginRequest, LoginResponse } from "../types/auth";
+import { LoginRequest, LoginResponse, LogoutResponse } from "../types/auth";
 
 export async function loginUser(data: LoginRequest): Promise<LoginResponse> {
   const response = await apiClient.post("/onboarding/login", data, {
@@ -7,3 +7,7 @@ export async function loginUser(data: LoginRequest): Promise<LoginResponse> {
   });
   return response.data;
 } 
+
+export async function logoutUser(data:LogoutResponse): Promise<void> {
+  await apiClient.post("/onboarding/logout");
+}

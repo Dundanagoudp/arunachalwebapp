@@ -86,6 +86,11 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar"
+import { toast } from "sonner"
+import { logoutUser } from "@/service/authService"
+import { setCookie } from "@/lib/cookies"
+import { useRouter } from "next/navigation"
+import { useCallback } from "react"
 
 // user-specific data
 const userData = {
@@ -241,6 +246,18 @@ const userData = {
 }
 
 export function UserSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const router = useRouter()
+  const handleLogout = useCallback(async () => {
+    try {
+      await logoutUser({ message: "", success: true })
+      setCookie("userRole", "", { days: -1 })
+      setCookie("token", "", { days: -1 })
+      toast.success("Logged out successfully")
+      router.replace("/login")
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || error.message || "Logout failed")
+    }
+  }, [router])
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -251,7 +268,7 @@ export function UserSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) 
         <NavProjects projects={userData.projects} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={userData.user} />
+        <NavUser user={userData.user} onLogout={handleLogout} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

@@ -74,6 +74,11 @@ import {
   UserCog,
   UserSearch,
 } from "lucide-react"
+import { toast } from "sonner"
+import { logoutUser } from "@/service/authService"
+import { setCookie } from "@/lib/cookies"
+import { useRouter } from "next/navigation"
+import { useCallback } from "react"
 
 import { NavMain } from "@/components/nav-main"
 import { NavProjects } from "@/components/nav-projects"
@@ -241,6 +246,18 @@ const adminData = {
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const router = useRouter()
+  const handleLogout = useCallback(async () => {
+    try {
+      await logoutUser({ message: "", success: true })
+      setCookie("userRole", "", { days: -1 })
+      setCookie("token", "", { days: -1 })
+      toast.success("Logged out successfully")
+      router.replace("/login")
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || error.message || "Logout failed")
+    }
+  }, [router])
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -251,7 +268,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavProjects projects={adminData.projects} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={adminData.user} />
+        <NavUser user={adminData.user} onLogout={handleLogout} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

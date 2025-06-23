@@ -14,3 +14,8 @@ export type LoginResponse = {
     };
   };
 }; 
+
+export type LogoutResponse = {
+  message: string;
+  success: boolean;
+};
