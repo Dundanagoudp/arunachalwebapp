@@ -12,6 +12,67 @@ import {
   PieChart,
   Settings2,
   SquareTerminal,
+  FileText,
+  Users,
+  Calendar,
+  BarChart3,
+  Home,
+  Plus,
+  Edit,
+  Trash2,
+  Eye,
+  UserCheck,
+  MessageSquare,
+  Image,
+  Video,
+  FileVideo,
+  Award,
+  Globe,
+  Newspaper,
+  BookMarked,
+  GraduationCap,
+  Users2,
+  Shield,
+  Database,
+  Activity,
+  TrendingUp,
+  Bell,
+  Mail,
+  HelpCircle,
+  Info,
+  ExternalLink,
+  Download,
+  Upload,
+  Search,
+  Filter,
+  SortAsc,
+  SortDesc,
+  MoreHorizontal,
+  ChevronRight,
+  ChevronLeft,
+  ChevronDown,
+  ChevronUp,
+  Check,
+  X,
+  AlertCircle,
+  CheckCircle,
+  Clock,
+  Star,
+  Heart,
+  Share,
+  Copy,
+  Link as LinkIcon,
+  Lock,
+  Unlock,
+  EyeOff,
+  Key,
+  LogOut,
+  User,
+  UserPlus,
+  UserMinus,
+  UserX,
+  UserCog,
+  UserSearch,
 } from "lucide-react"
 
 import { NavMain } from "@/components/nav-main"
@@ -26,90 +87,105 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar"
 
-// This is sample data.
-const data = {
+// Admin-specific data
+const adminData = {
   user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
+    name: "Admin User",
+    email: "admin@arunachalliterature.com",
+    avatar: "/avatars/admin.jpg",
   },
   teams: [
     {
-      name: "Acme Inc",
-      logo: GalleryVerticalEnd,
-      plan: "Enterprise",
-    },
-    {
-      name: "Acme Corp.",
-      logo: AudioWaveform,
-      plan: "Startup",
-    },
-    {
-      name: "Evil Corp.",
-      logo: Command,
-      plan: "Free",
+      name: "Arunachal Literature",
+      logo: BookOpen,
+      plan: "Admin",
     },
   ],
   navMain: [
     {
-      title: "Playground",
-      url: "#",
-      icon: SquareTerminal,
+      title: "Dashboard",
+      url: "/admin/dashboard",
+      icon: Home,
       isActive: true,
+    },
+    {
+      title: "Content Management",
+      url: "#",
+      icon: FileText,
       items: [
         {
-          title: "History",
-          url: "#",
+          title: "Blogs",
+          url: "/admin/blogs",
         },
         {
-          title: "Starred",
-          url: "#",
+          title: "Courses",
+          url: "/admin/courses",
         },
         {
-          title: "Settings",
-          url: "#",
+          title: "Events",
+          url: "/admin/events",
+        },
+        {
+          title: "Speakers",
+          url: "/admin/speakers",
+        },
+        {
+          title: "Gallery",
+          url: "/admin/gallery",
+        },
+        {
+          title: "Testimonials",
+          url: "/admin/testimonials",
         },
       ],
     },
     {
-      title: "Models",
+      title: "User Management",
       url: "#",
-      icon: Bot,
+      icon: Users,
       items: [
         {
-          title: "Genesis",
-          url: "#",
+          title: "All Users",
+          url: "/admin/users",
         },
         {
-          title: "Explorer",
-          url: "#",
+          title: "User Roles",
+          url: "/admin/users/roles",
         },
         {
-          title: "Quantum",
-          url: "#",
+          title: "User Permissions",
+          url: "/admin/users/permissions",
+        },
+        {
+          title: "User Activity",
+          url: "/admin/users/activity",
         },
       ],
     },
     {
-      title: "Documentation",
+      title: "Analytics",
       url: "#",
-      icon: BookOpen,
+      icon: BarChart3,
       items: [
         {
-          title: "Introduction",
-          url: "#",
+          title: "Overview",
+          url: "/admin/analytics",
         },
         {
-          title: "Get Started",
-          url: "#",
+          title: "Blog Analytics",
+          url: "/admin/analytics/blogs",
         },
         {
-          title: "Tutorials",
-          url: "#",
+          title: "Course Analytics",
+          url: "/admin/analytics/courses",
         },
         {
-          title: "Changelog",
-          url: "#",
+          title: "User Analytics",
+          url: "/admin/analytics/users",
+        },
+        {
+          title: "Traffic Sources",
+          url: "/admin/analytics/traffic",
         },
       ],
     },
@@ -120,38 +196,46 @@ const data = {
       items: [
         {
           title: "General",
-          url: "#",
+          url: "/admin/settings/general",
         },
         {
-          title: "Team",
-          url: "#",
+          title: "Appearance",
+          url: "/admin/settings/appearance",
         },
         {
-          title: "Billing",
-          url: "#",
+          title: "Email",
+          url: "/admin/settings/email",
         },
         {
-          title: "Limits",
-          url: "#",
+          title: "Security",
+          url: "/admin/settings/security",
+        },
+        {
+          title: "Backup",
+          url: "/admin/settings/backup",
+        },
+        {
+          title: "API Keys",
+          url: "/admin/settings/api",
         },
       ],
     },
   ],
   projects: [
     {
-      name: "Design Engineering",
-      url: "#",
-      icon: Frame,
+      name: "Website Frontend",
+      url: "/",
+      icon: Globe,
     },
     {
-      name: "Sales & Marketing",
-      url: "#",
-      icon: PieChart,
+      name: "Content Database",
+      url: "/admin/database",
+      icon: Database,
     },
     {
-      name: "Travel",
-      url: "#",
-      icon: Map,
+      name: "File Storage",
+      url: "/admin/storage",
+      icon: FileVideo,
     },
   ],
 }
@@ -160,14 +244,14 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <TeamSwitcher teams={data.teams} />
+        <TeamSwitcher teams={adminData.teams} />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={data.navMain} />
-        <NavProjects projects={data.projects} />
+        <NavMain items={adminData.navMain} />
+        <NavProjects projects={adminData.projects} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={data.user} />
+        <NavUser user={adminData.user} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
