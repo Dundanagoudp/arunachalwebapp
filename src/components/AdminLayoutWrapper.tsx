@@ -8,8 +8,10 @@ import { useEffect, useState } from 'react';
 
 export default function AdminLayoutWrapper({
   children,
+  showHeaderFooter,
 }: {
   children: React.ReactNode;
+  showHeaderFooter: boolean;
 }) {
   const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
@@ -24,12 +26,12 @@ export default function AdminLayoutWrapper({
 
   return (
     <div className="flex flex-col min-h-screen">
-      {mounted && !isAdminRoute && !isLoginPage && <LoadingProgress />}
-      {mounted && !isAdminRoute && !isLoginPage && <Header />}
+      {showHeaderFooter && !isAdminRoute && !isLoginPage && <LoadingProgress />}
+      {showHeaderFooter && !isAdminRoute && !isLoginPage && <Header />}
       <main className="flex-grow">
         {children}
       </main>
-      {mounted && !isAdminRoute && !isLoginPage && <Footer />}
+      {showHeaderFooter && !isAdminRoute && !isLoginPage && <Footer />}
     </div>
   );
 } 
