@@ -20,10 +20,12 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+  // Always show header/footer in the main layout
+  // /admin and /login can have their own layouts without header/footer
   return (
     <html lang="en">
       <body className={`${inter.className} ${dmSerifDisplay.variable}`}>
-        <AdminLayoutWrapper>
+        <AdminLayoutWrapper showHeaderFooter={true}>
           {children}
         </AdminLayoutWrapper>
       </body>

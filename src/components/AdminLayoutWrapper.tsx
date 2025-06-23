@@ -4,6 +4,7 @@ import { usePathname } from 'next/navigation';
 import Header from './layout/Header';
 import Footer from './layout/Footer';
 import LoadingProgress from './LoadingProgress';
+import { useEffect, useState } from 'react';
 
 export default function AdminLayoutWrapper({
   children,
@@ -11,17 +12,24 @@ export default function AdminLayoutWrapper({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  const isAdminRoute = pathname.startsWith('/admin');
-  const isLoginPage = pathname === '/login';
+  const [mounted, setMounted] = useState(false);
+  const [isAdminRoute, setIsAdminRoute] = useState(false);
+  const [isLoginPage, setIsLoginPage] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+    setIsAdminRoute(pathname.startsWith('/admin'));
+    setIsLoginPage(pathname === '/login');
+  }, [pathname]);
 
   return (
     <div className="flex flex-col min-h-screen">
-      {!isAdminRoute && !isLoginPage && <LoadingProgress />}
-      {!isAdminRoute && !isLoginPage && <Header />}
+      {mounted && !isAdminRoute && !isLoginPage && <LoadingProgress />}
+      {mounted && !isAdminRoute && !isLoginPage && <Header />}
       <main className="flex-grow">
         {children}
       </main>
-      {!isAdminRoute && !isLoginPage && <Footer />}
+      {mounted && !isAdminRoute && !isLoginPage && <Footer />}
     </div>
   );
 } 
