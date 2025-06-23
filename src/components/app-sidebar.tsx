@@ -2,77 +2,18 @@
 
 import * as React from "react"
 import {
-  AudioWaveform,
   BookOpen,
-  Bot,
-  Command,
-  Frame,
-  GalleryVerticalEnd,
-  Map,
-  PieChart,
-  Settings2,
-  SquareTerminal,
   FileText,
   Users,
   Calendar,
   BarChart3,
   Home,
-  Plus,
-  Edit,
-  Trash2,
-  Eye,
-  UserCheck,
-  MessageSquare,
-  Image,
-  Video,
-  FileVideo,
-  Award,
   Globe,
-  Newspaper,
-  BookMarked,
-  GraduationCap,
-  Users2,
-  Shield,
-  Database,
-  Activity,
-  TrendingUp,
-  Bell,
-  Mail,
-  HelpCircle,
-  Info,
-  ExternalLink,
-  Download,
-  Upload,
-  Search,
-  Filter,
-  SortAsc,
-  SortDesc,
-  MoreHorizontal,
-  ChevronRight,
-  ChevronLeft,
-  ChevronDown,
-  ChevronUp,
-  Check,
-  X,
-  AlertCircle,
-  CheckCircle,
-  Clock,
-  Star,
-  Heart,
-  Share,
-  Copy,
   Link as LinkIcon,
-  Lock,
-  Unlock,
-  EyeOff,
-  Key,
-  LogOut,
-  User,
-  UserPlus,
-  UserMinus,
-  UserX,
-  UserCog,
-  UserSearch,
+  Archive,
+  ImageIcon,
+  Settings,
+  Mic,
 } from "lucide-react"
 import { toast } from "sonner"
 import { logoutUser } from "@/service/authService"
@@ -106,7 +47,7 @@ const adminData = {
       plan: "Admin",
     },
   ],
-  navMain: [
+   navMain: [
     {
       title: "Dashboard",
       url: "/admin/dashboard",
@@ -114,116 +55,99 @@ const adminData = {
       isActive: true,
     },
     {
-      title: "Content Management",
-      url: "#",
-      icon: FileText,
+      title: "Events",
+      url: "/admin/events",
+      icon: Calendar,
       items: [
         {
-          title: "Blogs",
-          url: "/admin/dashboard/blogs",
+          title: "All Events",
+          url: "/admin/events",
         },
         {
-          title: "Courses",
-          url: "/admin/dashboard/courses",
-        },
-        {
-          title: "Events",
-          url: "/admin/dashboard/events",
-        },
-        {
-          title: "Speakers",
-          url: "/admin/dashboard/speakers",
-        },
-        {
-          title: "Gallery",
-          url: "/admin/dashboard/gallery",
-        },
-        {
-          title: "Testimonials",
-          url: "/admin/dashboard/testimonials",
+          title: "Create Event",
+          url: "/admin/events/create",
         },
       ],
     },
     {
-      title: "User Management",
-      url: "#",
+      title: "Speakers",
+      url: "/admin/speakers",
+      icon: Mic,
+      items: [
+        {
+          title: "All Speakers",
+          url: "/admin/speakers",
+        },
+        {
+          title: "Add Speaker",
+          url: "/admin/speakers/create",
+        },
+      ],
+    },
+    {
+      title: "Content",
+      url: "/admin/content",
+      icon: FileText,
+      items: [
+        {
+          title: "News & Blogs",
+          url: "/admin/content/blogs",
+        },
+        {
+          title: "Create Content",
+          url: "/admin/content/create",
+        },
+      ],
+    },
+    {
+      title: "Workshops",
+      url: "/admin/workshops",
+      icon: BookOpen,
+      items: [
+        {
+          title: "All Workshops",
+          url: "/admin/workshops",
+        },
+        {
+          title: "Create Workshop",
+          url: "/admin/workshops/create",
+        },
+      ],
+    },
+    {
+      title: "Users",
+      url: "/admin/users",
       icon: Users,
       items: [
         {
           title: "All Users",
-          url: "/admin/dashboard/users",
+          url: "/admin/users",
         },
         {
-          title: "User Roles",
-          url: "/admin/dashboard/users/roles",
-        },
-        {
-          title: "User Permissions",
-          url: "/admin/dashboard/users/permissions",
-        },
-        {
-          title: "User Activity",
-          url: "/admin/dashboard/users/activity",
+          title: "Add User",
+          url: "/admin/users/create",
         },
       ],
+    },
+    {
+      title: "Media",
+      url: "/admin/media",
+      icon: ImageIcon,
+    },
+    {
+      title: "Archives",
+      url: "/admin/archives",
+      icon: Archive,
     },
     {
       title: "Analytics",
-      url: "#",
+      url: "/admin/analytics",
       icon: BarChart3,
-      items: [
-        {
-          title: "Overview",
-          url: "/admin/dashboard/analytics",
-        },
-        {
-          title: "Blog Analytics",
-          url: "/admin/dashboard/analytics/blogs",
-        },
-        {
-          title: "Course Analytics",
-          url: "/admin/dashboard/analytics/courses",
-        },
-        {
-          title: "User Analytics",
-          url: "/admin/dashboard/analytics/users",
-        },
-        {
-          title: "Traffic Sources",
-          url: "/admin/dashboard/analytics/traffic",
-        },
-      ],
     },
     {
       title: "Settings",
-      url: "#",
-      icon: Settings2,
-      items: [
-        {
-          title: "General",
-          url: "/admin/dashboard/settings/general",
-        },
-        {
-          title: "Appearance",
-          url: "/admin/dashboard/settings/appearance",
-        },
-        {
-          title: "Email",
-          url: "/admin/dashboard/settings/email",
-        },
-        {
-          title: "Security",
-          url: "/admin/dashboard/settings/security",
-        },
-        {
-          title: "Backup",
-          url: "/admin/dashboard/settings/backup",
-        },
-        {
-          title: "API Keys",
-          url: "/admin/dashboard/settings/api",
-        },
-      ],
+      url: "/admin/settings",
+      icon: Settings,
     },
   ],
   projects: [
@@ -231,16 +155,6 @@ const adminData = {
       name: "Website Frontend",
       url: "/",
       icon: Globe,
-    },
-    {
-      name: "Content Database",
-      url: "/admin/database",
-      icon: Database,
-    },
-    {
-      name: "File Storage",
-      url: "/admin/storage",
-      icon: FileVideo,
     },
   ],
 }
