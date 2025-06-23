@@ -190,7 +190,6 @@ export default function BlogLayout() {
       <div className="hidden md:block absolute top-1/2 -translate-y-1/2 right-4 lg:right-10 z-0">
         <SunIcon size={40} className="lg:w-12 lg:h-12" src="/blogs/sun.gif" />
       </div>
-
       {/* Header */}
       {isLoading ? (
         <HeaderShimmer />

@@ -1,12 +1,11 @@
 'use client';
-
-import SpeakersGrid from '@/components/speakers/modules/speakers-section';
+import Speakers from '@/components/speakers/speakers';
 import React from 'react';
 
-export default function Speakers() {
+export default function Speakerspage() {
   return (
     <div >
-      <SpeakersGrid /> 
+      <Speakers /> 
     </div>
   );
 } 
