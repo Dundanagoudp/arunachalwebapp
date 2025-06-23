@@ -16,22 +16,24 @@ export default function AdminLayoutWrapper({
   const pathname = usePathname();
   const [mounted, setMounted] = useState(false);
   const [isAdminRoute, setIsAdminRoute] = useState(false);
+  const [isUserRoute, setIsUserRoute] = useState(false);
   const [isLoginPage, setIsLoginPage] = useState(false);
 
   useEffect(() => {
     setMounted(true);
     setIsAdminRoute(pathname.startsWith('/admin'));
+    setIsUserRoute(pathname.startsWith('/user'));
     setIsLoginPage(pathname === '/login');
   }, [pathname]);
 
   return (
     <div className="flex flex-col min-h-screen">
-      {showHeaderFooter && !isAdminRoute && !isLoginPage && <LoadingProgress />}
-      {showHeaderFooter && !isAdminRoute && !isLoginPage && <Header />}
+      {showHeaderFooter && !isAdminRoute && !isLoginPage && !isUserRoute && <LoadingProgress />}
+      {showHeaderFooter && !isAdminRoute && !isLoginPage && !isUserRoute && <Header />}
       <main className="flex-grow">
         {children}
       </main>
-      {showHeaderFooter && !isAdminRoute && !isLoginPage && <Footer />}
+      {showHeaderFooter && !isAdminRoute && !isLoginPage && !isUserRoute && <Footer />}
     </div>
   );
 } 
