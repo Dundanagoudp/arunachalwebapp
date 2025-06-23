@@ -3,6 +3,7 @@
 import { usePathname } from 'next/navigation';
 import Header from './layout/Header';
 import Footer from './layout/Footer';
+import LoadingProgress from './LoadingProgress';
 
 export default function AdminLayoutWrapper({
   children,
@@ -15,6 +16,7 @@ export default function AdminLayoutWrapper({
 
   return (
     <div className="flex flex-col min-h-screen">
+      {!isAdminRoute && !isLoginPage && <LoadingProgress />}
       {!isAdminRoute && !isLoginPage && <Header />}
       <main className="flex-grow">
         {children}

@@ -1,6 +1,6 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import Image from "next/image"
 import {
   Pagination,
@@ -53,7 +53,7 @@ const speakers: Speaker[] = [
     id: 6,
     name: "Dr. Priya Sharma",
     about: "Research & Development Head",
-    image: "/images/speaker2.png",
+    image: "/images/speaker.png",
   },
   {
     id: 7,
@@ -65,13 +65,13 @@ const speakers: Speaker[] = [
     id: 8,
     name: "Prof. Michael Chen",
     about: "Digital Transformation Leader",
-    image: "/images/speaker2.png",
+    image: "/images/speaker.png",
   },
   {
     id: 9,
     name: "Dr. Priya Sharma",
     about: "Research & Development Head",
-    image: "/images/speaker.png",
+    image: "/images/speaker2.png",
   },
   {
     id: 10,
@@ -91,12 +91,54 @@ const speakers: Speaker[] = [
     about: "Research & Development Head",
     image: "/images/speaker.png",
   },
+  {
+    id: 13,
+    name: "Dr. Rajesh Kumar",
+    about: "Technology Innovation Expert",
+    image: "/images/speaker2.png",
+  },
+  {
+    id: 14,
+    name: "Prof. Michael Chen",
+    about: "Digital Transformation Leader",
+    image: "/images/speaker.png",
+  },
+  {
+    id: 15,
+    name: "Dr. Priya Sharma",
+    about: "Research & Development Head",
+    image: "/images/speaker2.png",
+  },
+  {
+    id: 16,
+    name: "Dr. Rajesh Kumar",
+    about: "Technology Innovation Expert",
+    image: "/images/speaker.png",
+  },
+  {
+    id: 17,
+    name: "Prof. Michael Chen",
+    about: "Digital Transformation Leader",
+    image: "/images/speaker2.png",
+  },
+  {
+    id: 18,
+    name: "Dr. Priya Sharma",
+    about: "Research & Development Head",
+    image: "/images/speaker.png",
+  },
 ]
 
 export default function SpeakersGrid() {
   const [currentPage, setCurrentPage] = useState(1)
-  const speakersPerPage = 6
+  const [loading, setLoading] = useState(true)
+  const speakersPerPage = 9 // 3 rows x 3 columns for desktop
   const totalPages = Math.ceil(speakers.length / speakersPerPage)
+
+  useEffect(() => {
+    const timer = setTimeout(() => setLoading(false), 2500)
+    return () => clearTimeout(timer)
+  }, [])
 
   const indexOfLastSpeaker = currentPage * speakersPerPage
   const indexOfFirstSpeaker = indexOfLastSpeaker - speakersPerPage
@@ -112,51 +154,87 @@ export default function SpeakersGrid() {
           </h1>
         </div>
 
-        {/* Speakers Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12 max-w-6xl mx-auto mb-16">
-          {currentSpeakers.map((speaker, index) => (
-            <div key={speaker.id} className="flex flex-col items-center">
-              {/* Decorative Border with Shimmer Effect */}
-              <div className="relative">
-                <div
-                  className="relative w-48 h-48 bg-orange-400 p-1"
-                  style={{
-                    clipPath:
-                      "polygon(50% 0%, 80% 10%, 100% 35%, 90% 70%, 80% 90%, 50% 100%, 20% 90%, 10% 70%, 0% 35%, 20% 10%)",
-                  }}
-                >
-                  <div
-                    className="w-full h-full bg-white p-2 overflow-hidden"
-                    style={{
-                      clipPath:
-                        "polygon(50% 0%, 80% 10%, 100% 35%, 90% 70%, 80% 90%, 50% 100%, 20% 90%, 10% 70%, 0% 35%, 20% 10%)",
-                    }}
-                  >
+        {/* Speakers Grid - 2 columns on mobile (image only), 3 columns on desktop (full card) */}
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-6 md:gap-8 max-w-5xl mx-auto mb-10 px-2">
+          {loading
+            ? Array.from({ length: speakersPerPage }).map((_, idx) => (
+                <div key={idx} className="flex flex-col items-center animate-pulse">
+                  {/* Skeleton Image */}
+                  <div className="relative">
                     <div
-                      className="w-full h-full relative overflow-hidden"
+                      className="relative w-32 h-32 sm:w-40 sm:h-40 md:w-44 md:h-44 lg:w-48 lg:h-48 bg-orange-200 p-1"
                       style={{
                         clipPath:
                           "polygon(50% 0%, 80% 10%, 100% 35%, 90% 70%, 80% 90%, 50% 100%, 20% 90%, 10% 70%, 0% 35%, 20% 10%)",
                       }}
                     >
-                      <Image
-                        src={speaker.image || "/placeholder.svg"}
-                        alt={speaker.name}
-                        fill
-                        className="object-cover object-center"
-                      />
+                      <div
+                        className="w-full h-full bg-gray-200 p-2 overflow-hidden"
+                        style={{
+                          clipPath:
+                            "polygon(50% 0%, 80% 10%, 100% 35%, 90% 70%, 80% 90%, 50% 100%, 20% 90%, 10% 70%, 0% 35%, 20% 10%)",
+                        }}
+                      >
+                        <div
+                          className="w-full h-full bg-gray-300"
+                          style={{
+                            clipPath:
+                              "polygon(50% 0%, 80% 10%, 100% 35%, 90% 70%, 80% 90%, 50% 100%, 20% 90%, 10% 70%, 0% 35%, 20% 10%)",
+                          }}
+                        />
+                      </div>
                     </div>
                   </div>
+                  {/* Skeleton Text */}
+                  <div className="text-center mt-3 md:mt-4 lg:mt-6 w-full">
+                    <div className="h-4 bg-gray-200 rounded w-3/4 mx-auto mb-2" />
+                    <div className="h-3 bg-gray-100 rounded w-1/2 mx-auto" />
+                  </div>
                 </div>
-              </div>
+              ))
+            : currentSpeakers.map((speaker, index) => (
+                <div key={speaker.id} className="flex flex-col items-center">
+                  {/* Decorative Border */}
+                  <div className="relative">
+                    <div
+                      className="relative w-32 h-32 sm:w-40 sm:h-40 md:w-44 md:h-44 lg:w-48 lg:h-48 bg-orange-400 p-1"
+                      style={{
+                        clipPath:
+                          "polygon(50% 0%, 80% 10%, 100% 35%, 90% 70%, 80% 90%, 50% 100%, 20% 90%, 10% 70%, 0% 35%, 20% 10%)",
+                      }}
+                    >
+                      <div
+                        className="w-full h-full bg-white p-2 overflow-hidden"
+                        style={{
+                          clipPath:
+                            "polygon(50% 0%, 80% 10%, 100% 35%, 90% 70%, 80% 90%, 50% 100%, 20% 90%, 10% 70%, 0% 35%, 20% 10%)",
+                        }}
+                      >
+                        <div
+                          className="w-full h-full relative overflow-hidden"
+                          style={{
+                            clipPath:
+                              "polygon(50% 0%, 80% 10%, 100% 35%, 90% 70%, 80% 90%, 50% 100%, 20% 90%, 10% 70%, 0% 35%, 20% 10%)",
+                          }}
+                        >
+                          <Image
+                            src={speaker.image || "/placeholder.svg"}
+                            alt={speaker.name}
+                            fill
+                            className="object-cover object-center"
+                          />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
 
-              {/* Speaker Info */}
-              <div className="text-center mt-6">
-                <h3 className="text-lg font-semibold text-gray-800 mb-1">{speaker.name}</h3>
-                <p className="text-sm text-gray-600">{speaker.about}</p>
-              </div>
-            </div>
-          ))}
+                  {/* Speaker Info - always visible */}
+                  <div className="text-center mt-3 md:mt-4 lg:mt-6">
+                    <h3 className="text-base md:text-lg font-semibold text-gray-800 mb-1 md:mb-2">{speaker.name}</h3>
+                    <p className="text-xs md:text-sm text-gray-600">{speaker.about}</p>
+                  </div>
+                </div>
+              ))}
         </div>
 
         {/* Pagination */}
