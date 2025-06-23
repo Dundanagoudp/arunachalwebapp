@@ -8,7 +8,7 @@ export default function Speakers() {
   return (
     <div >
       <Speakerstopsection/>
-    {/* <SpeakersGrid />  */}
+    <SpeakersGrid /> 
     </div>
   );
 } 
