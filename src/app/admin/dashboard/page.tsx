@@ -42,13 +42,6 @@ export default function AdminDashboard() {
       color: "text-blue-600"
     },
     {
-      title: "Total Courses",
-      value: "8",
-      description: "+3 new courses",
-      icon: BookOpen,
-      color: "text-green-600"
-    },
-    {
       title: "Active Users",
       value: "1,234",
       description: "+8% from last week",
@@ -152,12 +145,6 @@ export default function AdminDashboard() {
                   New Blog
                 </Link>
               </Button>
-              <Button variant="outline" asChild>
-                <Link href="/admin/courses/create">
-                  <BookOpen className="mr-2 h-4 w-4" />
-                  New Course
-                </Link>
-              </Button>
             </div>
           </div>
 
@@ -238,57 +225,6 @@ export default function AdminDashboard() {
                 </div>
               </CardContent>
             </Card>
-
-            {/* Recent Courses */}
-            <Card>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <div>
-                    <CardTitle>Recent Courses</CardTitle>
-                    <CardDescription>
-                      Course enrollment and status overview
-                    </CardDescription>
-                  </div>
-                  <Button variant="outline" size="sm" asChild>
-                    <Link href="/admin/courses">
-                      View All
-                    </Link>
-                  </Button>
-                </div>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  {recentCourses.map((course) => (
-                    <div key={course.id} className="flex items-center justify-between">
-                      <div className="space-y-1">
-                        <p className="text-sm font-medium leading-none">
-                          {course.title}
-                        </p>
-                        <div className="flex items-center gap-2">
-                          <Badge variant={course.status === 'active' ? 'default' : 'secondary'}>
-                            {course.status}
-                          </Badge>
-                          <span className="text-xs text-muted-foreground">
-                            {course.students} students
-                          </span>
-                        </div>
-                      </div>
-                      <div className="flex gap-1">
-                        <Button variant="ghost" size="sm">
-                          <Eye className="h-3 w-3" />
-                        </Button>
-                        <Button variant="ghost" size="sm">
-                          <Edit className="h-3 w-3" />
-                        </Button>
-                        <Button variant="ghost" size="sm">
-                          <Trash2 className="h-3 w-3" />
-                        </Button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </CardContent>
-            </Card>
           </div>
 
           {/* Quick Actions */}
@@ -305,12 +241,6 @@ export default function AdminDashboard() {
                   <Link href="/admin/blogs">
                     <FileText className="h-6 w-6" />
                     Manage Blogs
-                  </Link>
-                </Button>
-                <Button variant="outline" className="h-20 flex-col gap-2" asChild>
-                  <Link href="/admin/courses">
-                    <BookOpen className="h-6 w-6" />
-                    Manage Courses
                   </Link>
                 </Button>
                 <Button variant="outline" className="h-20 flex-col gap-2" asChild>
