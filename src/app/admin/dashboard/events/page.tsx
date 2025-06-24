@@ -106,7 +106,7 @@ export default function EventsManagement() {
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="/admin/dashboard">Admin Panel</BreadcrumbLink>
+                  <BreadcrumbLink href="/admin/dashboard/">Admin Panel</BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>
@@ -125,7 +125,7 @@ export default function EventsManagement() {
               <p className="text-muted-foreground">Manage all events, schedules, and registrations.</p>
             </div>
             <Button asChild>
-              <Link href="/admin/events/create">
+              <Link href="/admin/dashboard/events/create">
                 <Plus className="mr-2 h-4 w-4" />
                 Create Event
               </Link>

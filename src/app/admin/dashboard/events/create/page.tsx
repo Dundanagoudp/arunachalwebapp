@@ -61,7 +61,7 @@ export default function CreateEvent() {
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="/admin/events">Events</BreadcrumbLink>
+                  <BreadcrumbLink href="/admin/dashboard/events">Events</BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>
@@ -80,7 +80,7 @@ export default function CreateEvent() {
               <p className="text-muted-foreground">Add a new event to your literature platform.</p>
             </div>
             <Button variant="outline" asChild>
-              <Link href="/admin/events">
+              <Link href="/admin/dashboard/events">
                 <ArrowLeft className="mr-2 h-4 w-4" />
                 Back to Events
               </Link>
@@ -194,7 +194,7 @@ export default function CreateEvent() {
                     Create Event
                   </Button>
                   <Button type="button" variant="outline" asChild>
-                    <Link href="/admin/events">Cancel</Link>
+                    <Link href="/admin/dashboard/events">Cancel</Link>
                   </Button>
                 </div>
               </form>
