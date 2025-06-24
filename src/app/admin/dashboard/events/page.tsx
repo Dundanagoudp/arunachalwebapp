@@ -28,8 +28,17 @@ import {
 import { Calendar, Plus, Edit, Trash2, Eye, Search, MoreHorizontal, Clock, Users, Loader2 } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import Link from "next/link"
-import { getAllEvents, deleteEvent } from "@/service/events-apis"
+import { getAllEvents, deleteEvent, updateEventDay } from "@/service/events-apis"
 import type { EventWithDays, EventDay } from "@/types/events-types"
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogClose,
+} from "@/components/ui/dialog"
 
 export default function EventsPage() {
   const { toast } = useToast()
@@ -37,6 +46,10 @@ export default function EventsPage() {
   const [events, setEvents] = useState<EventWithDays | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isDeleting, setIsDeleting] = useState<string | null>(null)
+  const [editSheetOpen, setEditSheetOpen] = useState(false)
+  const [editDay, setEditDay] = useState<EventDay | null>(null)
+  const [editForm, setEditForm] = useState({ name: "", description: "" })
+  const [editLoading, setEditLoading] = useState(false)
 
   useEffect(() => {
     fetchEvents()
@@ -108,6 +121,40 @@ export default function EventsPage() {
 
   const getTotalTimes = (days: EventDay[]) => {
     return days.reduce((total, day) => total + (day.times?.length || 0), 0)
+  }
+
+  // Open edit sheet for a day
+  const openEditSheet = (day: EventDay) => {
+    setEditDay(day)
+    setEditForm({ name: day.name, description: day.description })
+    setEditSheetOpen(true)
+  }
+
+  // Handle edit form change
+  const handleEditFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target
+    setEditForm((prev) => ({ ...prev, [name]: value }))
+  }
+
+  // Handle edit form submit
+  const handleEditSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    if (!editDay) return
+    setEditLoading(true)
+    try {
+      const result = await updateEventDay(editDay._id, editForm)
+      if (result.success) {
+        toast({ title: "Success", description: result.message || "Event Day updated" })
+        setEditSheetOpen(false)
+        fetchEvents()
+      } else {
+        toast({ title: "Error", description: result.error || "Failed to update event day" })
+      }
+    } catch (error) {
+      toast({ title: "Error", description: "An unexpected error occurred" })
+    } finally {
+      setEditLoading(false)
+    }
   }
 
   if (isLoading) {
@@ -342,7 +389,53 @@ export default function EventsPage() {
                           Created: {new Date(day.createdAt).toLocaleDateString()}
                         </p>
                       </div>
-                      <Badge variant="outline">{day.times?.length || 0} sessions</Badge>
+                      <div className="flex gap-2 items-center">
+                        <Badge variant="outline">{day.times?.length || 0} sessions</Badge>
+                        <Dialog open={editSheetOpen && editDay?._id === day._id} onOpenChange={setEditSheetOpen}>
+                          <DialogTrigger asChild>
+                            <Button size="sm" variant="outline" onClick={() => openEditSheet(day)}>
+                              Edit
+                            </Button>
+                          </DialogTrigger>
+                          <DialogContent>
+                            <DialogHeader>
+                              <DialogTitle>Edit Event Day</DialogTitle>
+                            </DialogHeader>
+                            <form onSubmit={handleEditSubmit} className="space-y-4 mt-4">
+                              <div>
+                                <Label htmlFor="edit-name">Name</Label>
+                                <Input
+                                  id="edit-name"
+                                  name="name"
+                                  value={editForm.name}
+                                  onChange={handleEditFormChange}
+                                  required
+                                  disabled={editLoading}
+                                />
+                              </div>
+                              <div>
+                                <Label htmlFor="edit-description">Description</Label>
+                                <Input
+                                  id="edit-description"
+                                  name="description"
+                                  value={editForm.description}
+                                  onChange={handleEditFormChange}
+                                  required
+                                  disabled={editLoading}
+                                />
+                              </div>
+                              <DialogFooter>
+                                <Button type="submit" disabled={editLoading}>
+                                  {editLoading ? "Saving..." : "Save Changes"}
+                                </Button>
+                                <DialogClose asChild>
+                                  <Button type="button" variant="outline">Cancel</Button>
+                                </DialogClose>
+                              </DialogFooter>
+                            </form>
+                          </DialogContent>
+                        </Dialog>
+                      </div>
                     </div>
 
                     {day.times && day.times.length > 0 && (
@@ -358,8 +451,7 @@ export default function EventsPage() {
                               <p className="text-xs text-muted-foreground mt-1">{time.description}</p>
                               <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
                                 <span>
-                                  🕐 {new Date(time.startTime).toLocaleTimeString()} -{" "}
-                                  {new Date(time.endTime).toLocaleTimeString()}
+                                  🕐 {time.startTime} - {time.endTime}
                                 </span>
                                 <span>👤 {time.speaker}</span>
                               </div>

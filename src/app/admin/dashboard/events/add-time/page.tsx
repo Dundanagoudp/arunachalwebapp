@@ -93,15 +93,16 @@ export default function AddTimeSlotPage() {
       const timeData: AddTimeData = {
         eventId: selectedDay.event_ref,
         eventDay_ref: formData.eventDay_ref,
-        startTime: new Date(formData.startTime).toISOString(),
-        endTime: new Date(formData.endTime).toISOString(),
+        startTime: formData.startTime,
+        endTime: formData.endTime,
         title: formData.title,
         description: formData.description,
         type: formData.type,
         speaker: formData.speaker,
       }
 
-      console.log("Adding time slot with data:", timeData)
+      // Debug: log the data being sent
+      console.log("[AddTimeSlot] Sending timeData:", timeData)
 
       const result = await addTimeToEventDay(timeData)
 
@@ -120,7 +121,13 @@ export default function AddTimeSlotPage() {
         })
       }
     } catch (error) {
-      console.error("Error adding time slot:", error)
+      // Debug: log backend error message
+      const err = error as any;
+      if (err && err.response && err.response.data) {
+        console.error("[AddTimeSlot] Backend error:", err.response.data)
+      } else {
+        console.error("Error adding time slot:", error)
+      }
       toast({
         title: "Error",
         description: "An unexpected error occurred"
@@ -250,7 +257,7 @@ export default function AddTimeSlotPage() {
                       <Input
                         id="startTime"
                         name="startTime"
-                        type="datetime-local"
+                        type="time"
                         value={formData.startTime}
                         onChange={handleChange}
                         required
@@ -262,7 +269,7 @@ export default function AddTimeSlotPage() {
                       <Input
                         id="endTime"
                         name="endTime"
-                        type="datetime-local"
+                        type="time"
                         value={formData.endTime}
                         onChange={handleChange}
                         required
