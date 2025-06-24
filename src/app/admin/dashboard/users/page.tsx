@@ -10,11 +10,7 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import { Separator } from "@/components/ui/separator"
-import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
-} from "@/components/ui/sidebar"
+import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -37,28 +33,14 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import { 
-  Users, 
-  UserPlus, 
-  Shield, 
-  Activity, 
-  TrendingUp, 
-  Plus,
-  Edit,
-  Trash2,
-  Eye,
-  Search,
-  MoreHorizontal,
-  Clock,
-  CheckCircle,
-  AlertCircle,
-  Mail,
-  Phone,
-  MapPin,
-  Calendar,
-  BookOpen,
-  Star
-} from "lucide-react"
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select"
+import { Users, UserPlus, Shield, Mail, Calendar, Plus, Edit, Trash2, Eye, Search, MoreHorizontal, Crown, User } from 'lucide-react'
 import Link from "next/link"
 import { useState } from "react"
 
@@ -73,69 +55,70 @@ export default function UsersManagement() {
   const users = [
     {
       id: 1,
-      name: "Rajesh Kumar",
-      email: "rajesh.kumar@example.com",
+      name: "John Doe",
+      email: "john.doe@example.com",
       role: "admin",
       status: "active",
-      avatar: "/avatars/rajesh.jpg",
-      phone: "+91 98765 43210",
-      location: "Itanagar, Arunachal Pradesh",
-      joinedDate: "2023-01-15",
-      lastActive: "2024-01-20",
-      coursesEnrolled: 5,
-      blogsRead: 12,
-      rating: 4.8
+      avatar: "/avatars/john.jpg",
+      createdAt: "2024-01-15",
+      lastLogin: "2024-01-20",
+      postsCount: 12,
+      eventsCount: 3,
     },
     {
       id: 2,
-      name: "Priya Sharma",
-      email: "priya.sharma@example.com",
-      role: "instructor",
+      name: "Jane Smith",
+      email: "jane.smith@example.com",
+      role: "editor",
       status: "active",
-      avatar: "/avatars/priya.jpg",
-      phone: "+91 98765 43211",
-      location: "Naharlagun, Arunachal Pradesh",
-      joinedDate: "2023-03-20",
-      lastActive: "2024-01-19",
-      coursesEnrolled: 3,
-      blogsRead: 8,
-      rating: 4.6
+      avatar: "/avatars/jane.jpg",
+      createdAt: "2024-01-10",
+      lastLogin: "2024-01-19",
+      postsCount: 8,
+      eventsCount: 1,
     },
     {
       id: 3,
-      name: "Amit Singh",
-      email: "amit.singh@example.com",
-      role: "student",
+      name: "Mike Johnson",
+      email: "mike.johnson@example.com",
+      role: "author",
       status: "active",
-      avatar: "/avatars/amit.jpg",
-      phone: "+91 98765 43212",
-      location: "Pasighat, Arunachal Pradesh",
-      joinedDate: "2023-06-10",
-      lastActive: "2024-01-18",
-      coursesEnrolled: 2,
-      blogsRead: 15,
-      rating: 4.9
+      avatar: "/avatars/mike.jpg",
+      createdAt: "2024-01-05",
+      lastLogin: "2024-01-18",
+      postsCount: 15,
+      eventsCount: 0,
     },
     {
       id: 4,
-      name: "Meena Devi",
-      email: "meena.devi@example.com",
-      role: "student",
+      name: "Sarah Wilson",
+      email: "sarah.wilson@example.com",
+      role: "author",
       status: "inactive",
-      avatar: "/avatars/meena.jpg",
-      phone: "+91 98765 43213",
-      location: "Tawang, Arunachal Pradesh",
-      joinedDate: "2023-08-05",
-      lastActive: "2023-12-15",
-      coursesEnrolled: 1,
-      blogsRead: 3,
-      rating: 4.2
-    }
+      avatar: "/avatars/sarah.jpg",
+      createdAt: "2023-12-20",
+      lastLogin: "2024-01-10",
+      postsCount: 5,
+      eventsCount: 2,
+    },
+    {
+      id: 5,
+      name: "David Brown",
+      email: "david.brown@example.com",
+      role: "subscriber",
+      status: "active",
+      avatar: "/avatars/david.jpg",
+      createdAt: "2024-01-12",
+      lastLogin: "2024-01-19",
+      postsCount: 0,
+      eventsCount: 0,
+    },
   ]
 
-  const filteredUsers = users.filter(user => {
-    const matchesSearch = user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
-                         user.email.toLowerCase().includes(searchTerm.toLowerCase())
+  const filteredUsers = users.filter((user) => {
+    const matchesSearch =
+      user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      user.email.toLowerCase().includes(searchTerm.toLowerCase())
     const matchesRole = roleFilter === "all" || user.role === roleFilter
     const matchesStatus = statusFilter === "all" || user.status === statusFilter
     return matchesSearch && matchesRole && matchesStatus
@@ -155,31 +138,37 @@ export default function UsersManagement() {
   const getRoleBadge = (role: string) => {
     switch (role) {
       case "admin":
-        return <Badge variant="destructive">Admin</Badge>
-      case "instructor":
-        return <Badge variant="default">Instructor</Badge>
-      case "student":
-        return <Badge variant="secondary">Student</Badge>
+        return <Badge variant="destructive"><Crown className="w-3 h-3 mr-1" />Admin</Badge>
+      case "editor":
+        return <Badge variant="default"><Shield className="w-3 h-3 mr-1" />Editor</Badge>
+      case "author":
+        return <Badge variant="secondary"><Edit className="w-3 h-3 mr-1" />Author</Badge>
+      case "subscriber":
+        return <Badge variant="outline"><User className="w-3 h-3 mr-1" />Subscriber</Badge>
       default:
         return <Badge variant="outline">{role}</Badge>
     }
   }
 
-  const getStatusIcon = (status: string) => {
+  const getStatusBadge = (status: string) => {
     switch (status) {
       case "active":
-        return <CheckCircle className="h-4 w-4 text-green-600" />
+        return <Badge variant="default">Active</Badge>
       case "inactive":
-        return <AlertCircle className="h-4 w-4 text-gray-600" />
+        return <Badge variant="secondary">Inactive</Badge>
       case "suspended":
-        return <AlertCircle className="h-4 w-4 text-red-600" />
+        return <Badge variant="destructive">Suspended</Badge>
       default:
-        return <Clock className="h-4 w-4 text-gray-600" />
+        return <Badge variant="outline">{status}</Badge>
     }
   }
 
   const getInitials = (name: string) => {
-    return name.split(' ').map(n => n[0]).join('').toUpperCase()
+    return name
+      .split(" ")
+      .map((n) => n[0])
+      .join("")
+      .toUpperCase()
   }
 
   return (
@@ -189,16 +178,11 @@ export default function UsersManagement() {
         <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
           <div className="flex items-center gap-2 px-4">
             <SidebarTrigger className="-ml-1" />
-            <Separator
-              orientation="vertical"
-              className="mr-2 data-[orientation=vertical]:h-4"
-            />
+            <Separator orientation="vertical" className="mr-2 data-[orientation=vertical]:h-4" />
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="/admin/dashboard">
-                    Admin Panel
-                  </BreadcrumbLink>
+                  <BreadcrumbLink href="/admin/dashboard">Admin Panel</BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>
@@ -208,18 +192,16 @@ export default function UsersManagement() {
             </Breadcrumb>
           </div>
         </header>
-        
+
         <div className="flex flex-1 flex-col gap-6 p-6 pt-0">
           {/* Header */}
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold tracking-tight">Users Management</h1>
-              <p className="text-muted-foreground">
-                Manage user accounts, roles, permissions, and track user activity.
-              </p>
+              <p className="text-muted-foreground">Manage user accounts, roles, and permissions.</p>
             </div>
             <Button asChild>
-              <Link href="/admin/users/create">
+              <Link href="/admin/dashboard/users/create">
                 <Plus className="mr-2 h-4 w-4" />
                 Add User
               </Link>
@@ -235,51 +217,37 @@ export default function UsersManagement() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{users.length}</div>
-                <p className="text-xs text-muted-foreground">
-                  +3 from last month
-                </p>
+                <p className="text-xs text-muted-foreground">+3 from last month</p>
               </CardContent>
             </Card>
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Active Users</CardTitle>
-                <CheckCircle className="h-4 w-4 text-green-600" />
+                <UserPlus className="h-4 w-4 text-green-600" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">
-                  {users.filter(u => u.status === 'active').length}
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Currently active
-                </p>
+                <div className="text-2xl font-bold">{users.filter((u) => u.status === "active").length}</div>
+                <p className="text-xs text-muted-foreground">Currently active</p>
               </CardContent>
             </Card>
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Instructors</CardTitle>
-                <Shield className="h-4 w-4 text-blue-600" />
+                <CardTitle className="text-sm font-medium">Admins</CardTitle>
+                <Crown className="h-4 w-4 text-red-600" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">
-                  {users.filter(u => u.role === 'instructor').length}
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Course instructors
-                </p>
+                <div className="text-2xl font-bold">{users.filter((u) => u.role === "admin").length}</div>
+                <p className="text-xs text-muted-foreground">Admin accounts</p>
               </CardContent>
             </Card>
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Students</CardTitle>
-                <BookOpen className="h-4 w-4 text-purple-600" />
+                <CardTitle className="text-sm font-medium">Authors</CardTitle>
+                <Edit className="h-4 w-4 text-blue-600" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">
-                  {users.filter(u => u.role === 'student').length}
-                </div>
-                <p className="text-xs text-muted-foreground">
-                  Enrolled students
-                </p>
+                <div className="text-2xl font-bold">{users.filter((u) => u.role === "author").length}</div>
+                <p className="text-xs text-muted-foreground">Content creators</p>
               </CardContent>
             </Card>
           </div>
@@ -306,31 +274,32 @@ export default function UsersManagement() {
                 </div>
                 <div>
                   <Label htmlFor="role">Role</Label>
-                  <select
-                    id="role"
-                    value={roleFilter}
-                    onChange={(e) => setRoleFilter(e.target.value)}
-                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    <option value="all">All Roles</option>
-                    <option value="admin">Admin</option>
-                    <option value="instructor">Instructor</option>
-                    <option value="student">Student</option>
-                  </select>
+                  <Select value={roleFilter} onValueChange={setRoleFilter}>
+                    <SelectTrigger className="w-[150px]">
+                      <SelectValue placeholder="All Roles" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Roles</SelectItem>
+                      <SelectItem value="admin">Admin</SelectItem>
+                      <SelectItem value="editor">Editor</SelectItem>
+                      <SelectItem value="author">Author</SelectItem>
+                      <SelectItem value="subscriber">Subscriber</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div>
                   <Label htmlFor="status">Status</Label>
-                  <select
-                    id="status"
-                    value={statusFilter}
-                    onChange={(e) => setStatusFilter(e.target.value)}
-                    className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                  >
-                    <option value="all">All Status</option>
-                    <option value="active">Active</option>
-                    <option value="inactive">Inactive</option>
-                    <option value="suspended">Suspended</option>
-                  </select>
+                  <Select value={statusFilter} onValueChange={setStatusFilter}>
+                    <SelectTrigger className="w-[150px]">
+                      <SelectValue placeholder="All Status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="all">All Status</SelectItem>
+                      <SelectItem value="active">Active</SelectItem>
+                      <SelectItem value="inactive">Inactive</SelectItem>
+                      <SelectItem value="suspended">Suspended</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
               </div>
             </CardContent>
@@ -341,7 +310,7 @@ export default function UsersManagement() {
             <CardHeader>
               <CardTitle>All Users</CardTitle>
               <CardDescription>
-                {filteredUsers.length} user{filteredUsers.length !== 1 ? 's' : ''} found
+                {filteredUsers.length} user{filteredUsers.length !== 1 ? "s" : ""} found
               </CardDescription>
             </CardHeader>
             <CardContent>
@@ -350,48 +319,34 @@ export default function UsersManagement() {
                   <div key={user.id} className="flex items-center justify-between p-4 border rounded-lg">
                     <div className="flex items-center gap-4">
                       <Avatar className="h-12 w-12">
-                        <AvatarImage src={user.avatar} alt={user.name} />
+                        <AvatarImage src={user.avatar || "/placeholder.svg"} alt={user.name} />
                         <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
                       </Avatar>
-                      <div className="space-y-1">
+                      <div className="flex-1 space-y-1">
                         <div className="flex items-center gap-2">
-                          <h3 className="text-sm font-medium leading-none">
-                            {user.name}
-                          </h3>
+                          <h3 className="text-sm font-medium leading-none">{user.name}</h3>
                           {getRoleBadge(user.role)}
+                          {getStatusBadge(user.status)}
                         </div>
-                        <p className="text-sm text-muted-foreground">
+                        <div className="flex items-center gap-1 text-sm text-muted-foreground">
+                          <Mail className="h-3 w-3" />
                           {user.email}
-                        </p>
+                        </div>
                         <div className="flex items-center gap-4 text-xs text-muted-foreground">
                           <span className="flex items-center gap-1">
-                            <MapPin className="h-3 w-3" />
-                            {user.location}
-                          </span>
-                          <span className="flex items-center gap-1">
                             <Calendar className="h-3 w-3" />
-                            Joined {user.joinedDate}
+                            Joined {user.createdAt}
                           </span>
-                          <span className="flex items-center gap-1">
-                            <BookOpen className="h-3 w-3" />
-                            {user.coursesEnrolled} courses
-                          </span>
-                          {user.rating > 0 && (
-                            <span className="flex items-center gap-1">
-                              <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-                              {user.rating}
-                            </span>
-                          )}
+                          <span>•</span>
+                          <span>Last login {user.lastLogin}</span>
+                          <span>•</span>
+                          <span>{user.postsCount} posts</span>
+                          <span>•</span>
+                          <span>{user.eventsCount} events</span>
                         </div>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
-                      <Badge variant={user.status === 'active' ? 'default' : 'secondary'}>
-                        <div className="flex items-center gap-1">
-                          {getStatusIcon(user.status)}
-                          {user.status}
-                        </div>
-                      </Badge>
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
                           <Button variant="ghost" size="sm">
@@ -402,25 +357,22 @@ export default function UsersManagement() {
                           <DropdownMenuLabel>Actions</DropdownMenuLabel>
                           <DropdownMenuSeparator />
                           <DropdownMenuItem asChild>
-                            <Link href={`/admin/users/${user.id}`}>
+                            <Link href={`/admin/dashboard/users/${user.id}`}>
                               <Eye className="mr-2 h-4 w-4" />
                               View Profile
                             </Link>
                           </DropdownMenuItem>
                           <DropdownMenuItem asChild>
-                            <Link href={`/admin/users/${user.id}/edit`}>
+                            <Link href={`/admin/dashboard/users/${user.id}/edit`}>
                               <Edit className="mr-2 h-4 w-4" />
-                              Edit
+                              Edit User
                             </Link>
                           </DropdownMenuItem>
                           <DropdownMenuItem>
-                            <Mail className="mr-2 h-4 w-4" />
-                            Send Email
+                            <Shield className="mr-2 h-4 w-4" />
+                            Change Role
                           </DropdownMenuItem>
-                          <DropdownMenuItem
-                            onClick={() => handleDelete(user)}
-                            className="text-red-600"
-                          >
+                          <DropdownMenuItem onClick={() => handleDelete(user)} className="text-red-600">
                             <Trash2 className="mr-2 h-4 w-4" />
                             Delete
                           </DropdownMenuItem>
@@ -440,7 +392,8 @@ export default function UsersManagement() {
             <DialogHeader>
               <DialogTitle>Delete User</DialogTitle>
               <DialogDescription>
-                Are you sure you want to delete "{selectedUser?.name}"? This action cannot be undone and will remove all user data.
+                Are you sure you want to delete "{selectedUser?.name}"? This action cannot be undone and will remove
+                all user data including posts, comments, and activity history.
               </DialogDescription>
             </DialogHeader>
             <DialogFooter>
@@ -456,4 +409,4 @@ export default function UsersManagement() {
       </SidebarInset>
     </SidebarProvider>
   )
-} 
+}

@@ -2,78 +2,24 @@
 
 import * as React from "react"
 import {
-  AudioWaveform,
   BookOpen,
-  Bot,
-  Command,
-  Frame,
-  GalleryVerticalEnd,
-  Map,
-  PieChart,
-  Settings2,
-  SquareTerminal,
   FileText,
   Users,
   Calendar,
   BarChart3,
   Home,
-  Plus,
-  Edit,
-  Trash2,
-  Eye,
-  UserCheck,
-  MessageSquare,
-  Image,
-  Video,
-  FileVideo,
-  Award,
   Globe,
-  Newspaper,
-  BookMarked,
-  GraduationCap,
-  Users2,
-  Shield,
-  Database,
-  Activity,
-  TrendingUp,
-  Bell,
-  Mail,
-  HelpCircle,
-  Info,
-  ExternalLink,
-  Download,
-  Upload,
-  Search,
-  Filter,
-  SortAsc,
-  SortDesc,
-  MoreHorizontal,
-  ChevronRight,
-  ChevronLeft,
-  ChevronDown,
-  ChevronUp,
-  Check,
-  X,
-  AlertCircle,
-  CheckCircle,
-  Clock,
-  Star,
-  Heart,
-  Share,
-  Copy,
   Link as LinkIcon,
-  Lock,
-  Unlock,
-  EyeOff,
-  Key,
-  LogOut,
-  User,
-  UserPlus,
-  UserMinus,
-  UserX,
-  UserCog,
-  UserSearch,
+  Archive,
+  ImageIcon,
+  Settings,
+  Mic,
 } from "lucide-react"
+import { toast } from "sonner"
+import { logoutUser } from "@/service/authService"
+import { setCookie } from "@/lib/cookies"
+import { useRouter } from "next/navigation"
+import { useCallback } from "react"
 
 import { NavMain } from "@/components/nav-main"
 import { NavProjects } from "@/components/nav-projects"
@@ -101,124 +47,128 @@ const adminData = {
       plan: "Admin",
     },
   ],
-  navMain: [
+   navMain: [
     {
       title: "Dashboard",
       url: "/admin/dashboard",
       icon: Home,
       isActive: true,
+      item:[
+        {
+          title: "Main",
+          url: "/admin/dashboard",
+        },
+      ]
     },
     {
-      title: "Content Management",
-      url: "#",
-      icon: FileText,
+      title: "Events",
+      url: "/admin/dashboard/events",
+      icon: Calendar,
       items: [
         {
-          title: "Blogs",
-          url: "/admin/blogs",
+          title: "All Events",
+          url: "/admin/dashboard/events",
         },
         {
-          title: "Courses",
-          url: "/admin/courses",
-        },
-        {
-          title: "Events",
-          url: "/admin/events",
-        },
-        {
-          title: "Speakers",
-          url: "/admin/speakers",
-        },
-        {
-          title: "Gallery",
-          url: "/admin/gallery",
-        },
-        {
-          title: "Testimonials",
-          url: "/admin/testimonials",
+          title: "Create Event",
+          url: "/admin/dashboard/events/create",
         },
       ],
     },
     {
-      title: "User Management",
-      url: "#",
+      title: "Speakers",
+      url: "/admin/dashboard/speakers",
+      icon: Mic,
+      items: [
+        {
+          title: "All Speakers",
+          url: "/admin/dashboard/speakers",
+        },
+        {
+          title: "Add Speaker",
+          url: "/admin/dashboard/speakers/create",
+        },
+      ],
+    },
+    {
+      title: "Content",
+      url: "/admin/dashboard/content",
+      icon: FileText,
+      items: [
+        {
+          title: "News & Blogs",
+          url: "/admin/dashboard/content/blogs",
+        },
+        {
+          title: "Create Content",
+          url: "/admin/dashboard/content/create",
+        },
+      ],
+    },
+    {
+      title: "Workshops",
+      url: "/admin/dashboard/workshops",
+      icon: BookOpen,
+      items: [
+        {
+          title: "All Workshops",
+          url: "/admin/dashboard/workshops",
+        },
+        {
+          title: "Create Workshop",
+          url: "/admin/dashboard/workshops/create",
+        },
+      ],
+    },
+    {
+      title: "Users",
+      url: "/admin/dashboard/users",
       icon: Users,
       items: [
         {
           title: "All Users",
-          url: "/admin/users",
+          url: "/admin/dashboard/users",
         },
         {
-          title: "User Roles",
-          url: "/admin/users/roles",
-        },
-        {
-          title: "User Permissions",
-          url: "/admin/users/permissions",
-        },
-        {
-          title: "User Activity",
-          url: "/admin/users/activity",
+          title: "Add User",
+          url: "/admin/dashboard/users/create",
         },
       ],
+    },
+    {
+      title: "Media",
+      url: "/admin/dashboard/media",
+      icon: ImageIcon,
+    },
+    {
+      title: "Archives",
+      url: "/admin/dashboard/archive",
+      icon: Archive,
+      items: [
+        {
+          title: "All Archives",
+          url: "/admin/dashboard/archive",
+        },
+        {
+          title: "Add Archive",
+          url: "/admin/dashboard/archive/add-year",
+        },
+        {
+          title: "Upload Image",
+          url: "/admin/dashboard/archive/upload",
+        },
+      ]
+      
     },
     {
       title: "Analytics",
-      url: "#",
+      url: "/admin/dashboard/analytics",
       icon: BarChart3,
-      items: [
-        {
-          title: "Overview",
-          url: "/admin/analytics",
-        },
-        {
-          title: "Blog Analytics",
-          url: "/admin/analytics/blogs",
-        },
-        {
-          title: "Course Analytics",
-          url: "/admin/analytics/courses",
-        },
-        {
-          title: "User Analytics",
-          url: "/admin/analytics/users",
-        },
-        {
-          title: "Traffic Sources",
-          url: "/admin/analytics/traffic",
-        },
-      ],
     },
     {
       title: "Settings",
-      url: "#",
-      icon: Settings2,
-      items: [
-        {
-          title: "General",
-          url: "/admin/settings/general",
-        },
-        {
-          title: "Appearance",
-          url: "/admin/settings/appearance",
-        },
-        {
-          title: "Email",
-          url: "/admin/settings/email",
-        },
-        {
-          title: "Security",
-          url: "/admin/settings/security",
-        },
-        {
-          title: "Backup",
-          url: "/admin/settings/backup",
-        },
-        {
-          title: "API Keys",
-          url: "/admin/settings/api",
-        },
-      ],
+      url: "/admin/dashboard/settings",
+      icon: Settings,
     },
   ],
   projects: [
@@ -227,20 +177,22 @@ const adminData = {
       url: "/",
       icon: Globe,
     },
-    {
-      name: "Content Database",
-      url: "/admin/database",
-      icon: Database,
-    },
-    {
-      name: "File Storage",
-      url: "/admin/storage",
-      icon: FileVideo,
-    },
   ],
 }
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+  const router = useRouter()
+  const handleLogout = useCallback(async () => {
+    try {
+      await logoutUser({ message: "", success: true })
+      setCookie("userRole", "", { days: -1 })
+      setCookie("token", "", { days: -1 })
+      toast.success("Logged out successfully")
+      router.replace("/login")
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || error.message || "Logout failed")
+    }
+  }, [router])
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
@@ -251,7 +203,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavProjects projects={adminData.projects} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={adminData.user} />
+        <NavUser user={adminData.user} onLogout={handleLogout} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
