@@ -53,100 +53,121 @@ const adminData = {
       url: "/admin/dashboard",
       icon: Home,
       isActive: true,
+      item:[
+        {
+          title: "Main",
+          url: "/admin/dashboard",
+        },
+      ]
     },
     {
       title: "Events",
-      url: "/admin/events",
+      url: "/admin/dashboard/events",
       icon: Calendar,
       items: [
         {
           title: "All Events",
-          url: "/admin/events",
+          url: "/admin/dashboard/events",
         },
         {
           title: "Create Event",
-          url: "/admin/events/create",
+          url: "/admin/dashboard/events/create",
         },
       ],
     },
     {
       title: "Speakers",
-      url: "/admin/speakers",
+      url: "/admin/dashboard/speakers",
       icon: Mic,
       items: [
         {
           title: "All Speakers",
-          url: "/admin/speakers",
+          url: "/admin/dashboard/speakers",
         },
         {
           title: "Add Speaker",
-          url: "/admin/speakers/create",
+          url: "/admin/dashboard/speakers/create",
         },
       ],
     },
     {
       title: "Content",
-      url: "/admin/content",
+      url: "/admin/dashboard/content",
       icon: FileText,
       items: [
         {
           title: "News & Blogs",
-          url: "/admin/content/blogs",
+          url: "/admin/dashboard/content/blogs",
         },
         {
           title: "Create Content",
-          url: "/admin/content/create",
+          url: "/admin/dashboard/content/create",
         },
       ],
     },
     {
       title: "Workshops",
-      url: "/admin/workshops",
+      url: "/admin/dashboard/workshops",
       icon: BookOpen,
       items: [
         {
           title: "All Workshops",
-          url: "/admin/workshops",
+          url: "/admin/dashboard/workshops",
         },
         {
           title: "Create Workshop",
-          url: "/admin/workshops/create",
+          url: "/admin/dashboard/workshops/create",
         },
       ],
     },
     {
       title: "Users",
-      url: "/admin/users",
+      url: "/admin/dashboard/users",
       icon: Users,
       items: [
         {
           title: "All Users",
-          url: "/admin/users",
+          url: "/admin/dashboard/users",
         },
         {
           title: "Add User",
-          url: "/admin/users/create",
+          url: "/admin/dashboard/users/create",
         },
       ],
     },
     {
       title: "Media",
-      url: "/admin/media",
+      url: "/admin/dashboard/media",
       icon: ImageIcon,
     },
     {
       title: "Archives",
-      url: "/admin/archives",
+      url: "/admin/dashboard/archive",
       icon: Archive,
+      items: [
+        {
+          title: "All Archives",
+          url: "/admin/dashboard/archive",
+        },
+        {
+          title: "Add Archive",
+          url: "/admin/dashboard/archive/add-year",
+        },
+        {
+          title: "Upload Image",
+          url: "/admin/dashboard/archive/upload",
+        },
+      ]
+      
     },
     {
       title: "Analytics",
-      url: "/admin/analytics",
+      url: "/admin/dashboard/analytics",
       icon: BarChart3,
     },
     {
       title: "Settings",
-      url: "/admin/settings",
+      url: "/admin/dashboard/settings",
       icon: Settings,
     },
   ],

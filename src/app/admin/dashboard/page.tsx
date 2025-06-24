@@ -162,13 +162,13 @@ export default function AdminDashboard() {
             </div>
             <div className="flex gap-2">
               <Button asChild>
-                <Link href="/admin/content/create">
+                <Link href="/admin/dashboard/content/create">
                   <Plus className="mr-2 h-4 w-4" />
                   New Content
                 </Link>
               </Button>
               <Button variant="outline" asChild>
-                <Link href="/admin/events/create">
+                <Link href="/admin/dashboard/events/create">
                   <Calendar className="mr-2 h-4 w-4" />
                   New Event
                 </Link>
@@ -209,7 +209,7 @@ export default function AdminDashboard() {
                     <CardDescription>Latest actions and updates on your platform</CardDescription>
                   </div>
                   <Button variant="outline" size="sm" asChild>
-                    <Link href="/admin/content/blogs">View All</Link>
+                    <Link href="/admin/dashboard/content/blogs">View All</Link>
                   </Button>
                 </div>
               </CardHeader>
@@ -281,7 +281,7 @@ export default function AdminDashboard() {
                     <CardDescription>Events scheduled for the next few weeks</CardDescription>
                   </div>
                   <Button variant="outline" size="sm" asChild>
-                    <Link href="/admin/events">View All</Link>
+                    <Link href="/admin/dashboard/events">View All</Link>
                   </Button>
                 </div>
               </CardHeader>
@@ -320,31 +320,31 @@ export default function AdminDashboard() {
               <CardContent>
                 <div className="grid gap-2">
                   <Button variant="outline" className="justify-start" asChild>
-                    <Link href="/admin/content/blogs">
+                    <Link href="/admin/dashboard/content/blogs">
                       <FileText className="mr-2 h-4 w-4" />
                       Manage Content
                     </Link>
                   </Button>
                   <Button variant="outline" className="justify-start" asChild>
-                    <Link href="/admin/events">
+                    <Link href="/admin/dashboard/events">
                       <Calendar className="mr-2 h-4 w-4" />
                       Manage Events
                     </Link>
                   </Button>
                   <Button variant="outline" className="justify-start" asChild>
-                    <Link href="/admin/speakers">
+                    <Link href="/admin/dashboard/speakers">
                       <Mic className="mr-2 h-4 w-4" />
                       Manage Speakers
                     </Link>
                   </Button>
                   <Button variant="outline" className="justify-start" asChild>
-                    <Link href="/admin/users">
+                    <Link href="/admin/dashboard/users">
                       <Users className="mr-2 h-4 w-4" />
                       Manage Users
                     </Link>
                   </Button>
                   <Button variant="outline" className="justify-start" asChild>
-                    <Link href="/admin/workshops">
+                    <Link href="/admin/dashboard/workshops">
                       <BookOpen className="mr-2 h-4 w-4" />
                       Manage Workshops
                     </Link>
