@@ -456,6 +456,11 @@ export default function EventsPage() {
                                   🕐 {time.startTime} - {time.endTime}
                                 </span>
                                 <span>👤 {time.speaker}</span>
+                                <Button asChild size="sm" variant="outline" className="ml-2">
+                                  <Link href={`/admin/dashboard/events/edit-time/${day._id}/${time._id}`}>
+                                    Edit
+                                  </Link>
+                                </Button>
                               </div>
                             </div>
                           ))}

@@ -115,9 +115,10 @@ export async function updateEvent(eventId: string, data: Partial<Event>): Promis
 }
 
 // Update Time
-export async function updateTime(timeId: string, data: Partial<EventTime>): Promise<ApiResponse<EventTime>> {
+// eventRoute.post("/updateTime/day/:day_ref/time/:timeId",protect,restrictTo("admin","user"),updateTime);
+export async function updateTime(dayId: string, timeId: string, data: Partial<EventTime>): Promise<ApiResponse<EventTime>> {
   try {
-    const response = await apiClient.post(`/event/updateTime/${timeId}`, data)
+    const response = await apiClient.post(`/event/updateTime/day/${dayId}/time/${timeId}`, data)
     return {
       success: true,
       data: response.data,
