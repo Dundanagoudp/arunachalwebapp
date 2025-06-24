@@ -317,9 +317,11 @@ export default function EventsPage() {
                               View Details
                             </Link>
                           </DropdownMenuItem>
-                          <DropdownMenuItem>
-                            <Edit className="mr-2 h-4 w-4" />
-                            Edit Event
+                          <DropdownMenuItem asChild>
+                            <Link href={`/admin/dashboard/events/edit/${events.event._id}`}>
+                              <Edit className="mr-2 h-4 w-4" />
+                              Edit Event
+                            </Link>
                           </DropdownMenuItem>
                           <DropdownMenuItem asChild>
                             <Link href="/admin/dashboard/events/add-time">
