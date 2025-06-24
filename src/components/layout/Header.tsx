@@ -196,7 +196,6 @@ const Header = () => {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.5 }}
                 >
-                  {/* <p className="text-xs text-gray-500 text-center font-medium">Literary Festival • Arunachal Pradesh</p> */}
                 </motion.div>
               </SheetContent>
             </Sheet>
