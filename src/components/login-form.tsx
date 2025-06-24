@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { setCookie } from "@/lib/cookies";
 import { useEffect, useState } from "react";
 import { getCookie } from "@/lib/cookies";
+import Cookies from "js-cookie";
 
 type LoginFormValues = {
   email: string;
@@ -69,8 +70,9 @@ export function LoginForm({
 
       console.log("[LoginForm] Account type from backend:", result.data.user.accountType); // Debug log
       // Use the imported setCookie function with the correct signature
-      setCookie("userRole", result.data.user.role, { days: 1 });
-      setCookie("token", result.token, { days: 1 });
+      Cookies.set("userRole", result.data.user.role, { expires: 1, path: "/" });
+      Cookies.set("token", result.token, { expires: 1, path: "/" });
+      console.log("[LoginForm] Token set in cookie:", Cookies.get("token")); // Debug log
 
       toast.success(result.message);
 
@@ -82,6 +84,8 @@ export function LoginForm({
         default:
           router.replace("/user/dashboard");
       }
+      // Force reload to ensure token is available for all requests
+      window.location.reload();
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "Login failed");
     }

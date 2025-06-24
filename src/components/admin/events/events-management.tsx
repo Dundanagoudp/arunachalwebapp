@@ -31,7 +31,7 @@ import Link from "next/link"
 import { getAllEvents, deleteEvent } from "@/service/events-apis"
 import type { EventWithDays, EventDay } from "@/types/events-types"
 
-export default function EventsPage() {
+export default function EventsManagement() {
   const { toast } = useToast()
   const [searchTerm, setSearchTerm] = useState("")
   const [events, setEvents] = useState<EventWithDays | null>(null)
@@ -48,7 +48,6 @@ export default function EventsPage() {
       const result = await getAllEvents()
       if (result.success && result.data) {
         setEvents(result.data)
-        console.log("Events loaded:", result.data)
       } else {
         toast({
           title: "Error",
@@ -77,7 +76,7 @@ export default function EventsPage() {
           title: "Success",
           description: result.message || "Event deleted successfully",
         })
-        fetchEvents()
+        fetchEvents() // Refresh the events list
       } else {
         toast({
           title: "Error",
@@ -116,10 +115,7 @@ export default function EventsPage() {
         <AppSidebar />
         <SidebarInset>
           <div className="flex items-center justify-center h-screen">
-            <div className="text-center">
-              <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
-              <p>Loading events...</p>
-            </div>
+            <Loader2 className="h-8 w-8 animate-spin" />
           </div>
         </SidebarInset>
       </SidebarProvider>
@@ -137,7 +133,7 @@ export default function EventsPage() {
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="/admin/dashboard">Admin Panel</BreadcrumbLink>
+                  <BreadcrumbLink href="/admin/dashboard/">Admin Panel</BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>
@@ -149,26 +145,17 @@ export default function EventsPage() {
         </header>
 
         <div className="flex flex-1 flex-col gap-6 p-6 pt-0">
-          {/* Header */}
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold tracking-tight">Events Management</h1>
               <p className="text-muted-foreground">Manage all events, schedules, and registrations.</p>
             </div>
-            <div className="flex gap-2">
-              <Button asChild>
-                <Link href="/admin/dashboard/events/create">
-                  <Plus className="mr-2 h-4 w-4" />
-                  Create Event
-                </Link>
-              </Button>
-              <Button variant="outline" asChild>
-                <Link href="/admin/dashboard/events/add-time">
-                  <Clock className="mr-2 h-4 w-4" />
-                  Add Time Slot
-                </Link>
-              </Button>
-            </div>
+            <Button asChild>
+              <Link href="/admin/dashboard/events/create">
+                <Plus className="mr-2 h-4 w-4" />
+                Create Event
+              </Link>
+            </Button>
           </div>
 
           {/* Stats Cards */}
@@ -179,7 +166,7 @@ export default function EventsPage() {
                 <Calendar className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{events?.event ? "1" : "0"}</div>
+                <div className="text-2xl font-bold">{events?.event?.name || "No Event"}</div>
                 <p className="text-xs text-muted-foreground">Active event</p>
               </CardContent>
             </Card>
@@ -242,12 +229,6 @@ export default function EventsPage() {
                           <Clock className="h-4 w-4" />
                           <span>{events.event.totalDays} days</span>
                         </div>
-                        <div className="flex items-center gap-1">
-                          <span>Year: {events.event.year}</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <span>Month: {events.event.month}</span>
-                        </div>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
@@ -264,21 +245,17 @@ export default function EventsPage() {
                         <DropdownMenuContent align="end">
                           <DropdownMenuLabel>Actions</DropdownMenuLabel>
                           <DropdownMenuSeparator />
-                          <DropdownMenuItem asChild>
-                            <Link href={`/admin/dashboard/events/${events.event._id}`}>
-                              <Eye className="mr-2 h-4 w-4" />
-                              View Details
-                            </Link>
+                          <DropdownMenuItem>
+                            <Eye className="mr-2 h-4 w-4" />
+                            View Details
                           </DropdownMenuItem>
                           <DropdownMenuItem>
                             <Edit className="mr-2 h-4 w-4" />
                             Edit Event
                           </DropdownMenuItem>
-                          <DropdownMenuItem asChild>
-                            <Link href="/admin/dashboard/events/add-time">
-                              <Clock className="mr-2 h-4 w-4" />
-                              Add Time Slot
-                            </Link>
+                          <DropdownMenuItem>
+                            <Calendar className="mr-2 h-4 w-4" />
+                            Manage Schedule
                           </DropdownMenuItem>
                           <DropdownMenuItem
                             className="text-red-600"
@@ -338,9 +315,6 @@ export default function EventsPage() {
                           Day {day.dayNumber}: {day.name}
                         </h3>
                         <p className="text-sm text-muted-foreground">{day.description}</p>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          Created: {new Date(day.createdAt).toLocaleDateString()}
-                        </p>
                       </div>
                       <Badge variant="outline">{day.times?.length || 0} sessions</Badge>
                     </div>
@@ -368,36 +342,12 @@ export default function EventsPage() {
                         </div>
                       </div>
                     )}
-
-                    {(!day.times || day.times.length === 0) && (
-                      <div className="text-center py-4 text-muted-foreground">
-                        <Clock className="h-6 w-6 mx-auto mb-2 opacity-50" />
-                        <p className="text-sm">No sessions scheduled for this day</p>
-                        <Button variant="outline" size="sm" className="mt-2" asChild>
-                          <Link href="/admin/dashboard/events/add-time">Add Time Slot</Link>
-                        </Button>
-                      </div>
-                    )}
                   </div>
                 ))}
 
-                {filteredDays.length === 0 && !events?.event && (
+                {filteredDays.length === 0 && (
                   <div className="text-center py-8 text-muted-foreground">
-                    <Calendar className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                    <h3 className="text-lg font-medium mb-2">No Events Found</h3>
-                    <p className="mb-4">Create your first event to get started.</p>
-                    <Button asChild>
-                      <Link href="/admin/dashboard/events/create">
-                        <Plus className="mr-2 h-4 w-4" />
-                        Create Event
-                      </Link>
-                    </Button>
-                  </div>
-                )}
-
-                {filteredDays.length === 0 && events?.event && (
-                  <div className="text-center py-8 text-muted-foreground">
-                    <p>No event days match your search criteria.</p>
+                    No event days found. Create an event first to see event days here.
                   </div>
                 )}
               </div>
