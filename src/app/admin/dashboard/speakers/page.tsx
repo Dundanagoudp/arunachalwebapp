@@ -31,6 +31,15 @@ import { useState, useEffect } from "react"
 import { getSpeaker, deleteSpeaker, getEvent } from "@/service/speaker"
 import type { Speaker, Event } from "@/types/speaker-types"
 import Image from "next/image"
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination"
 
 export default function SpeakersPage() {
   const [speakers, setSpeakers] = useState<Speaker[]>([])
@@ -41,6 +50,45 @@ export default function SpeakersPage() {
 
   // Delete state
   const [deleteLoading, setDeleteLoading] = useState<string | null>(null)
+
+  // Pagination state
+  const [currentPage, setCurrentPage] = useState(1)
+  const itemsPerPage = 10
+  const totalPages = Math.ceil(speakers.length / itemsPerPage)
+  const startIndex = (currentPage - 1) * itemsPerPage
+  const endIndex = startIndex + itemsPerPage
+  const currentSpeakers = speakers.slice(startIndex, endIndex)
+
+  // Reset to page 1 if speakers list changes and current page is out of range
+  useEffect(() => {
+    if (currentPage > totalPages) setCurrentPage(1)
+  }, [speakers, totalPages])
+
+  // Generate pagination items (with ellipsis)
+  const generatePaginationItems = () => {
+    const items = []
+    const maxVisiblePages = 5
+    if (totalPages <= maxVisiblePages) {
+      for (let i = 1; i <= totalPages; i++) items.push(i)
+    } else {
+      if (currentPage <= 3) {
+        for (let i = 1; i <= 4; i++) items.push(i)
+        items.push('ellipsis')
+        items.push(totalPages)
+      } else if (currentPage >= totalPages - 2) {
+        items.push(1)
+        items.push('ellipsis')
+        for (let i = totalPages - 3; i <= totalPages; i++) items.push(i)
+      } else {
+        items.push(1)
+        items.push('ellipsis')
+        for (let i = currentPage - 1; i <= currentPage + 1; i++) items.push(i)
+        items.push('ellipsis')
+        items.push(totalPages)
+      }
+    }
+    return items
+  }
 
   useEffect(() => {
     fetchSpeakers()
@@ -195,7 +243,7 @@ export default function SpeakersPage() {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {speakers.map((speaker) => (
+                      {currentSpeakers.map((speaker) => (
                         <TableRow key={speaker._id}>
                           <TableCell>
                             {speaker.image_url ? (
@@ -266,6 +314,43 @@ export default function SpeakersPage() {
                       ))}
                     </TableBody>
                   </Table>
+                  {/* Pagination UI */}
+                  <div className="flex flex-col items-center gap-2 py-4">
+                    <Pagination>
+                      <PaginationContent>
+                        <PaginationItem>
+                          <PaginationPrevious
+                            onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                            className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                          />
+                        </PaginationItem>
+                        {generatePaginationItems().map((item, idx) => (
+                          <PaginationItem key={idx}>
+                            {item === 'ellipsis' ? (
+                              <PaginationEllipsis />
+                            ) : (
+                              <PaginationLink
+                                isActive={currentPage === item}
+                                onClick={() => setCurrentPage(item as number)}
+                                className="cursor-pointer"
+                              >
+                                {item}
+                              </PaginationLink>
+                            )}
+                          </PaginationItem>
+                        ))}
+                        <PaginationItem>
+                          <PaginationNext
+                            onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                            className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                          />
+                        </PaginationItem>
+                      </PaginationContent>
+                    </Pagination>
+                    <div className="text-xs text-muted-foreground">
+                      Page {currentPage} of {totalPages} • Showing {speakers.length === 0 ? 0 : startIndex + 1}-{Math.min(endIndex, speakers.length)} of {speakers.length} speakers
+                    </div>
+                  </div>
                 </div>
               )}
             </CardContent>
