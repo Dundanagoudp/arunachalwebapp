@@ -10,134 +10,30 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination"
-
-interface Speaker {
-  id: number
-  name: string
-  about: string
-  image: string
-}
-
-const speakers: Speaker[] = [
-  {
-    id: 1,
-    name: "Dr. Rajesh Kumar",
-    about: "Technology Innovation Expert",
-    image: "/images/speaker.png",
-  },
-  {
-    id: 2,
-    name: "Prof. Michael Chen",
-    about: "Digital Transformation Leader",
-    image: "/images/speaker2.png",
-  },
-  {
-    id: 3,
-    name: "Dr. Priya Sharma",
-    about: "Research & Development Head",
-    image: "/images/speaker.png",
-  },
-  {
-    id: 4,
-    name: "Dr. Rajesh Kumar",
-    about: "Technology Innovation Expert",
-    image: "/images/speaker2.png",
-  },
-  {
-    id: 5,
-    name: "Prof. Michael Chen",
-    about: "Digital Transformation Leader",
-    image: "/images/speaker.png",
-  },
-  {
-    id: 6,
-    name: "Dr. Priya Sharma",
-    about: "Research & Development Head",
-    image: "/images/speaker.png",
-  },
-  {
-    id: 7,
-    name: "Dr. Rajesh Kumar",
-    about: "Technology Innovation Expert",
-    image: "/images/speaker.png",
-  },
-  {
-    id: 8,
-    name: "Prof. Michael Chen",
-    about: "Digital Transformation Leader",
-    image: "/images/speaker.png",
-  },
-  {
-    id: 9,
-    name: "Dr. Priya Sharma",
-    about: "Research & Development Head",
-    image: "/images/speaker2.png",
-  },
-  {
-    id: 10,
-    name: "Dr. Rajesh Kumar",
-    about: "Technology Innovation Expert",
-    image: "/images/speaker.png",
-  },
-  {
-    id: 11,
-    name: "Prof. Michael Chen",
-    about: "Digital Transformation Leader",
-    image: "/images/speaker2.png",
-  },
-  {
-    id: 12,
-    name: "Dr. Priya Sharma",
-    about: "Research & Development Head",
-    image: "/images/speaker.png",
-  },
-  {
-    id: 13,
-    name: "Dr. Rajesh Kumar",
-    about: "Technology Innovation Expert",
-    image: "/images/speaker2.png",
-  },
-  {
-    id: 14,
-    name: "Prof. Michael Chen",
-    about: "Digital Transformation Leader",
-    image: "/images/speaker.png",
-  },
-  {
-    id: 15,
-    name: "Dr. Priya Sharma",
-    about: "Research & Development Head",
-    image: "/images/speaker2.png",
-  },
-  {
-    id: 16,
-    name: "Dr. Rajesh Kumar",
-    about: "Technology Innovation Expert",
-    image: "/images/speaker.png",
-  },
-  {
-    id: 17,
-    name: "Prof. Michael Chen",
-    about: "Digital Transformation Leader",
-    image: "/images/speaker2.png",
-  },
-  {
-    id: 18,
-    name: "Dr. Priya Sharma",
-    about: "Research & Development Head",
-    image: "/images/speaker.png",
-  },
-]
+import { getSpeaker } from "@/service/speaker"
+import { Speaker } from "@/types/speaker-types"
 
 export default function SpeakersGrid() {
   const [currentPage, setCurrentPage] = useState(1)
   const [loading, setLoading] = useState(true)
+  const [speakers, setSpeakers] = useState<Speaker[]>([])
+  const [error, setError] = useState<string | null>(null)
   const speakersPerPage = 9 // 3 rows x 3 columns for desktop
   const totalPages = Math.ceil(speakers.length / speakersPerPage)
 
   useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 2500)
-    return () => clearTimeout(timer)
+    setLoading(true)
+    getSpeaker()
+      .then((res) => {
+        if (res.success && res.data) {
+          setSpeakers(res.data)
+          setError(null)
+        } else {
+          setError(res.error || "Failed to fetch speakers")
+        }
+      })
+      .catch(() => setError("Failed to fetch speakers"))
+      .finally(() => setLoading(false))
   }, [])
 
   const indexOfLastSpeaker = currentPage * speakersPerPage
@@ -153,6 +49,11 @@ export default function SpeakersGrid() {
             SPEAKERS
           </h1>
         </div>
+
+        {/* Error State */}
+        {error && (
+          <div className="text-center text-red-500 mb-8">{error}</div>
+        )}
 
         {/* Speakers Grid - 2 columns on mobile (image only), 3 columns on desktop (full card) */}
         <div className="grid grid-cols-2 md:grid-cols-3 gap-6 md:gap-8 max-w-5xl mx-auto mb-10 px-2">
@@ -192,8 +93,8 @@ export default function SpeakersGrid() {
                   </div>
                 </div>
               ))
-            : currentSpeakers.map((speaker, index) => (
-                <div key={speaker.id} className="flex flex-col items-center">
+            : currentSpeakers.map((speaker) => (
+                <div key={speaker._id} className="flex flex-col items-center">
                   {/* Decorative Border */}
                   <div className="relative">
                     <div
@@ -218,7 +119,7 @@ export default function SpeakersGrid() {
                           }}
                         >
                           <Image
-                            src={speaker.image || "/placeholder.svg"}
+                            src={speaker.image_url || "/placeholder.svg"}
                             alt={speaker.name}
                             fill
                             className="object-cover object-center"

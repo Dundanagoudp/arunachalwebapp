@@ -11,3 +11,5 @@ export async function loginUser(data: LoginRequest): Promise<LoginResponse> {
 export async function logoutUser(data:LogoutResponse): Promise<void> {
   await apiClient.post("/onboarding/logout");
 }
+// adduser 
+// authRoute.post("/addUser",protect,restrictTo("admin"),addUser);

@@ -5,17 +5,14 @@ import { useState, useEffect } from "react"
 import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
+import { getAllEvents } from "@/service/events-apis"
 
 // Types for schedule data
 interface ScheduleEvent {
   id: string;
   time: string;
   event: string;
-  description?: string;
   speaker?: string;
-  location?: string;
-  duration?: string;
-  type?: 'keynote' | 'panel' | 'workshop' | 'break' | 'networking';
 }
 
 interface DaySchedule {
@@ -30,58 +27,32 @@ interface ScheduleData {
   days: DaySchedule[];
 }
 
-// Mock API function - replace with actual API call
+// Month names for formatting
+const months = [
+  "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"
+];
+
+// Fetch real schedule data from API
 const fetchScheduleData = async (): Promise<ScheduleData> => {
-  // Simulate API delay
-  await new Promise(resolve => setTimeout(resolve, 1500));
-  
-  // Mock data - replace this with actual API call
+  const result = await getAllEvents();
+  if (!result.success || !result.data) throw new Error(result.error || "Failed to fetch events");
+  const { event, days } = result.data;
+  // Map days to DaySchedule[]
+  const mappedDays = days.map((day) => ({
+    day: `Day ${day.dayNumber}`,
+    date: `${day.dayNumber} ${months[(event.month || 1) - 1]} ${event.year}`,
+    events: (day.times || []).map((t) => ({
+      id: t._id,
+      time: `${t.startTime}`,
+      // time: `${t.startTime} - ${t.endTime}`,
+      event: t.title,
+      speaker: t.speaker,
+    })),
+  }));
   return {
-    festivalName: "ARUNACHAL LITERATURE FESTIVAL",
-    year: "2025",
-    days: [
-      {
-        day: "Day 1",
-        date: "20th November",
-        events: [
-          { id: "1", time: "09:00 AM", event: "Registration & Welcome Coffee", type: "break" },
-          { id: "2", time: "10:00 AM", event: "Opening Ceremony", type: "keynote", speaker: "Chief Guest" },
-          { id: "3", time: "11:00 AM", event: "Keynote Address: Preserving Indigenous Literature", type: "keynote", speaker: "Dr. A. K. Mishra" },
-          { id: "4", time: "12:00 PM", event: "Panel Discussion: Digital Age of Literature", type: "panel", speaker: "Multiple Speakers" },
-          { id: "5", time: "01:00 PM", event: "Lunch Break", type: "break" },
-          { id: "6", time: "02:00 PM", event: "Workshop: Creative Writing in Tribal Languages", type: "workshop", speaker: "Prof. R. Singh" },
-          { id: "7", time: "03:30 PM", event: "Book Launch: 'Voices of Arunachal'", type: "keynote", speaker: "Author Panel" },
-          { id: "8", time: "04:30 PM", event: "Networking Session", type: "networking" },
-          { id: "9", time: "05:30 PM", event: "Cultural Performance", type: "keynote" },
-        ]
-      },
-      {
-        day: "Day 2",
-        date: "21st November",
-        events: [
-          { id: "10", time: "09:00 AM", event: "Morning Session: Poetry Reading", type: "workshop", speaker: "Poetry Circle" },
-          { id: "11", time: "10:30 AM", event: "Workshop: Storytelling Techniques", type: "workshop", speaker: "Ms. P. Devi" },
-          { id: "12", time: "12:00 PM", event: "Lunch Break", type: "break" },
-          { id: "13", time: "01:30 PM", event: "Panel: Publishing in Regional Languages", type: "panel", speaker: "Publishers Panel" },
-          { id: "14", time: "03:00 PM", event: "Interactive Session: Youth Literature", type: "workshop", speaker: "Young Authors" },
-          { id: "15", time: "04:30 PM", event: "Book Signing Event", type: "networking" },
-          { id: "16", time: "06:00 PM", event: "Evening Cultural Program", type: "keynote" },
-        ]
-      },
-      {
-        day: "Day 3",
-        date: "22nd November",
-        events: [
-          { id: "17", time: "09:00 AM", event: "Final Day Opening", type: "keynote" },
-          { id: "18", time: "10:00 AM", event: "Special Guest Talk: Future of Literature", type: "keynote", speaker: "Dr. S. Kumar" },
-          { id: "19", time: "11:30 AM", event: "Workshop: Digital Publishing", type: "workshop", speaker: "Tech Experts" },
-          { id: "20", time: "01:00 PM", event: "Lunch & Networking", type: "break" },
-          { id: "21", time: "02:30 PM", event: "Award Ceremony", type: "keynote" },
-          { id: "22", time: "04:00 PM", event: "Closing Ceremony", type: "keynote" },
-          { id: "23", time: "05:00 PM", event: "Farewell Tea", type: "networking" },
-        ]
-      }
-    ]
+    festivalName: event.name,
+    year: String(event.year),
+    days: mappedDays,
   };
 };
 

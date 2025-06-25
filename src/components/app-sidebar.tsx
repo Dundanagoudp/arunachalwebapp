@@ -73,6 +73,10 @@ const adminData = {
           title: "Create Event",
           url: "/admin/dashboard/events/create",
         },
+        {
+          title: "Add Time Slot",
+          url: "/admin/dashboard/events/add-time",
+        }
       ],
     },
     {

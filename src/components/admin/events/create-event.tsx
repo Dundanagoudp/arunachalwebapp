@@ -1,8 +1,7 @@
 "use client"
 
 import type React from "react"
-import { useState } from "react"
-import { useRouter } from "next/navigation"
+import { useState, useEffect, useRef } from "react"
 import { AppSidebar } from "@/components/app-sidebar"
 import {
   Breadcrumb,
@@ -25,9 +24,15 @@ import Link from "next/link"
 import { addEvent } from "@/service/events-apis"
 import type { CreateEventData } from "@/types/events-types"
 
-export default function CreateEventPage() {
+// Helper to get current local ISO string for datetime-local input
+function getNowISOString() {
+  const now = new Date();
+  const tzOffset = now.getTimezoneOffset() * 60000;
+  return new Date(now.getTime() - tzOffset).toISOString().slice(0, 16);
+}
+
+export default function CreateEvent() {
   const { toast } = useToast()
-  const router = useRouter()
   const [isLoading, setIsLoading] = useState(false)
   const [formData, setFormData] = useState<CreateEventData>({
     name: "",
@@ -40,6 +45,22 @@ export default function CreateEventPage() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    // Prevent selecting past dates
+    const now = new Date();
+    if (formData.startDate && new Date(formData.startDate) < now) {
+      toast({
+        title: "Error",
+        description: "Start Date cannot be in the past.",
+      });
+      return;
+    }
+    if (formData.endDate && new Date(formData.endDate) < now) {
+      toast({
+        title: "Error",
+        description: "End Date cannot be in the past.",
+      });
+      return;
+    }
     setIsLoading(true)
 
     try {
@@ -60,8 +81,15 @@ export default function CreateEventPage() {
           description: result.message || "Event created successfully",
         })
 
-        // Redirect to events page after successful creation
-        router.push("/admin/dashboard/events")
+        // Reset form
+        setFormData({
+          name: "",
+          description: "",
+          startDate: "",
+          endDate: "",
+          year: new Date().getFullYear(),
+          month: new Date().getMonth() + 1,
+        })
       } else {
         toast({
           title: "Error",
@@ -72,7 +100,7 @@ export default function CreateEventPage() {
       console.error("Error creating event:", error)
       toast({
         title: "Error",
-        description: "An unexpected error occurred"
+        description: "An unexpected error occurred",
       })
     } finally {
       setIsLoading(false)
@@ -114,7 +142,6 @@ export default function CreateEventPage() {
         </header>
 
         <div className="flex flex-1 flex-col gap-6 p-6 pt-0">
-          {/* Header */}
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold tracking-tight">Create New Event</h1>
@@ -128,7 +155,6 @@ export default function CreateEventPage() {
             </Button>
           </div>
 
-          {/* Form */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -145,7 +171,7 @@ export default function CreateEventPage() {
                     <Input
                       id="name"
                       name="name"
-                      placeholder="e.g., ARUNACHAL LITERATURE FESTIVAL events"
+                      placeholder="Enter event name"
                       value={formData.name}
                       onChange={handleChange}
                       required
@@ -173,7 +199,7 @@ export default function CreateEventPage() {
                   <Textarea
                     id="description"
                     name="description"
-                    placeholder="e.g., One-day coding workshop"
+                    placeholder="Enter event description"
                     value={formData.description}
                     onChange={handleChange}
                     rows={4}
@@ -198,7 +224,7 @@ export default function CreateEventPage() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="startDate">Start Date & Time *</Label>
+                    <Label htmlFor="startDate">Start Date *</Label>
                     <Input
                       id="startDate"
                       name="startDate"
@@ -207,10 +233,11 @@ export default function CreateEventPage() {
                       onChange={handleChange}
                       required
                       disabled={isLoading}
+                      min={getNowISOString()}
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="endDate">End Date & Time *</Label>
+                    <Label htmlFor="endDate">End Date *</Label>
                     <Input
                       id="endDate"
                       name="endDate"
@@ -219,6 +246,7 @@ export default function CreateEventPage() {
                       onChange={handleChange}
                       required
                       disabled={isLoading}
+                      min={getNowISOString()}
                     />
                   </div>
                 </div>
@@ -228,7 +256,7 @@ export default function CreateEventPage() {
                     {isLoading ? (
                       <>
                         <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Creating Event...
+                        Creating...
                       </>
                     ) : (
                       <>

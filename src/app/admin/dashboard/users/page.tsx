@@ -42,7 +42,8 @@ import {
 } from "@/components/ui/select"
 import { Users, UserPlus, Shield, Mail, Calendar, Plus, Edit, Trash2, Eye, Search, MoreHorizontal, Crown, User } from 'lucide-react'
 import Link from "next/link"
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { getCookie } from "@/lib/cookies"
 
 export default function UsersManagement() {
   const [searchTerm, setSearchTerm] = useState("")
@@ -50,6 +51,11 @@ export default function UsersManagement() {
   const [statusFilter, setStatusFilter] = useState("all")
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
   const [selectedUser, setSelectedUser] = useState<any>(null)
+  const [userRole, setUserRole] = useState<string | null>(null)
+
+  useEffect(() => {
+    setUserRole(getCookie("userRole"))
+  }, [])
 
   // Mock data - replace with actual data from your backend
   const users = [
@@ -200,13 +206,20 @@ export default function UsersManagement() {
               <h1 className="text-3xl font-bold tracking-tight">Users Management</h1>
               <p className="text-muted-foreground">Manage user accounts, roles, and permissions.</p>
             </div>
-            <Button asChild>
-              <Link href="/admin/dashboard/users/create">
-                <Plus className="mr-2 h-4 w-4" />
-                Add User
-              </Link>
-            </Button>
+            {userRole === "admin" && (
+              <Button asChild>
+                <Link href="/admin/dashboard/users/create">
+                  <Plus className="mr-2 h-4 w-4" />
+                  Add User
+                </Link>
+              </Button>
+            )}
           </div>
+          {userRole !== "admin" && (
+            <div className="mb-4 text-xs text-muted-foreground">
+              Note: Only admins can add, edit, change role, or delete users. You can only view user profiles.
+            </div>
+          )}
 
           {/* Stats Cards */}
           <div className="grid gap-4 md:grid-cols-4">
@@ -362,20 +375,26 @@ export default function UsersManagement() {
                               View Profile
                             </Link>
                           </DropdownMenuItem>
-                          <DropdownMenuItem asChild>
-                            <Link href={`/admin/dashboard/users/${user.id}/edit`}>
-                              <Edit className="mr-2 h-4 w-4" />
-                              Edit User
-                            </Link>
-                          </DropdownMenuItem>
-                          <DropdownMenuItem>
-                            <Shield className="mr-2 h-4 w-4" />
-                            Change Role
-                          </DropdownMenuItem>
-                          <DropdownMenuItem onClick={() => handleDelete(user)} className="text-red-600">
-                            <Trash2 className="mr-2 h-4 w-4" />
-                            Delete
-                          </DropdownMenuItem>
+                          {userRole === "admin" && (
+                            <DropdownMenuItem asChild>
+                              <Link href={`/admin/dashboard/users/${user.id}/edit`}>
+                                <Edit className="mr-2 h-4 w-4" />
+                                Edit User
+                              </Link>
+                            </DropdownMenuItem>
+                          )}
+                          {userRole === "admin" && (
+                            <DropdownMenuItem>
+                              <Shield className="mr-2 h-4 w-4" />
+                              Change Role
+                            </DropdownMenuItem>
+                          )}
+                          {userRole === "admin" && (
+                            <DropdownMenuItem onClick={() => handleDelete(user)} className="text-red-600">
+                              <Trash2 className="mr-2 h-4 w-4" />
+                              Delete
+                            </DropdownMenuItem>
+                          )}
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </div>

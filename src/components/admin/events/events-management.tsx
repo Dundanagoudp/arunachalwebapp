@@ -28,28 +28,15 @@ import {
 import { Calendar, Plus, Edit, Trash2, Eye, Search, MoreHorizontal, Clock, Users, Loader2 } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import Link from "next/link"
-import { getAllEvents, deleteEvent, updateEventDay } from "@/service/events-apis"
+import { getAllEvents, deleteEvent } from "@/service/events-apis"
 import type { EventWithDays, EventDay } from "@/types/events-types"
-import {
-  Dialog,
-  DialogTrigger,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogFooter,
-  DialogClose,
-} from "@/components/ui/dialog"
 
-export default function EventsPage() {
+export default function EventsManagement() {
   const { toast } = useToast()
   const [searchTerm, setSearchTerm] = useState("")
   const [events, setEvents] = useState<EventWithDays | null>(null)
   const [isLoading, setIsLoading] = useState(true)
   const [isDeleting, setIsDeleting] = useState<string | null>(null)
-  const [editSheetOpen, setEditSheetOpen] = useState(false)
-  const [editDay, setEditDay] = useState<EventDay | null>(null)
-  const [editForm, setEditForm] = useState({ name: "", description: "" })
-  const [editLoading, setEditLoading] = useState(false)
 
   useEffect(() => {
     fetchEvents()
@@ -61,7 +48,6 @@ export default function EventsPage() {
       const result = await getAllEvents()
       if (result.success && result.data) {
         setEvents(result.data)
-        console.log("Events loaded:", result.data)
       } else {
         toast({
           title: "Error",
@@ -90,7 +76,7 @@ export default function EventsPage() {
           title: "Success",
           description: result.message || "Event deleted successfully",
         })
-        fetchEvents()
+        fetchEvents() // Refresh the events list
       } else {
         toast({
           title: "Error",
@@ -123,50 +109,13 @@ export default function EventsPage() {
     return days.reduce((total, day) => total + (day.times?.length || 0), 0)
   }
 
-  // Open edit sheet for a day
-  const openEditSheet = (day: EventDay) => {
-    setEditDay(day)
-    setEditForm({ name: day.name, description: day.description })
-    setEditSheetOpen(true)
-  }
-
-  // Handle edit form change
-  const handleEditFormChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target
-    setEditForm((prev) => ({ ...prev, [name]: value }))
-  }
-
-  // Handle edit form submit
-  const handleEditSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    if (!editDay) return
-    setEditLoading(true)
-    try {
-      const result = await updateEventDay(editDay._id, editForm)
-      if (result.success) {
-        toast({ title: "Success", description: result.message || "Event Day updated" })
-        setEditSheetOpen(false)
-        fetchEvents()
-      } else {
-        toast({ title: "Error", description: result.error || "Failed to update event day" })
-      }
-    } catch (error) {
-      toast({ title: "Error", description: "An unexpected error occurred" })
-    } finally {
-      setEditLoading(false)
-    }
-  }
-
   if (isLoading) {
     return (
       <SidebarProvider>
         <AppSidebar />
         <SidebarInset>
           <div className="flex items-center justify-center h-screen">
-            <div className="text-center">
-              <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
-              <p>Loading events...</p>
-            </div>
+            <Loader2 className="h-8 w-8 animate-spin" />
           </div>
         </SidebarInset>
       </SidebarProvider>
@@ -184,7 +133,7 @@ export default function EventsPage() {
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="/admin/dashboard">Admin Panel</BreadcrumbLink>
+                  <BreadcrumbLink href="/admin/dashboard/">Admin Panel</BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>
@@ -196,26 +145,17 @@ export default function EventsPage() {
         </header>
 
         <div className="flex flex-1 flex-col gap-6 p-6 pt-0">
-          {/* Header */}
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold tracking-tight">Events Management</h1>
               <p className="text-muted-foreground">Manage all events, schedules, and registrations.</p>
             </div>
-            <div className="flex gap-2">
-              <Button asChild>
-                <Link href="/admin/dashboard/events/create">
-                  <Plus className="mr-2 h-4 w-4" />
-                  Create Event
-                </Link>
-              </Button>
-              <Button variant="outline" asChild>
-                <Link href="/admin/dashboard/events/add-time">
-                  <Clock className="mr-2 h-4 w-4" />
-                  Add Time Slot
-                </Link>
-              </Button>
-            </div>
+            <Button asChild>
+              <Link href="/admin/dashboard/events/create">
+                <Plus className="mr-2 h-4 w-4" />
+                Create Event
+              </Link>
+            </Button>
           </div>
 
           {/* Stats Cards */}
@@ -226,7 +166,7 @@ export default function EventsPage() {
                 <Calendar className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{events?.event ? "1" : "0"}</div>
+                <div className="text-2xl font-bold">{events?.event?.name || "No Event"}</div>
                 <p className="text-xs text-muted-foreground">Active event</p>
               </CardContent>
             </Card>
@@ -289,12 +229,6 @@ export default function EventsPage() {
                           <Clock className="h-4 w-4" />
                           <span>{events.event.totalDays} days</span>
                         </div>
-                        <div className="flex items-center gap-1">
-                          <span>Year: {events.event.year}</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <span>Month: {events.event.month}</span>
-                        </div>
                       </div>
                     </div>
                     <div className="flex items-center gap-2">
@@ -311,23 +245,17 @@ export default function EventsPage() {
                         <DropdownMenuContent align="end">
                           <DropdownMenuLabel>Actions</DropdownMenuLabel>
                           <DropdownMenuSeparator />
-                          <DropdownMenuItem asChild>
-                            <Link href={`/admin/dashboard/events/${events.event._id}`}>
-                              <Eye className="mr-2 h-4 w-4" />
-                              View Details
-                            </Link>
+                          <DropdownMenuItem>
+                            <Eye className="mr-2 h-4 w-4" />
+                            View Details
                           </DropdownMenuItem>
-                          <DropdownMenuItem asChild>
-                            <Link href={`/admin/dashboard/events/edit/${events.event._id}`}>
-                              <Edit className="mr-2 h-4 w-4" />
-                              Edit Event
-                            </Link>
+                          <DropdownMenuItem>
+                            <Edit className="mr-2 h-4 w-4" />
+                            Edit Event
                           </DropdownMenuItem>
-                          <DropdownMenuItem asChild>
-                            <Link href="/admin/dashboard/events/add-time">
-                              <Clock className="mr-2 h-4 w-4" />
-                              Add Time Slot
-                            </Link>
+                          <DropdownMenuItem>
+                            <Calendar className="mr-2 h-4 w-4" />
+                            Manage Schedule
                           </DropdownMenuItem>
                           <DropdownMenuItem
                             className="text-red-600"
@@ -387,57 +315,8 @@ export default function EventsPage() {
                           Day {day.dayNumber}: {day.name}
                         </h3>
                         <p className="text-sm text-muted-foreground">{day.description}</p>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          Created: {new Date(day.createdAt).toLocaleDateString()}
-                        </p>
                       </div>
-                      <div className="flex gap-2 items-center">
-                        <Badge variant="outline">{day.times?.length || 0} sessions</Badge>
-                        <Dialog open={editSheetOpen && editDay?._id === day._id} onOpenChange={setEditSheetOpen}>
-                          <DialogTrigger asChild>
-                            <Button size="sm" variant="outline" onClick={() => openEditSheet(day)}>
-                              Edit
-                            </Button>
-                          </DialogTrigger>
-                          <DialogContent>
-                            <DialogHeader>
-                              <DialogTitle>Edit Event Day</DialogTitle>
-                            </DialogHeader>
-                            <form onSubmit={handleEditSubmit} className="space-y-4 mt-4">
-                              <div>
-                                <Label htmlFor="edit-name">Name</Label>
-                                <Input
-                                  id="edit-name"
-                                  name="name"
-                                  value={editForm.name}
-                                  onChange={handleEditFormChange}
-                                  required
-                                  disabled={editLoading}
-                                />
-                              </div>
-                              <div>
-                                <Label htmlFor="edit-description">Description</Label>
-                                <Input
-                                  id="edit-description"
-                                  name="description"
-                                  value={editForm.description}
-                                  onChange={handleEditFormChange}
-                                  required
-                                  disabled={editLoading}
-                                />
-                              </div>
-                              <DialogFooter>
-                                <Button type="submit" disabled={editLoading}>
-                                  {editLoading ? "Saving..." : "Save Changes"}
-                                </Button>
-                                <DialogClose asChild>
-                                  <Button type="button" variant="outline">Cancel</Button>
-                                </DialogClose>
-                              </DialogFooter>
-                            </form>
-                          </DialogContent>
-                        </Dialog>
-                      </div>
+                      <Badge variant="outline">{day.times?.length || 0} sessions</Badge>
                     </div>
 
                     {day.times && day.times.length > 0 && (
@@ -453,50 +332,22 @@ export default function EventsPage() {
                               <p className="text-xs text-muted-foreground mt-1">{time.description}</p>
                               <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
                                 <span>
-                                  🕐 {time.startTime} - {time.endTime}
+                                  🕐 {new Date(time.startTime).toLocaleTimeString()} -{" "}
+                                  {new Date(time.endTime).toLocaleTimeString()}
                                 </span>
                                 <span>👤 {time.speaker}</span>
-                                <Button asChild size="sm" variant="outline" className="ml-2">
-                                  <Link href={`/admin/dashboard/events/edit-time/${day._id}/${time._id}`}>
-                                    Edit
-                                  </Link>
-                                </Button>
                               </div>
                             </div>
                           ))}
                         </div>
                       </div>
                     )}
-
-                    {(!day.times || day.times.length === 0) && (
-                      <div className="text-center py-4 text-muted-foreground">
-                        <Clock className="h-6 w-6 mx-auto mb-2 opacity-50" />
-                        <p className="text-sm">No sessions scheduled for this day</p>
-                        <Button variant="outline" size="sm" className="mt-2" asChild>
-                          <Link href="/admin/dashboard/events/add-time">Add Time Slot</Link>
-                        </Button>
-                      </div>
-                    )}
                   </div>
                 ))}
 
-                {filteredDays.length === 0 && !events?.event && (
+                {filteredDays.length === 0 && (
                   <div className="text-center py-8 text-muted-foreground">
-                    <Calendar className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                    <h3 className="text-lg font-medium mb-2">No Events Found</h3>
-                    <p className="mb-4">Create your first event to get started.</p>
-                    <Button asChild>
-                      <Link href="/admin/dashboard/events/create">
-                        <Plus className="mr-2 h-4 w-4" />
-                        Create Event
-                      </Link>
-                    </Button>
-                  </div>
-                )}
-
-                {filteredDays.length === 0 && events?.event && (
-                  <div className="text-center py-8 text-muted-foreground">
-                    <p>No event days match your search criteria.</p>
+                    No event days found. Create an event first to see event days here.
                   </div>
                 )}
               </div>

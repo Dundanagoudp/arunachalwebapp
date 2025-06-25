@@ -25,11 +25,14 @@ function AvatarImage({
   className,
   ...props
 }: React.ComponentProps<typeof AvatarPrimitive.Image>) {
+  const [imgSrc, setImgSrc] = React.useState(props.src);
   return (
     <AvatarPrimitive.Image
       data-slot="avatar-image"
       className={cn("aspect-square size-full", className)}
       {...props}
+      src={imgSrc}
+      onError={() => setImgSrc("/images/default-avatar.png")}
     />
   )
 }
