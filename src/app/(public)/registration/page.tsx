@@ -1,4 +1,4 @@
-'use client';
+ 'use client';
 
 import RegistrationForm from '@/components/registration/modules/registrationForm';
 import RegistrationSection from '@/components/registration/registration-section';

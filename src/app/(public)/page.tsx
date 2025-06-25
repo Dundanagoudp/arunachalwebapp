@@ -1,0 +1,27 @@
+import Attendeessay from "@/components/homecomponents/modules/attendeessay";
+import Blogs from "@/components/homecomponents/modules/blogs";
+import Carousel from "@/components/homecomponents/modules/carousel";
+import Contactsection from "@/components/homecomponents/modules/contact-section";
+import GallerySection from "@/components/homecomponents/modules/gallery-section";
+import HeroSection from "@/components/homecomponents/modules/herosection";
+import Schedule from "@/components/homecomponents/modules/schedule";
+import Speakers from "@/components/homecomponents/modules/speakers";
+import Testimonials from "@/components/homecomponents/modules/testimonials";
+import FestivalInfo from "@/components/homecomponents/modules/welcome-section";
+
+export default function Home() {
+  return (
+    <div>
+      <HeroSection />
+      <FestivalInfo />
+      <Carousel/>
+      <Schedule/>
+      <Speakers/>
+      <Testimonials/>
+      <GallerySection/>
+      <Attendeessay/>
+      <Blogs/>
+      <Contactsection/>
+    </div>
+  );
+} 
