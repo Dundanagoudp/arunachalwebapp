@@ -1,311 +1,149 @@
-// "use client"
-
-// import Image from "next/image"
-// import { ArrowUpRight } from "lucide-react"
-// import { Swiper, SwiperSlide } from "swiper/react"
-// import { Navigation, Pagination, EffectCoverflow } from "swiper/modules"
-// import "swiper/css"
-// import "swiper/css/navigation"
-// import "swiper/css/pagination"
-// import "swiper/css/effect-coverflow"
-// import { useEffect, useState } from "react"
-// import { getSpeaker } from "@/service/speaker"
-// import type { Speaker } from "@/types/speaker-types"
-
-// export default function Speakers() {
-//   const [speakersData, setSpeakersData] = useState<Speaker[]>([])
-//   const [loading, setLoading] = useState(true)
-//   const [error, setError] = useState<string | null>(null)
-
-//   useEffect(() => {
-//     async function fetchSpeakers() {
-//       setLoading(true)
-//       setError(null)
-//       const res = await getSpeaker()
-//       if (res.success && res.data) {
-//         setSpeakersData(res.data)
-//       } else {
-//         setError(res.error || "Failed to fetch speakers")
-//       }
-//       setLoading(false)
-//     }
-//     fetchSpeakers()
-//   }, [])
-
-//   if (loading) {
-//     return (
-//       <div className="flex justify-center items-center min-h-[300px]">Loading speakers...</div>
-//     )
-//   }
-//   if (error) {
-//     return (
-//       <div className="flex justify-center items-center min-h-[300px] text-red-500">{error}</div>
-//     )
-//   }
-
-//   return (
-//     <div className="min-h-screen bg-gradient-to-b from-[#FFF8E7] to-[#FFFAEE] relative overflow-hidden">
-//       {/* Top-left diamond pattern */}
-//       <div className="absolute top-0 left-0 w-24 h-24 md:w-32 md:h-32 lg:w-30 lg:h-30 z-0">
-//         <Image src="/schedule/diamond-pattern.png" alt="Diamond Pattern" fill style={{ objectFit: "contain" }} />
-//       </div>
-//       {/* Top-right diamond pattern */}
-//       <div className="absolute top-0 right-0 w-24 h-24 md:w-32 md:h-32 lg:w-30 lg:h-30 z-0">
-//         <Image src="/schedule/diamond-pattern.png" alt="Diamond Pattern" fill style={{ objectFit: "contain" }} />
-//       </div>
-
-//       <div className="container mx-auto py-16 px-4 relative z-10">
-//         {/* Header Section */}
-//         <div className="flex flex-col items-center text-center mb-16">
-//           <p className="text-5xl md:text-2xl font-bold text-[#E67E22] font-serif tracking-wide">
-//             ARUNACHAL LITERATURE FESTIVAL
-//           </p>
-//           <div className="flex items-center gap-6 mb-8">
-//             <div className="w-3 h-3 bg-[#E67E22] rounded-full" />
-//             <h1 className="text-5xl md:text-7xl font-bold text-[#E67E22] font-serif tracking-wide">SPEAKERS</h1>
-//             <div className="w-3 h-3 bg-[#E67E22] rounded-full" />
-//           </div>
-//           <div className="mt-8 flex justify-center mb-2">
-//             <button className="group relative flex items-center hover:scale-105 transition-transform duration-300 focus:outline-none">
-//               <span className="bg-[#E67E22] text-white px-6 py-3 pr-12 rounded-full text-lg font-medium">
-//                 View All
-//               </span>
-//               <span className="absolute right-0 left-30 translate-x-1/2 bg-[#E67E22] w-10 h-10 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 group-hover:translate-x-6 group-hover:rotate-12">
-//                 <ArrowUpRight className="w-4 h-4 text-white transition-transform duration-300 group-hover:rotate-45" />
-//               </span>
-//             </button>
-//           </div>
-//         </div>
-
-//         {/* Swiper Carousel for both Desktop and Mobile */}
-//         <div className="mt-12 px-4">
-//           <Swiper
-//             effect={"coverflow"}
-//             grabCursor={true}
-//             centeredSlides={false}
-//             slidesPerView={
-//               typeof window !== 'undefined' && window.innerWidth >= 1024
-//                 ? Math.min(speakersData.length, 4)
-//                 : 'auto'
-//             }
-//             spaceBetween={24}
-//             loop={speakersData.length > 4}
-//             coverflowEffect={{
-//               rotate: 0,
-//               stretch: 0,
-//               depth: 100,
-//               modifier: 2.5,
-//               slideShadows: true,
-//             }}
-//             pagination={{ 
-//               clickable: true,
-//               dynamicBullets: true 
-//             }}
-//             navigation={speakersData.length > 3}
-//             modules={[EffectCoverflow, Pagination, Navigation]}
-//             breakpoints={{
-//               640: {
-//                 slidesPerView: 2,
-//               },
-//               768: {
-//                 slidesPerView: 3,
-//               },
-//               1024: {
-//                 slidesPerView: Math.min(speakersData.length, 4),
-//               },
-//             }}
-//             className="speakersSwiper"
-//           >
-//             {speakersData.map((speaker) => (
-//               <SwiperSlide 
-//                 key={speaker._id} 
-//                 className="!w-[280px] !h-[380px] md:!w-[240px] md:!h-[340px]"
-//               >
-//                 <div className="relative group h-full">
-//                   <div className="absolute -inset-2 bg-gradient-to-r from-yellow-400 via-orange-400 to-yellow-400 rounded-lg opacity-75 group-hover:opacity-100 transition duration-300 animate-pulse"></div>
-//                   <div className="relative bg-white p-1 rounded-lg h-full">
-//                     <div className="w-full h-full overflow-hidden rounded-lg shadow-2xl transition-transform duration-300 group-hover:scale-105">
-//                       <Image
-//                         src={speaker.image_url || "/images/speaker.png"}
-//                         alt={speaker.name}
-//                         width={400}
-//                         height={500}
-//                         className="w-full h-full object-cover"
-//                       />
-//                       <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/70 to-transparent text-white p-4">
-//                         <p className="font-semibold text-lg mb-1">{speaker.name}</p>
-//                         <p className="text-sm opacity-90">{speaker.about}</p>
-//                       </div>
-//                     </div>
-//                   </div>
-//                 </div>
-//               </SwiperSlide>
-//             ))}
-//           </Swiper>
-//         </div>
-//       </div>
-//     </div>
-//   )
-// } 
-
 "use client"
-
 import Image from "next/image"
 import { ArrowUpRight } from "lucide-react"
 import { Swiper, SwiperSlide } from "swiper/react"
-import { Navigation, Pagination, EffectCoverflow } from "swiper/modules"
+import { EffectCoverflow, Pagination } from "swiper/modules"
 import "swiper/css"
-import "swiper/css/navigation"
-import "swiper/css/pagination"
 import "swiper/css/effect-coverflow"
+import "swiper/css/pagination"
+import { useEffect, useState } from "react"
+import { getSpeaker } from "@/service/speaker"
 
 export default function Speakers() {
-  // Example data with many speakers (can be 5-56 items)
-  const speakersData = Array.from({ length: 56 }, (_, i) => ({
-    id: `${i + 1}`,
-    name: `Speaker ${i + 1}`,
-    about: `About speaker ${i + 1}`,
-    image: i % 2 === 0 ? "/images/speaker.png" : "/images/speaker2.png",
-    isLarge: i % 4 === 1, // Make every 4th speaker large (for desktop view)
-  }))
+  const [speakers, setSpeakers] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
 
-  // For desktop view, we'll show 3 speakers at a time (left, center, right)
-  const desktopSpeakers = [
-    speakersData[0] || { id: "1", name: "Speaker", about: "About", image: "/placeholder.svg", isLarge: false },
-    speakersData[1] || { id: "2", name: "Speaker", about: "About", image: "/placeholder.svg", isLarge: true },
-    speakersData[2] || { id: "3", name: "Speaker", about: "About", image: "/placeholder.svg", isLarge: false },
-  ]
+  useEffect(() => {
+    async function fetchSpeakers() {
+      setLoading(true)
+      setError(null)
+      try {
+        const res = await getSpeaker()
+        if (res.success && res.data) {
+          setSpeakers(res.data)
+        } else {
+          setError(res.error || "Failed to fetch speakers.")
+        }
+      } catch (err) {
+        setError("Failed to fetch speakers.")
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchSpeakers()
+  }, [])
+
+  // Loading dots animation
+  const LoadingDots = () => (
+    <div className="flex flex-col items-center justify-center min-h-[300px]">
+      <div className="flex space-x-2 mt-10">
+        <span className="w-3 h-3 bg-yellow-400 rounded-full animate-bounce [animation-delay:-0.3s]"></span>
+        <span className="w-3 h-3 bg-orange-400 rounded-full animate-bounce [animation-delay:-0.15s]"></span>
+        <span className="w-3 h-3 bg-yellow-400 rounded-full animate-bounce"></span>
+      </div>
+      <div className="mt-4 text-lg text-[#E67E22] font-semibold">Loading speakers...</div>
+    </div>
+  )
+
+  // Error fallback
+  if (error) {
+    return (
+      <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-[#FFF8E7] to-[#FFFAEE]">
+        <div className="text-red-500 text-xl font-bold mb-4">{error}</div>
+        <button
+          onClick={() => window.location.reload()}
+          className="bg-[#E67E22] text-white px-6 py-2 rounded-full hover:bg-[#d35400] transition-colors"
+        >
+          Retry
+        </button>
+      </div>
+    )
+  }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#FFF8E7] to-[#FFFAEE] relative overflow-hidden">
-      {/* Top-left diamond pattern */}
-      <div className="absolute top-0 left-0 w-24 h-24 md:w-32 md:h-32 lg:w-30 lg:h-30 z-0">
-        <Image src="/schedule/diamond-pattern.png" alt="Diamond Pattern" fill style={{ objectFit: "contain" }} />
+    <div className="min-h-screen bg-gradient-to-b from-[#FFF8E7] to-[#FFFAEE] relative">
+      {/* Background patterns */}
+      <div className="absolute top-0 left-0 w-24 h-24 md:w-32 md:h-32">
+        <Image src="/schedule/diamond-pattern.png" alt="Pattern" fill />
       </div>
-      {/* Top-right diamond pattern */}
-      <div className="absolute top-0 right-0 w-24 h-24 md:w-32 md:h-32 lg:w-30 lg:h-30 z-0">
-        <Image src="/schedule/diamond-pattern.png" alt="Diamond Pattern" fill style={{ objectFit: "contain" }} />
+      <div className="absolute top-0 right-0 w-24 h-24 md:w-32 md:h-32">
+        <Image src="/schedule/diamond-pattern.png" alt="Pattern" fill />
       </div>
 
       <div className="container mx-auto py-16 px-4 relative z-10">
-        {/* Header Section */}
-        <div className="flex flex-col items-center text-center mb-16">
-          <p className="text-5xl md:text-2xl font-bold text-[#E67E22] font-serif tracking-wide">
-            ARUNACHAL LITERATURE FESTIVAL
-          </p>
-          <div className="flex items-center gap-6 mb-8">
-            <div className="w-3 h-3 bg-[#E67E22] rounded-full" />
-            <h1 className="text-5xl md:text-7xl font-bold text-[#E67E22] font-serif tracking-wide">SPEAKERS</h1>
-            <div className="w-3 h-3 bg-[#E67E22] rounded-full" />
-          </div>
-          <div className="mt-8 flex justify-center mb-2">
-            <button className="group relative flex items-center hover:scale-105 transition-transform duration-300 focus:outline-none">
-              <span className="bg-[#E67E22] text-white px-6 py-3 pr-12 rounded-full text-lg font-medium">
-                View All
-              </span>
-              <span className="absolute right-0 left-30 translate-x-1/2 bg-[#E67E22] w-10 h-10 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 group-hover:translate-x-6 group-hover:rotate-12">
-                <ArrowUpRight className="w-4 h-4 text-white transition-transform duration-300 group-hover:rotate-45" />
-              </span>
-            </button>
-          </div>
+        {/* Header */}
+        <div className="text-center mb-16">
+          <h1 className="text-5xl md:text-7xl font-bold text-[#E67E22] font-serif">
+            SPEAKERS
+          </h1>
+          {/* View All button */}
         </div>
 
-        {/* Desktop Layout - Shows 3 speakers at a time */}
-        <div className="hidden lg:flex flex-col lg:flex-row items-end justify-center gap-8 lg:gap-12 mt-20">
-          {desktopSpeakers.map((speaker, index) => (
-            <div 
-              key={speaker.id} 
-              className={`relative flex flex-col items-center ${
-                index === 1 ? 'order-1 lg:order-2 lg:-mt-24' : 
-                index === 0 ? 'order-2 lg:order-1' : 'order-3'
-              }`}
+        {/* Carousel or Loading */}
+        <div className="px-4">
+          {loading ? (
+            <LoadingDots />
+          ) : (
+            <Swiper
+              effect={"coverflow"}
+              grabCursor={true}
+              centeredSlides={true}
+              slidesPerView={"auto"}
+              coverflowEffect={{
+                rotate: 0,
+                stretch: 0,
+                depth: 100,
+                modifier: 2,
+                slideShadows: false,
+              }}
+              pagination={{ clickable: true }}
+              modules={[EffectCoverflow, Pagination]}
+              className="speaker-carousel"
+              breakpoints={{
+                640: {
+                  coverflowEffect: {
+                    depth: 200,
+                    modifier: 1.5
+                  }
+                },
+                1024: {
+                  coverflowEffect: {
+                    depth: 300,
+                    modifier: 1
+                  }
+                }
+              }}
             >
-              <div className={`relative group ${index === 1 ? 'mt-12 mb-15' : ''}`}>
-                <div className={`absolute ${
-                  index === 1 ? '-inset-3' : '-inset-2'
-                } bg-gradient-to-r from-yellow-400 via-orange-400 to-yellow-400 rounded-lg opacity-75 group-hover:opacity-100 transition duration-300 animate-pulse`}></div>
-                <div className="relative bg-white p-1 rounded-lg">
-                  <div className={`${
-                    speaker.isLarge ? 'w-[280px] h-[380px] md:w-[320px] md:h-[420px]' : 'w-[220px] h-[300px] md:w-[260px] md:h-[340px]'
-                  } overflow-hidden rounded-lg shadow-2xl transition-transform duration-300 group-hover:scale-105`}>
-                    <Image
-                      src={speaker.image}
-                      alt={speaker.name}
-                      width={400}
-                      height={500}
-                      className="w-full h-full object-cover"
-                    />
-                    <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/70 to-transparent text-white p-4">
-                      <p className={`font-semibold ${speaker.isLarge ? 'text-xl' : 'text-lg'} mb-1`}>{speaker.name}</p>
-                      <p className={`${speaker.isLarge ? 'text-base' : 'text-sm'} opacity-90`}>{speaker.about}</p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ))}
-        </div>
-
-        {/* Mobile & Tablet Layout - Swiper Carousel */}
-        <div className="lg:hidden mt-12 px-4">
-          <Swiper
-            effect={"coverflow"}
-            grabCursor={true}
-            centeredSlides={true}
-            slidesPerView={"auto"}
-            spaceBetween={20}
-            loop={true}
-            coverflowEffect={{
-              rotate: 0,
-              stretch: 0,
-              depth: 100,
-              modifier: 2.5,
-              slideShadows: true,
-            }}
-            pagination={{ 
-              clickable: true,
-              dynamicBullets: true 
-            }}
-            navigation={speakersData.length > 3}
-            modules={[EffectCoverflow, Pagination, Navigation]}
-            breakpoints={{
-              640: {
-                slidesPerView: 2,
-              },
-              768: {
-                slidesPerView: 3,
-              },
-            }}
-            className="speakersSwiper"
-          >
-            {speakersData.map((speaker) => (
-              <SwiperSlide 
-                key={speaker.id} 
-                className="!w-[280px] !h-[380px] md:!w-[240px] md:!h-[340px]"
-              >
-                <div className="relative group h-full">
-                  <div className="absolute -inset-2 bg-gradient-to-r from-yellow-400 via-orange-400 to-yellow-400 rounded-lg opacity-75 group-hover:opacity-100 transition duration-300 animate-pulse"></div>
-                  <div className="relative bg-white p-1 rounded-lg h-full">
-                    <div className="w-full h-full overflow-hidden rounded-lg shadow-2xl transition-transform duration-300 group-hover:scale-105">
-                      <Image
-                        src={speaker.image}
-                        alt={speaker.name}
-                        width={400}
-                        height={500}
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/70 to-transparent text-white p-4">
-                        <p className="font-semibold text-lg mb-1">{speaker.name}</p>
-                        <p className="text-sm opacity-90">{speaker.about}</p>
+              {speakers.map((speaker) => (
+                <SwiperSlide
+                  key={speaker._id || speaker.id}
+                  className="!w-[220px] !h-[300px] md:!w-[280px] md:!h-[380px]"
+                >
+                  <div className="relative group h-full">
+                    <div className="absolute -inset-2 bg-gradient-to-r from-yellow-400 via-orange-400 to-yellow-400 rounded-lg opacity-75 group-hover:opacity-100 transition duration-300"></div>
+                    <div className="relative bg-white p-1 rounded-lg h-full">
+                      <div className="w-full h-full overflow-hidden rounded-lg shadow-2xl">
+                        <Image
+                          src={speaker.image_url || "/images/speaker.png"}
+                          alt={speaker.name || "Speaker"}
+                          width={400}
+                          height={500}
+                          className="w-full h-full object-cover"
+                        />
+                        <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/70 to-transparent text-white p-4">
+                          <p className="font-semibold text-lg">{speaker.name}</p>
+                          <p className="text-sm opacity-90">{speaker.about}</p>
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              </SwiperSlide>
-            ))}
-          </Swiper>
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          )}
         </div>
       </div>
     </div>
   )
-} 
+}

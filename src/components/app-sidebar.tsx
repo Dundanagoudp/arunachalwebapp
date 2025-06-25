@@ -140,11 +140,6 @@ const adminData = {
       ],
     },
     {
-      title: "Media",
-      url: "/admin/dashboard/media",
-      icon: ImageIcon,
-    },
-    {
       title: "Archives",
       url: "/admin/dashboard/archive",
       icon: Archive,

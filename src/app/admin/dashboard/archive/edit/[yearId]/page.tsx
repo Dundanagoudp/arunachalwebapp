@@ -2,8 +2,8 @@
 
 import type React from "react"
 
-import { useState } from "react"
-import { useRouter } from "next/navigation"
+import { useState, useEffect } from "react"
+import { useRouter, useParams } from "next/navigation"
 import { AppSidebar } from "@/components/app-sidebar"
 import {
   Breadcrumb,
@@ -21,19 +21,54 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Calendar, AlertCircle, CheckCircle } from "lucide-react"
-import { addYear } from "@/service/archive"
+import { Calendar, AlertCircle, CheckCircle, Loader2 } from "lucide-react"
+import { updateYear, getImagesByYear } from "@/service/archive"
 
-export default function AddYearPage() {
+export default function EditYearPage() {
   const router = useRouter()
+  const params = useParams()
+  const yearId = params.yearId as string
+
   const [loading, setLoading] = useState(false)
+  const [fetchLoading, setFetchLoading] = useState(true)
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState("")
+  const [yearData, setYearData] = useState<any>(null)
   const [formData, setFormData] = useState({
     year: new Date().getFullYear(),
     month: 1,
     totalDays: 30,
   })
+
+  useEffect(() => {
+    if (yearId) {
+      fetchYearData()
+    }
+  }, [yearId])
+
+  const fetchYearData = async () => {
+    try {
+      setFetchLoading(true)
+      const result = await getImagesByYear(yearId)
+
+      if (result.success && result.data?.archive && result.data.archive.length > 0) {
+        const firstImage = result.data.archive[0]
+        setYearData(firstImage.year_ref)
+        setFormData({
+          year: firstImage.year_ref.year,
+          month: 1, // Default month since it's not in the response
+          totalDays: 30, // Default days
+        })
+      } else {
+        setError("Year data not found")
+      }
+    } catch (error: any) {
+      console.error("Error fetching year data:", error)
+      setError("Failed to fetch year data")
+    } finally {
+      setFetchLoading(false)
+    }
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -42,7 +77,7 @@ export default function AddYearPage() {
     setSuccess(false)
 
     try {
-      const result = await addYear({
+      const result = await updateYear(yearId, {
         year: formData.year.toString(),
         month: formData.month.toString(),
         totalDays: formData.totalDays.toString(),
@@ -50,16 +85,16 @@ export default function AddYearPage() {
 
       if (result.success) {
         setSuccess(true)
-        console.log("Year created successfully:", result.data)
+        console.log("Year updated successfully:", result.data)
         setTimeout(() => {
           router.push("/admin/dashboard/archive")
         }, 2000)
       } else {
-        throw new Error(result.error || "Failed to create year")
+        throw new Error(result.error || "Failed to update year")
       }
     } catch (error: any) {
-      console.error("Error creating year:", error)
-      setError(error.message || "Failed to create year. Please try again.")
+      console.error("Error updating year:", error)
+      setError(error.message || "Failed to update year. Please try again.")
     } finally {
       setLoading(false)
     }
@@ -87,11 +122,21 @@ export default function AddYearPage() {
     { value: 12, label: "December" },
   ]
 
-  const getDaysInMonth = (year: number, month: number) => {
-    return new Date(year, month, 0).getDate()
+  if (fetchLoading) {
+    return (
+      <SidebarProvider>
+        <AppSidebar />
+        <SidebarInset>
+          <div className="flex items-center justify-center h-screen">
+            <div className="text-center">
+              <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
+              <p>Loading year data...</p>
+            </div>
+          </div>
+        </SidebarInset>
+      </SidebarProvider>
+    )
   }
-
-  const maxDaysForMonth = getDaysInMonth(formData.year, formData.month)
 
   return (
     <SidebarProvider>
@@ -112,7 +157,7 @@ export default function AddYearPage() {
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>
-                  <BreadcrumbPage>Add Year</BreadcrumbPage>
+                  <BreadcrumbPage>Edit Year {yearData?.year}</BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
@@ -122,8 +167,8 @@ export default function AddYearPage() {
         <div className="flex flex-1 flex-col gap-6 p-6 pt-0">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold tracking-tight">Add New Year</h1>
-              <p className="text-muted-foreground">Create a new year in your archive with specified days.</p>
+              <h1 className="text-3xl font-bold tracking-tight">Edit Year {yearData?.year}</h1>
+              <p className="text-muted-foreground">Update the year configuration in your archive.</p>
             </div>
           </div>
 
@@ -132,7 +177,7 @@ export default function AddYearPage() {
               <Alert className="mb-6 border-green-200 bg-green-50">
                 <CheckCircle className="h-4 w-4 text-green-600" />
                 <AlertDescription className="text-green-800">
-                  Year created successfully! You will be redirected to the archive page shortly.
+                  Year updated successfully! You will be redirected to the archive page shortly.
                 </AlertDescription>
               </Alert>
             )}
@@ -151,7 +196,7 @@ export default function AddYearPage() {
                     <Calendar className="h-5 w-5" />
                     Year Details
                   </CardTitle>
-                  <CardDescription>Configure the year and number of days for your archive.</CardDescription>
+                  <CardDescription>Update the year and configuration for your archive.</CardDescription>
                 </CardHeader>
                 <CardContent className="space-y-6">
                   <div className="grid gap-4 md:grid-cols-2">
@@ -200,30 +245,20 @@ export default function AddYearPage() {
                       max="366"
                       required
                     />
-                    <div className="space-y-1">
-                      <p className="text-xs text-muted-foreground">
-                        This will create {formData.totalDays} days (Day 1, Day 2, ... Day {formData.totalDays}) for{" "}
-                        {months.find((m) => m.value === formData.month)?.label} {formData.year}.
-                      </p>
-                      <p className="text-xs text-blue-600">
-                        Suggested: {maxDaysForMonth} days for {months.find((m) => m.value === formData.month)?.label}{" "}
-                        {formData.year}
-                      </p>
-                    </div>
+                    <p className="text-xs text-muted-foreground">
+                      Update the total number of days for this archive period.
+                    </p>
                   </div>
 
                   <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
-                    <h4 className="font-medium text-blue-900 mb-2">Preview</h4>
+                    <h4 className="font-medium text-blue-900 mb-2">Current Configuration</h4>
                     <div className="text-sm text-blue-800">
                       <p>
                         <strong>Archive Period:</strong> {months.find((m) => m.value === formData.month)?.label}{" "}
                         {formData.year}
                       </p>
                       <p>
-                        <strong>Days to Create:</strong> {formData.totalDays} days
-                      </p>
-                      <p>
-                        <strong>Day Labels:</strong> Day 1, Day 2, Day 3, ..., Day {formData.totalDays}
+                        <strong>Total Days:</strong> {formData.totalDays} days
                       </p>
                     </div>
                   </div>
@@ -232,7 +267,7 @@ export default function AddYearPage() {
 
               <div className="flex gap-2">
                 <Button type="submit" disabled={loading || success}>
-                  {loading ? "Creating..." : success ? "Created Successfully!" : "Create Year"}
+                  {loading ? "Updating..." : success ? "Updated Successfully!" : "Update Year"}
                 </Button>
                 <Button type="button" variant="outline" onClick={() => router.back()} disabled={loading}>
                   Cancel

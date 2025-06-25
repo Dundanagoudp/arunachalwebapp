@@ -2,6 +2,8 @@
 
 import type React from "react"
 
+import { useState, useEffect } from "react"
+import { useRouter, useSearchParams } from "next/navigation"
 import { AppSidebar } from "@/components/app-sidebar"
 import {
   Breadcrumb,
@@ -21,8 +23,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Progress } from "@/components/ui/progress"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Upload, X, ImageIcon, CheckCircle, AlertCircle, FileImage } from "lucide-react"
-import { useState, useEffect } from "react"
-import { useRouter, useSearchParams } from "next/navigation"
+import { getAllImages, uploadImages } from "@/service/archive"
 
 interface ArchiveYear {
   _id: string
@@ -36,7 +37,7 @@ interface ArchiveDay {
   dayLabel: string
 }
 
-export default function UploadImages() {
+export default function UploadImagesPage() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [loading, setLoading] = useState(false)
@@ -64,11 +65,9 @@ export default function UploadImages() {
 
   const fetchYears = async () => {
     try {
-      const response = await fetch("/api/archive/getImages")
-      const data = await response.json()
-
-      if (data.archive) {
-        const uniqueYears = data.archive.reduce((acc: ArchiveYear[], img: any) => {
+      const result = await getAllImages()
+      if (result.success && result.data?.archive) {
+        const uniqueYears = result.data.archive.reduce((acc: ArchiveYear[], img: any) => {
           const existingYear = acc.find((y) => y._id === img.year_ref._id)
           if (!existingYear) {
             acc.push({
@@ -79,7 +78,8 @@ export default function UploadImages() {
           }
           return acc
         }, [])
-setYears(uniqueYears.sort((a: ArchiveYear, b: ArchiveYear) => b.year - a.year))      }
+        setYears(uniqueYears.sort((a: ArchiveYear, b: ArchiveYear) => b.year - a.year))
+      }
     } catch (error) {
       console.error("Error fetching years:", error)
     }
@@ -87,11 +87,9 @@ setYears(uniqueYears.sort((a: ArchiveYear, b: ArchiveYear) => b.year - a.year)) 
 
   const fetchDays = async (yearId: string) => {
     try {
-      const response = await fetch("/api/archive/getImages")
-      const data = await response.json()
-
-      if (data.archive) {
-        const daysForYear = data.archive
+      const result = await getAllImages()
+      if (result.success && result.data?.archive) {
+        const daysForYear = result.data.archive
           .filter((img: any) => img.year_ref._id === yearId)
           .map((img: any) => img.dayNumber_ref)
           .filter((day: any, index: number, self: any[]) => index === self.findIndex((d) => d._id === day._id))
@@ -175,27 +173,19 @@ setYears(uniqueYears.sort((a: ArchiveYear, b: ArchiveYear) => b.year - a.year)) 
         })
       }, 200)
 
-      const response = await fetch(`/api/archive/uploadImages/${formData.dayId}/year/${formData.yearId}`, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: uploadData,
-      })
+      const result = await uploadImages(formData.yearId, formData.dayId, uploadData)
 
       clearInterval(progressInterval)
       setUploadProgress(100)
 
-      const data = await response.json()
-
-      if (response.ok) {
+      if (result.success) {
         setSuccess(true)
-        console.log("Images uploaded successfully:", data)
+        console.log("Images uploaded successfully:", result.data)
         setTimeout(() => {
           router.push("/admin/dashboard/archive")
         }, 2000)
       } else {
-        throw new Error(data.message || "Failed to upload images")
+        throw new Error(result.error || "Failed to upload images")
       }
     } catch (error: any) {
       console.error("Error uploading images:", error)
@@ -246,9 +236,9 @@ setYears(uniqueYears.sort((a: ArchiveYear, b: ArchiveYear) => b.year - a.year)) 
 
           <div className="max-w-4xl">
             {success && (
-              <Alert className="mb-6">
-                <CheckCircle className="h-4 w-4" />
-                <AlertDescription>
+              <Alert className="mb-6 border-green-200 bg-green-50">
+                <CheckCircle className="h-4 w-4 text-green-600" />
+                <AlertDescription className="text-green-800">
                   Images uploaded successfully! You will be redirected to the archive page shortly.
                 </AlertDescription>
               </Alert>
