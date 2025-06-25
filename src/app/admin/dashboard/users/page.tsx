@@ -206,18 +206,16 @@ export default function UsersManagement() {
               <h1 className="text-3xl font-bold tracking-tight">Users Management</h1>
               <p className="text-muted-foreground">Manage user accounts, roles, and permissions.</p>
             </div>
-            {userRole === "admin" && (
-              <Button asChild>
-                <Link href="/admin/dashboard/users/create">
-                  <Plus className="mr-2 h-4 w-4" />
-                  Add User
-                </Link>
-              </Button>
-            )}
+            <Button asChild>
+              <Link href="/admin/dashboard/users/create">
+                <Plus className="mr-2 h-4 w-4" />
+                Add User
+              </Link>
+            </Button>
           </div>
           {userRole !== "admin" && (
             <div className="mb-4 text-xs text-muted-foreground">
-              Note: Only admins can add, edit, change role, or delete users. You can only view user profiles.
+              Note: Only admins can delete or change user roles. You can add and edit users you have access to.
             </div>
           )}
 
@@ -375,14 +373,12 @@ export default function UsersManagement() {
                               View Profile
                             </Link>
                           </DropdownMenuItem>
-                          {userRole === "admin" && (
-                            <DropdownMenuItem asChild>
-                              <Link href={`/admin/dashboard/users/${user.id}/edit`}>
-                                <Edit className="mr-2 h-4 w-4" />
-                                Edit User
-                              </Link>
-                            </DropdownMenuItem>
-                          )}
+                          <DropdownMenuItem asChild>
+                            <Link href={`/admin/dashboard/users/${user.id}/edit`}>
+                              <Edit className="mr-2 h-4 w-4" />
+                              Edit User
+                            </Link>
+                          </DropdownMenuItem>
                           {userRole === "admin" && (
                             <DropdownMenuItem>
                               <Shield className="mr-2 h-4 w-4" />

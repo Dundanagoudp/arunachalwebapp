@@ -35,14 +35,8 @@ export function LoginForm({
     const userRole = getCookie("userRole");
     console.log("[LoginForm] userRole from cookie:", userRole); // Debug log
     if (userRole) {
-      // Redirect to appropriate dashboard based on role
-      switch (userRole) {
-        case "admin":
-          router.replace("/admin/dashboard");
-          break;
-        default:
-          router.replace("/user/dashboard");
-      }
+      // Always redirect to /admin/dashboard for all users
+      router.replace("/admin/dashboard");
     }
   }, [router]);
 
