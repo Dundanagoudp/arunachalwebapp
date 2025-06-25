@@ -1,4 +1,4 @@
-'use client';
+ 'use client';
 import Speakers from '@/components/speakers/speakers';
 import React from 'react';
 

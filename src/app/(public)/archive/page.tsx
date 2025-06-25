@@ -1,4 +1,4 @@
-'use client';
+ 'use client';
 import Archive from "@/components/archive/archive";
 
 export default function Archivepage() {

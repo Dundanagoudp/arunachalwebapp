@@ -1,4 +1,4 @@
-'use client';
+ 'use client';
 
 import ContactUsPage from '@/components/contact/contact-us';
 import React from 'react';

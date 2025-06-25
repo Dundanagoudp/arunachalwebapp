@@ -1,4 +1,4 @@
-"use client";
+ "use client";
 
 import BlogLayout from "@/components/blogs/modules/blogspage";
 

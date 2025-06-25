@@ -1,4 +1,4 @@
-'use client';
+ 'use client';
 
 import Inthenews from '@/components/Inthenews/modules/Inthenews-section';
 import React from 'react';
