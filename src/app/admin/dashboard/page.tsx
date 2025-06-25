@@ -17,6 +17,8 @@ import { Badge } from "@/components/ui/badge"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Calendar, Users, FileText, Mic, BookOpen, TrendingUp, Plus, Eye, BarChart3, Activity } from "lucide-react"
 import Link from "next/link"
+import { useEffect, useState } from "react"
+import { getCookie } from "@/lib/cookies"
 
 export default function AdminDashboard() {
   // Mock data for dashboard
@@ -129,6 +131,11 @@ export default function AdminDashboard() {
     },
   ]
 
+  const [userRole, setUserRole] = useState<string | null>(null)
+  useEffect(() => {
+    setUserRole(getCookie("userRole"))
+  }, [])
+
   return (
     <SidebarProvider>
       <AppSidebar />
@@ -155,25 +162,29 @@ export default function AdminDashboard() {
           {/* Welcome Section */}
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold tracking-tight">Welcome back, Admin!</h1>
+              <h1 className="text-3xl font-bold tracking-tight">
+                Welcome back, {userRole === "admin" ? "Admin" : "User"}!
+              </h1>
               <p className="text-muted-foreground">
                 Here's what's happening with your Arunachal Literature platform today.
               </p>
             </div>
-            <div className="flex gap-2">
-              <Button asChild>
-                <Link href="/admin/dashboard/content/create">
-                  <Plus className="mr-2 h-4 w-4" />
-                  New Content
-                </Link>
-              </Button>
-              <Button variant="outline" asChild>
-                <Link href="/admin/dashboard/events/create">
-                  <Calendar className="mr-2 h-4 w-4" />
-                  New Event
-                </Link>
-              </Button>
-            </div>
+            {userRole === "admin" && (
+              <div className="flex gap-2">
+                <Button asChild>
+                  <Link href="/admin/dashboard/content/create">
+                    <Plus className="mr-2 h-4 w-4" />
+                    New Content
+                  </Link>
+                </Button>
+                <Button variant="outline" asChild>
+                  <Link href="/admin/dashboard/events/create">
+                    <Calendar className="mr-2 h-4 w-4" />
+                    New Event
+                  </Link>
+                </Button>
+              </div>
+            )}
           </div>
 
           {/* Stats Cards */}
@@ -337,19 +348,28 @@ export default function AdminDashboard() {
                       Manage Speakers
                     </Link>
                   </Button>
-                  <Button variant="outline" className="justify-start" asChild>
-                    <Link href="/admin/dashboard/users">
-                      <Users className="mr-2 h-4 w-4" />
-                      Manage Users
-                    </Link>
-                  </Button>
-                  <Button variant="outline" className="justify-start" asChild>
-                    <Link href="/admin/dashboard/workshops">
-                      <BookOpen className="mr-2 h-4 w-4" />
-                      Manage Workshops
-                    </Link>
-                  </Button>
+                  {userRole === "admin" && (
+                    <Button variant="outline" className="justify-start" asChild>
+                      <Link href="/admin/dashboard/users">
+                        <Users className="mr-2 h-4 w-4" />
+                        Manage Users
+                      </Link>
+                    </Button>
+                  )}
+                  {userRole === "admin" && (
+                    <Button variant="outline" className="justify-start" asChild>
+                      <Link href="/admin/dashboard/workshops">
+                        <BookOpen className="mr-2 h-4 w-4" />
+                        Manage Workshops
+                      </Link>
+                    </Button>
+                  )}
                 </div>
+                {userRole === "user" && (
+                  <div className="mt-2 text-xs text-muted-foreground">
+                    Note: Some features are only available to admins.
+                  </div>
+                )}
               </CardContent>
             </Card>
           </div>

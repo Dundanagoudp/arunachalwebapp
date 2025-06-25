@@ -5,6 +5,7 @@ const nextConfig: NextConfig = {
     domains: [
       'images.unsplash.com',
       'hebbkx1anhila5yf.public.blob.vercel-storage.com',
+      'storage.googleapis.com',
     ],
   },
   

@@ -13,6 +13,13 @@ import { useToast } from "@/hooks/use-toast"
 import { getEventDays, addTimeToEventDay } from "@/service/events-apis"
 import type { EventDay, AddTimeData } from "@/types/events-types"
 
+// Helper to get current local ISO string for datetime-local input
+function getNowISOString() {
+  const now = new Date();
+  const tzOffset = now.getTimezoneOffset() * 60000;
+  return new Date(now.getTime() - tzOffset).toISOString().slice(0, 16);
+}
+
 export default function AddTimeSlot() {
   const { toast } = useToast()
   const [eventDays, setEventDays] = useState<EventDay[]>([])
@@ -57,6 +64,21 @@ export default function AddTimeSlot() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    // Prevent selecting past times
+    if (formData.startTime && new Date(formData.startTime) < new Date()) {
+      toast({
+        title: "Error",
+        description: "Start Time cannot be in the past.",
+      });
+      return;
+    }
+    if (formData.endTime && new Date(formData.endTime) < new Date()) {
+      toast({
+        title: "Error",
+        description: "End Time cannot be in the past.",
+      });
+      return;
+    }
 
     if (!formData.eventDay_ref) {
       toast({
@@ -180,6 +202,7 @@ export default function AddTimeSlot() {
                 onChange={handleChange}
                 required
                 disabled={isSubmitting}
+                min={getNowISOString()}
               />
             </div>
             <div className="space-y-2">
@@ -192,6 +215,7 @@ export default function AddTimeSlot() {
                 onChange={handleChange}
                 required
                 disabled={isSubmitting}
+                min={getNowISOString()}
               />
             </div>
           </div>

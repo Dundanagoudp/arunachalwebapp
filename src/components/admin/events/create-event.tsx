@@ -1,7 +1,7 @@
 "use client"
 
 import type React from "react"
-import { useState } from "react"
+import { useState, useEffect, useRef } from "react"
 import { AppSidebar } from "@/components/app-sidebar"
 import {
   Breadcrumb,
@@ -24,6 +24,13 @@ import Link from "next/link"
 import { addEvent } from "@/service/events-apis"
 import type { CreateEventData } from "@/types/events-types"
 
+// Helper to get current local ISO string for datetime-local input
+function getNowISOString() {
+  const now = new Date();
+  const tzOffset = now.getTimezoneOffset() * 60000;
+  return new Date(now.getTime() - tzOffset).toISOString().slice(0, 16);
+}
+
 export default function CreateEvent() {
   const { toast } = useToast()
   const [isLoading, setIsLoading] = useState(false)
@@ -38,6 +45,22 @@ export default function CreateEvent() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    // Prevent selecting past dates
+    const now = new Date();
+    if (formData.startDate && new Date(formData.startDate) < now) {
+      toast({
+        title: "Error",
+        description: "Start Date cannot be in the past.",
+      });
+      return;
+    }
+    if (formData.endDate && new Date(formData.endDate) < now) {
+      toast({
+        title: "Error",
+        description: "End Date cannot be in the past.",
+      });
+      return;
+    }
     setIsLoading(true)
 
     try {
@@ -210,6 +233,7 @@ export default function CreateEvent() {
                       onChange={handleChange}
                       required
                       disabled={isLoading}
+                      min={getNowISOString()}
                     />
                   </div>
                   <div className="space-y-2">
@@ -222,6 +246,7 @@ export default function CreateEvent() {
                       onChange={handleChange}
                       required
                       disabled={isLoading}
+                      min={getNowISOString()}
                     />
                   </div>
                 </div>

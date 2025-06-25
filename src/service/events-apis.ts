@@ -9,7 +9,6 @@ import type {
   ApiResponse,
 } from "@/types/events-types"
 
-
 // Add Event - First step in the flow
 export async function addEvent(data: CreateEventData): Promise<ApiResponse<Event>> {
   try {
@@ -58,6 +57,23 @@ export async function getEventDays(): Promise<ApiResponse<EventDay[]>> {
     return {
       success: false,
       error: error.response?.data?.message || "Failed to fetch event days",
+    }
+  }
+}
+
+// get evdnet event/getEvent
+export async function getEvent(): Promise<ApiResponse<Event[]>> {
+  try {
+    const response = await apiClient.get("/event/getEvent")
+    return {
+      success: true,
+      data: response.data,
+      message: "Events fetched successfully",
+    }
+  } catch (error: any) {
+    return {
+      success: false,
+      error: error.response?.data?.message || "Failed to fetch events",
     }
   }
 }
