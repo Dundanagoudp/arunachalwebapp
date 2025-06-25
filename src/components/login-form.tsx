@@ -77,13 +77,8 @@ export function LoginForm({
       toast.success(result.message);
 
       // Redirect based on role
-      switch (result.data.user.role) {
-        case "admin":
-          router.replace("/admin/dashboard");
-          break;
-        default:
-          router.replace("/user/dashboard");
-      }
+      // Always redirect to /admin/dashboard for all users
+      router.replace("/admin/dashboard");
       // Force reload to ensure token is available for all requests
       window.location.reload();
     } catch (error) {

@@ -119,7 +119,7 @@ export default function SpeakersGrid() {
                           }}
                         >
                           <Image
-                            src={speaker.image_url || "/placeholder.svg"}
+                            src={speaker.image_url || "/images/speaker.png"}
                             alt={speaker.name}
                             fill
                             className="object-cover object-center"

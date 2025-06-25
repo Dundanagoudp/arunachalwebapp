@@ -105,7 +105,7 @@ export async function updateSpeaker(speakerId: string, data: FormData): Promise<
     const response = await apiClient.post(`/speaker/updateSpeaker/${speakerId}`, data)
     return {
       success: true,
-      data: response.data.updatedSpeaker, // Fixed: using updatedSpeaker from your API response
+      data: response.data.updatedSpeaker, 
       message: response.data.message || "Speaker updated successfully",
     }
   } catch (error: any) {
