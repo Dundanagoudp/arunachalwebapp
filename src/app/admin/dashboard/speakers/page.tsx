@@ -136,7 +136,7 @@ export default function SpeakersPage() {
               <p className="text-muted-foreground">Manage all speakers for your events.</p>
             </div>
             <Button asChild>
-              <Link href="/admin/speakers/create">
+              <Link href="/admin/dashboard/speakers/create">
                 <Plus className="mr-2 h-4 w-4" />
                 Add Speaker
               </Link>
@@ -176,7 +176,7 @@ export default function SpeakersPage() {
                   <h3 className="text-lg font-semibold mb-2">No speakers found</h3>
                   <p className="text-muted-foreground mb-4">Get started by adding your first speaker.</p>
                   <Button asChild>
-                    <Link href="/admin/speakers/create">
+                    <Link href="/admin/dashboard/speakers/create">
                       <Plus className="mr-2 h-4 w-4" />
                       Add Speaker
                     </Link>
