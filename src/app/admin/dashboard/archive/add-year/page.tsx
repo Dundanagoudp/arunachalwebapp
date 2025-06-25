@@ -212,21 +212,7 @@ export default function AddYearPage() {
                     </div>
                   </div>
 
-                  <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
-                    <h4 className="font-medium text-blue-900 mb-2">Preview</h4>
-                    <div className="text-sm text-blue-800">
-                      <p>
-                        <strong>Archive Period:</strong> {months.find((m) => m.value === formData.month)?.label}{" "}
-                        {formData.year}
-                      </p>
-                      <p>
-                        <strong>Days to Create:</strong> {formData.totalDays} days
-                      </p>
-                      <p>
-                        <strong>Day Labels:</strong> Day 1, Day 2, Day 3, ..., Day {formData.totalDays}
-                      </p>
-                    </div>
-                  </div>
+
                 </CardContent>
               </Card>
 
