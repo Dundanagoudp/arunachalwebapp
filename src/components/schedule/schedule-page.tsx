@@ -1,38 +1,31 @@
 import { Download } from "lucide-react"
 import { useState, useEffect } from "react"
 import Image from "next/image"
+import { getAllEvents } from "@/service/events-apis"
 
-const scheduleData = [
-  [ // Day 1
-    { id: "1", time: "09:00 AM", name: "Registration & Welcome Coffee" },
-    { id: "2", time: "10:00 AM", name: "Opening Ceremony", speaker: "Chief Guest" },
-    { id: "3", time: "11:00 AM", name: "Keynote Address: Preserving Indigenous Literature", speaker: "Dr. A. K. Mishra" },
-    { id: "4", time: "12:00 PM", name: "Panel Discussion: Digital Age of Literature", speaker: "Multiple Speakers" },
-    { id: "5", time: "01:00 PM", name: "Lunch Break" },
-    { id: "6", time: "02:00 PM", name: "Workshop: Creative Writing in Tribal Languages", speaker: "Prof. R. Singh" },
-    { id: "7", time: "03:30 PM", name: "Book Launch: 'Voices of Arunachal'", speaker: "Author Panel" },
-    { id: "8", time: "04:30 PM", name: "Networking Session" },
-    { id: "9", time: "05:30 PM", name: "Cultural Performance" },
-  ],
-  [ // Day 2
-    { id: "10", time: "09:00 AM", name: "Morning Session: Poetry Reading", speaker: "Poetry Circle" },
-    { id: "11", time: "10:30 AM", name: "Workshop: Storytelling Techniques", speaker: "Ms. P. Devi" },
-    { id: "12", time: "12:00 PM", name: "Lunch Break" },
-    { id: "13", time: "01:30 PM", name: "Panel: Publishing in Regional Languages", speaker: "Publishers Panel" },
-    { id: "14", time: "03:00 PM", name: "Interactive Session: Youth Literature", speaker: "Young Authors" },
-    { id: "15", time: "04:30 PM", name: "Book Signing Event" },
-    { id: "16", time: "06:00 PM", name: "Evening Cultural Program" },
-  ],
-  [ // Day 3
-    { id: "17", time: "09:00 AM", name: "Final Day Opening" },
-    { id: "18", time: "10:00 AM", name: "Special Guest Talk: Future of Literature", speaker: "Dr. S. Kumar" },
-    { id: "19", time: "11:30 AM", name: "Workshop: Digital Publishing", speaker: "Tech Experts" },
-    { id: "20", time: "01:00 PM", name: "Lunch & Networking" },
-    { id: "21", time: "02:30 PM", name: "Award Ceremony" },
-    { id: "22", time: "04:00 PM", name: "Closing Ceremony" },
-    { id: "23", time: "05:00 PM", name: "Farewell Tea" },
-  ],
-]
+// Month names for formatting
+const months = [
+  "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"
+];
+
+// Fetch real schedule data from API
+const fetchScheduleData = async () => {
+  const result = await getAllEvents();
+  if (!result.success || !result.data) throw new Error(result.error || "Failed to fetch events");
+  const { event, days } = result.data;
+  
+  // Map days to the expected format
+  const mappedDays = days.map((day) => 
+    (day.times || []).map((t) => ({
+      id: t._id,
+      time: t.startTime,
+      name: t.title,
+      speaker: t.speaker
+    }))
+  );
+  
+  return mappedDays;
+};
 
 const tabLabels = ["DAY 1", "DAY 2", "DAY 3"]
 
@@ -60,13 +53,28 @@ function ScheduleSkeleton() {
 export default function Schedulepage() {
   const [activeTab, setActiveTab] = useState(0)
   const [loading, setLoading] = useState(true)
-  const events = scheduleData[activeTab]
+  const [scheduleData, setScheduleData] = useState<any[][]>([])
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    setLoading(true)
-    const timer = setTimeout(() => setLoading(false), 1200)
-    return () => clearTimeout(timer)
-  }, [activeTab])
+    const loadData = async () => {
+      try {
+        setLoading(true)
+        setError(null)
+        const data = await fetchScheduleData()
+        setScheduleData(data)
+      } catch (err) {
+        setError("Failed to load schedule data")
+        console.error("Error loading schedule:", err)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadData()
+  }, [])
+
+  const events = scheduleData[activeTab] || []
 
   return (
     <div className="min-h-screen bg-[#FFFAEE] p-8 relative overflow-hidden">
@@ -120,6 +128,8 @@ export default function Schedulepage() {
         {/* Event Card or Skeleton */}
         {loading ? (
           <ScheduleSkeleton />
+        ) : error ? (
+          <div className="text-red-500 text-center p-4">{error}</div>
         ) : (
           <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-2">
             <div className="max-h-[500px] overflow-y-auto pr-4 relative">

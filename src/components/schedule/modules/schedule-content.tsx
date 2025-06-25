@@ -1,24 +1,30 @@
 import React, { useEffect, useState } from "react"
+import { getAllEvents } from "@/service/events-apis"
 
 export type ScheduleDay = 0 | 1 | 2
 
-const scheduleData = [
-  [ // Day 1
-    { time: "11:00 AM", name: "Event Name 1", description: "" },
-    { time: "12:00 PM", name: "Event Name 2", description: "" },
-    { time: "01:00 PM", name: "Event Name 3", description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit." },
-  ],
-  [ // Day 2
-    { time: "11:00 AM", name: "Event Name 4", description: "" },
-    { time: "12:00 PM", name: "Event Name 5", description: "" },
-    { time: "01:00 PM", name: "Event Name 6", description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit." },
-  ],
-  [ // Day 3
-    { time: "11:00 AM", name: "Event Name 7", description: "" },
-    { time: "12:00 PM", name: "Event Name 8", description: "" },
-    { time: "01:00 PM", name: "Event Name 9", description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit." },
-  ],
-]
+// Month names for formatting
+const months = [
+  "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"
+];
+
+// Fetch real schedule data from API
+const fetchScheduleData = async () => {
+  const result = await getAllEvents();
+  if (!result.success || !result.data) throw new Error(result.error || "Failed to fetch events");
+  const { event, days } = result.data;
+  
+  // Map days to the expected format
+  const mappedDays = days.map((day) => 
+    (day.times || []).map((t) => ({
+      time: t.startTime,
+      name: t.title,
+      description: ""
+    }))
+  );
+  
+  return mappedDays;
+};
 
 function ScheduleSkeleton() {
   return (
@@ -41,15 +47,31 @@ function ScheduleSkeleton() {
 
 export function ScheduleContent({ activeDay }: { activeDay: ScheduleDay }) {
   const [loading, setLoading] = useState(true)
-  const events = scheduleData[activeDay]
+  const [scheduleData, setScheduleData] = useState<any[][]>([])
+  const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
-    setLoading(true)
-    const timer = setTimeout(() => setLoading(false), 1000)
-    return () => clearTimeout(timer)
-  }, [activeDay])
+    const loadData = async () => {
+      try {
+        setLoading(true)
+        setError(null)
+        const data = await fetchScheduleData()
+        setScheduleData(data)
+      } catch (err) {
+        setError("Failed to load schedule data")
+        console.error("Error loading schedule:", err)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    loadData()
+  }, [])
+
+  const events = scheduleData[activeDay] || []
 
   if (loading) return <ScheduleSkeleton />
+  if (error) return <div className="text-red-500 text-center p-4">{error}</div>
 
   return (
     <div className="bg-white rounded-lg p-4 shadow-sm">
@@ -58,7 +80,7 @@ export function ScheduleContent({ activeDay }: { activeDay: ScheduleDay }) {
           key={index}
           className="py-4 flex flex-col sm:flex-row gap-4 items-start mb-4 last:mb-0 bg-white rounded-xl shadow-md border border-gray-200"
         >
-          <div className="w-24 font-medium text-[#000000-700 font-dm-serif text-base sm:text-lg mb-2 sm:mb-0">{event.time}</div>
+          <div className="w-24 font-medium text-[#000000] font-dm-serif text-base sm:text-lg mb-2 sm:mb-0">{event.time}</div>
           <div className="flex-1">
             <div className="font-bilo text-base text-[#000000]">{event.name}</div>
             {event.description && <div className="text-sm text-gray-500 mt-1 font-bilo">{event.description}</div>}
