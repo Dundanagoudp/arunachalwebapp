@@ -3,7 +3,7 @@
 import { ArrowUpRight } from "lucide-react"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
-import SunIcon from "@/components/archive/sun-icon"
+import SunIcon from "../archive/sun-icon"
 
 export default function ContactUsPage() {
   const inputWrapperClass = "relative"

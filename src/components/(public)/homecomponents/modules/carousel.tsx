@@ -5,7 +5,7 @@ import Image from "next/image"
 import { ChevronRight, ChevronLeft, ArrowUpRight } from "lucide-react"
 import { motion } from "framer-motion"
 import { SkeletonCard } from "@/components/skeleton-card"
-import SunIcon from "@/components/archive/sun-icon"
+import SunIcon from "../../archive/sun-icon"
 
 export default function Carousel() {
   const [currentIndex, setCurrentIndex] = useState(0)

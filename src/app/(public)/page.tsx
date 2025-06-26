@@ -1,13 +1,14 @@
-import Attendeessay from "@/components/homecomponents/modules/attendeessay";
-import Blogs from "@/components/homecomponents/modules/blogs";
-import Carousel from "@/components/homecomponents/modules/carousel";
-import Contactsection from "@/components/homecomponents/modules/contact-section";
-import GallerySection from "@/components/homecomponents/modules/gallery-section";
-import HeroSection from "@/components/homecomponents/modules/herosection";
-import Schedule from "@/components/homecomponents/modules/schedule";
-import Speakers from "@/components/homecomponents/modules/speakers";
-import Testimonials from "@/components/homecomponents/modules/testimonials";
-import FestivalInfo from "@/components/homecomponents/modules/welcome-section";
+import Attendeessay from "@/components/(public)/homecomponents/modules/attendeessay";
+import Blogs from "@/components/(public)/homecomponents/modules/blogs";
+import Carousel from "@/components/(public)/homecomponents/modules/carousel";
+import Contactsection from "@/components/(public)/homecomponents/modules/contact-section";
+import GallerySection from "@/components/(public)/homecomponents/modules/gallery-section";
+import HeroSection from "@/components/(public)/homecomponents/modules/herosection";
+import Schedule from "@/components/(public)/homecomponents/modules/schedule";
+import Testimonials from "@/components/(public)/homecomponents/modules/testimonials";
+import FestivalInfo from "@/components/(public)/homecomponents/modules/welcome-section";
+import Speakers from "@/components/(public)/speakers/speakers";
+
 
 export default function Home() {
   return (
