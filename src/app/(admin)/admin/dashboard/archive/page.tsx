@@ -25,7 +25,7 @@ import {
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Plus, Upload, RefreshCw, Archive, AlertCircle, CheckCircle } from "lucide-react"
 import Link from "next/link"
-import { getAllImages, deleteUploadedImage } from "@/service/archive"
+import { getAllImages, deleteUploadedImage, deleteYear } from "@/service/archive"
 import { ArchiveStats } from "@/components/admin/archivecomponets/archive-stats"
 import { ArchiveFilters } from "@/components/admin/archivecomponets/archive-filters"
 import { ImageGrid } from "@/components/admin/archivecomponets/image-grid"
@@ -46,6 +46,8 @@ export default function ArchiveManagement() {
   const [refreshing, setRefreshing] = useState(false)
   const [deleteLoading, setDeleteLoading] = useState(false)
   const [successMessage, setSuccessMessage] = useState("")
+  const [deleteYearDialogOpen, setDeleteYearDialogOpen] = useState(false)
+  const [deleteYearLoading, setDeleteYearLoading] = useState(false)
 
   useEffect(() => {
     fetchImages()
@@ -160,6 +162,35 @@ export default function ArchiveManagement() {
     }
   }
 
+  const handleDeleteYear = () => {
+    setDeleteYearDialogOpen(true)
+  }
+
+  const confirmDeleteYear = async () => {
+    if (yearFilter === "all") return
+    setDeleteYearLoading(true)
+    setError("")
+    try {
+      // Find the yearId from images (since we only have year number in yearFilter)
+      const yearImage = images.find(img => img.year_ref.year.toString() === yearFilter)
+      const yearId = yearImage?.year_ref._id
+      if (!yearId) throw new Error("Year ID not found")
+      const result = await deleteYear(yearId)
+      if (result.success) {
+        setSuccessMessage("Year deleted successfully")
+        setYearFilter("all")
+        await fetchImages()
+      } else {
+        throw new Error(result.error || "Failed to delete year")
+      }
+    } catch (error: any) {
+      setError(error.message || "Failed to delete year")
+    } finally {
+      setDeleteYearLoading(false)
+      setDeleteYearDialogOpen(false)
+    }
+  }
+
   if (loading) {
     return (
       <SidebarProvider>
@@ -264,6 +295,7 @@ export default function ArchiveManagement() {
             totalCount={filteredImages.length}
             onSelectAll={handleSelectAll}
             onBulkDelete={() => setBulkDeleteDialogOpen(true)}
+            onDeleteYear={yearFilter !== "all" ? handleDeleteYear : undefined}
           />
 
           {/* Content */}
@@ -333,6 +365,26 @@ export default function ArchiveManagement() {
               </Button>
               <Button variant="destructive" onClick={handleBulkDelete} disabled={deleteLoading}>
                 {deleteLoading ? "Deleting..." : `Delete ${selectedImages.length} Images`}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Delete Year Confirmation Dialog */}
+        <Dialog open={deleteYearDialogOpen} onOpenChange={setDeleteYearDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Delete Year</DialogTitle>
+              <DialogDescription>
+                Are you sure you want to delete this year and all its images? This action cannot be undone.
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setDeleteYearDialogOpen(false)} disabled={deleteYearLoading}>
+                Cancel
+              </Button>
+              <Button variant="destructive" onClick={confirmDeleteYear} disabled={deleteYearLoading}>
+                {deleteYearLoading ? "Deleting..." : "Delete Year"}
               </Button>
             </DialogFooter>
           </DialogContent>

@@ -24,6 +24,7 @@ interface ArchiveFiltersProps {
   totalCount: number
   onSelectAll: () => void
   onBulkDelete: () => void
+  onDeleteYear?: () => void
 }
 
 export function ArchiveFilters({
@@ -39,6 +40,7 @@ export function ArchiveFilters({
   totalCount,
   onSelectAll,
   onBulkDelete,
+  onDeleteYear,
 }: ArchiveFiltersProps) {
   const [availableYears, setAvailableYears] = useState<ArchiveYear[]>([])
   const [availableDays, setAvailableDays] = useState<ArchiveDay[]>([])
@@ -113,6 +115,12 @@ export function ArchiveFilters({
               <Button variant="destructive" size="sm" onClick={onBulkDelete}>
                 <Trash2 className="h-4 w-4 mr-2" />
                 Delete Selected ({selectedCount})
+              </Button>
+            )}
+            {onDeleteYear && yearFilter !== "all" && (
+              <Button variant="destructive" size="sm" onClick={onDeleteYear}>
+                <Trash2 className="h-4 w-4 mr-2" />
+                Delete Year
               </Button>
             )}
           </div>
