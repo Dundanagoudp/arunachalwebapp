@@ -5,9 +5,9 @@ import Contactsection from "@/components/(public)/homecomponents/modules/contact
 import GallerySection from "@/components/(public)/homecomponents/modules/gallery-section";
 import HeroSection from "@/components/(public)/homecomponents/modules/herosection";
 import Schedule from "@/components/(public)/homecomponents/modules/schedule";
+import Speakers from "@/components/(public)/homecomponents/modules/speakers";
 import Testimonials from "@/components/(public)/homecomponents/modules/testimonials";
 import FestivalInfo from "@/components/(public)/homecomponents/modules/welcome-section";
-import Speakers from "@/components/(public)/speakers/speakers";
 
 
 export default function Home() {
