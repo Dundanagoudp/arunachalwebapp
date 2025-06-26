@@ -30,6 +30,7 @@ import { ArchiveStats } from "@/components/admin/archivecomponets/archive-stats"
 import { ArchiveFilters } from "@/components/admin/archivecomponets/archive-filters"
 import { ImageGrid } from "@/components/admin/archivecomponets/image-grid"
 import type { ArchiveImage } from "@/types/archive-types"
+import { Skeleton } from "@/components/ui/skeleton"
 
 export default function ArchiveManagement() {
   const [images, setImages] = useState<ArchiveImage[]>([])
@@ -48,6 +49,8 @@ export default function ArchiveManagement() {
   const [successMessage, setSuccessMessage] = useState("")
   const [deleteYearDialogOpen, setDeleteYearDialogOpen] = useState(false)
   const [deleteYearLoading, setDeleteYearLoading] = useState(false)
+  const [currentPage, setCurrentPage] = useState(1)
+  const imagesPerPage = 8
 
   useEffect(() => {
     fetchImages()
@@ -101,6 +104,18 @@ export default function ArchiveManagement() {
 
     return matchesSearch && matchesYear && matchesDay
   })
+
+  // Pagination logic
+  const totalPages = Math.ceil(filteredImages.length / imagesPerPage)
+  const paginatedImages = filteredImages.slice(
+    (currentPage - 1) * imagesPerPage,
+    currentPage * imagesPerPage
+  )
+
+  // Reset to page 1 if filters change and current page is out of range
+  useEffect(() => {
+    if (currentPage > totalPages) setCurrentPage(1)
+  }, [searchTerm, yearFilter, dayFilter, totalPages])
 
   const handleSelectImage = (imageId: string) => {
     setSelectedImages((prev) => (prev.includes(imageId) ? prev.filter((id) => id !== imageId) : [...prev, imageId]))
@@ -196,11 +211,32 @@ export default function ArchiveManagement() {
       <SidebarProvider>
         <AppSidebar />
         <SidebarInset>
-          <div className="flex items-center justify-center h-screen">
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
-              <p className="mt-4">Loading archive data...</p>
-            </div>
+          <div className="flex flex-1 flex-col gap-6 p-6 pt-0">
+            {/* Skeleton for grouped years/days/images */}
+            {[1, 2].map((yearIdx) => (
+              <div key={yearIdx} className="border rounded-lg p-6 mb-6">
+                <div className="flex items-center gap-2 mb-6">
+                  <Skeleton className="h-6 w-32" /> {/* Year title */}
+                  <Skeleton className="h-5 w-16" /> {/* Days badge */}
+                  <Skeleton className="h-5 w-20" /> {/* Images badge */}
+                </div>
+                <div className="space-y-6">
+                  {[1, 2].map((dayIdx) => (
+                    <div key={dayIdx} className="border rounded-lg p-4 mb-4">
+                      <div className="flex items-center gap-2 mb-4">
+                        <Skeleton className="h-5 w-24" /> {/* Day label */}
+                        <Skeleton className="h-5 w-16" /> {/* Images badge */}
+                      </div>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                        {[1, 2].map((imgIdx) => (
+                          <Skeleton key={imgIdx} className="aspect-square w-full h-32" />
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
           </div>
         </SidebarInset>
       </SidebarProvider>
@@ -299,14 +335,45 @@ export default function ArchiveManagement() {
           />
 
           {/* Content */}
-          {filteredImages.length > 0 ? (
-            <ImageGrid
-              images={filteredImages}
-              viewMode={viewMode}
-              selectedImages={selectedImages}
-              onSelectImage={handleSelectImage}
-              onDeleteImage={handleDeleteImage}
-            />
+          {paginatedImages.length > 0 ? (
+            <>
+              <ImageGrid
+                images={paginatedImages}
+                viewMode={viewMode}
+                selectedImages={selectedImages}
+                onSelectImage={handleSelectImage}
+                onDeleteImage={handleDeleteImage}
+              />
+              {/* Pagination Controls */}
+              <div className="flex justify-center items-center gap-2 mt-6">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                >
+                  Prev
+                </Button>
+                {Array.from({ length: totalPages }).map((_, idx) => (
+                  <Button
+                    key={idx + 1}
+                    variant={currentPage === idx + 1 ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setCurrentPage(idx + 1)}
+                  >
+                    {idx + 1}
+                  </Button>
+                ))}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                  disabled={currentPage === totalPages}
+                >
+                  Next
+                </Button>
+              </div>
+            </>
           ) : (
             <Card>
               <CardContent className="text-center py-12">
