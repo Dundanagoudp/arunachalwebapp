@@ -127,8 +127,8 @@ export function ArchiveFilters({
         </div>
       </CardHeader>
       <CardContent>
-        <div className="flex gap-4 items-end">
-          <div className="flex-1">
+        <div className="flex flex-col gap-4 md:flex-row md:gap-4 md:items-end">
+          <div className="flex-1 w-full">
             <Label htmlFor="search">Search archive</Label>
             <div className="relative">
               <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -137,14 +137,14 @@ export function ArchiveFilters({
                 placeholder="Search by year or day..."
                 value={searchTerm}
                 onChange={(e) => onSearchChange(e.target.value)}
-                className="pl-8"
+                className="pl-8 w-full"
               />
             </div>
           </div>
-          <div>
+          <div className="w-full md:w-auto">
             <Label htmlFor="year">Year</Label>
             <Select value={yearFilter} onValueChange={onYearFilterChange} disabled={loading}>
-              <SelectTrigger className="w-[200px]">
+              <SelectTrigger className="w-full md:w-[200px]">
                 <SelectValue placeholder={loading ? "Loading..." : "All Years"} />
               </SelectTrigger>
               <SelectContent>
@@ -157,14 +157,14 @@ export function ArchiveFilters({
               </SelectContent>
             </Select>
           </div>
-          <div>
+          <div className="w-full md:w-auto">
             <Label htmlFor="day">Day</Label>
             <Select
               value={dayFilter}
               onValueChange={onDayFilterChange}
               disabled={!yearFilter || yearFilter === "all" || availableDays.length === 0}
             >
-              <SelectTrigger className="w-[150px]">
+              <SelectTrigger className="w-full md:w-[150px]">
                 <SelectValue placeholder="All Days" />
               </SelectTrigger>
               <SelectContent>
@@ -177,7 +177,7 @@ export function ArchiveFilters({
               </SelectContent>
             </Select>
           </div>
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2 w-full md:w-auto md:justify-end">
             <Checkbox
               id="selectAll"
               checked={selectedCount === totalCount && totalCount > 0}

@@ -265,14 +265,14 @@ export default function ArchiveManagement() {
           </div>
         </header>
 
-        <div className="flex flex-1 flex-col gap-6 p-6 pt-0">
+        <div className="flex flex-1 flex-col gap-6 p-2 pt-0 sm:p-4 md:p-6">
           {/* Header */}
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
             <div>
-              <h1 className="text-3xl font-bold tracking-tight">Archive Management</h1>
-              <p className="text-muted-foreground">Manage your archive collection by years, days, and images.</p>
+              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Archive Management</h1>
+              <p className="text-muted-foreground text-sm sm:text-base">Manage your archive collection by years, days, and images.</p>
             </div>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2 mt-2 md:mt-0">
               <Button variant="outline" onClick={refreshData} disabled={refreshing}>
                 <RefreshCw className={`mr-2 h-4 w-4 ${refreshing ? "animate-spin" : ""}`} />
                 Refresh
