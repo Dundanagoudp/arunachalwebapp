@@ -22,15 +22,15 @@ import { use } from "react"
 
 // Shimmer effect component
 const ShimmerEffect = ({ className }: { className?: string }) => (
-  <div className={`relative overflow-hidden ${className}`}>
-    <div className="bg-gradient-to-r from-gray-300 via-gray-100 to-gray-300 bg-[length:200%_100%] animate-shimmer rounded h-full w-full"></div>
-    <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent animate-shimmer rounded h-full w-full"></div>
+  <div className={`relative overflow-hidden rounded-lg border border-gray-200 shadow-sm ${className}`}>
+    <div className="absolute inset-0 bg-gradient-to-r from-gray-200 via-gray-100 to-gray-200 animate-[shimmer_1.5s_infinite_linear]" style={{ backgroundSize: '200% 100%' }} />
+    <div className="invisible">&nbsp;</div>
   </div>
 )
 
 // Gallery Image Shimmer Component
 const GalleryImageShimmer = () => (
-  <div className="aspect-[4/3] rounded-lg overflow-hidden">
+  <div className="aspect-[4/3] w-full h-full">
     <ShimmerEffect className="w-full h-full" />
   </div>
 )
@@ -40,7 +40,7 @@ const HeaderShimmer = () => (
   <header className="container mx-auto px-4 py-6 flex items-center justify-between relative">
     <ShimmerEffect className="h-6 w-16" />
     <ShimmerEffect className="h-8 w-20" />
-    <ShimmerEffect className="h-7 w-7 rounded-full" />
+    <ShimmerEffect className="h-7 w-7" />
   </header>
 )
 
@@ -73,7 +73,7 @@ function ImageModal({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 bg-black bg-opacity-80 z-50 flex items-center justify-center p-4"
+          className="fixed inset-0 z-[9999] bg-black/80 backdrop-blur-sm flex items-center justify-center p-2 sm:p-4 transition-all duration-300"
           onClick={onClose}
         >
           <motion.div
@@ -81,7 +81,7 @@ function ImageModal({
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.9, opacity: 0 }}
             transition={{ type: "spring", stiffness: 300 }}
-            className="relative max-w-4xl max-h-[90vh] bg-white rounded-lg overflow-hidden"
+            className="relative w-full max-w-4xl max-h-[90vh] bg-white rounded-lg overflow-hidden shadow-xl"
             onClick={(e) => e.stopPropagation()}
           >
             <button
