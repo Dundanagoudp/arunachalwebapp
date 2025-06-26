@@ -2,18 +2,19 @@ export interface ArchiveYear {
   _id: string
   year: number
   month: number
-  totalDays: number
-  createdAt: string
-  updatedAt: string
+  totalDays?: number
+  days?: ArchiveDay[]
+  createdAt?: string
+  updatedAt?: string
 }
 
 export interface ArchiveDay {
   _id: string
-  year_ref: string | ArchiveYear
+  year_ref?: string | ArchiveYear
   dayLabel: string
-  dayNumber: number
-  createdAt: string
-  updatedAt: string
+  dayNumber?: number
+  createdAt?: string
+  updatedAt?: string
 }
 
 export interface ArchiveImage {
@@ -50,9 +51,7 @@ export interface ArchiveApiResponse {
 }
 
 export interface YearApiResponse {
-  year: ArchiveYear
-  days?: ArchiveDay[]
-  images?: ArchiveImage[]
+  years: ArchiveYear[]
 }
 
 export interface UploadResponse {

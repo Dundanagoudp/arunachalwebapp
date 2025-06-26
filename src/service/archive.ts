@@ -1,7 +1,30 @@
 import apiClient from "@/apiClient"
-import type { ApiResponse, ArchiveImage, ArchiveYear, ArchiveApiResponse, UploadResponse } from "@/types/archive-types"
+import type {
+  ApiResponse,
+  ArchiveImage,
+  ArchiveYear,
+  ArchiveApiResponse,
+  YearApiResponse,
+  UploadResponse,
+} from "@/types/archive-types"
 
 // Year Management
+export async function getYear(): Promise<ApiResponse<YearApiResponse>> {
+  try {
+    const response = await apiClient.get("/archive/getYear")
+    return {
+      success: true,
+      data: response.data,
+      message: "Years fetched successfully",
+    }
+  } catch (error: any) {
+    return {
+      success: false,
+      error: error.response?.data?.message || "Failed to fetch years",
+    }
+  }
+}
+
 export async function addYear(data: any): Promise<ApiResponse<ArchiveYear>> {
   try {
     const response = await apiClient.post("/archive/addyear", data)

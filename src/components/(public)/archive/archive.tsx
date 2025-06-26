@@ -1,10 +1,12 @@
 "use client"
+
+import { useState, useEffect } from "react"
+import { useRouter } from "next/navigation"
 import Image from "next/image"
 import { ArrowRight } from "lucide-react"
 import { motion } from "framer-motion"
-import { useRouter } from "next/navigation"
-import { useState, useEffect } from "react"
-import SunIcon from "./sun-icon"
+import { getYearWiseImages, getYear } from "@/service/archive"
+import SunIcon from "@/components/sunicon-gif"
 
 // Shimmer effect component
 const ShimmerEffect = ({ className }: { className?: string }) => (
@@ -40,22 +42,73 @@ const HeaderShimmer = () => (
   </header>
 )
 
+interface YearData {
+  year: number
+  yearId: string
+  images: string[]
+}
+
 export default function Archive() {
   const router = useRouter()
   const [isLoading, setIsLoading] = useState(true)
+  const [yearData, setYearData] = useState<YearData[]>([])
+  const [error, setError] = useState<string | null>(null)
+  const [activeYearId, setActiveYearId] = useState<string | null>(null)
 
   useEffect(() => {
-    // Simulate loading time
-    const timer = setTimeout(() => {
-      setIsLoading(false)
-    }, 2000) // Show shimmer for 2 seconds
+    const fetchArchiveData = async () => {
+      try {
+        setIsLoading(true)
 
-    return () => clearTimeout(timer)
+        // Get both years and images data
+        const [yearsResponse, imagesResponse] = await Promise.all([getYear(), getYearWiseImages()])
+
+        if (yearsResponse.success && imagesResponse.success && yearsResponse.data && imagesResponse.data) {
+          // Create a map of year numbers to year IDs
+          const yearIdMap = new Map()
+          if (yearsResponse.data.years) {
+            yearsResponse.data.years.forEach((yearObj: any) => {
+              yearIdMap.set(yearObj.year, yearObj._id)
+            })
+          }
+
+          // Transform the images data with year IDs
+          const transformedData: YearData[] = imagesResponse.data.archive.map((item: any) => ({
+            year: item.year,
+            yearId: yearIdMap.get(item.year) || item.year.toString(),
+            images: item.images.filter((_: any, index: number) => index % 2 === 1),
+          }))
+
+          setYearData(transformedData.sort((a, b) => b.year - a.year))
+        } else {
+          setError("Failed to fetch archive data")
+        }
+      } catch (err) {
+        setError("An error occurred while fetching data")
+        console.error("Archive fetch error:", err)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchArchiveData()
   }, [])
 
   // Function to handle redirection when clicking on a year card
-  const handleYearClick = (year: number) => {
-    router.push(`/archive/${year}`)
+  const handleYearClick = (yearData: YearData) => {
+    setActiveYearId(yearData.yearId)
+    router.push(`/archive/${yearData.year}?yearId=${yearData.yearId}`)
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-[#FFFAEE] flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-red-600 mb-4">Error Loading Archive</h2>
+          <p className="text-gray-600">{error}</p>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -70,10 +123,10 @@ export default function Archive() {
         </header>
       )}
 
-      <main className="container mx-auto px-4 py-8 lg:-w-64 lg:px-18">
+      <main className="container mx-auto px-4 py-8 lg:max-w-8xl lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <SunIcon size={38} className="absolute top-58 left-5 " />
-          
+          <SunIcon size={38} className="absolute top-58 left-5" />
+
           {isLoading ? (
             <>
               <YearCardShimmer />
@@ -83,71 +136,62 @@ export default function Archive() {
             </>
           ) : (
             <>
-              {[2024, 2023, 2022, 2021].map((year) => (
+              {yearData.map((data) => (
                 <motion.div
-                  key={year}
-                  className="border-2 border-orange-400 rounded-xl p-4 relative overflow-hidden cursor-pointer"
+                  key={data.year}
+                  className={`group border-2 rounded-xl p-4 relative overflow-hidden cursor-pointer transition-colors ${activeYearId === data.yearId ? 'border-red-600' : 'border-orange-400'}`}
                   whileHover={{ scale: 1.02 }}
                   transition={{ type: "spring", stiffness: 300 }}
-                  onClick={() => handleYearClick(year)}
+                  onClick={() => handleYearClick(data)}
                   tabIndex={0}
                   role="button"
-                  aria-label={`View gallery for year ${year}`}
+                  aria-label={`View gallery for year ${data.year}`}
                   onKeyDown={(e) => {
                     if (e.key === "Enter" || e.key === " ") {
-                      handleYearClick(year)
+                      handleYearClick(data)
                     }
                   }}
                 >
                   <div className="grid grid-cols-2 gap-2 mb-4">
-                    <div className="aspect-[4/3] rounded-lg overflow-hidden">
-                      <Image
-                        src="/gallery/gallery1.png"
-                        alt={`Gallery preview image 1 for year ${year}`}
-                        width={200}
-                        height={150}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <div className="aspect-[4/3] rounded-lg overflow-hidden">
-                      <Image
-                        src="/gallery/gallery2.png"
-                        alt={`Gallery preview image 2 for year ${year}`}
-                        width={200}
-                        height={150}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <div className="aspect-[4/3] rounded-lg overflow-hidden">
-                      <Image
-                        src="/gallery/gallery3.png"
-                        alt={`Gallery preview image 3 for year ${year}`}
-                        width={200}
-                        height={150}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <div className="aspect-[4/3] rounded-lg overflow-hidden">
-                      <Image
-                        src="/gallery/gallery4.png"
-                        alt={`Gallery preview image 4 for year ${year}`}
-                        width={200}
-                        height={150}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
+                    {data.images.slice(0, 4).map((imageUrl, index) => (
+                      <div key={index} className="aspect-[4/3] rounded-lg overflow-hidden">
+                        <Image
+                          src={imageUrl || "/placeholder.svg?height=150&width=200"}
+                          alt={`Gallery preview image ${index + 1} for year ${data.year}`}
+                          width={200}
+                          height={150}
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement
+                            target.src = "/placeholder.svg?height=150&width=200"
+                          }}
+                        />
+                      </div>
+                    ))}
+                    {/* Fill remaining slots with placeholders if not enough images */}
+                    {Array.from({ length: Math.max(0, 4 - data.images.length) }, (_, index) => (
+                      <div key={`placeholder-${index}`} className="aspect-[4/3] rounded-lg overflow-hidden bg-gray-200">
+                        <Image
+                          src="/placeholder.svg?height=150&width=200"
+                          alt={`Placeholder image ${index + 1}`}
+                          width={200}
+                          height={150}
+                          className="w-full h-full object-cover opacity-50"
+                        />
+                      </div>
+                    ))}
                   </div>
                   <div className="flex justify-between items-center">
-                    <h2 className="text-2xl font-bold text-amber-800">{year}</h2>
-                    <div className="flex items-center text-sm font-medium text-gray-700">
-                      View All <ArrowRight size={16} className="ml-1" />
+                    <h2 className="text-2xl font-bold text-amber-800">{data.year}</h2>
+                    <div className={`flex items-center text-sm font-medium transition-colors ${activeYearId === data.yearId ? 'text-red-600' : 'text-gray-700'} group-hover:text-red-600 group-focus:text-red-600`}>
+                      View All ({data.images.length} images) <ArrowRight size={16} className={`ml-1 transition-colors ${activeYearId === data.yearId ? 'text-red-600' : ''} group-hover:text-red-600 group-focus:text-red-600`} />
                     </div>
                   </div>
                 </motion.div>
               ))}
             </>
           )}
-          <SunIcon size={35} className="absolute top-190 left-0 " />
+          <SunIcon size={35} className="absolute bottom-10 left-0" />
         </div>
       </main>
     </div>

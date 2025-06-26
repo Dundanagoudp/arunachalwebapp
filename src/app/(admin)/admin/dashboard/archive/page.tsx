@@ -37,6 +37,7 @@ export default function ArchiveManagement() {
   const [error, setError] = useState("")
   const [searchTerm, setSearchTerm] = useState("")
   const [yearFilter, setYearFilter] = useState("all")
+  const [dayFilter, setDayFilter] = useState("all")
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid")
   const [selectedImages, setSelectedImages] = useState<string[]>([])
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
@@ -94,7 +95,9 @@ export default function ArchiveManagement() {
 
     const matchesYear = yearFilter === "all" || image.year_ref.year.toString() === yearFilter
 
-    return matchesSearch && matchesYear
+    const matchesDay = dayFilter === "all" || image.dayNumber_ref._id === dayFilter
+
+    return matchesSearch && matchesYear && matchesDay
   })
 
   const handleSelectImage = (imageId: string) => {
@@ -253,7 +256,8 @@ export default function ArchiveManagement() {
             onSearchChange={setSearchTerm}
             yearFilter={yearFilter}
             onYearFilterChange={setYearFilter}
-            availableYears={uniqueYears}
+            dayFilter={dayFilter}
+            onDayFilterChange={setDayFilter}
             viewMode={viewMode}
             onViewModeChange={setViewMode}
             selectedCount={selectedImages.length}

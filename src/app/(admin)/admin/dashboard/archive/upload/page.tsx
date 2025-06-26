@@ -23,18 +23,25 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Progress } from "@/components/ui/progress"
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Upload, X, ImageIcon, CheckCircle, AlertCircle, FileImage } from "lucide-react"
-import { getAllImages, uploadImages } from "@/service/archive"
+import { getYear, uploadImages } from "@/service/archive"
+import type { ArchiveYear as YearType, ArchiveDay as DayType } from "@/types/archive-types"
 
-interface ArchiveYear {
-  _id: string
-  year: number
-  month: number
-}
-
-interface ArchiveDay {
-  _id: string
-  year_ref: string
-  dayLabel: string
+const getMonthName = (monthNumber: number) => {
+  const months = [
+    "January",
+    "February",
+    "March",
+    "April",
+    "May",
+    "June",
+    "July",
+    "August",
+    "September",
+    "October",
+    "November",
+    "December",
+  ]
+  return months[monthNumber - 1] || `Month ${monthNumber}`
 }
 
 export default function UploadImagesPage() {
@@ -44,8 +51,8 @@ export default function UploadImagesPage() {
   const [uploadProgress, setUploadProgress] = useState(0)
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState("")
-  const [years, setYears] = useState<ArchiveYear[]>([])
-  const [days, setDays] = useState<ArchiveDay[]>([])
+  const [years, setYears] = useState<YearType[]>([])
+  const [days, setDays] = useState<DayType[]>([])
   const [selectedFiles, setSelectedFiles] = useState<File[]>([])
   const [dragActive, setDragActive] = useState(false)
   const [formData, setFormData] = useState({
@@ -65,20 +72,11 @@ export default function UploadImagesPage() {
 
   const fetchYears = async () => {
     try {
-      const result = await getAllImages()
-      if (result.success && result.data?.archive) {
-        const uniqueYears = result.data.archive.reduce((acc: ArchiveYear[], img: any) => {
-          const existingYear = acc.find((y) => y._id === img.year_ref._id)
-          if (!existingYear) {
-            acc.push({
-              _id: img.year_ref._id,
-              year: img.year_ref.year,
-              month: 1,
-            })
-          }
-          return acc
-        }, [])
-        setYears(uniqueYears.sort((a: ArchiveYear, b: ArchiveYear) => b.year - a.year))
+      const result = await getYear()
+      if (result.success && result.data?.years) {
+        // Sort years by year in descending order (newest first)
+        const sortedYears = result.data.years.sort((a, b) => b.year - a.year)
+        setYears(sortedYears)
       }
     } catch (error) {
       console.error("Error fetching years:", error)
@@ -87,21 +85,21 @@ export default function UploadImagesPage() {
 
   const fetchDays = async (yearId: string) => {
     try {
-      const result = await getAllImages()
-      if (result.success && result.data?.archive) {
-        const daysForYear = result.data.archive
-          .filter((img: any) => img.year_ref._id === yearId)
-          .map((img: any) => img.dayNumber_ref)
-          .filter((day: any, index: number, self: any[]) => index === self.findIndex((d) => d._id === day._id))
-          .sort((a: any, b: any) => {
-            const aNum = Number.parseInt(a.dayLabel.replace("Day ", ""))
-            const bNum = Number.parseInt(b.dayLabel.replace("Day ", ""))
-            return aNum - bNum
-          })
-        setDays(daysForYear)
+      const selectedYear = years.find((year) => year._id === yearId)
+      if (selectedYear && selectedYear.days) {
+        // Sort days by day number
+        const sortedDays = selectedYear.days.sort((a, b) => {
+          const aNum = Number.parseInt(a.dayLabel.replace("Day ", ""))
+          const bNum = Number.parseInt(b.dayLabel.replace("Day ", ""))
+          return aNum - bNum
+        })
+        setDays(sortedDays)
+      } else {
+        setDays([])
       }
     } catch (error) {
       console.error("Error fetching days:", error)
+      setDays([])
     }
   }
 
@@ -271,7 +269,7 @@ export default function UploadImagesPage() {
                         <SelectContent>
                           {years.map((year) => (
                             <SelectItem key={year._id} value={year._id}>
-                              {year.year}
+                              {year.year} - {getMonthName(year.month)} ({year.days?.length || 0} days)
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -301,7 +299,8 @@ export default function UploadImagesPage() {
                   {selectedYear && selectedDay && (
                     <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
                       <p className="text-sm text-blue-800">
-                        <strong>Upload Destination:</strong> {selectedDay.dayLabel} of Year {selectedYear.year}
+                        <strong>Upload Destination:</strong> {selectedDay.dayLabel} of Year {selectedYear.year} (
+                        {getMonthName(selectedYear.month)})
                       </p>
                     </div>
                   )}

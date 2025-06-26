@@ -1,5 +1,6 @@
 "use client"
 
+import { useState, useEffect } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -7,13 +8,16 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Checkbox } from "@/components/ui/checkbox"
 import { Search, Filter, Grid3X3, List, Trash2 } from "lucide-react"
+import { getYear } from "@/service/archive"
+import type { ArchiveYear, ArchiveDay } from "@/types/archive-types"
 
 interface ArchiveFiltersProps {
   searchTerm: string
   onSearchChange: (value: string) => void
   yearFilter: string
   onYearFilterChange: (value: string) => void
-  availableYears: number[]
+  dayFilter: string
+  onDayFilterChange: (value: string) => void
   viewMode: "grid" | "list"
   onViewModeChange: (mode: "grid" | "list") => void
   selectedCount: number
@@ -27,7 +31,8 @@ export function ArchiveFilters({
   onSearchChange,
   yearFilter,
   onYearFilterChange,
-  availableYears,
+  dayFilter,
+  onDayFilterChange,
   viewMode,
   onViewModeChange,
   selectedCount,
@@ -35,6 +40,63 @@ export function ArchiveFilters({
   onSelectAll,
   onBulkDelete,
 }: ArchiveFiltersProps) {
+  const [availableYears, setAvailableYears] = useState<ArchiveYear[]>([])
+  const [availableDays, setAvailableDays] = useState<ArchiveDay[]>([])
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    fetchAvailableYears()
+  }, [])
+
+  useEffect(() => {
+    if (yearFilter && yearFilter !== "all") {
+      const selectedYear = availableYears.find((year) => year.year.toString() === yearFilter)
+      if (selectedYear && selectedYear.days) {
+        setAvailableDays(selectedYear.days)
+      } else {
+        setAvailableDays([])
+      }
+    } else {
+      setAvailableDays([])
+    }
+    // Reset day filter when year changes
+    onDayFilterChange("all")
+  }, [yearFilter, availableYears, onDayFilterChange])
+
+  const fetchAvailableYears = async () => {
+    try {
+      setLoading(true)
+      const result = await getYear()
+      if (result.success && result.data?.years) {
+        // Sort years by year in descending order (newest first)
+        const sortedYears = result.data.years.sort((a, b) => b.year - a.year)
+        setAvailableYears(sortedYears)
+      }
+    } catch (error) {
+      console.error("Error fetching years:", error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const getMonthName = (monthNumber: number) => {
+    const months = [
+      "January",
+      "February",
+      "March",
+      "April",
+      "May",
+      "June",
+      "July",
+      "August",
+      "September",
+      "October",
+      "November",
+      "December",
+    ]
+    return months[monthNumber - 1] || `Month ${monthNumber}`
+  }
+
   return (
     <Card>
       <CardHeader>
@@ -73,15 +135,35 @@ export function ArchiveFilters({
           </div>
           <div>
             <Label htmlFor="year">Year</Label>
-            <Select value={yearFilter} onValueChange={onYearFilterChange}>
-              <SelectTrigger className="w-[150px]">
-                <SelectValue placeholder="All Years" />
+            <Select value={yearFilter} onValueChange={onYearFilterChange} disabled={loading}>
+              <SelectTrigger className="w-[200px]">
+                <SelectValue placeholder={loading ? "Loading..." : "All Years"} />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Years</SelectItem>
-                {availableYears.map((year) => (
-                  <SelectItem key={year} value={year.toString()}>
-                    {year}
+                {availableYears.map((yearData) => (
+                  <SelectItem key={yearData._id} value={yearData.year.toString()}>
+                    {yearData.year} - {getMonthName(yearData.month)} ({yearData.days?.length || 0} days)
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Label htmlFor="day">Day</Label>
+            <Select
+              value={dayFilter}
+              onValueChange={onDayFilterChange}
+              disabled={!yearFilter || yearFilter === "all" || availableDays.length === 0}
+            >
+              <SelectTrigger className="w-[150px]">
+                <SelectValue placeholder="All Days" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="all">All Days</SelectItem>
+                {availableDays.map((day) => (
+                  <SelectItem key={day._id} value={day._id}>
+                    {day.dayLabel}
                   </SelectItem>
                 ))}
               </SelectContent>

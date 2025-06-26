@@ -4,7 +4,6 @@ import Link from "next/link"
 import Image from "next/image"
 import { ArrowLeft, Download, X } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
-import SunIcon from "@/components/archive/sun-icon"
 import {
   Pagination,
   PaginationContent,
@@ -14,6 +13,12 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination"
+import { getImagesByYear } from "@/service/archive"
+import SunIcon from "@/components/sunicon-gif"
+import { useSearchParams } from "next/navigation"
+import { use } from "react"
+
+
 
 // Shimmer effect component
 const ShimmerEffect = ({ className }: { className?: string }) => (
@@ -111,29 +116,94 @@ function ImageModal({
   )
 }
 
-export default function GalleryPage({ params }: { params: { year: string } }) {
-  const { year } = params
+interface ImageData {
+  id: string
+  url: string
+}
+
+interface YearImagesResponse {
+  year: number
+  images: ImageData[]
+}
+
+
+
+export default function GalleryPage({ params }: { params: Promise<{ year: string }> }) {
+  const { year } = use(params)
+  const searchParams = useSearchParams()
+  const yearId = searchParams.get("yearId")
+
   const [selectedImage, setSelectedImage] = useState<{ src: string; alt: string } | null>(null)
   const [currentPage, setCurrentPage] = useState(1)
   const [isLoading, setIsLoading] = useState(true)
+  const [images, setImages] = useState<string[]>([])
+  const [error, setError] = useState<string | null>(null)
   const imagesPerPage = 12
 
+  if (!yearId) {
+    return (
+      <div className="min-h-screen bg-[#FFFAEE] flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-red-600 mb-4">Invalid URL</h2>
+          <p className="text-gray-600 mb-4">Year ID is required to view this gallery</p>
+          <Link href="/archive" className="text-blue-600 hover:underline">
+            ← Back to Archive
+          </Link>
+        </div>
+      </div>
+    )
+  }
+
   useEffect(() => {
-    // Simulate loading time
-    const timer = setTimeout(() => {
-      setIsLoading(false)
-    }, 2000) // Show shimmer for 2 seconds
+    const fetchYearImages = async () => {
+      try {
+        setIsLoading(true)
 
-    return () => clearTimeout(timer)
-  }, [])
+        if (!yearId) {
+          setError("Year ID is required")
+          return
+        }
 
-  // Create an array of 48 images for the gallery
-  const images = Array.from({ length: 48 }, (_, i) => {
-    // Alternate between the two sample images
-    return i % 2 === 0
-      ? "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Frame%202095585096-X2btxoeKDnI6VIlmtlCzWFN1ELtjwR.png"
-      : "https://hebbkx1anhila5yf.public.blob.vercel-storage.com/Frame%202095585095-tkfzydTnu1GHwrL6TbaTaVVX8Mfudq.png"
-  })
+        // Only use the specific year ID API
+        const response = await getImagesByYear(yearId)
+
+        if (response.success && response.data) {
+          // Handle both possible API response shapes
+          let imageUrls: string[] = [];
+          if (
+            response.data.archive &&
+            !Array.isArray(response.data.archive) &&
+            typeof response.data.archive === "object" &&
+            Array.isArray((response.data.archive as any).images)
+          ) {
+            // New API shape: { archive: { year, images: [ { id, url } ] } }
+            imageUrls = (response.data.archive as any).images.map((img: any) => img.url)
+          } else if (
+            Array.isArray(response.data.archive) &&
+            response.data.archive.length > 0 &&
+            (response.data.archive[0] as any).image_url
+          ) {
+            // Old API shape: { archive: [ { image_url, ... } ] }
+            imageUrls = (response.data.archive as any[]).map((img: any) => img.image_url)
+          }
+          if (imageUrls.length > 0) {
+            setImages(imageUrls)
+          } else {
+            setError(`No images found for year ${year}`)
+          }
+        } else {
+          setError(response.error || "Failed to fetch images")
+        }
+      } catch (err) {
+        setError("An error occurred while fetching images")
+        console.error("Gallery fetch error:", err)
+      } finally {
+        setIsLoading(false)
+      }
+    }
+
+    fetchYearImages()
+  }, [year, yearId])
 
   // Calculate pagination
   const totalPages = Math.ceil(images.length / imagesPerPage)
@@ -146,21 +216,34 @@ export default function GalleryPage({ params }: { params: { year: string } }) {
     if (!selectedImage) return
 
     try {
-      // Create a temporary anchor element
+      const response = await fetch(selectedImage.src)
+      const blob = await response.blob()
+      const url = window.URL.createObjectURL(blob)
+
       const link = document.createElement("a")
-      link.href = selectedImage.src
+      link.href = url
       link.download = `gallery-${year}-image.jpg`
       document.body.appendChild(link)
       link.click()
       document.body.removeChild(link)
+
+      window.URL.revokeObjectURL(url)
     } catch (error) {
       console.error("Download failed:", error)
+      // Fallback method
+      const link = document.createElement("a")
+      link.href = selectedImage.src
+      link.download = `gallery-${year}-image.jpg`
+      link.target = "_blank"
+      document.body.appendChild(link)
+      link.click()
+      document.body.removeChild(link)
     }
   }
 
   // Function to handle album download
   const handleAlbumDownload = () => {
-    alert(`Downloading all images from ${year} album...`)
+    alert(`Downloading all ${images.length} images from ${year} album...`)
     // In a real application, this would trigger a zip download of all images
   }
 
@@ -178,26 +261,40 @@ export default function GalleryPage({ params }: { params: { year: string } }) {
         for (let i = 1; i <= 4; i++) {
           items.push(i)
         }
-        items.push('ellipsis')
+        items.push("ellipsis")
         items.push(totalPages)
       } else if (currentPage >= totalPages - 2) {
         items.push(1)
-        items.push('ellipsis')
+        items.push("ellipsis")
         for (let i = totalPages - 3; i <= totalPages; i++) {
           items.push(i)
         }
       } else {
         items.push(1)
-        items.push('ellipsis')
+        items.push("ellipsis")
         for (let i = currentPage - 1; i <= currentPage + 1; i++) {
           items.push(i)
         }
-        items.push('ellipsis')
+        items.push("ellipsis")
         items.push(totalPages)
       }
     }
 
     return items
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-[#FFFAEE] flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-red-600 mb-4">Error Loading Gallery</h2>
+          <p className="text-gray-600 mb-4">{error}</p>
+          <Link href="/archive" className="text-blue-600 hover:underline">
+            ← Back to Archive
+          </Link>
+        </div>
+      </div>
+    )
   }
 
   return (
@@ -207,7 +304,11 @@ export default function GalleryPage({ params }: { params: { year: string } }) {
         <HeaderShimmer />
       ) : (
         <header className="container mx-auto px-4 py-6 flex items-center justify-between relative">
-          <Link href="/" className="flex items-center text-gray-700 hover:text-blue-700" aria-label="Back to archive">
+          <Link
+            href="/archive"
+            className="flex items-center text-gray-700 hover:text-blue-700"
+            aria-label="Back to archive"
+          >
             <ArrowLeft size={20} className="mr-1" />
             <span>Back</span>
           </Link>
@@ -225,7 +326,7 @@ export default function GalleryPage({ params }: { params: { year: string } }) {
         {isLoading ? (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
             <TitleShimmer />
-            
+
             <motion.div
               className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"
               variants={{
@@ -258,8 +359,13 @@ export default function GalleryPage({ params }: { params: { year: string } }) {
             <h2 className="text-4xl font-bold text-center text-amber-800 mb-2">GALLERY {year}</h2>
 
             <div className="flex justify-center mb-8">
-              <button className="flex items-center px-4 py-2 text-gray-700 hover:text-blue-700">
-                <span>Download {year} Album</span>
+              <button
+                className="flex items-center px-4 py-2 text-gray-700 hover:text-blue-700"
+                onClick={handleAlbumDownload}
+              >
+                <span>
+                  Download {year} Album ({images.length} images)
+                </span>
                 <Download size={18} className="ml-2" />
               </button>
             </div>
@@ -288,14 +394,18 @@ export default function GalleryPage({ params }: { params: { year: string } }) {
                   }}
                   whileHover={{ scale: 1.05 }}
                   transition={{ type: "spring", stiffness: 300 }}
-                  onClick={() => setSelectedImage({ src, alt: `Gallery image ${index + 1}` })}
+                  onClick={() => setSelectedImage({ src, alt: `Gallery image ${startIndex + index + 1}` })}
                 >
                   <Image
-                    src={src || "/placeholder.svg"}
-                    alt={`Gallery image ${index + 1}`}
+                    src={src || "/placeholder.svg?height=225&width=300"}
+                    alt={`Gallery image ${startIndex + index + 1}`}
                     width={300}
                     height={225}
                     className="w-full h-full object-cover"
+                    onError={(e) => {
+                      const target = e.target as HTMLImageElement
+                      target.src = "/placeholder.svg?height=225&width=300"
+                    }}
                   />
                 </motion.div>
               ))}
@@ -312,15 +422,15 @@ export default function GalleryPage({ params }: { params: { year: string } }) {
                 <Pagination>
                   <PaginationContent>
                     <PaginationItem>
-                      <PaginationPrevious 
+                      <PaginationPrevious
                         onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
                         className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
                       />
                     </PaginationItem>
-                    
+
                     {generatePaginationItems().map((item, index) => (
                       <PaginationItem key={index}>
-                        {item === 'ellipsis' ? (
+                        {item === "ellipsis" ? (
                           <PaginationEllipsis />
                         ) : (
                           <PaginationLink
@@ -333,18 +443,19 @@ export default function GalleryPage({ params }: { params: { year: string } }) {
                         )}
                       </PaginationItem>
                     ))}
-                    
+
                     <PaginationItem>
-                      <PaginationNext 
+                      <PaginationNext
                         onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
                         className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
                       />
                     </PaginationItem>
                   </PaginationContent>
                 </Pagination>
-                
+
                 <div className="text-center mt-4 text-sm text-gray-600">
-                  Page {currentPage} of {totalPages} • Showing {startIndex + 1}-{Math.min(endIndex, images.length)} of {images.length} images
+                  Page {currentPage} of {totalPages} • Showing {startIndex + 1}-{Math.min(endIndex, images.length)} of{" "}
+                  {images.length} images
                 </div>
               </motion.div>
             )}
