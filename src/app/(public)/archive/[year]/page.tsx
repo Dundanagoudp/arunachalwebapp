@@ -18,6 +18,8 @@ import SunIcon from "@/components/sunicon-gif"
 import { useSearchParams } from "next/navigation"
 import { use } from "react"
 
+
+
 // Shimmer effect component
 const ShimmerEffect = ({ className }: { className?: string }) => (
   <div className={`relative overflow-hidden ${className}`}>
@@ -124,6 +126,8 @@ interface YearImagesResponse {
   images: ImageData[]
 }
 
+
+
 export default function GalleryPage({ params }: { params: Promise<{ year: string }> }) {
   const { year } = use(params)
   const searchParams = useSearchParams()
@@ -164,9 +168,25 @@ export default function GalleryPage({ params }: { params: Promise<{ year: string
         const response = await getImagesByYear(yearId)
 
         if (response.success && response.data) {
-          const yearData = response.data.archive
-          if (yearData && Array.isArray(yearData.images) && yearData.images.length > 0) {
-            const imageUrls = yearData.images.map((img: any) => img.url)
+          // Handle both possible API response shapes
+          let imageUrls: string[] = [];
+          if (
+            response.data.archive &&
+            !Array.isArray(response.data.archive) &&
+            typeof response.data.archive === "object" &&
+            Array.isArray((response.data.archive as any).images)
+          ) {
+            // New API shape: { archive: { year, images: [ { id, url } ] } }
+            imageUrls = (response.data.archive as any).images.map((img: any) => img.url)
+          } else if (
+            Array.isArray(response.data.archive) &&
+            response.data.archive.length > 0 &&
+            (response.data.archive[0] as any).image_url
+          ) {
+            // Old API shape: { archive: [ { image_url, ... } ] }
+            imageUrls = (response.data.archive as any[]).map((img: any) => img.image_url)
+          }
+          if (imageUrls.length > 0) {
             setImages(imageUrls)
           } else {
             setError(`No images found for year ${year}`)
