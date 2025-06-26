@@ -1,6 +1,7 @@
  "use client";
 
-import BlogLayout from "@/components/blogs/modules/blogspage";
+import BlogLayout from "@/components/(public)/blogs/modules/blogspage";
+
 
 export default function page() {
   return (

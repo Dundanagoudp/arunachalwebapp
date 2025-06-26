@@ -1,5 +1,6 @@
 'use client';
-import Schedulepage from "@/components/schedule/schedule-page";
+
+import Schedulepage from "@/components/(public)/schedule/schedule-page";
 
 
 export default function Schedule() {

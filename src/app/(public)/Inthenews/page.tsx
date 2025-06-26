@@ -1,6 +1,6 @@
  'use client';
 
-import Inthenews from '@/components/Inthenews/modules/Inthenews-section';
+import Inthenews from '@/components/(public)/Inthenews/modules/Inthenews-section';
 import React from 'react';
 
 export default function Inthenewspage() {

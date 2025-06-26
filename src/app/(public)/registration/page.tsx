@@ -1,7 +1,8 @@
  'use client';
 
-import RegistrationForm from '@/components/registration/modules/registrationForm';
-import RegistrationSection from '@/components/registration/registration-section';
+
+import RegistrationForm from '@/components/(public)/registration/modules/registrationForm';
+import RegistrationSection from '@/components/(public)/registration/registration-section';
 import React from 'react';
 
 export default function Registrationpage() {

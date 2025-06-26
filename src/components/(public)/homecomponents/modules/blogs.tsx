@@ -3,7 +3,7 @@ import Image from "next/image"
 import Link from "next/link" // Import Link
 import { ArrowRight, ArrowUpRight } from "lucide-react" // Change to ArrowRight
 import { BlogCardSkeleton } from "@/components/blog-card-skeleton" // Import the new skeleton component
-import SunIcon from "@/components/archive/sun-icon"
+import SunIcon from "../../archive/sun-icon"
 
 export default function Blogs() {
   const isLoading = false // For demonstration, set to false. In a real app, this would come from data fetching.

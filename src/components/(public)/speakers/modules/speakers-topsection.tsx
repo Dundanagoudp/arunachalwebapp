@@ -4,7 +4,7 @@ import Image from "next/image"
 import SunIcon from "@/components/sunicon-gif";
 import dynamic from "next/dynamic";
 
-const DiamondPatternBackground = dynamic(() => import("../../DiamondPatternBackground"), { ssr: false });
+const DiamondPatternBackground = dynamic(() => import("../../../DiamondPatternBackground"), { ssr: false });
 
 export default function Speakerstopsection() {
   return (

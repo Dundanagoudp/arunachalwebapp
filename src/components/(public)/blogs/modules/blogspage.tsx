@@ -4,7 +4,6 @@ import Link from "next/link" // Import Link
 import { useState, useEffect } from "react"
 import { ArrowUpRight } from "lucide-react" // Change to ArrowRight
 import { BlogCardSkeleton } from "@/components/blog-card-skeleton" // Import the new skeleton component
-import SunIcon from "@/components/archive/sun-icon"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -17,6 +16,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination"
+import SunIcon from "@/components/sunicon-gif"
 
 // Shimmer effect component
 const ShimmerEffect = ({ className }: { className?: string }) => (
