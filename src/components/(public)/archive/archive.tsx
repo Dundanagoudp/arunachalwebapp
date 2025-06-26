@@ -7,6 +7,15 @@ import { ArrowRight } from "lucide-react"
 import { motion } from "framer-motion"
 import { getYearWiseImages, getYear } from "@/service/archive"
 import SunIcon from "@/components/sunicon-gif"
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination"
 
 // Shimmer effect component
 const ShimmerEffect = ({ className }: { className?: string }) => (
@@ -54,6 +63,8 @@ export default function Archive() {
   const [yearData, setYearData] = useState<YearData[]>([])
   const [error, setError] = useState<string | null>(null)
   const [activeYearId, setActiveYearId] = useState<string | null>(null)
+  const [currentPage, setCurrentPage] = useState(1)
+  const cardsPerPage = 4
 
   useEffect(() => {
     const fetchArchiveData = async () => {
@@ -100,6 +111,13 @@ export default function Archive() {
     router.push(`/archive/${yearData.year}?yearId=${yearData.yearId}`)
   }
 
+  // Pagination logic for year cards
+  const totalPages = Math.ceil(yearData.length / cardsPerPage)
+  const paginatedYearData = yearData.slice(
+    (currentPage - 1) * cardsPerPage,
+    currentPage * cardsPerPage
+  )
+
   if (error) {
     return (
       <div className="min-h-screen bg-[#FFFAEE] flex items-center justify-center">
@@ -136,7 +154,7 @@ export default function Archive() {
             </>
           ) : (
             <>
-              {yearData.map((data) => (
+              {paginatedYearData.map((data) => (
                 <motion.div
                   key={data.year}
                   className={`group border-2 rounded-xl p-4 relative overflow-hidden cursor-pointer transition-colors ${activeYearId === data.yearId ? 'border-red-600' : 'border-orange-400'}`}
@@ -193,6 +211,38 @@ export default function Archive() {
           )}
           <SunIcon size={35} className="absolute bottom-10 left-0" />
         </div>
+        {/* Pagination Controls */}
+        {!isLoading && totalPages > 1 && (
+          <div className="flex justify-center mt-8">
+            <Pagination>
+              <PaginationContent>
+                <PaginationItem>
+                  <PaginationPrevious
+                    onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                    className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                  />
+                </PaginationItem>
+                {Array.from({ length: totalPages }).map((_, idx) => (
+                  <PaginationItem key={idx + 1}>
+                    <PaginationLink
+                      isActive={currentPage === idx + 1}
+                      onClick={() => setCurrentPage(idx + 1)}
+                      className="cursor-pointer"
+                    >
+                      {idx + 1}
+                    </PaginationLink>
+                  </PaginationItem>
+                ))}
+                <PaginationItem>
+                  <PaginationNext
+                    onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                    className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                  />
+                </PaginationItem>
+              </PaginationContent>
+            </Pagination>
+          </div>
+        )}
       </main>
     </div>
   )
