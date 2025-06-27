@@ -1,13 +1,16 @@
 "use client"
 
 import { useEffect, useState } from "react"
-import { useParams } from "next/navigation"
+import { useParams, useRouter } from "next/navigation"
 import { getVideoById } from "@/service/videosService"
-import { VideoBlog } from "@/types/videos-types"
+import type { VideoBlog } from "@/types/videos-types"
 import { format } from "date-fns"
+import { Button } from "@/components/ui/button"
+import { ArrowLeft } from "lucide-react"
 
 export default function PublicVideoDetail() {
   const params = useParams()
+  const router = useRouter()
   const videoId = params?.id as string
   const [video, setVideo] = useState<VideoBlog | null>(null)
   const [loading, setLoading] = useState(true)
@@ -24,45 +27,98 @@ export default function PublicVideoDetail() {
 
   if (loading) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-gray-500">Loading...</div>
+      <div className="min-h-screen bg-[#fffaee] flex items-center justify-center">
+        <div className="text-gray-600 text-lg">Loading...</div>
       </div>
     )
   }
 
   if (!video) {
     return (
-      <div className="flex items-center justify-center min-h-screen">
-        <div className="text-gray-500">Video not found</div>
+      <div className="min-h-screen bg-[#fffaee] flex items-center justify-center">
+        <div className="text-center">
+          <div className="text-gray-700 text-xl mb-4">Video not found</div>
+          <Button onClick={() => router.back()} className="bg-gray-800 hover:bg-gray-700 text-white">
+            <ArrowLeft className="w-4 h-4 mr-2" />
+            Go Back
+          </Button>
+        </div>
       </div>
     )
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#FFF8ED] px-4 py-12">
-      <div className="w-full max-w-xl bg-white rounded-xl shadow-lg p-6">
-        <div className="mb-4">
-          {video.videoType === "youtube" && video.youtubeUrl ? (
-            <div className="aspect-video w-full rounded-lg overflow-hidden">
+    <div className="min-h-screen bg-[#fffaee] px-2 sm:px-4 py-4 sm:py-8">
+      {/* Back Button */}
+      <div className="max-w-6xl mx-auto mb-4 sm:mb-6">
+        <Button
+          onClick={() => router.back()}
+          variant="outline"
+          className="border-gray-300 text-gray-700 hover:bg-gray-100 text-sm sm:text-base"
+        >
+          <ArrowLeft className="w-4 h-4 mr-2" />
+          Back
+        </Button>
+      </div>
+
+      {/* Video Content */}
+      <div className="max-w-6xl mx-auto">
+        <div className="bg-white rounded-xl sm:rounded-2xl overflow-hidden transform transition-all duration-500 hover:scale-[1.02] animate-in slide-in-from-bottom-4">
+          {/* Video Player Section */}
+          <div className="aspect-video bg-gradient-to-br from-gray-50 to-gray-100 rounded-t-xl sm:rounded-t-2xl overflow-hidden relative">
+            <div className="absolute inset-0 bg-gradient-to-r from-blue-50/20 to-purple-50/20 animate-pulse"></div>
+            {video.videoType === "youtube" && video.youtubeUrl ? (
               <iframe
                 width="100%"
-                height="360"
+                height="100%"
                 src={video.youtubeUrl.replace("watch?v=", "embed/")}
                 title={video.title}
                 frameBorder="0"
                 allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                 allowFullScreen
-              ></iframe>
+                className="w-full h-full relative z-10 transition-opacity duration-300 hover:opacity-95"
+              />
+            ) : video.videoType === "video" && video.video_url ? (
+              <video
+                controls
+                className="w-full h-full object-cover relative z-10 transition-transform duration-300 hover:scale-[1.01]"
+                src={video.video_url}
+              />
+            ) : (
+              <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200 relative z-10">
+                <div className="text-center text-gray-500 animate-bounce">
+                  <p className="text-base sm:text-lg">No video available</p>
+                </div>
+              </div>
+            )}
+          </div>
+
+          {/* Video Info */}
+          <div className="p-4 sm:p-6 lg:p-8 bg-gradient-to-r from-white to-gray-50/50">
+            <div className="space-y-3 sm:space-y-4">
+              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 leading-tight transform transition-all duration-300 hover:text-gray-700 animate-in slide-in-from-left-2">
+                {video.title}
+              </h1>
+              <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4">
+                <p className="text-sm sm:text-base text-gray-600 transform transition-colors duration-300 hover:text-gray-800 animate-in slide-in-from-left-4">
+                  {format(new Date(video.addedAt), "MMMM d, yyyy")}
+                </p>
+                <div className="flex items-center space-x-2">
+                  <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                  <span className="text-xs sm:text-sm text-gray-500">Available Now</span>
+                </div>
+              </div>
             </div>
-          ) : video.videoType === "video" && video.video_url ? (
-            <video controls className="w-full rounded-lg" src={video.video_url} />
-          ) : (
-            <div className="text-center py-8">No video available</div>
-          )}
+          </div>
         </div>
-        <h1 className="text-2xl font-bold mb-2 text-gray-900">{video.title}</h1>
-        <p className="text-sm text-gray-600 mb-1">{format(new Date(video.addedAt), 'MMM d, yyyy')}</p>
+
+        {/* Decorative Elements */}
+        <div className="mt-8 flex justify-center space-x-2 opacity-30">
+          <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "0ms" }}></div>
+          <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "150ms" }}></div>
+          <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: "300ms" }}></div>
+        </div>
       </div>
     </div>
   )
-} 
+}
