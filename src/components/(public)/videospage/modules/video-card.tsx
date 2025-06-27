@@ -5,23 +5,17 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 
 interface VideoCardProps {
   title: string
-  channelName: string
-  views: string
   uploadTime: string
   duration: string
   thumbnailUrl: string
-  channelAvatar: string
   onClick?: () => void
 }
 
 export function VideoCard({
   title,
-  channelName,
-  views,
   uploadTime,
   duration,
   thumbnailUrl,
-  channelAvatar,
   onClick,
 }: VideoCardProps) {
   return (
@@ -43,20 +37,13 @@ export function VideoCard({
           {duration}
         </div>
       </div>
-      <div className="flex space-x-2 sm:space-x-3">
-        <Avatar className="w-8 h-8 sm:w-9 sm:h-9 flex-shrink-0">
-          <AvatarImage src={channelAvatar || "/placeholder.svg"} alt={channelName} />
-          <AvatarFallback>{channelName.charAt(0)}</AvatarFallback>
-        </Avatar>
-        <div className="flex-1 min-w-0">
-          <h3 className="font-medium text-sm sm:text-base line-clamp-2 text-gray-900 group-hover:text-gray-700">
-            {title}
-          </h3>
-          <p className="text-xs sm:text-sm text-gray-600 mt-1">{channelName}</p>
-          <p className="text-xs sm:text-sm text-gray-600">
-            {views} • {uploadTime}
-          </p>
-        </div>
+      <div className="mt-2">
+        <h3 className="font-medium text-sm sm:text-base line-clamp-2 text-gray-900 group-hover:text-gray-700">
+          {title}
+        </h3>
+        <p className="text-xs sm:text-sm text-gray-600 mt-1">
+          {uploadTime}
+        </p>
       </div>
     </div>
   )
