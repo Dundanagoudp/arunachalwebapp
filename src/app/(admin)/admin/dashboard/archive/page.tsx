@@ -25,11 +25,12 @@ import {
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Plus, Upload, RefreshCw, Archive, AlertCircle, CheckCircle } from "lucide-react"
 import Link from "next/link"
-import { getAllImages, deleteUploadedImage } from "@/service/archive"
+import { getAllImages, deleteUploadedImage, deleteYear } from "@/service/archive"
 import { ArchiveStats } from "@/components/admin/archivecomponets/archive-stats"
 import { ArchiveFilters } from "@/components/admin/archivecomponets/archive-filters"
 import { ImageGrid } from "@/components/admin/archivecomponets/image-grid"
 import type { ArchiveImage } from "@/types/archive-types"
+import { Skeleton } from "@/components/ui/skeleton"
 
 export default function ArchiveManagement() {
   const [images, setImages] = useState<ArchiveImage[]>([])
@@ -46,6 +47,10 @@ export default function ArchiveManagement() {
   const [refreshing, setRefreshing] = useState(false)
   const [deleteLoading, setDeleteLoading] = useState(false)
   const [successMessage, setSuccessMessage] = useState("")
+  const [deleteYearDialogOpen, setDeleteYearDialogOpen] = useState(false)
+  const [deleteYearLoading, setDeleteYearLoading] = useState(false)
+  const [currentPage, setCurrentPage] = useState(1)
+  const imagesPerPage = 8
 
   useEffect(() => {
     fetchImages()
@@ -99,6 +104,18 @@ export default function ArchiveManagement() {
 
     return matchesSearch && matchesYear && matchesDay
   })
+
+  // Pagination logic
+  const totalPages = Math.ceil(filteredImages.length / imagesPerPage)
+  const paginatedImages = filteredImages.slice(
+    (currentPage - 1) * imagesPerPage,
+    currentPage * imagesPerPage
+  )
+
+  // Reset to page 1 if filters change and current page is out of range
+  useEffect(() => {
+    if (currentPage > totalPages) setCurrentPage(1)
+  }, [searchTerm, yearFilter, dayFilter, totalPages])
 
   const handleSelectImage = (imageId: string) => {
     setSelectedImages((prev) => (prev.includes(imageId) ? prev.filter((id) => id !== imageId) : [...prev, imageId]))
@@ -160,16 +177,66 @@ export default function ArchiveManagement() {
     }
   }
 
+  const handleDeleteYear = () => {
+    setDeleteYearDialogOpen(true)
+  }
+
+  const confirmDeleteYear = async () => {
+    if (yearFilter === "all") return
+    setDeleteYearLoading(true)
+    setError("")
+    try {
+      // Find the yearId from images (since we only have year number in yearFilter)
+      const yearImage = images.find(img => img.year_ref.year.toString() === yearFilter)
+      const yearId = yearImage?.year_ref._id
+      if (!yearId) throw new Error("Year ID not found")
+      const result = await deleteYear(yearId)
+      if (result.success) {
+        setSuccessMessage("Year deleted successfully")
+        setYearFilter("all")
+        await fetchImages()
+      } else {
+        throw new Error(result.error || "Failed to delete year")
+      }
+    } catch (error: any) {
+      setError(error.message || "Failed to delete year")
+    } finally {
+      setDeleteYearLoading(false)
+      setDeleteYearDialogOpen(false)
+    }
+  }
+
   if (loading) {
     return (
       <SidebarProvider>
         <AppSidebar />
         <SidebarInset>
-          <div className="flex items-center justify-center h-screen">
-            <div className="text-center">
-              <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
-              <p className="mt-4">Loading archive data...</p>
-            </div>
+          <div className="flex flex-1 flex-col gap-6 p-6 pt-0">
+            {/* Skeleton for grouped years/days/images */}
+            {[1, 2].map((yearIdx) => (
+              <div key={yearIdx} className="border rounded-lg p-6 mb-6">
+                <div className="flex items-center gap-2 mb-6">
+                  <Skeleton className="h-6 w-32" /> {/* Year title */}
+                  <Skeleton className="h-5 w-16" /> {/* Days badge */}
+                  <Skeleton className="h-5 w-20" /> {/* Images badge */}
+                </div>
+                <div className="space-y-6">
+                  {[1, 2].map((dayIdx) => (
+                    <div key={dayIdx} className="border rounded-lg p-4 mb-4">
+                      <div className="flex items-center gap-2 mb-4">
+                        <Skeleton className="h-5 w-24" /> {/* Day label */}
+                        <Skeleton className="h-5 w-16" /> {/* Images badge */}
+                      </div>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                        {[1, 2].map((imgIdx) => (
+                          <Skeleton key={imgIdx} className="aspect-square w-full h-32" />
+                        ))}
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            ))}
           </div>
         </SidebarInset>
       </SidebarProvider>
@@ -198,14 +265,14 @@ export default function ArchiveManagement() {
           </div>
         </header>
 
-        <div className="flex flex-1 flex-col gap-6 p-6 pt-0">
+        <div className="flex flex-1 flex-col gap-6 p-2 pt-0 sm:p-4 md:p-6">
           {/* Header */}
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
             <div>
-              <h1 className="text-3xl font-bold tracking-tight">Archive Management</h1>
-              <p className="text-muted-foreground">Manage your archive collection by years, days, and images.</p>
+              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Archive Management</h1>
+              <p className="text-muted-foreground text-sm sm:text-base">Manage your archive collection by years, days, and images.</p>
             </div>
-            <div className="flex gap-2">
+            <div className="flex flex-wrap gap-2 mt-2 md:mt-0">
               <Button variant="outline" onClick={refreshData} disabled={refreshing}>
                 <RefreshCw className={`mr-2 h-4 w-4 ${refreshing ? "animate-spin" : ""}`} />
                 Refresh
@@ -264,17 +331,49 @@ export default function ArchiveManagement() {
             totalCount={filteredImages.length}
             onSelectAll={handleSelectAll}
             onBulkDelete={() => setBulkDeleteDialogOpen(true)}
+            onDeleteYear={yearFilter !== "all" ? handleDeleteYear : undefined}
           />
 
           {/* Content */}
-          {filteredImages.length > 0 ? (
-            <ImageGrid
-              images={filteredImages}
-              viewMode={viewMode}
-              selectedImages={selectedImages}
-              onSelectImage={handleSelectImage}
-              onDeleteImage={handleDeleteImage}
-            />
+          {paginatedImages.length > 0 ? (
+            <>
+              <ImageGrid
+                images={paginatedImages}
+                viewMode={viewMode}
+                selectedImages={selectedImages}
+                onSelectImage={handleSelectImage}
+                onDeleteImage={handleDeleteImage}
+              />
+              {/* Pagination Controls */}
+              <div className="flex justify-center items-center gap-2 mt-6">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                >
+                  Prev
+                </Button>
+                {Array.from({ length: totalPages }).map((_, idx) => (
+                  <Button
+                    key={idx + 1}
+                    variant={currentPage === idx + 1 ? "default" : "outline"}
+                    size="sm"
+                    onClick={() => setCurrentPage(idx + 1)}
+                  >
+                    {idx + 1}
+                  </Button>
+                ))}
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                  disabled={currentPage === totalPages}
+                >
+                  Next
+                </Button>
+              </div>
+            </>
           ) : (
             <Card>
               <CardContent className="text-center py-12">
@@ -333,6 +432,26 @@ export default function ArchiveManagement() {
               </Button>
               <Button variant="destructive" onClick={handleBulkDelete} disabled={deleteLoading}>
                 {deleteLoading ? "Deleting..." : `Delete ${selectedImages.length} Images`}
+              </Button>
+            </DialogFooter>
+          </DialogContent>
+        </Dialog>
+
+        {/* Delete Year Confirmation Dialog */}
+        <Dialog open={deleteYearDialogOpen} onOpenChange={setDeleteYearDialogOpen}>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Delete Year</DialogTitle>
+              <DialogDescription>
+                Are you sure you want to delete this year and all its images? This action cannot be undone.
+              </DialogDescription>
+            </DialogHeader>
+            <DialogFooter>
+              <Button variant="outline" onClick={() => setDeleteYearDialogOpen(false)} disabled={deleteYearLoading}>
+                Cancel
+              </Button>
+              <Button variant="destructive" onClick={confirmDeleteYear} disabled={deleteYearLoading}>
+                {deleteYearLoading ? "Deleting..." : "Delete Year"}
               </Button>
             </DialogFooter>
           </DialogContent>

@@ -6,6 +6,7 @@ const nextConfig: NextConfig = {
       'images.unsplash.com',
       'hebbkx1anhila5yf.public.blob.vercel-storage.com',
       'storage.googleapis.com',
+      'img.youtube.com',
     ],
   },
   

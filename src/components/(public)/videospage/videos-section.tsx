@@ -12,159 +12,63 @@ import {
 } from "@/components/ui/pagination"
 import { VideoSkeleton } from "./modules/video-skeleton"
 import { VideoCard } from "./modules/video-card"
+import { getYoutubeVideos, getRawVideos } from "@/service/videosService"
+import { VideoBlog } from "@/types/videos-types"
+import { Dialog } from "@/components/ui/dialog"
+import { useToast } from "@/hooks/use-toast"
+import { format } from "date-fns"
+import Link from "next/link"
 
-// Mock video data
-const mockVideos = [
-  {
-    id: 1,
-    title: "How to Build a Modern Web Application with Next.js 15",
-    channelName: "Tech Academy",
-    views: "125K views",
-    uploadTime: "2 days ago",
-    duration: "15:42",
-    thumbnailUrl: "/gallery/gallery2.png",
-    channelAvatar: "/gallery/gallery2.png",
-  },
-  {
-    id: 2,
-    title: "React Server Components Explained - Complete Guide",
-    channelName: "Code Masters",
-    views: "89K views",
-    uploadTime: "1 week ago",
-    duration: "22:15",
-    thumbnailUrl: "/gallery/gallery2.png",
-    channelAvatar: "/gallery/gallery2.png",
-  },
-  {
-    id: 3,
-    title: "TypeScript Tips and Tricks for Better Code",
-    channelName: "Dev Tutorials",
-    views: "67K views",
-    uploadTime: "3 days ago",
-    duration: "18:30",
-    thumbnailUrl: "/gallery/gallery2.png",
-    channelAvatar: "/gallery/gallery2.png",
-  },
-  {
-    id: 4,
-    title: "CSS Grid vs Flexbox - When to Use What",
-    channelName: "Design Pro",
-    views: "234K views",
-    uploadTime: "5 days ago",
-    duration: "12:45",
-    thumbnailUrl: "/gallery/gallery2.png",
-    channelAvatar: "/gallery/gallery2.png",
-  },
-  {
-    id: 5,
-    title: "Building Responsive Layouts with Tailwind CSS",
-    channelName: "Frontend Focus",
-    views: "156K views",
-    uploadTime: "1 week ago",
-    duration: "25:18",
-    thumbnailUrl: "/gallery/gallery2.png",
-    channelAvatar: "/gallery/gallery2.png",
-  },
-  {
-    id: 6,
-    title: "JavaScript ES2024 New Features Overview",
-    channelName: "JS Weekly",
-    views: "98K views",
-    uploadTime: "4 days ago",
-    duration: "19:22",
-    thumbnailUrl: "/gallery/gallery2.png",
-    channelAvatar: "/gallery/gallery2.png",
-  },
-  {
-    id: 7,
-    title: "Database Design Best Practices for Developers",
-    channelName: "Backend Basics",
-    views: "178K views",
-    uploadTime: "6 days ago",
-    duration: "28:45",
-    thumbnailUrl: "/gallery/gallery2.png",
-    channelAvatar: "/gallery/gallery2.png",
-  },
-  {
-    id: 8,
-    title: "API Security: Protecting Your Endpoints",
-    channelName: "Security First",
-    views: "145K views",
-    uploadTime: "1 week ago",
-    duration: "21:33",
-    thumbnailUrl: "/gallery/gallery2.png",
-    channelAvatar: "/gallery/gallery2.png",
-  },
-  {
-    id: 9,
-    title: "Docker for Beginners - Complete Tutorial",
-    channelName: "DevOps Guide",
-    views: "267K views",
-    uploadTime: "2 weeks ago",
-    duration: "35:12",
-    thumbnailUrl: "/gallery/gallery2.png",
-    channelAvatar: "/gallery/gallery2.png",
-  },
-  {
-    id: 10,
-    title: "Git Workflow Strategies for Team Development",
-    channelName: "Team Dev",
-    views: "123K views",
-    uploadTime: "1 week ago",
-    duration: "16:28",
-    thumbnailUrl: "/gallery/gallery2.png",
-    channelAvatar: "/gallery/gallery2.png",
-  },
-  {
-    id: 11,
-    title: "Performance Optimization in React Applications",
-    channelName: "React Pro",
-    views: "189K views",
-    uploadTime: "3 days ago",
-    duration: "24:15",
-    thumbnailUrl: "/gallery/gallery2.png",
-    channelAvatar: "/gallery/gallery2.png",
-  },
-  {
-    id: 12,
-    title: "Building a REST API with Node.js and Express",
-    channelName: "Node Academy",
-    views: "201K views",
-    uploadTime: "5 days ago",
-    duration: "32:45",
-    thumbnailUrl: "/gallery/gallery2.png",
-    channelAvatar: "/gallery/gallery2.png",
-  },
-]
+// Helper to extract YouTube video ID
+function getYouTubeVideoId(url: string = "") {
+  return url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\n?#]+)/)?.[1] || "";
+}
 
 export default function Videosection() {
   const [loading, setLoading] = useState(true)
   const [currentPage, setCurrentPage] = useState(1)
+  const [activeTab, setActiveTab] = useState<'youtube' | 'uploaded'>("youtube")
+  const [youtubeVideos, setYoutubeVideos] = useState<VideoBlog[]>([])
+  const [uploadedVideos, setUploadedVideos] = useState<VideoBlog[]>([])
+  const { toast } = useToast()
   const videosPerPage = 12
-  const totalPages = Math.ceil(mockVideos.length / videosPerPage)
+  const videos = activeTab === 'youtube' ? youtubeVideos : uploadedVideos
+  const totalPages = Math.ceil(videos.length / videosPerPage)
 
   useEffect(() => {
-    // Simulate loading
-    const timer = setTimeout(() => {
-      setLoading(false)
-    }, 2000)
-
-    return () => clearTimeout(timer)
-  }, [])
+    setLoading(true)
+    const fetchVideos = async () => {
+      try {
+        if (activeTab === 'youtube') {
+          const res = await getYoutubeVideos()
+          if (res.success && res.data) setYoutubeVideos(res.data)
+          else toast({ title: "Error", description: res.error || "Failed to fetch YouTube videos" })
+        } else {
+          const res = await getRawVideos()
+          if (res.success && res.data) setUploadedVideos(res.data)
+          else toast({ title: "Error", description: res.error || "Failed to fetch uploaded videos" })
+        }
+      } catch (e) {
+        toast({ title: "Error", description: "Failed to fetch videos" })
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchVideos()
+  }, [activeTab, toast])
 
   const getCurrentVideos = () => {
     const startIndex = (currentPage - 1) * videosPerPage
     const endIndex = startIndex + videosPerPage
-    return mockVideos.slice(startIndex, endIndex)
+    return videos.slice(startIndex, endIndex)
   }
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page)
     setLoading(true)
-    // Simulate loading when changing pages
     setTimeout(() => {
       setLoading(false)
-    }, 1000)
+    }, 500)
   }
 
   return (
@@ -172,29 +76,71 @@ export default function Videosection() {
       <div className="container mx-auto px-3 sm:px-4 lg:px-6 py-4 sm:py-8">
         <div className="mb-6 sm:mb-8">
           <h1 className="text-2xl sm:text-3xl font-bold text-gray-900 mb-2">Videos</h1>
-          <p className="text-sm sm:text-base text-gray-600">Discover amazing content from creators around the world</p>
+        </div>
+
+        {/* Tabs */}
+        <div className="flex gap-4 mb-8">
+          <button
+            className={`px-4 py-2 rounded-t-lg font-semibold border-b-2 transition-colors ${activeTab === 'youtube' ? 'border-orange-500 text-orange-600 bg-orange-50' : 'border-transparent text-gray-600 bg-transparent'}`}
+            onClick={() => { setActiveTab('youtube'); setCurrentPage(1); }}
+          >
+            YouTube Videos
+          </button>
+          <button
+            className={`px-4 py-2 rounded-t-lg font-semibold border-b-2 transition-colors ${activeTab === 'uploaded' ? 'border-orange-500 text-orange-600 bg-orange-50' : 'border-transparent text-gray-600 bg-transparent'}`}
+            onClick={() => { setActiveTab('uploaded'); setCurrentPage(1); }}
+          >
+            Uploaded Videos
+          </button>
         </div>
 
         {/* Video Grid - Fully Responsive */}
         <div className="grid grid-cols-1 xs:grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 2xl:grid-cols-4 gap-4 sm:gap-6 mb-8">
           {loading
-            ? Array.from({ length: 12 }).map((_, index) => <VideoSkeleton key={index} />)
+            ? Array.from({ length: videosPerPage }).map((_, index) => <VideoSkeleton key={index} />)
             : getCurrentVideos().map((video) => (
-                <VideoCard
-                  key={video.id}
-                  title={video.title}
-                  channelName={video.channelName}
-                  views={video.views}
-                  uploadTime={video.uploadTime}
-                  duration={video.duration}
-                  thumbnailUrl={video.thumbnailUrl}
-                  channelAvatar={video.channelAvatar}
-                />
+                activeTab === 'youtube' ? (
+                  <a
+                    key={video._id}
+                    href={video.youtubeUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="relative group"
+                  >
+                    <VideoCard
+                      title={video.title}
+                      uploadTime={format(new Date(video.addedAt), 'MMM d, yyyy')}
+                      duration={''}
+                      thumbnailUrl={
+                        video.videoType === 'youtube' && video.youtubeUrl
+                          ? `https://img.youtube.com/vi/${getYouTubeVideoId(video.youtubeUrl)}/hqdefault.jpg`
+                          : video.imageUrl || "/gallery/gallery2.png"
+                      }
+                    />
+                  </a>
+                ) : (
+                  <Link
+                    key={video._id}
+                    href={`/videos/${video._id}`}
+                    className="relative group"
+                  >
+                    <VideoCard
+                      title={video.title}
+                      uploadTime={format(new Date(video.addedAt), 'MMM d, yyyy')}
+                      duration={''}
+                      thumbnailUrl={
+                        video.videoType === 'youtube' && video.youtubeUrl
+                          ? `https://img.youtube.com/vi/${getYouTubeVideoId(video.youtubeUrl)}/hqdefault.jpg`
+                          : video.imageUrl || "/gallery/gallery2.png"
+                      }
+                    />
+                  </Link>
+                )
               ))}
         </div>
 
         {/* Pagination */}
-        {!loading && (
+        {!loading && totalPages > 1 && (
           <div className="flex justify-center">
             <Pagination>
               <PaginationContent>
