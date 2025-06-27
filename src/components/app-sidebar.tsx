@@ -14,6 +14,7 @@ import {
   ImageIcon,
   Settings,
   Mic,
+  Video,
 } from "lucide-react"
 import { toast } from "sonner"
 import { logoutUser } from "@/service/authService"
@@ -91,6 +92,21 @@ const adminData = {
         {
           title: "Add Speaker",
           url: "/admin/dashboard/speakers/create",
+        },
+      ],
+    },
+    {
+      title: "Videos",
+      url: "/admin/dashboard/videos",
+      icon: Video,
+      items: [
+        {
+          title: "All Videos",
+          url: "/admin/dashboard/videos",
+        },
+        {
+          title: "Add Video",
+          url: "/admin/dashboard/videos/add",
         },
       ],
     },
