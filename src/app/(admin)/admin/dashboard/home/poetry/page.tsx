@@ -187,9 +187,6 @@ export default function PoetryManagementPage() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-2xl font-bold tracking-tight">Poetry Management</h1>
-              <p className="text-muted-foreground">
-                Manage your poetry collection - add, edit, and delete poetry entries.
-              </p>
             </div>
             <Button onClick={() => setIsAddModalOpen(true)} className="gap-2">
               <Plus className="h-4 w-4" />
