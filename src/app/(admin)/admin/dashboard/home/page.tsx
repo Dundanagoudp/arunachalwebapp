@@ -54,6 +54,9 @@ import {
   updateButtonText,
   deleteButtonText,
 } from "@/service/homeService"
+import BannersSection from '@/components/admin/home/BannersSection'
+import BannerTextSection from '@/components/admin/home/BannerTextSection'
+import ButtonTextSection from '@/components/admin/home/ButtonTextSection'
 
 interface Banner {
   _id: string
@@ -545,468 +548,43 @@ export default function HomeManagementPage() {
           </div>
         </header>
 
-        <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
-          <div className="min-h-[100vh] flex-1 rounded-xl bg-muted/50 md:min-h-min p-4">
-            <div className="mb-6">
-              <h1 className="text-3xl font-bold tracking-tight">Home Page Management</h1>
-              <p className="text-muted-foreground">Manage banners, text content, and buttons for the home page</p>
-            </div>
-
-            <Tabs defaultValue="banners" className="w-full">
-              <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="banners" className="flex items-center gap-2">
-                  <ImageIcon className="h-4 w-4" />
-                  <span className="hidden sm:inline">Banners</span>
-                </TabsTrigger>
-                <TabsTrigger value="banner-text" className="flex items-center gap-2">
-                  <Type className="h-4 w-4" />
-                  <span className="hidden sm:inline">Banner Text</span>
-                </TabsTrigger>
-                <TabsTrigger value="button-text" className="flex items-center gap-2">
-                  <MousePointer className="h-4 w-4" />
-                  <span className="hidden sm:inline">Button Text</span>
-                </TabsTrigger>
-              </TabsList>
-
-              {/* Banners Tab */}
-              <TabsContent value="banners" className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <h2 className="text-2xl font-semibold">Banner Management</h2>
-                  <Dialog
-                    open={dialogs.addBanner}
-                    onOpenChange={(open) => setDialogs((prev) => ({ ...prev, addBanner: open }))}
-                  >
-                    <DialogTrigger asChild>
-                      <Button>
-                        <Plus className="h-4 w-4 mr-2" />
-                        Add Banner
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent>
-                      <DialogHeader>
-                        <DialogTitle>Add New Banner</DialogTitle>
-                        <DialogDescription>Upload a new banner image for the home page</DialogDescription>
-                      </DialogHeader>
-                      <div className="space-y-4">
-                        <div>
-                          <Label htmlFor="banner-file">Banner Image</Label>
-                          <Input
-                            id="banner-file"
-                            type="file"
-                            accept="image/*"
-                            onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
-                          />
-                        </div>
-                      </div>
-                      <DialogFooter>
-                        <Button onClick={handleAddBanner} disabled={loading.action || !selectedFile}>
-                          {loading.action && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-                          Add Banner
-                        </Button>
-                      </DialogFooter>
-                    </DialogContent>
-                  </Dialog>
-                </div>
-
-                {loading.banners ? (
-                  <div className="flex justify-center items-center h-32">
-                    <Loader2 className="h-8 w-8 animate-spin" />
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {banners.map((banner) => (
-                      <Card key={banner._id}>
-                        <CardHeader className="pb-2">
-                          <div className="aspect-video relative overflow-hidden rounded-md">
-                            <img
-                              src={banner.image_url || "/placeholder.svg"}
-                              alt="Banner"
-                              className="object-cover w-full h-full"
-                            />
-                          </div>
-                        </CardHeader>
-                        <CardContent>
-                          <div className="flex justify-between items-center">
-                            <p className="text-sm text-muted-foreground">ID: {banner._id.slice(-8)}</p>
-                            <div className="flex gap-2">
-                              <Button size="sm" variant="outline" onClick={() => openEditBannerDialog(banner)}>
-                                <Edit className="h-4 w-4" />
-                              </Button>
-                              <AlertDialog>
-                                <AlertDialogTrigger asChild>
-                                  <Button size="sm" variant="destructive">
-                                    <Trash2 className="h-4 w-4" />
-                                  </Button>
-                                </AlertDialogTrigger>
-                                <AlertDialogContent>
-                                  <AlertDialogHeader>
-                                    <AlertDialogTitle>Delete Banner</AlertDialogTitle>
-                                    <AlertDialogDescription>
-                                      Are you sure you want to delete this banner? This action cannot be undone.
-                                    </AlertDialogDescription>
-                                  </AlertDialogHeader>
-                                  <AlertDialogFooter>
-                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                    <AlertDialogAction
-                                      onClick={() => handleDeleteBanner(banner._id)}
-                                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                                    >
-                                      Delete
-                                    </AlertDialogAction>
-                                  </AlertDialogFooter>
-                                </AlertDialogContent>
-                              </AlertDialog>
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
-                )}
-
-                {/* Edit Banner Dialog */}
-                <Dialog
-                  open={dialogs.editBanner}
-                  onOpenChange={(open) => setDialogs((prev) => ({ ...prev, editBanner: open }))}
-                >
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>Edit Banner</DialogTitle>
-                      <DialogDescription>Upload a new image to replace the current banner</DialogDescription>
-                    </DialogHeader>
-                    <div className="space-y-4">
-                      {editingBanner && (
-                        <div className="aspect-video relative overflow-hidden rounded-md">
-                          <img
-                            src={editingBanner.image_url || "/placeholder.svg"}
-                            alt="Current Banner"
-                            className="object-cover w-full h-full"
-                          />
-                        </div>
-                      )}
-                      <div>
-                        <Label htmlFor="edit-banner-file">New Banner Image</Label>
-                        <Input
-                          id="edit-banner-file"
-                          type="file"
-                          accept="image/*"
-                          onChange={(e) => setSelectedFile(e.target.files?.[0] || null)}
-                        />
-                      </div>
-                    </div>
-                    <DialogFooter>
-                      <Button onClick={handleUpdateBanner} disabled={loading.action || !selectedFile}>
-                        {loading.action && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-                        Update Banner
-                      </Button>
-                    </DialogFooter>
-                  </DialogContent>
-                </Dialog>
-              </TabsContent>
-
-              {/* Banner Text Tab */}
-              <TabsContent value="banner-text" className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <h2 className="text-2xl font-semibold">Banner Text Management</h2>
-                  <Dialog
-                    open={dialogs.addBannerText}
-                    onOpenChange={(open) => setDialogs((prev) => ({ ...prev, addBannerText: open }))}
-                  >
-                    <DialogTrigger asChild>
-                      <Button>
-                        <Plus className="h-4 w-4 mr-2" />
-                        Add Banner Text
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent>
-                      <DialogHeader>
-                        <DialogTitle>Add Banner Text</DialogTitle>
-                        <DialogDescription>Add text content for the banner section</DialogDescription>
-                      </DialogHeader>
-                      <div className="space-y-4">
-                        <div>
-                          <Label htmlFor="banner-text">Banner Text</Label>
-                          <Input
-                            id="banner-text"
-                            value={bannerTextForm.bannerText}
-                            onChange={(e) => setBannerTextForm((prev) => ({ ...prev, bannerText: e.target.value }))}
-                            placeholder="Enter main banner text"
-                          />
-                        </div>
-                        <div>
-                          <Label htmlFor="banner-subtext">Banner Subtext</Label>
-                          <Textarea
-                            id="banner-subtext"
-                            value={bannerTextForm.bannerSubText}
-                            onChange={(e) => setBannerTextForm((prev) => ({ ...prev, bannerSubText: e.target.value }))}
-                            placeholder="Enter banner subtext"
-                          />
-                        </div>
-                        <div>
-                          <Label htmlFor="location">Location</Label>
-                          <Input
-                            id="location"
-                            value={bannerTextForm.location}
-                            onChange={(e) => setBannerTextForm((prev) => ({ ...prev, location: e.target.value }))}
-                            placeholder="Enter location"
-                          />
-                        </div>
-                      </div>
-                      <DialogFooter>
-                        <Button onClick={handleAddBannerText} disabled={loading.action}>
-                          {loading.action && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-                          Add Banner Text
-                        </Button>
-                      </DialogFooter>
-                    </DialogContent>
-                  </Dialog>
-                </div>
-
-                {loading.bannerTexts ? (
-                  <div className="flex justify-center items-center h-32">
-                    <Loader2 className="h-8 w-8 animate-spin" />
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {bannerTexts.map((bannerText) => (
-                      <Card key={bannerText._id}>
-                        <CardHeader>
-                          <CardTitle className="text-lg">{bannerText.bannerText}</CardTitle>
-                          <CardDescription>{bannerText.bannerSubText}</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                          <div className="flex justify-between items-center">
-                            <p className="text-sm text-muted-foreground">Location: {bannerText.location}</p>
-                            <div className="flex gap-2">
-                              <Button size="sm" variant="outline" onClick={() => openEditBannerTextDialog(bannerText)}>
-                                <Edit className="h-4 w-4" />
-                              </Button>
-                              <AlertDialog>
-                                <AlertDialogTrigger asChild>
-                                  <Button size="sm" variant="destructive">
-                                    <Trash2 className="h-4 w-4" />
-                                  </Button>
-                                </AlertDialogTrigger>
-                                <AlertDialogContent>
-                                  <AlertDialogHeader>
-                                    <AlertDialogTitle>Delete Banner Text</AlertDialogTitle>
-                                    <AlertDialogDescription>
-                                      Are you sure you want to delete this banner text? This action cannot be undone.
-                                    </AlertDialogDescription>
-                                  </AlertDialogHeader>
-                                  <AlertDialogFooter>
-                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                    <AlertDialogAction
-                                      onClick={() => handleDeleteBannerText(bannerText._id)}
-                                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                                    >
-                                      Delete
-                                    </AlertDialogAction>
-                                  </AlertDialogFooter>
-                                </AlertDialogContent>
-                              </AlertDialog>
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
-                )}
-
-                {/* Edit Banner Text Dialog */}
-                <Dialog
-                  open={dialogs.editBannerText}
-                  onOpenChange={(open) => setDialogs((prev) => ({ ...prev, editBannerText: open }))}
-                >
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>Edit Banner Text</DialogTitle>
-                      <DialogDescription>Update the banner text content</DialogDescription>
-                    </DialogHeader>
-                    <div className="space-y-4">
-                      <div>
-                        <Label htmlFor="edit-banner-text">Banner Text</Label>
-                        <Input
-                          id="edit-banner-text"
-                          value={bannerTextForm.bannerText}
-                          onChange={(e) => setBannerTextForm((prev) => ({ ...prev, bannerText: e.target.value }))}
-                          placeholder="Enter main banner text"
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="edit-banner-subtext">Banner Subtext</Label>
-                        <Textarea
-                          id="edit-banner-subtext"
-                          value={bannerTextForm.bannerSubText}
-                          onChange={(e) => setBannerTextForm((prev) => ({ ...prev, bannerSubText: e.target.value }))}
-                          placeholder="Enter banner subtext"
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="edit-location">Location</Label>
-                        <Input
-                          id="edit-location"
-                          value={bannerTextForm.location}
-                          onChange={(e) => setBannerTextForm((prev) => ({ ...prev, location: e.target.value }))}
-                          placeholder="Enter location"
-                        />
-                      </div>
-                    </div>
-                    <DialogFooter>
-                      <Button onClick={handleUpdateBannerText} disabled={loading.action}>
-                        {loading.action && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-                        Update Banner Text
-                      </Button>
-                    </DialogFooter>
-                  </DialogContent>
-                </Dialog>
-              </TabsContent>
-
-              {/* Button Text Tab */}
-              <TabsContent value="button-text" className="space-y-4">
-                <div className="flex justify-between items-center">
-                  <h2 className="text-2xl font-semibold">Button Text Management</h2>
-                  <Dialog
-                    open={dialogs.addButtonText}
-                    onOpenChange={(open) => setDialogs((prev) => ({ ...prev, addButtonText: open }))}
-                  >
-                    <DialogTrigger asChild>
-                      <Button>
-                        <Plus className="h-4 w-4 mr-2" />
-                        Add Button Text
-                      </Button>
-                    </DialogTrigger>
-                    <DialogContent>
-                      <DialogHeader>
-                        <DialogTitle>Add Button Text</DialogTitle>
-                        <DialogDescription>Add a new button with text and link</DialogDescription>
-                      </DialogHeader>
-                      <div className="space-y-4">
-                        <div>
-                          <Label htmlFor="button-text">Button Text</Label>
-                          <Input
-                            id="button-text"
-                            value={buttonTextForm.text}
-                            onChange={(e) => setButtonTextForm((prev) => ({ ...prev, text: e.target.value }))}
-                            placeholder="Enter button text"
-                          />
-                        </div>
-                        <div>
-                          <Label htmlFor="button-link">Button Link</Label>
-                          <Input
-                            id="button-link"
-                            value={buttonTextForm.link}
-                            onChange={(e) => setButtonTextForm((prev) => ({ ...prev, link: e.target.value }))}
-                            placeholder="Enter button link URL"
-                          />
-                        </div>
-                      </div>
-                      <DialogFooter>
-                        <Button onClick={handleAddButtonText} disabled={loading.action}>
-                          {loading.action && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-                          Add Button Text
-                        </Button>
-                      </DialogFooter>
-                    </DialogContent>
-                  </Dialog>
-                </div>
-
-                {loading.buttonTexts ? (
-                  <div className="flex justify-center items-center h-32">
-                    <Loader2 className="h-8 w-8 animate-spin" />
-                  </div>
-                ) : (
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    {buttonTexts.map((buttonText) => (
-                      <Card key={buttonText._id}>
-                        <CardHeader>
-                          <CardTitle className="text-lg">{buttonText.text}</CardTitle>
-                          <CardDescription className="break-all">{buttonText.link}</CardDescription>
-                        </CardHeader>
-                        <CardContent>
-                          <div className="flex justify-between items-center">
-                            <Button variant="outline" size="sm" asChild>
-                              <a href={buttonText.link} target="_blank" rel="noopener noreferrer">
-                                Preview
-                              </a>
-                            </Button>
-                            <div className="flex gap-2">
-                              <Button size="sm" variant="outline" onClick={() => openEditButtonTextDialog(buttonText)}>
-                                <Edit className="h-4 w-4" />
-                              </Button>
-                              <AlertDialog>
-                                <AlertDialogTrigger asChild>
-                                  <Button size="sm" variant="destructive">
-                                    <Trash2 className="h-4 w-4" />
-                                  </Button>
-                                </AlertDialogTrigger>
-                                <AlertDialogContent>
-                                  <AlertDialogHeader>
-                                    <AlertDialogTitle>Delete Button Text</AlertDialogTitle>
-                                    <AlertDialogDescription>
-                                      Are you sure you want to delete this button text? This action cannot be undone.
-                                    </AlertDialogDescription>
-                                  </AlertDialogHeader>
-                                  <AlertDialogFooter>
-                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                    <AlertDialogAction
-                                      onClick={() => handleDeleteButtonText(buttonText._id)}
-                                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                                    >
-                                      Delete
-                                    </AlertDialogAction>
-                                  </AlertDialogFooter>
-                                </AlertDialogContent>
-                              </AlertDialog>
-                            </div>
-                          </div>
-                        </CardContent>
-                      </Card>
-                    ))}
-                  </div>
-                )}
-
-                {/* Edit Button Text Dialog */}
-                <Dialog
-                  open={dialogs.editButtonText}
-                  onOpenChange={(open) => setDialogs((prev) => ({ ...prev, editButtonText: open }))}
-                >
-                  <DialogContent>
-                    <DialogHeader>
-                      <DialogTitle>Edit Button Text</DialogTitle>
-                      <DialogDescription>Update the button text and link</DialogDescription>
-                    </DialogHeader>
-                    <div className="space-y-4">
-                      <div>
-                        <Label htmlFor="edit-button-text">Button Text</Label>
-                        <Input
-                          id="edit-button-text"
-                          value={buttonTextForm.text}
-                          onChange={(e) => setButtonTextForm((prev) => ({ ...prev, text: e.target.value }))}
-                          placeholder="Enter button text"
-                        />
-                      </div>
-                      <div>
-                        <Label htmlFor="edit-button-link">Button Link</Label>
-                        <Input
-                          id="edit-button-link"
-                          value={buttonTextForm.link}
-                          onChange={(e) => setButtonTextForm((prev) => ({ ...prev, link: e.target.value }))}
-                          placeholder="Enter button link URL"
-                        />
-                      </div>
-                    </div>
-                    <DialogFooter>
-                      <Button onClick={handleUpdateButtonText} disabled={loading.action}>
-                        {loading.action && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-                        Update Button Text
-                      </Button>
-                    </DialogFooter>
-                  </DialogContent>
-                </Dialog>
-              </TabsContent>
-            </Tabs>
+        <div className="flex flex-1 flex-col gap-4 p-4 pt-0 bg-white min-h-screen">
+          <div className="mb-6">
+            <h1 className="text-3xl font-bold tracking-tight">Home Page Management</h1>
+            <p className="text-muted-foreground">Manage banners, text content, and buttons for the home page</p>
           </div>
+
+          <Tabs defaultValue="banners" className="w-full">
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="banners" className="flex items-center gap-2">
+                <ImageIcon className="h-4 w-4" />
+                <span className="hidden sm:inline">Banners</span>
+              </TabsTrigger>
+              <TabsTrigger value="banner-text" className="flex items-center gap-2">
+                <Type className="h-4 w-4" />
+                <span className="hidden sm:inline">Banner Text</span>
+              </TabsTrigger>
+              <TabsTrigger value="button-text" className="flex items-center gap-2">
+                <MousePointer className="h-4 w-4" />
+                <span className="hidden sm:inline">Button Text</span>
+              </TabsTrigger>
+            </TabsList>
+
+            {/* Banners Tab */}
+            <TabsContent value="banners" className="space-y-4">
+              <BannersSection />
+            </TabsContent>
+
+            {/* Banner Text Tab */}
+            <TabsContent value="banner-text" className="space-y-4">
+              <BannerTextSection />
+            </TabsContent>
+
+            {/* Button Text Tab */}
+            <TabsContent value="button-text" className="space-y-4">
+              <ButtonTextSection />
+            </TabsContent>
+          </Tabs>
         </div>
       </SidebarInset>
     </SidebarProvider>
