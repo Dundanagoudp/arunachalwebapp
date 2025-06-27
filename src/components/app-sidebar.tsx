@@ -33,6 +33,8 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar"
+import { title } from "process"
+import { Item } from "@radix-ui/react-dropdown-menu"
 
 // Admin-specific data
 const adminData = {
@@ -95,6 +97,26 @@ const adminData = {
         },
       ],
     },
+        {
+      title: "Archives",
+      url: "/admin/dashboard/archive",
+      icon: Archive,
+      items: [
+        {
+          title: "All Archives",
+          url: "/admin/dashboard/archive",
+        },
+        {
+          title: "Add Archive",
+          url: "/admin/dashboard/archive/add-year",
+        },
+        {
+          title: "Upload Image",
+          url: "/admin/dashboard/archive/upload",
+        },
+      ]
+      
+    },
     {
       title: "Videos",
       url: "/admin/dashboard/videos",
@@ -126,6 +148,17 @@ const adminData = {
       ],
     },
     {
+      title:"Home",
+      url:"/admin/dashboard/home",
+      icon:ImageIcon,
+      items:[
+        {
+          title:"Home",
+          url:"/admin/dashboard/home"
+        }
+      ]
+    },
+    {
       title: "Workshops",
       url: "/admin/dashboard/workshops",
       icon: BookOpen,
@@ -154,31 +187,6 @@ const adminData = {
           url: "/admin/dashboard/users/create",
         },
       ],
-    },
-    {
-      title: "Archives",
-      url: "/admin/dashboard/archive",
-      icon: Archive,
-      items: [
-        {
-          title: "All Archives",
-          url: "/admin/dashboard/archive",
-        },
-        {
-          title: "Add Archive",
-          url: "/admin/dashboard/archive/add-year",
-        },
-        {
-          title: "Upload Image",
-          url: "/admin/dashboard/archive/upload",
-        },
-      ]
-      
-    },
-    {
-      title: "Analytics",
-      url: "/admin/dashboard/analytics",
-      icon: BarChart3,
     },
     {
       title: "Settings",
