@@ -155,6 +155,10 @@ const adminData = {
         {
           title:"Home",
           url:"/admin/dashboard/home"
+        },
+        {
+          title:"Poetry",
+          url:"/admin/dashboard/home/poetry"
         }
       ]
     },
