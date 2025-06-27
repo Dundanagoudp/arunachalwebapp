@@ -11,6 +11,7 @@ interface VideoCardProps {
   duration: string
   thumbnailUrl: string
   channelAvatar: string
+  onClick?: () => void
 }
 
 export function VideoCard({
@@ -21,9 +22,10 @@ export function VideoCard({
   duration,
   thumbnailUrl,
   channelAvatar,
+  onClick,
 }: VideoCardProps) {
   return (
-    <div className="flex flex-col space-y-3 cursor-pointer group">
+    <div className="flex flex-col space-y-3 cursor-pointer group" onClick={onClick}>
       <div className="relative aspect-video rounded-xl overflow-hidden bg-gray-100">
         <Image
           src={thumbnailUrl || "/placeholder.svg"}
@@ -31,6 +33,12 @@ export function VideoCard({
           fill
           className="object-cover group-hover:scale-105 transition-transform duration-200"
         />
+        <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+          <svg width="48" height="48" viewBox="0 0 48 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="24" cy="24" r="24" fill="black" fillOpacity="0.6" />
+            <polygon points="20,16 34,24 20,32" fill="white" />
+          </svg>
+        </div>
         <div className="absolute bottom-2 right-2 bg-black bg-opacity-80 text-white text-xs px-1.5 py-0.5 rounded">
           {duration}
         </div>
