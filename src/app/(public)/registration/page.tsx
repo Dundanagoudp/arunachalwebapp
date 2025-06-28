@@ -9,7 +9,7 @@ export default function Registrationpage() {
   return (
     <div >
       <RegistrationSection/>
-      <RegistrationForm/>
+      {/* <RegistrationForm/> */}
     </div>
   );
 } 
