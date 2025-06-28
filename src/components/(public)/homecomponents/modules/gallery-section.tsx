@@ -7,19 +7,11 @@ import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
 import { ArrowRight, ArrowUpRight, ChevronLeft, ChevronRight, X } from "lucide-react"
 import { SkeletonCard } from "@/components/skeleton-card"
+import { getAllImages } from "@/service/archive"
+import type { ArchiveImage } from "@/types/archive-types"
 
 export default function GallerySection() {
-  const gallery = [
-    { src: "/gallery/gallery1.png", alt: "Speaker 1" },
-    { src: "/gallery/gallery2.png", alt: "Speaker 2" },
-    { src: "/gallery/gallery3.png", alt: "Speaker 3" },
-    { src: "/gallery/gallery4.png", alt: "Speaker 4" },
-    { src: "/gallery/gallery5.png", alt: "Speaker 5" },
-    { src: "/gallery/gallery6.png", alt: "Speaker 6" },
-    
-    
-  ]
-
+  const [gallery, setGallery] = useState<ArchiveImage[]>([])
   const [isLightboxOpen, setIsLightboxOpen] = useState(false)
   const [currentIndex, setCurrentIndex] = useState(0)
   const [isLoading, setIsLoading] = useState(true)
@@ -66,8 +58,16 @@ export default function GallerySection() {
   }, [isLightboxOpen, handleKeyDown])
 
   useEffect(() => {
-    // Simulate loading for 1.5 seconds
+    // Simulate loading for 1.5 seconds and fetch images
+    setIsLoading(true)
     const timer = setTimeout(() => setIsLoading(false), 1500)
+    getAllImages().then((res) => {
+      if (res.success && res.data?.archive) {
+        // Sort by createdAt descending and take 6 latest
+        const sorted = [...res.data.archive].sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
+        setGallery(sorted.slice(0, 6))
+      }
+    })
     return () => clearTimeout(timer)
   }, [])
 
@@ -134,9 +134,9 @@ export default function GallerySection() {
                   {/* Image area shimmer only, no text */}
                 </div>
               ))
-            : gallery.slice(0, 6).map((image, index) => (
+            : gallery.map((image, index) => (
                 <div
-                  key={index}
+                  key={image._id}
                   className="rounded-lg overflow-hidden shadow-md cursor-pointer hover:opacity-90 transition-opacity aspect-[3/2] flex items-center justify-center bg-white"
                   onClick={() => openLightbox(index)}
                   role="button"
@@ -148,8 +148,8 @@ export default function GallerySection() {
                   }}
                 >
                   <Image
-                    src={image.src || "/placeholder.svg"}
-                    alt={image.alt}
+                    src={image.image_url || "/placeholder.svg"}
+                    alt={image.originalName || `Gallery Image ${index + 1}`}
                     width={600}
                     height={400}
                     className="w-full h-full object-cover rounded-lg"
@@ -176,8 +176,8 @@ export default function GallerySection() {
               {currentImage && (
                 <div className="absolute inset-0 flex items-center justify-center">
                   <Image
-                    src={currentImage.src || "/placeholder.svg"}
-                    alt={currentImage.alt}
+                    src={currentImage.image_url || "/placeholder.svg"}
+                    alt={currentImage.originalName || "Gallery Image"}
                     fill
                     className="object-contain rounded-lg"
                   />

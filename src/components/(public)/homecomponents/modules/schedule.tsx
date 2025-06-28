@@ -6,6 +6,7 @@ import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { getAllEvents } from "@/service/events-apis"
+import { useRouter } from "next/navigation"
 
 // Types for schedule data
 interface ScheduleEvent {
@@ -57,6 +58,7 @@ const fetchScheduleData = async (): Promise<ScheduleData> => {
 };
 
 export default function Schedule() {
+  const router = useRouter()
   const [activeDay, setActiveDay] = useState("Day 1")
   const [scheduleData, setScheduleData] = useState<ScheduleData | null>(null)
   const [loading, setLoading] = useState(true)
@@ -79,6 +81,10 @@ export default function Schedule() {
 
     loadScheduleData()
   }, [])
+
+  const handleViewAllClick = () => {
+    router.push("/schedule")
+  }
 
   // Loading skeleton component
   const LoadingSkeleton = () => (
@@ -199,7 +205,10 @@ export default function Schedule() {
 
         {/* View All Button */}
         <div className="mt-8 flex justify-center">
-          <button className="group relative flex items-center hover:scale-105 transition-transform duration-300 focus:outline-none">
+          <button 
+            onClick={handleViewAllClick}
+            className="group relative flex items-center hover:scale-105 transition-transform duration-300 focus:outline-none cursor-pointer"
+          >
             <span className="bg-[#6A1B1A] text-white px-6 py-3 pr-12 rounded-full text-lg font-medium">
               View All
             </span>
