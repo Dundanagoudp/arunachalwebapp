@@ -9,6 +9,7 @@ const apiClient = axios.create({
     "Content-Type": "application/json",
   },
   withCredentials: true,
+  timeout: 30000, // 30 second default timeout
 })
 
 // Add request interceptors for authentication tokens
@@ -33,9 +34,13 @@ apiClient.interceptors.request.use(
       })
     }
 
+    // Add performance logging
+    console.log(`API Request: ${config.method?.toUpperCase()} ${config.url}`)
+
     return config
   },
   (error) => {
+    console.error("Request interceptor error:", error)
     return Promise.reject(error)
   },
 )
@@ -43,15 +48,27 @@ apiClient.interceptors.request.use(
 // Add response interceptor for better error handling
 apiClient.interceptors.response.use(
   (response) => {
-    console.log("API Response:", response.data)
+    console.log(`API Response: ${response.config.method?.toUpperCase()} ${response.config.url} - ${response.status}`)
     return response
   },
   (error) => {
-    console.error("API Error:", error)
+    console.error("API Error:", {
+      url: error.config?.url,
+      method: error.config?.method,
+      status: error.response?.status,
+      message: error.message,
+      timeout: error.code === 'ECONNABORTED'
+    })
+    
     if (error.response) {
       console.error("Error response data:", error.response.data)
       console.error("Error response status:", error.response.status)
     }
+    
+    if (error.code === 'ECONNABORTED') {
+      console.error("Request timeout - the server took too long to respond")
+    }
+    
     return Promise.reject(error)
   },
 )

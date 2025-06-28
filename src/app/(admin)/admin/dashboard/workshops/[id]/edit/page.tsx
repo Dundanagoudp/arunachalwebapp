@@ -17,7 +17,7 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { BookOpen, Save, ArrowLeft, Upload, Loader2, X } from "lucide-react"
+import { BookOpen, Save, ArrowLeft, Upload, Loader2, X, RefreshCw } from "lucide-react"
 import Link from "next/link"
 import { useState, useEffect } from "react"
 import { useRouter, useParams } from "next/navigation"
@@ -25,6 +25,7 @@ import { updateWorkshop, getWorkshops, getEvents } from "@/service/registrationS
 import type { Workshop, UpdateWorkshopData } from "@/types/workshop-types"
 import type { Event } from "@/types/events-types"
 import { useToast } from "@/hooks/use-toast"
+import { FormSkeleton, PageHeaderSkeleton } from "@/components/skeleton-card"
 
 export default function EditWorkshop() {
   const router = useRouter()
@@ -33,6 +34,7 @@ export default function EditWorkshop() {
   const [workshop, setWorkshop] = useState<Workshop | null>(null)
   const [events, setEvents] = useState<Event[]>([])
   const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
   const [formData, setFormData] = useState<UpdateWorkshopData>({
     name: "",
@@ -48,6 +50,7 @@ export default function EditWorkshop() {
 
   const fetchData = async () => {
     setLoading(true)
+    setError(null)
     try {
       const [workshopsResponse, eventsResponse] = await Promise.all([getWorkshops(), getEvents()])
 
@@ -62,21 +65,33 @@ export default function EditWorkshop() {
             registrationFormUrl: foundWorkshop.registrationFormUrl,
           })
         } else {
+          setError("Workshop not found")
           toast({
             title: "Error",
             description: "Workshop not found",
           })
           router.push("/admin/dashboard/workshops")
         }
+      } else {
+        setError(workshopsResponse.error || "Failed to fetch workshop")
+        toast({
+          title: "Error",
+          description: workshopsResponse.error || "Failed to fetch workshop",
+        })
       }
 
       if (eventsResponse.success && eventsResponse.data) {
         setEvents(eventsResponse.data)
+      } else {
+        // Don't set error for events, just log it
+        console.warn("Failed to fetch events:", eventsResponse.error)
       }
     } catch (error) {
+      const errorMessage = "Failed to fetch workshop. Please check your connection."
+      setError(errorMessage)
       toast({
         title: "Error",
-        description: "Failed to fetch workshop",
+        description: errorMessage,
       })
     } finally {
       setLoading(false)
@@ -198,14 +213,14 @@ export default function EditWorkshop() {
           window.location.href = "/admin/dashboard/workshops"
         }
       } else {
-        console.log("Update failed:", response.error)
+        console.error("API Error Response:", response)
         toast({
           title: "Error",
           description: response.error || "Failed to update workshop",
         })
       }
     } catch (error) {
-      console.error("Update error:", error)
+      console.error("Submit Error:", error)
       toast({
         title: "Error",
         description: "An unexpected error occurred. Please try again.",
@@ -222,36 +237,8 @@ export default function EditWorkshop() {
     })
   }
 
-  if (loading) {
-    return (
-      <SidebarProvider>
-        <AppSidebar />
-        <SidebarInset>
-          <div className="flex items-center justify-center h-screen">
-            <Loader2 className="h-8 w-8 animate-spin" />
-          </div>
-        </SidebarInset>
-      </SidebarProvider>
-    )
-  }
-
-  if (!workshop) {
-    return (
-      <SidebarProvider>
-        <AppSidebar />
-        <SidebarInset>
-          <div className="flex items-center justify-center h-screen">
-            <div className="text-center">
-              <h2 className="text-2xl font-bold">Workshop not found</h2>
-              <Button asChild className="mt-4" suppressHydrationWarning={true}>
-                <Link href="/admin/dashboard/workshops">Back to Workshops</Link>
-              </Button>
-            </div>
-          </div>
-        </SidebarInset>
-      </SidebarProvider>
-    )
-  }
+  // Show skeleton if loading OR if there's an error (to prevent showing empty form)
+  const shouldShowSkeleton = loading || error
 
   return (
     <SidebarProvider>
@@ -280,124 +267,122 @@ export default function EditWorkshop() {
         </header>
 
         <div className="flex flex-1 flex-col gap-4 p-4 md:gap-6 md:p-6 pt-0">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div>
-              <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Edit Workshop</h1>
-              <p className="text-muted-foreground text-sm md:text-base">Update workshop information.</p>
+          {/* Header */}
+          {shouldShowSkeleton ? (
+            <PageHeaderSkeleton />
+          ) : (
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div>
+                <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Edit Workshop</h1>
+                <p className="text-muted-foreground text-sm md:text-base">
+                  Update workshop information and details.
+                </p>
+                {workshop && (
+                  <p className="text-sm text-muted-foreground mt-1">
+                    Event: {getEventName(workshop.eventRef)}
+                  </p>
+                )}
+              </div>
+              <div className="flex gap-2">
+                <Button 
+                  variant="outline" 
+                  onClick={fetchData} 
+                  disabled={loading}
+                  className="w-full sm:w-auto bg-transparent"
+                >
+                  <RefreshCw className={`mr-2 h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+                  Refresh
+                </Button>
+                <Button variant="outline" asChild className="w-full sm:w-auto bg-transparent" suppressHydrationWarning={true}>
+                  <Link href="/admin/dashboard/workshops">
+                    <ArrowLeft className="mr-2 h-4 w-4" />
+                    Back to Workshops
+                  </Link>
+                </Button>
+              </div>
             </div>
-            <Button variant="outline" asChild className="w-full sm:w-auto bg-transparent" suppressHydrationWarning={true}>
-              <Link href="/admin/dashboard/workshops">
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Back to Workshops
-              </Link>
-            </Button>
-          </div>
+          )}
 
+          {/* Form */}
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <BookOpen className="h-5 w-5" />
                 Workshop Details
               </CardTitle>
-              <CardDescription>Update the information for this workshop.</CardDescription>
+              <CardDescription>Update the information for your workshop.</CardDescription>
             </CardHeader>
             <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid gap-6 md:grid-cols-2">
+              {shouldShowSkeleton ? (
+                <FormSkeleton />
+              ) : (
+                <form onSubmit={handleSubmit} className="space-y-6">
+                  <div className="grid gap-6 md:grid-cols-2">
+                    <div className="space-y-2">
+                      <Label htmlFor="name">Workshop Name *</Label>
+                      <Input
+                        id="name"
+                        name="name"
+                        placeholder="Enter workshop name"
+                        value={formData.name || ""}
+                        onChange={handleChange}
+                        required
+                        suppressHydrationWarning={true}
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="eventRef">Associated Event</Label>
+                      <Input
+                        id="eventRef"
+                        value={workshop ? getEventName(workshop.eventRef) : ""}
+                        disabled
+                        className="bg-muted"
+                        suppressHydrationWarning={true}
+                      />
+                      <p className="text-xs text-muted-foreground">Event cannot be changed after creation</p>
+                    </div>
+                  </div>
+
                   <div className="space-y-2">
-                    <Label htmlFor="name">Workshop Name *</Label>
-                    <Input
-                      id="name"
-                      name="name"
-                      placeholder="Enter workshop name"
-                      value={formData.name}
+                    <Label htmlFor="about">About Workshop *</Label>
+                    <Textarea
+                      id="about"
+                      name="about"
+                      placeholder="Enter workshop description and details"
+                      value={formData.about || ""}
                       onChange={handleChange}
+                      rows={6}
                       required
                       suppressHydrationWarning={true}
                     />
                   </div>
 
                   <div className="space-y-2">
-                    <Label>Associated Event</Label>
-                    <Input value={getEventName(workshop.eventRef)} disabled className="bg-muted" suppressHydrationWarning={true} />
-                    <p className="text-xs text-muted-foreground">Event association cannot be changed</p>
+                    <Label htmlFor="registrationFormUrl">Registration Form URL *</Label>
+                    <Input
+                      id="registrationFormUrl"
+                      name="registrationFormUrl"
+                      type="url"
+                      placeholder="https://docs.google.com/forms/..."
+                      value={formData.registrationFormUrl || ""}
+                      onChange={handleChange}
+                      required
+                      suppressHydrationWarning={true}
+                    />
+                    <p className="text-xs text-muted-foreground">Must be a valid Google Forms URL</p>
                   </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="about">About Workshop *</Label>
-                  <Textarea
-                    id="about"
-                    name="about"
-                    placeholder="Enter workshop description and details"
-                    value={formData.about}
-                    onChange={handleChange}
-                    rows={6}
-                    required
-                    suppressHydrationWarning={true}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="registrationFormUrl">Registration Form URL *</Label>
-                  <Input
-                    id="registrationFormUrl"
-                    name="registrationFormUrl"
-                    type="url"
-                    placeholder="https://docs.google.com/forms/..."
-                    value={formData.registrationFormUrl}
-                    onChange={handleChange}
-                    required
-                    suppressHydrationWarning={true}
-                  />
-                  <p className="text-xs text-muted-foreground">Must be a valid Google Forms URL</p>
-                </div>
-
-                <div className="space-y-4">
-                  <Label>Workshop Image</Label>
-                  <p className="text-xs text-muted-foreground">Upload a new image to replace the current one</p>
 
                   <div className="space-y-4">
-                    <div className="space-y-2">
-                      <Label className="text-sm font-medium">Upload New Image</Label>
-                      <div className="flex flex-col sm:flex-row gap-2">
-                        <input
-                          type="file"
-                          id="imageFile"
-                          accept="image/*"
-                          onChange={handleImageUpload}
-                          className="hidden"
-                          suppressHydrationWarning={true}
-                        />
-                        <Button
-                          type="button"
-                          variant="outline"
-                          className="w-full sm:w-auto bg-transparent"
-                          onClick={() => document.getElementById("imageFile")?.click()}
-                          suppressHydrationWarning={true}
-                        >
-                          <Upload className="mr-2 h-4 w-4" />
-                          Choose New Image
-                        </Button>
-                        <p className="text-xs text-muted-foreground self-center">
-                          Max size: 5MB. Supported: JPG, PNG, GIF
-                        </p>
-                      </div>
-                    </div>
+                    <Label>Workshop Image</Label>
+                    <p className="text-xs text-muted-foreground">Upload a new image to replace the current one</p>
 
-                    {/* Image Preview */}
-                    {(uploadedImage || formData.imageUrl) && (
+                    <div className="space-y-4">
                       <div className="space-y-2">
-                        <div className="flex items-center justify-between">
-                          <Label className="text-sm font-medium">Image Preview</Label>
-                          <Button type="button" variant="ghost" size="sm" onClick={removeImage} className="h-auto p-1" suppressHydrationWarning={true}>
-                            <X className="h-4 w-4" />
-                          </Button>
-                        </div>
+                        <Label className="text-sm font-medium">Current Image</Label>
                         <div className="w-full max-w-md h-48 bg-muted rounded-md overflow-hidden border">
                           <img
-                            src={uploadedImage || formData.imageUrl || "/placeholder.svg"}
-                            alt="Workshop preview"
+                            src={workshop?.imageUrl || "/placeholder.svg"}
+                            alt="Current workshop image"
                             className="w-full h-full object-cover"
                             onError={(e) => {
                               const target = e.target as HTMLImageElement
@@ -406,40 +391,96 @@ export default function EditWorkshop() {
                               if (parent) {
                                 parent.innerHTML = `
                                   <div class="w-full h-full flex items-center justify-center text-muted-foreground">
-                                    <p>Image not found or invalid URL</p>
+                                    <p>Image not found</p>
                                   </div>
                                 `
                               }
                             }}
                           />
                         </div>
-                        <p className="text-xs text-muted-foreground">
-                          {uploadedImage ? "New uploaded file preview" : "Current image"}
-                        </p>
                       </div>
-                    )}
-                  </div>
-                </div>
 
-                <div className="flex flex-col sm:flex-row gap-4">
-                  <Button type="submit" disabled={submitting} className="w-full sm:w-auto" suppressHydrationWarning={true}>
-                    {submitting ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Updating...
-                      </>
-                    ) : (
-                      <>
-                        <Save className="mr-2 h-4 w-4" />
-                        Update Workshop
-                      </>
-                    )}
-                  </Button>
-                  <Button type="button" variant="outline" asChild className="w-full sm:w-auto bg-transparent" suppressHydrationWarning={true}>
-                    <Link href="/admin/dashboard/workshops">Cancel</Link>
-                  </Button>
-                </div>
-              </form>
+                      <div className="space-y-2">
+                        <Label className="text-sm font-medium">Upload New Image (Optional)</Label>
+                        <div className="flex flex-col sm:flex-row gap-2">
+                          <input
+                            type="file"
+                            id="imageFile"
+                            accept="image/*"
+                            onChange={handleImageUpload}
+                            className="hidden"
+                            suppressHydrationWarning={true}
+                          />
+                          <Button
+                            type="button"
+                            variant="outline"
+                            className="w-full sm:w-auto bg-transparent"
+                            onClick={() => document.getElementById("imageFile")?.click()}
+                            suppressHydrationWarning={true}
+                          >
+                            <Upload className="mr-2 h-4 w-4" />
+                            Choose New Image
+                          </Button>
+                          <p className="text-xs text-muted-foreground self-center">
+                            Max size: 5MB. Supported: JPG, PNG, GIF
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* New Image Preview */}
+                      {uploadedImage && (
+                        <div className="space-y-2">
+                          <div className="flex items-center justify-between">
+                            <Label className="text-sm font-medium">New Image Preview</Label>
+                            <Button type="button" variant="ghost" size="sm" onClick={removeImage} className="h-auto p-1" suppressHydrationWarning={true}>
+                              <X className="h-4 w-4" />
+                            </Button>
+                          </div>
+                          <div className="w-full max-w-md h-48 bg-muted rounded-md overflow-hidden border">
+                            <img
+                              src={uploadedImage}
+                              alt="New workshop preview"
+                              className="w-full h-full object-cover"
+                              onError={(e) => {
+                                const target = e.target as HTMLImageElement
+                                target.style.display = "none"
+                                const parent = target.parentElement
+                                if (parent) {
+                                  parent.innerHTML = `
+                                    <div class="w-full h-full flex items-center justify-center text-muted-foreground">
+                                      <p>Image not found or invalid URL</p>
+                                    </div>
+                                  `
+                                }
+                              }}
+                            />
+                          </div>
+                          <p className="text-xs text-muted-foreground">New image preview</p>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="flex flex-col sm:flex-row gap-4">
+                    <Button type="submit" disabled={submitting} className="w-full sm:w-auto" suppressHydrationWarning={true}>
+                      {submitting ? (
+                        <>
+                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                          Updating...
+                        </>
+                      ) : (
+                        <>
+                          <Save className="mr-2 h-4 w-4" />
+                          Update Workshop
+                        </>
+                      )}
+                    </Button>
+                    <Button type="button" variant="outline" asChild className="w-full sm:w-auto bg-transparent" suppressHydrationWarning={true}>
+                      <Link href="/admin/dashboard/workshops">Cancel</Link>
+                    </Button>
+                  </div>
+                </form>
+              )}
             </CardContent>
           </Card>
         </div>
