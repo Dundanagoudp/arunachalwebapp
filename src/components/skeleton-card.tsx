@@ -1,6 +1,18 @@
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 
+// Public carousel card skeleton - matches the carousel layout
+export function CarouselCardSkeleton() {
+  return (
+    <div className="flex flex-col items-center">
+      <div className="overflow-hidden rounded-lg w-64 h-100 shadow-md">
+        <Skeleton className="w-full h-full" />
+      </div>
+      <Skeleton className="h-6 w-32 mt-4" />
+    </div>
+  )
+}
+
 // Workshop card skeleton
 export function WorkshopCardSkeleton() {
   return (
