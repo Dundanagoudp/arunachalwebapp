@@ -266,24 +266,26 @@ export default function EditWorkshop() {
           </div>
         </header>
 
-        <div className="flex flex-1 flex-col gap-4 p-4 md:gap-6 md:p-6 pt-0">
+        {/* Main content wrapper, no horizontal scroll */}
+        <div className="flex flex-1 flex-col gap-4 p-2 sm:p-4 md:gap-6 md:p-6 pt-0 w-full max-w-full">
           {/* Header */}
           {shouldShowSkeleton ? (
             <PageHeaderSkeleton />
           ) : (
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-              <div>
-                <h1 className="text-2xl md:text-3xl font-bold tracking-tight">Edit Workshop</h1>
-                <p className="text-muted-foreground text-sm md:text-base">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 w-full max-w-full">
+              <div className="min-w-0">
+                <h1 className="text-2xl md:text-3xl font-bold tracking-tight truncate">Edit Workshop</h1>
+                <p className="text-muted-foreground text-sm md:text-base truncate">
                   Update workshop information and details.
                 </p>
                 {workshop && (
-                  <p className="text-sm text-muted-foreground mt-1">
+                  <p className="text-sm text-muted-foreground mt-1 truncate">
                     Event: {getEventName(workshop.eventRef)}
                   </p>
                 )}
               </div>
-              <div className="flex gap-2">
+              {/* Responsive button group: stack on mobile, row on sm+ */}
+              <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
                 <Button 
                   variant="outline" 
                   onClick={fetchData} 
