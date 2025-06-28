@@ -62,6 +62,13 @@ export default function EventsPage() {
       if (result.success && result.data) {
         setEvents(result.data)
         console.log("Events loaded:", result.data)
+        console.log("Event days:", result.data.days)
+        result.data.days?.forEach((day: EventDay) => {
+          console.log(`Day ${day.dayNumber} (${day._id}):`, day.times?.length || 0, "time slots")
+          day.times?.forEach((time, index) => {
+            console.log(`  Time slot ${index + 1}:`, { id: time._id, title: time.title })
+          })
+        })
       } else {
         toast({
           title: "Error",

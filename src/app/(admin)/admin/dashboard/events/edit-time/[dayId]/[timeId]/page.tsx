@@ -3,15 +3,34 @@
 import React from "react";
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
+import { AppSidebar } from "@/components/app-sidebar";
+import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar";
+import { Separator } from "@/components/ui/separator";
+import { SidebarTrigger } from "@/components/ui/sidebar";
+import {
+  Breadcrumb,
+  BreadcrumbItem,
+  BreadcrumbLink,
+  BreadcrumbList,
+  BreadcrumbPage,
+  BreadcrumbSeparator,
+} from "@/components/ui/breadcrumb";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
-import { getEventDays, updateTime } from "@/service/events-apis";
+import { getEventDays, updateTime, getAllEvents } from "@/service/events-apis";
 import type { EventDay, EventTime } from "@/types/events-types";
 
-export default function EditTimeSlotPage({ params }: { params: Promise<{ dayId: string, timeId: string }> }) {
+interface PageProps {
+  params: Promise<{
+    dayId: string;
+    timeId: string;
+  }>;
+}
+
+export default function EditTimeSlotPage({ params }: PageProps) {
   const { dayId, timeId } = React.use(params);
   const router = useRouter();
   const { toast } = useToast();
@@ -19,6 +38,7 @@ export default function EditTimeSlotPage({ params }: { params: Promise<{ dayId: 
   const [timeSlot, setTimeSlot] = useState<EventTime | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     startTime: "",
     endTime: "",
@@ -30,14 +50,32 @@ export default function EditTimeSlotPage({ params }: { params: Promise<{ dayId: 
 
   useEffect(() => {
     const fetchData = async () => {
+      if (!dayId || !timeId) {
+        setError("Invalid day or time ID");
+        setIsLoading(false);
+        return;
+      }
+
       setIsLoading(true);
+      setError(null);
+      
       try {
-        const result = await getEventDays();
+        console.log("Fetching events for dayId:", dayId, "timeId:", timeId);
+        const result = await getAllEvents();
+        
         if (result.success && result.data) {
-          const day = result.data.find((d: EventDay) => d._id === dayId);
+          const day = result.data.days?.find((d: EventDay) => d._id === dayId);
+          console.log("Found day:", day);
+          
           if (day) {
             setEventDay(day);
+            console.log("Looking for timeId:", timeId);
+            console.log("Available time slots:", day.times);
+            console.log("Time slot IDs:", day.times?.map(t => t._id));
+            
             const slot = day.times?.find((t) => t._id === timeId) || null;
+            console.log("Found time slot:", slot);
+            
             if (slot) {
               setTimeSlot(slot);
               setFormData({
@@ -49,27 +87,40 @@ export default function EditTimeSlotPage({ params }: { params: Promise<{ dayId: 
                 speaker: slot.speaker,
               });
             } else {
-              toast({ title: "Error", description: "Time slot not found" });
-              router.replace("/admin/dashboard/events");
+              setError(`Time slot not found. Looking for ID: ${timeId}. Available IDs: ${day.times?.map(t => t._id).join(', ') || 'none'}`);
+              toast({ 
+                title: "Error", 
+                description: "Time slot not found"
+              });
             }
           } else {
-            toast({ title: "Error", description: "Event day not found" });
-            router.replace("/admin/dashboard/events");
+            setError("Event day not found");
+            toast({ 
+              title: "Error", 
+              description: "Event day not found"
+            });
           }
         } else {
-          toast({ title: "Error", description: result.error || "Failed to fetch event days" });
-          router.replace("/admin/dashboard/events");
+          setError(result.error || "Failed to fetch events");
+          toast({ 
+            title: "Error", 
+            description: result.error || "Failed to fetch events"
+          });
         }
       } catch (error) {
-        toast({ title: "Error", description: "Failed to fetch event days" });
-        router.replace("/admin/dashboard/events");
+        console.error("Error fetching events:", error);
+        setError("Failed to fetch events");
+        toast({ 
+          title: "Error", 
+          description: "Failed to fetch events"
+        });
       } finally {
         setIsLoading(false);
       }
     };
+
     fetchData();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dayId, timeId]);
+  }, [dayId, timeId, toast]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;
@@ -78,118 +129,247 @@ export default function EditTimeSlotPage({ params }: { params: Promise<{ dayId: 
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!eventDay || !timeSlot) return;
+    if (!eventDay || !timeSlot) {
+      toast({ 
+        title: "Error", 
+        description: "Missing event day or time slot data"
+      });
+      return;
+    }
+    
     setIsSubmitting(true);
     try {
+      console.log("Updating time slot:", { dayId: eventDay._id, timeId: timeSlot._id, formData });
       const result = await updateTime(eventDay._id, timeSlot._id, formData);
+      
       if (result.success) {
-        toast({ title: "Success", description: result.message || "Time slot updated" });
+        toast({ 
+          title: "Success", 
+          description: result.message || "Time slot updated successfully" 
+        });
         router.replace("/admin/dashboard/events");
       } else {
-        toast({ title: "Error", description: result.error || "Failed to update time slot" });
+        toast({ 
+          title: "Error", 
+          description: result.error || "Failed to update time slot"
+        });
       }
     } catch (error) {
-      toast({ title: "Error", description: "An unexpected error occurred" });
+      console.error("Error updating time slot:", error);
+      toast({ 
+        title: "Error", 
+        description: "An unexpected error occurred"
+      });
     } finally {
       setIsSubmitting(false);
     }
   };
 
-  if (isLoading) {
-    return <div className="p-8 text-center">Loading...</div>;
-  }
+  const handleCancel = () => {
+    router.replace("/admin/dashboard/events");
+  };
 
-  if (!eventDay || !timeSlot) {
-    return null;
-  }
+  const renderContent = () => {
+    if (isLoading) {
+      return (
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-900 mx-auto mb-4"></div>
+            <p>Loading time slot details...</p>
+          </div>
+        </div>
+      );
+    }
+
+    if (error) {
+      return (
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <Card className="w-full max-w-lg">
+            <CardHeader>
+              <CardTitle className="text-red-600">Error</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-red-600 mb-4">{error}</p>
+              <Button onClick={handleCancel} variant="outline">
+                Back to Events
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      );
+    }
+
+    if (!eventDay || !timeSlot) {
+      return (
+        <div className="flex items-center justify-center min-h-[60vh]">
+          <Card className="w-full max-w-lg">
+            <CardHeader>
+              <CardTitle>Not Found</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="mb-4">The requested time slot could not be found.</p>
+              <Button onClick={handleCancel} variant="outline">
+                Back to Events
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      );
+    }
+
+    return (
+      <div className="w-full max-w-4xl mx-auto">
+        <Card className="w-full">
+          <CardHeader>
+            <CardTitle className="text-2xl">Edit Time Slot</CardTitle>
+            <p className="text-muted-foreground">
+              Day {eventDay.dayNumber}: {eventDay.name}
+            </p>
+          </CardHeader>
+          <CardContent>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="startTime">Start Time *</Label>
+                  <Input
+                    id="startTime"
+                    name="startTime"
+                    type="time"
+                    value={formData.startTime}
+                    onChange={handleChange}
+                    required
+                    disabled={isSubmitting}
+                    className="w-full"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="endTime">End Time *</Label>
+                  <Input
+                    id="endTime"
+                    name="endTime"
+                    type="time"
+                    value={formData.endTime}
+                    onChange={handleChange}
+                    required
+                    disabled={isSubmitting}
+                    className="w-full"
+                  />
+                </div>
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="title">Session Title *</Label>
+                <Input
+                  id="title"
+                  name="title"
+                  value={formData.title}
+                  onChange={handleChange}
+                  required
+                  disabled={isSubmitting}
+                  placeholder="Enter session title"
+                  className="w-full"
+                />
+              </div>
+              
+              <div className="space-y-2">
+                <Label htmlFor="description">Description *</Label>
+                <Input
+                  id="description"
+                  name="description"
+                  value={formData.description}
+                  onChange={handleChange}
+                  required
+                  disabled={isSubmitting}
+                  placeholder="Enter session description"
+                  className="w-full"
+                />
+              </div>
+              
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label htmlFor="type">Session Type *</Label>
+                  <Input
+                    id="type"
+                    name="type"
+                    value={formData.type}
+                    onChange={handleChange}
+                    required
+                    disabled={isSubmitting}
+                    placeholder="e.g., event, workshop, break"
+                    className="w-full"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="speaker">Speaker *</Label>
+                  <Input
+                    id="speaker"
+                    name="speaker"
+                    value={formData.speaker}
+                    onChange={handleChange}
+                    required
+                    disabled={isSubmitting}
+                    placeholder="Enter speaker name"
+                    className="w-full"
+                  />
+                </div>
+              </div>
+              
+              <div className="flex gap-4 pt-4">
+                <Button type="submit" disabled={isSubmitting} className="flex-1">
+                  {isSubmitting ? "Saving..." : "Save Changes"}
+                </Button>
+                <Button type="button" variant="outline" onClick={handleCancel} className="flex-1">
+                  Cancel
+                </Button>
+              </div>
+            </form>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  };
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen">
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle>Edit Time Slot</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="flex gap-2">
-              <div className="space-y-2">
-                <Label htmlFor="startTime">Start Time *</Label>
-                <Input
-                  id="startTime"
-                  name="startTime"
-                  type="time"
-                  value={formData.startTime}
-                  onChange={handleChange}
-                  required
-                  disabled={isSubmitting}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label htmlFor="endTime">End Time *</Label>
-                <Input
-                  id="endTime"
-                  name="endTime"
-                  type="time"
-                  value={formData.endTime}
-                  onChange={handleChange}
-                  required
-                  disabled={isSubmitting}
-                />
-              </div>
+    <SidebarProvider>
+      <AppSidebar />
+      <SidebarInset>
+        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 border-b bg-white/80 backdrop-blur-sm sticky top-0 z-40">
+          <div className="flex items-center gap-2 px-4">
+            <SidebarTrigger className="-ml-1" />
+            <Separator orientation="vertical" className="mr-2 data-[orientation=vertical]:h-4" />
+            <Breadcrumb>
+              <BreadcrumbList>
+                <BreadcrumbItem className="hidden md:block">
+                  <BreadcrumbLink href="/admin/dashboard">Admin Panel</BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator className="hidden md:block" />
+                <BreadcrumbItem className="hidden md:block">
+                  <BreadcrumbLink href="/admin/dashboard/events">Events</BreadcrumbLink>
+                </BreadcrumbItem>
+                <BreadcrumbSeparator className="hidden md:block" />
+                <BreadcrumbItem>
+                  <BreadcrumbPage>Edit Time Slot</BreadcrumbPage>
+                </BreadcrumbItem>
+              </BreadcrumbList>
+            </Breadcrumb>
+          </div>
+        </header>
+
+        <div className="flex flex-1 flex-col gap-6 p-6 pt-0">
+          {/* Header */}
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-3xl font-bold tracking-tight">Edit Time Slot</h1>
+              <p className="text-muted-foreground">
+                {eventDay ? `Day ${eventDay.dayNumber}: ${eventDay.name}` : "Loading..."}
+              </p>
             </div>
-            <div className="space-y-2">
-              <Label htmlFor="title">Session Title *</Label>
-              <Input
-                id="title"
-                name="title"
-                value={formData.title}
-                onChange={handleChange}
-                required
-                disabled={isSubmitting}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="description">Description *</Label>
-              <Input
-                id="description"
-                name="description"
-                value={formData.description}
-                onChange={handleChange}
-                required
-                disabled={isSubmitting}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="type">Session Type *</Label>
-              <Input
-                id="type"
-                name="type"
-                value={formData.type}
-                onChange={handleChange}
-                required
-                disabled={isSubmitting}
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="speaker">Speaker *</Label>
-              <Input
-                id="speaker"
-                name="speaker"
-                value={formData.speaker}
-                onChange={handleChange}
-                required
-                disabled={isSubmitting}
-              />
-            </div>
-            <div className="flex gap-4">
-              <Button type="submit" disabled={isSubmitting}>
-                {isSubmitting ? "Saving..." : "Save Changes"}
-              </Button>
-              <Button type="button" variant="outline" onClick={() => router.replace("/admin/dashboard/events")}>Cancel</Button>
-            </div>
-          </form>
-        </CardContent>
-      </Card>
-    </div>
+          </div>
+
+          {/* Content */}
+          {renderContent()}
+        </div>
+      </SidebarInset>
+    </SidebarProvider>
   );
 } 
