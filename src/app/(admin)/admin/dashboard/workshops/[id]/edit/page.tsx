@@ -170,25 +170,45 @@ export default function EditWorkshop() {
       // Only include image if a new one is uploaded
       if (uploadedImage) {
         updateData.imageUrl = uploadedImage
+        console.log("Updating with new image, base64 length:", uploadedImage.length)
+      } else {
+        console.log("No new image uploaded, keeping existing image")
       }
+
+      console.log("Sending update data:", { 
+        ...updateData, 
+        imageUrl: uploadedImage ? "base64_data_present" : "no_new_image" 
+      })
 
       const response = await updateWorkshop(workshop._id, updateData)
       if (response.success) {
+        console.log("Update successful, redirecting to workshops list")
         toast({
           title: "Success",
           description: "Workshop updated successfully",
         })
-        router.push("/admin/dashboard/workshops")
+        
+        // Try different navigation approaches
+        try {
+          await router.push("/admin/dashboard/workshops")
+          console.log("Router push completed")
+        } catch (navError) {
+          console.error("Navigation error:", navError)
+          // Fallback to window.location
+          window.location.href = "/admin/dashboard/workshops"
+        }
       } else {
+        console.log("Update failed:", response.error)
         toast({
           title: "Error",
           description: response.error || "Failed to update workshop",
         })
       }
     } catch (error) {
+      console.error("Update error:", error)
       toast({
         title: "Error",
-        description: "Failed to update workshop",
+        description: "An unexpected error occurred. Please try again.",
       })
     } finally {
       setSubmitting(false)

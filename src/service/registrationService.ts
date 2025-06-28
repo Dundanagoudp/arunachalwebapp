@@ -136,6 +136,11 @@ export async function getWorkshops(): Promise<ApiResponse<Workshop[]>> {
 // Update workshop
 export async function updateWorkshop(workshopId: string, data: UpdateWorkshopData): Promise<ApiResponse<Workshop>> {
   try {
+    console.log("Updating workshop with data:", { 
+      ...data, 
+      imageUrl: data.imageUrl ? "base64_data_present" : "no_image" 
+    })
+
     // Prepare form data for file upload
     const formData = new FormData()
     
@@ -145,20 +150,39 @@ export async function updateWorkshop(workshopId: string, data: UpdateWorkshopDat
 
     // Handle image upload if provided
     if (data.imageUrl && data.imageUrl.startsWith('data:')) {
+      console.log("Converting base64 to file for upload")
       // Convert base64 to file
       const response = await fetch(data.imageUrl)
       const blob = await response.blob()
       const file = new File([blob], 'workshop-image.jpg', { type: blob.type })
       formData.append("imageUrl", file)
+    } else if (data.imageUrl && data.imageUrl.startsWith('http')) {
+      console.log("Image URL provided, but backend expects file upload")
+      return {
+        success: false,
+        error: "Please upload an image file (URLs are not supported by the backend)",
+      }
+    } else {
+      console.log("No new image provided, keeping existing image")
     }
 
-    const response = await apiClient.post(`/registration/updateRegistration/${workshopId}`, formData, {
+    // Add timeout to prevent hanging
+    const timeoutPromise = new Promise((_, reject) => {
+      setTimeout(() => reject(new Error('Request timeout - backend may be hanging')), 30000) // 30 seconds
+    })
+
+    const requestPromise = apiClient.post(`/registration/updateRegistration/${workshopId}`, formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
+      timeout: 25000, // 25 second timeout
     })
+
+    const response = await Promise.race([requestPromise, timeoutPromise]) as any
     
     console.log("Update workshop response:", response.data)
+    console.log("Response status:", response.status)
+    console.log("Response success property:", response.data?.success)
 
     return {
       success: true,
@@ -167,6 +191,22 @@ export async function updateWorkshop(workshopId: string, data: UpdateWorkshopDat
     }
   } catch (error: any) {
     console.error("Error updating workshop:", error)
+    
+    // Handle specific error types
+    if (error.code === 'ERR_NETWORK' || error.message.includes('CONNECTION_RESET')) {
+      return {
+        success: false,
+        error: "Backend server is not responding. Please try again or contact support.",
+      }
+    }
+    
+    if (error.message.includes('timeout')) {
+      return {
+        success: false,
+        error: "Request timed out. The backend may be experiencing issues. Please try again.",
+      }
+    }
+    
     return {
       success: false,
       error: error.response?.data?.message || "Failed to update workshop",
