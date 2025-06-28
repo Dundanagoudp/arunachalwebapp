@@ -13,212 +13,190 @@ import {
 import { Separator } from "@/components/ui/separator"
 import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Plus, Edit, Trash2, Loader2, Search, ChevronLeft, ChevronRight } from "lucide-react"
-import { PoetryModal } from "@/components/admin/home/poetry/poetry-modal"
-import { DeleteConfirmDialog } from "@/components/admin/home/poetry/delete-confirm-dialog"
-import { useToast } from "@/hooks/use-toast"
-import { addPoetry, updatePoetry, getPoetry, deletePoetry } from "@/service/poetryService"
 import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import {
   Pagination,
   PaginationContent,
-  PaginationEllipsis,
   PaginationItem,
   PaginationLink,
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination"
+import { Plus, Search, Users, MessageSquare, RefreshCw } from "lucide-react"
+import { useToast } from "@/hooks/use-toast"
 
-interface Poetry {
-  _id: string
-  text: string
-  author: string
-  __v: number
-}
+import type { Testimonial } from "@/types/testimonial-types"
+import { getTestimonials, addTestimonial, updateTestimonial, deleteTestimonial } from "@/service/testimonialService"
+import { TestimonialCard } from "@/components/admin/home/testimonial/testimonial-card"
+import { TestimonialForm } from "@/components/admin/home/testimonial/testimonial-form"
+import { DeleteConfirmationDialog } from "@/components/admin/home/testimonial/delete-confirmation-dialog"
 
-// Skeleton component for poetry items
-function PoetrySkeleton() {
-  return (
-    <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between p-4 border rounded-lg space-y-3 sm:space-y-0">
-      <div className="flex-1 space-y-2">
-        <Skeleton className="h-4 w-full" />
-        <Skeleton className="h-4 w-3/4" />
-        <Skeleton className="h-3 w-32" />
-      </div>
-      <div className="flex items-center gap-2 sm:ml-4">
-        <Skeleton className="h-8 w-16" />
-        <Skeleton className="h-8 w-16" />
-      </div>
-    </div>
-  )
-}
+const ITEMS_PER_PAGE = 6
 
-export default function PoetryManagementPage() {
-  const [poetry, setPoetry] = useState<Poetry[]>([])
-  const [filteredPoetry, setFilteredPoetry] = useState<Poetry[]>([])
+export default function TestimonialsManagement() {
+  const [testimonials, setTestimonials] = useState<Testimonial[]>([])
+  const [filteredTestimonials, setFilteredTestimonials] = useState<Testimonial[]>([])
   const [loading, setLoading] = useState(true)
-  const [isAddModalOpen, setIsAddModalOpen] = useState(false)
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false)
-  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
-  const [selectedPoetry, setSelectedPoetry] = useState<Poetry | null>(null)
-  const [actionLoading, setActionLoading] = useState(false)
   const [searchTerm, setSearchTerm] = useState("")
   const [currentPage, setCurrentPage] = useState(1)
-  const [itemsPerPage] = useState(5)
+
+  // Modal states
+  const [isFormOpen, setIsFormOpen] = useState(false)
+  const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false)
+  const [editingTestimonial, setEditingTestimonial] = useState<Testimonial | null>(null)
+  const [deletingTestimonial, setDeletingTestimonial] = useState<Testimonial | null>(null)
+  const [formLoading, setFormLoading] = useState(false)
+  const [deleteLoading, setDeleteLoading] = useState(false)
+
   const { toast } = useToast()
 
-  // Calculate pagination
-  const totalPages = Math.ceil(filteredPoetry.length / itemsPerPage)
-  const startIndex = (currentPage - 1) * itemsPerPage
-  const endIndex = startIndex + itemsPerPage
-  const currentPoetry = filteredPoetry.slice(startIndex, endIndex)
-
-  // Fetch all poetry on component mount
-  useEffect(() => {
-    fetchPoetry()
-  }, [])
-
-  // Filter poetry based on search term
-  useEffect(() => {
-    const filtered = poetry.filter(
-      (item) =>
-        item.text.toLowerCase().includes(searchTerm.toLowerCase()) ||
-        item.author.toLowerCase().includes(searchTerm.toLowerCase())
-    )
-    setFilteredPoetry(filtered)
-    setCurrentPage(1) // Reset to first page when searching
-  }, [poetry, searchTerm])
-
-  const fetchPoetry = async () => {
+  // Fetch testimonials
+  const fetchTestimonials = async () => {
+    setLoading(true)
     try {
-      setLoading(true)
-      const response = await getPoetry()
-      if (response.success) {
-        setPoetry(response.data)
+      const response = await getTestimonials()
+      if (response.success && response.data) {
+        setTestimonials(response.data)
+        setFilteredTestimonials(response.data)
       } else {
         toast({
           title: "Error",
-          description: response.error || "Failed to fetch poetry",
+          description: response.error || "Failed to fetch testimonials",
         })
       }
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to fetch poetry",
+        description: "An unexpected error occurred",
       })
     } finally {
       setLoading(false)
     }
   }
 
-  const handleAddPoetry = async (data: { text: string; author: string }) => {
+  useEffect(() => {
+    fetchTestimonials()
+  }, [])
+
+  // Search functionality
+  useEffect(() => {
+    const filtered = testimonials.filter(
+      (testimonial) =>
+        testimonial.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        testimonial.about.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        testimonial.description.toLowerCase().includes(searchTerm.toLowerCase()),
+    )
+    setFilteredTestimonials(filtered)
+    setCurrentPage(1)
+  }, [searchTerm, testimonials])
+
+  // Pagination
+  const totalPages = Math.ceil(filteredTestimonials.length / ITEMS_PER_PAGE)
+  const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
+  const endIndex = startIndex + ITEMS_PER_PAGE
+  const currentTestimonials = filteredTestimonials.slice(startIndex, endIndex)
+
+  // Handle form submission
+  const handleFormSubmit = async (formData: FormData) => {
+    setFormLoading(true)
     try {
-      setActionLoading(true)
-      const response = await addPoetry(data)
+      let response
+      if (editingTestimonial) {
+        response = await updateTestimonial(editingTestimonial._id, formData)
+      } else {
+        response = await addTestimonial(formData)
+      }
+
       if (response.success) {
         toast({
           title: "Success",
-          description: response.message || "Poetry added successfully",
+          description: response.message,
         })
-        setIsAddModalOpen(false)
-        fetchPoetry() // Refresh the list
+        setIsFormOpen(false)
+        setEditingTestimonial(null)
+        fetchTestimonials()
       } else {
         toast({
           title: "Error",
-          description: response.error || "Failed to add poetry",
+          description: response.error || "Operation failed",
         })
       }
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to add poetry",
+        description: "An unexpected error occurred",
       })
     } finally {
-      setActionLoading(false)
+      setFormLoading(false)
     }
   }
 
-  const handleEditPoetry = async (data: { text: string; author: string }) => {
-    if (!selectedPoetry) return
+  // Handle delete
+  const handleDelete = async () => {
+    if (!deletingTestimonial) return
 
+    setDeleteLoading(true)
     try {
-      setActionLoading(true)
-      const response = await updatePoetry(selectedPoetry._id, data)
+      const response = await deleteTestimonial(deletingTestimonial._id)
       if (response.success) {
         toast({
           title: "Success",
-          description: response.message || "Poetry updated successfully",
-        })
-        setIsEditModalOpen(false)
-        setSelectedPoetry(null)
-        fetchPoetry() // Refresh the list
-      } else {
-        toast({
-          title: "Error",
-          description: response.error || "Failed to update poetry",
-        })
-      }
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to update poetry",
-      })
-    } finally {
-      setActionLoading(false)
-    }
-  }
-
-  const handleDeletePoetry = async () => {
-    if (!selectedPoetry) return
-
-    try {
-      setActionLoading(true)
-      const response = await deletePoetry(selectedPoetry._id)
-      if (response.success) {
-        toast({
-          title: "Success",
-          description: response.message || "Poetry deleted successfully",
+          description: response.message,
         })
         setIsDeleteDialogOpen(false)
-        setSelectedPoetry(null)
-        fetchPoetry() // Refresh the list
+        setDeletingTestimonial(null)
+        fetchTestimonials()
       } else {
         toast({
           title: "Error",
-          description: response.error || "Failed to delete poetry",
+          description: response.error || "Failed to delete testimonial",
         })
       }
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to delete poetry",
+        description: "An unexpected error occurred",
       })
     } finally {
-      setActionLoading(false)
+      setDeleteLoading(false)
     }
   }
 
-  const openEditModal = (poetryItem: Poetry) => {
-    setSelectedPoetry(poetryItem)
-    setIsEditModalOpen(true)
+  // Handle edit
+  const handleEdit = (testimonial: Testimonial) => {
+    setEditingTestimonial(testimonial)
+    setIsFormOpen(true)
   }
 
-  const openDeleteDialog = (poetryItem: Poetry) => {
-    setSelectedPoetry(poetryItem)
-    setIsDeleteDialogOpen(true)
+  // Handle delete confirmation
+  const handleDeleteClick = (id: string) => {
+    const testimonial = testimonials.find(t => t._id === id)
+    if (testimonial) {
+      setDeletingTestimonial(testimonial)
+      setIsDeleteDialogOpen(true)
+    }
   }
 
-  const handlePageChange = (page: number) => {
-    setCurrentPage(page)
+  // Handle add new
+  const handleAddNew = () => {
+    setEditingTestimonial(null)
+    setIsFormOpen(true)
+  }
+
+  // Handle form cancel
+  const handleFormCancel = () => {
+    setIsFormOpen(false)
+    setEditingTestimonial(null)
   }
 
   return (
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
+        {/* Header */}
         <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 border-b bg-white/80 backdrop-blur-sm sticky top-0 z-40">
           <div className="flex items-center gap-2 px-2 sm:px-4">
             <SidebarTrigger className="-ml-1" />
@@ -230,267 +208,188 @@ export default function PoetryManagementPage() {
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>
-                  <BreadcrumbPage className="text-sm sm:text-base">Poetry Management</BreadcrumbPage>
+                  <BreadcrumbPage className="text-sm sm:text-base">Testimonials Management</BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
           </div>
         </header>
 
-        <div className="flex flex-1 flex-col gap-4 p-2 sm:p-4">
-          {/* Header Section */}
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-            <div>
-              <h1 className="text-xl sm:text-2xl font-bold tracking-tight">Poetry Management</h1>
-              <p className="text-sm sm:text-base text-muted-foreground">Manage your poetry collection</p>
+        {/* Main Content */}
+        <div className="flex-1 space-y-4 p-4 md:p-6 lg:p-8">
+          {/* Stats Cards */}
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Total Testimonials</CardTitle>
+                <MessageSquare className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{testimonials.length}</div>
+                <p className="text-xs text-muted-foreground">Customer feedback entries</p>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Unique Customers</CardTitle>
+                <Users className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{new Set(testimonials.map((t) => t.about)).size}</div>
+                <p className="text-xs text-muted-foreground">Different customers</p>
+              </CardContent>
+            </Card>
+            <Card className="md:col-span-2 lg:col-span-1">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Search Results</CardTitle>
+                <Search className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{filteredTestimonials.length}</div>
+                <p className="text-xs text-muted-foreground">Matching testimonials</p>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Actions Bar */}
+          <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+            <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+              <div className="relative flex-1 sm:w-80">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+                <Input
+                  placeholder="Search testimonials..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10"
+                  suppressHydrationWarning
+                />
+              </div>
+              <Button
+                variant="outline"
+                onClick={fetchTestimonials}
+                disabled={loading}
+                className="shrink-0 bg-transparent"
+              >
+                <RefreshCw className={`h-4 w-4 mr-2 ${loading ? "animate-spin" : ""}`} />
+                Refresh
+              </Button>
             </div>
-            <Button 
-              onClick={() => setIsAddModalOpen(true)} 
-              className="gap-2 transition-all duration-200 hover:scale-105 active:scale-95 w-full sm:w-auto"
-            >
-              <Plus className="h-4 w-4" />
-              <span className="hidden sm:inline">Add Poetry</span>
-              <span className="sm:hidden">Add</span>
+            <Button onClick={handleAddNew} className="w-full sm:w-auto">
+              <Plus className="h-4 w-4 mr-2" />
+              Add Testimonial
             </Button>
           </div>
 
-          {/* Search and Filters */}
-          <div className="flex flex-col sm:flex-row sm:items-center gap-3 sm:gap-4">
-            <div className="relative flex-1">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-              <Input
-                placeholder="Search poetry or author..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10 transition-all duration-200 focus:ring-2 focus:ring-primary/20"
-                suppressHydrationWarning
-              />
-            </div>
-            <div className="text-sm text-muted-foreground text-center sm:text-left">
-              {filteredPoetry.length} of {poetry.length} poems
-            </div>
-          </div>
-
-          <Card className="transition-all duration-300">
-            <CardHeader className="pb-4">
-              <CardTitle className="flex items-center gap-2 text-lg sm:text-xl">
-                Poetry Collection
-                {loading && <Loader2 className="h-4 w-4 animate-spin" />}
-              </CardTitle>
-              <CardDescription className="text-sm sm:text-base">
-                {filteredPoetry.length} {filteredPoetry.length === 1 ? "poem" : "poems"} found
-              </CardDescription>
-            </CardHeader>
-            <CardContent className="pt-0">
-              {loading ? (
-                <div className="space-y-4">
-                  {Array.from({ length: 3 }).map((_, i) => (
-                    <PoetrySkeleton key={i} />
-                  ))}
-                </div>
-              ) : currentPoetry.length === 0 ? (
-                <div className="text-center py-8 sm:py-12">
-                  <div className="mx-auto w-16 h-16 sm:w-24 sm:h-24 bg-muted rounded-full flex items-center justify-center mb-4">
-                    <Search className="h-6 w-6 sm:h-8 sm:w-8 text-muted-foreground" />
-                  </div>
-                  <h3 className="text-base sm:text-lg font-semibold mb-2">No poetry found</h3>
-                  <p className="text-sm sm:text-base text-muted-foreground mb-4 px-4">
-                    {searchTerm ? "Try adjusting your search terms." : "Add your first poem to get started!"}
-                  </p>
-                  {!searchTerm && (
-                    <Button onClick={() => setIsAddModalOpen(true)} className="gap-2">
-                      <Plus className="h-4 w-4" />
-                      Add Poetry
-                    </Button>
-                  )}
-                </div>
-              ) : (
-                <>
-                  <div className="space-y-3 sm:space-y-4">
-                    {currentPoetry.map((poetryItem, index) => (
-                      <div
-                        key={poetryItem._id}
-                        className="flex flex-col sm:flex-row sm:items-start sm:justify-between p-3 sm:p-4 border rounded-lg hover:bg-muted/50 transition-all duration-200 group animate-in fade-in-0 slide-in-from-bottom-4"
-                        style={{
-                          animationDelay: `${index * 100}ms`,
-                          animationDuration: '0.5s',
-                          animationTimingFunction: 'ease-out',
-                          animationFillMode: 'forwards'
-                        }}
-                      >
-                        <div className="flex-1 space-y-2 mb-3 sm:mb-0">
-                          <p className="text-sm sm:text-base font-medium leading-relaxed group-hover:text-primary transition-colors">
-                            "{poetryItem.text}"
-                          </p>
-                          <p className="text-xs sm:text-sm text-muted-foreground">— {poetryItem.author}</p>
-                        </div>
-                        <div className="flex items-center gap-2 sm:ml-4 opacity-100 sm:opacity-0 group-hover:opacity-100 transition-opacity duration-200">
-                          <Button 
-                            variant="outline" 
-                            size="sm" 
-                            onClick={() => openEditModal(poetryItem)} 
-                            className="gap-1 sm:gap-2 transition-all duration-200 hover:scale-105 active:scale-95 flex-1 sm:flex-none"
-                          >
-                            <Edit className="h-3 w-3 sm:h-4 sm:w-4" />
-                            <span className="hidden sm:inline">Edit</span>
-                          </Button>
-                          <Button
-                            variant="outline"
-                            size="sm"
-                            onClick={() => openDeleteDialog(poetryItem)}
-                            className="gap-1 sm:gap-2 text-destructive hover:text-destructive transition-all duration-200 hover:scale-105 active:scale-95 flex-1 sm:flex-none"
-                          >
-                            <Trash2 className="h-3 w-3 sm:h-4 sm:w-4" />
-                            <span className="hidden sm:inline">Delete</span>
-                          </Button>
+          {/* Testimonials Grid */}
+          {loading ? (
+            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+              {Array.from({ length: 6 }).map((_, i) => (
+                <Card key={i}>
+                  <CardContent className="p-6">
+                    <div className="space-y-4">
+                      <Skeleton className="h-8 w-8 rounded-full" />
+                      <Skeleton className="h-20 w-full" />
+                      <div className="flex items-center gap-3">
+                        <Skeleton className="h-10 w-10 rounded-full" />
+                        <div className="space-y-2 flex-1">
+                          <Skeleton className="h-4 w-24" />
+                          <Skeleton className="h-3 w-16" />
                         </div>
                       </div>
-                    ))}
-                  </div>
-
-                  {/* Pagination */}
-                  {totalPages > 1 && (
-                    <div className="mt-6 flex justify-center">
-                      <Pagination>
-                        <PaginationContent className="flex-wrap">
-                          <PaginationItem>
-                            <PaginationPrevious 
-                              onClick={() => handlePageChange(currentPage - 1)}
-                              className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
-                            />
-                          </PaginationItem>
-                          
-                          {/* Show limited page numbers on mobile */}
-                          {totalPages <= 5 ? (
-                            // Show all pages if 5 or fewer
-                            Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
-                              <PaginationItem key={page}>
-                                <PaginationLink
-                                  onClick={() => handlePageChange(page)}
-                                  isActive={currentPage === page}
-                                  className="cursor-pointer transition-all duration-200 hover:scale-105"
-                                >
-                                  {page}
-                                </PaginationLink>
-                              </PaginationItem>
-                            ))
-                          ) : (
-                            // Show smart pagination for more pages
-                            <>
-                              {currentPage > 2 && (
-                                <>
-                                  <PaginationItem>
-                                    <PaginationLink
-                                      onClick={() => handlePageChange(1)}
-                                      className="cursor-pointer transition-all duration-200 hover:scale-105"
-                                    >
-                                      1
-                                    </PaginationLink>
-                                  </PaginationItem>
-                                  {currentPage > 3 && (
-                                    <PaginationItem>
-                                      <PaginationEllipsis />
-                                    </PaginationItem>
-                                  )}
-                                </>
-                              )}
-                              
-                              {Array.from({ length: totalPages }, (_, i) => i + 1)
-                                .filter(page => page >= Math.max(1, currentPage - 1) && page <= Math.min(totalPages, currentPage + 1))
-                                .map((page) => (
-                                  <PaginationItem key={page}>
-                                    <PaginationLink
-                                      onClick={() => handlePageChange(page)}
-                                      isActive={currentPage === page}
-                                      className="cursor-pointer transition-all duration-200 hover:scale-105"
-                                    >
-                                      {page}
-                                    </PaginationLink>
-                                  </PaginationItem>
-                                ))}
-                              
-                              {currentPage < totalPages - 1 && (
-                                <>
-                                  {currentPage < totalPages - 2 && (
-                                    <PaginationItem>
-                                      <PaginationEllipsis />
-                                    </PaginationItem>
-                                  )}
-                                  <PaginationItem>
-                                    <PaginationLink
-                                      onClick={() => handlePageChange(totalPages)}
-                                      className="cursor-pointer transition-all duration-200 hover:scale-105"
-                                    >
-                                      {totalPages}
-                                    </PaginationLink>
-                                  </PaginationItem>
-                                </>
-                              )}
-                            </>
-                          )}
-                          
-                          <PaginationItem>
-                            <PaginationNext 
-                              onClick={() => handlePageChange(currentPage + 1)}
-                              className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
-                            />
-                          </PaginationItem>
-                        </PaginationContent>
-                      </Pagination>
                     </div>
-                  )}
-                </>
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          ) : currentTestimonials.length > 0 ? (
+            <>
+              <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+                {currentTestimonials.map((testimonial) => (
+                  <TestimonialCard
+                    key={testimonial._id}
+                    testimonial={testimonial}
+                    onEdit={handleEdit}
+                    onDelete={handleDeleteClick}
+                  />
+                ))}
+              </div>
+
+              {/* Pagination */}
+              {totalPages > 1 && (
+                <div className="flex justify-center">
+                  <Pagination>
+                    <PaginationContent>
+                      <PaginationItem>
+                        <PaginationPrevious
+                          onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                          className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                        />
+                      </PaginationItem>
+                      {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                        <PaginationItem key={page}>
+                          <PaginationLink
+                            onClick={() => setCurrentPage(page)}
+                            isActive={currentPage === page}
+                            className="cursor-pointer"
+                          >
+                            {page}
+                          </PaginationLink>
+                        </PaginationItem>
+                      ))}
+                      <PaginationItem>
+                        <PaginationNext
+                          onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                          className={currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                        />
+                      </PaginationItem>
+                    </PaginationContent>
+                  </Pagination>
+                </div>
               )}
-            </CardContent>
-          </Card>
+            </>
+          ) : (
+            <Card>
+              <CardContent className="flex flex-col items-center justify-center py-12">
+                <MessageSquare className="h-12 w-12 text-muted-foreground mb-4" />
+                <h3 className="text-lg font-semibold mb-2">No testimonials found</h3>
+                <p className="text-muted-foreground text-center mb-4">
+                  {searchTerm
+                    ? "No testimonials match your search criteria."
+                    : "Get started by adding your first testimonial."}
+                </p>
+                {!searchTerm && (
+                  <Button onClick={handleAddNew}>
+                    <Plus className="h-4 w-4 mr-2" />
+                    Add First Testimonial
+                  </Button>
+                )}
+              </CardContent>
+            </Card>
+          )}
         </div>
 
-        {/* Add Poetry Modal */}
-        <PoetryModal
-          isOpen={isAddModalOpen}
-          onClose={() => setIsAddModalOpen(false)}
-          onSubmit={handleAddPoetry}
-          title="Add New Poetry"
-          submitText="Add Poetry"
-          loading={actionLoading}
-        />
-
-        {/* Edit Poetry Modal */}
-        <PoetryModal
-          isOpen={isEditModalOpen}
-          onClose={() => {
-            setIsEditModalOpen(false)
-            setSelectedPoetry(null)
-          }}
-          onSubmit={handleEditPoetry}
-          title="Edit Poetry"
-          submitText="Update Poetry"
-          loading={actionLoading}
-          initialData={
-            selectedPoetry
-              ? {
-                  text: selectedPoetry.text,
-                  author: selectedPoetry.author,
-                }
-              : undefined
-          }
-        />
+        {/* Form Dialog */}
+        <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
+          <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+            <DialogHeader>
+              <DialogTitle>{editingTestimonial ? "Edit Testimonial" : "Add New Testimonial"}</DialogTitle>
+            </DialogHeader>
+            <TestimonialForm
+              testimonial={editingTestimonial || undefined}
+              onSubmit={handleFormSubmit}
+              onCancel={handleFormCancel}
+              isLoading={formLoading}
+            />
+          </DialogContent>
+        </Dialog>
 
         {/* Delete Confirmation Dialog */}
-        <DeleteConfirmDialog
+        <DeleteConfirmationDialog
           isOpen={isDeleteDialogOpen}
-          onClose={() => {
-            setIsDeleteDialogOpen(false)
-            setSelectedPoetry(null)
-          }}
-          onConfirm={handleDeletePoetry}
-          title="Delete Poetry"
-          description={
-            selectedPoetry
-              ? `Are you sure you want to delete "${selectedPoetry.text}" by ${selectedPoetry.author}? This action cannot be undone.`
-              : "Are you sure you want to delete this poetry?"
-          }
-          loading={actionLoading}
+          onClose={() => setIsDeleteDialogOpen(false)}
+          onConfirm={handleDelete}
+          isLoading={deleteLoading}
+          testimonialName={deletingTestimonial?.about || ""}
         />
       </SidebarInset>
     </SidebarProvider>
