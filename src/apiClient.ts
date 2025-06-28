@@ -9,7 +9,7 @@ const apiClient = axios.create({
     "Content-Type": "application/json",
   },
   withCredentials: true,
-  timeout: 30000, // 30 second default timeout
+  timeout: 45000, // Increased to 45 seconds for better handling of slow responses
 })
 
 // Add request interceptors for authentication tokens
@@ -67,6 +67,7 @@ apiClient.interceptors.response.use(
     
     if (error.code === 'ECONNABORTED') {
       console.error("Request timeout - the server took too long to respond")
+      // You could show a toast notification here for timeout errors
     }
     
     return Promise.reject(error)

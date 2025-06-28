@@ -24,6 +24,7 @@ import { useToast } from "@/hooks/use-toast"
 import Link from "next/link"
 import { addEvent } from "@/service/events-apis"
 import type { CreateEventData } from "@/types/events-types"
+import { FormPageSkeleton } from "@/components/admin/events/form-skeleton"
 
 export default function CreateEventPage() {
   const { toast } = useToast()
@@ -198,11 +199,11 @@ export default function CreateEventPage() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="startDate">Start Date & Time *</Label>
+                    <Label htmlFor="startDate">Start Date *</Label>
                     <Input
                       id="startDate"
                       name="startDate"
-                      type="datetime-local"
+                      type="date"
                       value={formData.startDate}
                       onChange={handleChange}
                       required
@@ -210,11 +211,11 @@ export default function CreateEventPage() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="endDate">End Date & Time *</Label>
+                    <Label htmlFor="endDate">End Date *</Label>
                     <Input
                       id="endDate"
                       name="endDate"
-                      type="datetime-local"
+                      type="date"
                       value={formData.endDate}
                       onChange={handleChange}
                       required
@@ -223,7 +224,7 @@ export default function CreateEventPage() {
                   </div>
                 </div>
 
-                <div className="flex gap-4">
+                <div className="flex gap-2">
                   <Button type="submit" disabled={isLoading}>
                     {isLoading ? (
                       <>
@@ -237,7 +238,7 @@ export default function CreateEventPage() {
                       </>
                     )}
                   </Button>
-                  <Button type="button" variant="outline" asChild disabled={isLoading}>
+                  <Button type="button" variant="outline" asChild>
                     <Link href="/admin/dashboard/events">Cancel</Link>
                   </Button>
                 </div>
