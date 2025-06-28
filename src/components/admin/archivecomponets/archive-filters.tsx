@@ -101,76 +101,89 @@ export function ArchiveFilters({
 
   return (
     <Card>
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <CardTitle className="flex items-center gap-2">
+      <CardHeader className="pb-3 sm:pb-6">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-2">
+          <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
             <Filter className="h-4 w-4" />
-            Filters & Controls
+            <span className="hidden sm:inline">Filters & Controls</span>
+            <span className="sm:hidden">Filters</span>
           </CardTitle>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" onClick={() => onViewModeChange(viewMode === "grid" ? "list" : "grid")}>
-              {viewMode === "grid" ? <List className="h-4 w-4" /> : <Grid3X3 className="h-4 w-4" />}
+          <div className="flex items-center gap-2 flex-wrap">
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => onViewModeChange(viewMode === "grid" ? "list" : "grid")}
+              className="text-xs sm:text-sm"
+            >
+              {viewMode === "grid" ? <List className="h-3 w-3 sm:h-4 sm:w-4" /> : <Grid3X3 className="h-3 w-3 sm:h-4 sm:w-4" />}
             </Button>
             {selectedCount > 0 && (
-              <Button variant="destructive" size="sm" onClick={onBulkDelete}>
-                <Trash2 className="h-4 w-4 mr-2" />
-                Delete Selected ({selectedCount})
+              <Button variant="destructive" size="sm" onClick={onBulkDelete} className="text-xs sm:text-sm">
+                <Trash2 className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                <span className="hidden sm:inline">Delete Selected ({selectedCount})</span>
+                <span className="sm:hidden">Delete ({selectedCount})</span>
               </Button>
             )}
             {onDeleteYear && yearFilter !== "all" && (
-              <Button variant="destructive" size="sm" onClick={onDeleteYear}>
-                <Trash2 className="h-4 w-4 mr-2" />
-                Delete Year
+              <Button variant="destructive" size="sm" onClick={onDeleteYear} className="text-xs sm:text-sm">
+                <Trash2 className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                <span className="hidden sm:inline">Delete Year</span>
+                <span className="sm:hidden">Delete Year</span>
               </Button>
             )}
           </div>
         </div>
       </CardHeader>
-      <CardContent>
-        <div className="flex flex-col gap-4 md:flex-row md:gap-4 md:items-end">
+      <CardContent className="pt-0">
+        <div className="flex flex-col gap-3 sm:gap-4 md:flex-row md:gap-4 md:items-end">
           <div className="flex-1 w-full">
-            <Label htmlFor="search">Search archive</Label>
+            <Label htmlFor="search" className="text-xs sm:text-sm">Search archive</Label>
             <div className="relative">
-              <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Search className="absolute left-2 top-2.5 h-3 w-3 sm:h-4 sm:w-4 text-muted-foreground" />
               <Input
                 id="search"
                 placeholder="Search by year or day..."
                 value={searchTerm}
                 onChange={(e) => onSearchChange(e.target.value)}
-                className="pl-8 w-full"
+                className="pl-6 sm:pl-8 w-full text-xs sm:text-sm"
               />
             </div>
           </div>
           <div className="w-full md:w-auto">
-            <Label htmlFor="year">Year</Label>
+            <Label htmlFor="year" className="text-xs sm:text-sm">Year</Label>
             <Select value={yearFilter} onValueChange={onYearFilterChange} disabled={loading}>
-              <SelectTrigger className="w-full md:w-[200px]">
+              <SelectTrigger className="w-full md:w-[180px] lg:w-[200px] text-xs sm:text-sm">
                 <SelectValue placeholder={loading ? "Loading..." : "All Years"} />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Years</SelectItem>
                 {availableYears.map((yearData) => (
-                  <SelectItem key={yearData._id} value={yearData.year.toString()}>
-                    {yearData.year} - {getMonthName(yearData.month)} ({yearData.days?.length || 0} days)
+                  <SelectItem key={yearData._id} value={yearData.year.toString()} className="text-xs sm:text-sm">
+                    <span className="hidden sm:inline">
+                      {yearData.year} - {getMonthName(yearData.month)} ({yearData.days?.length || 0} days)
+                    </span>
+                    <span className="sm:hidden">
+                      {yearData.year} ({yearData.days?.length || 0} days)
+                    </span>
                   </SelectItem>
                 ))}
               </SelectContent>
             </Select>
           </div>
           <div className="w-full md:w-auto">
-            <Label htmlFor="day">Day</Label>
+            <Label htmlFor="day" className="text-xs sm:text-sm">Day</Label>
             <Select
               value={dayFilter}
               onValueChange={onDayFilterChange}
               disabled={!yearFilter || yearFilter === "all" || availableDays.length === 0}
             >
-              <SelectTrigger className="w-full md:w-[150px]">
+              <SelectTrigger className="w-full md:w-[130px] lg:w-[150px] text-xs sm:text-sm">
                 <SelectValue placeholder="All Days" />
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="all">All Days</SelectItem>
                 {availableDays.map((day) => (
-                  <SelectItem key={day._id} value={day._id}>
+                  <SelectItem key={day._id} value={day._id} className="text-xs sm:text-sm">
                     {day.dayLabel}
                   </SelectItem>
                 ))}
@@ -182,9 +195,11 @@ export function ArchiveFilters({
               id="selectAll"
               checked={selectedCount === totalCount && totalCount > 0}
               onCheckedChange={onSelectAll}
+              className="h-3 w-3 sm:h-4 sm:w-4"
             />
-            <Label htmlFor="selectAll" className="text-sm">
-              Select All ({totalCount})
+            <Label htmlFor="selectAll" className="text-xs sm:text-sm">
+              <span className="hidden sm:inline">Select All ({totalCount})</span>
+              <span className="sm:hidden">All ({totalCount})</span>
             </Label>
           </div>
         </div>

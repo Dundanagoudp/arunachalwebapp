@@ -203,7 +203,7 @@ export default function UploadImagesPage() {
       <AppSidebar />
       <SidebarInset>
       <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 border-b bg-white/80 backdrop-blur-sm sticky top-0 z-40">
-      <div className="flex items-center gap-2 px-4">
+      <div className="flex items-center gap-2 px-2 sm:px-4">
             <SidebarTrigger className="-ml-1" />
             <Separator orientation="vertical" className="mr-2 data-[orientation=vertical]:h-4" />
             <Breadcrumb>
@@ -217,77 +217,82 @@ export default function UploadImagesPage() {
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>
-                  <BreadcrumbPage>Upload Images</BreadcrumbPage>
+                  <BreadcrumbPage className="text-sm sm:text-base">Upload Images</BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
           </div>
         </header>
 
-        <div className="flex flex-1 flex-col gap-6 p-6 pt-0">
+        <div className="flex flex-1 flex-col gap-4 p-2 sm:gap-6 sm:p-4 md:p-6 pt-0">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold tracking-tight">Upload Images</h1>
-              <p className="text-muted-foreground">Upload images to a specific day in your archive.</p>
+              <h1 className="text-xl sm:text-2xl md:text-3xl font-bold tracking-tight">Upload Images</h1>
+              <p className="text-muted-foreground text-xs sm:text-sm md:text-base">Upload images to a specific day in your archive.</p>
             </div>
           </div>
 
           <div className="max-w-4xl">
             {success && (
-              <Alert className="mb-6 border-green-200 bg-green-50">
+              <Alert className="mb-4 sm:mb-6 border-green-200 bg-green-50">
                 <CheckCircle className="h-4 w-4 text-green-600" />
-                <AlertDescription className="text-green-800">
+                <AlertDescription className="text-green-800 text-sm">
                   Images uploaded successfully! You will be redirected to the archive page shortly.
                 </AlertDescription>
               </Alert>
             )}
 
             {error && (
-              <Alert variant="destructive" className="mb-6">
+              <Alert variant="destructive" className="mb-4 sm:mb-6">
                 <AlertCircle className="h-4 w-4" />
-                <AlertDescription>{error}</AlertDescription>
+                <AlertDescription className="text-sm">{error}</AlertDescription>
               </Alert>
             )}
 
-            <form onSubmit={handleSubmit} className="space-y-6">
+            <form onSubmit={handleSubmit} className="space-y-4 sm:space-y-6">
               <Card>
-                <CardHeader>
-                  <CardTitle>Select Destination</CardTitle>
-                  <CardDescription>Choose the year and day where you want to upload images.</CardDescription>
+                <CardHeader className="pb-3 sm:pb-6">
+                  <CardTitle className="text-base sm:text-lg">Select Destination</CardTitle>
+                  <CardDescription className="text-xs sm:text-sm">Choose the year and day where you want to upload images.</CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-4">
-                  <div className="grid gap-4 md:grid-cols-2">
+                <CardContent className="space-y-3 sm:space-y-4">
+                  <div className="grid gap-3 sm:gap-4 md:grid-cols-2">
                     <div className="space-y-2">
-                      <Label htmlFor="year">Year *</Label>
+                      <Label htmlFor="year" className="text-xs sm:text-sm">Year *</Label>
                       <Select
                         value={formData.yearId}
                         onValueChange={(value) => setFormData((prev) => ({ ...prev, yearId: value, dayId: "" }))}
                       >
-                        <SelectTrigger>
+                        <SelectTrigger className="text-xs sm:text-sm">
                           <SelectValue placeholder="Select year" />
                         </SelectTrigger>
                         <SelectContent>
                           {years.map((year) => (
-                            <SelectItem key={year._id} value={year._id}>
-                              {year.year} - {getMonthName(year.month)} ({year.days?.length || 0} days)
+                            <SelectItem key={year._id} value={year._id} className="text-xs sm:text-sm">
+                              <span className="hidden sm:inline">
+                                {year.year} - {getMonthName(year.month)} ({year.days?.length || 0} days)
+                              </span>
+                              <span className="sm:hidden">
+                                {year.year} ({year.days?.length || 0} days)
+                              </span>
                             </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="day">Day *</Label>
+                      <Label htmlFor="day" className="text-xs sm:text-sm">Day *</Label>
                       <Select
                         value={formData.dayId}
                         onValueChange={(value) => setFormData((prev) => ({ ...prev, dayId: value }))}
                         disabled={!formData.yearId}
                       >
-                        <SelectTrigger>
+                        <SelectTrigger className="text-xs sm:text-sm">
                           <SelectValue placeholder="Select day" />
                         </SelectTrigger>
                         <SelectContent>
                           {days.map((day) => (
-                            <SelectItem key={day._id} value={day._id}>
+                            <SelectItem key={day._id} value={day._id} className="text-xs sm:text-sm">
                               {day.dayLabel}
                             </SelectItem>
                           ))}
@@ -298,7 +303,7 @@ export default function UploadImagesPage() {
 
                   {selectedYear && selectedDay && (
                     <div className="p-3 bg-blue-50 rounded-lg border border-blue-200">
-                      <p className="text-sm text-blue-800">
+                      <p className="text-xs sm:text-sm text-blue-800">
                         <strong>Upload Destination:</strong> {selectedDay.dayLabel} of Year {selectedYear.year} (
                         {getMonthName(selectedYear.month)})
                       </p>
@@ -308,18 +313,18 @@ export default function UploadImagesPage() {
               </Card>
 
               <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <ImageIcon className="h-5 w-5" />
+                <CardHeader className="pb-3 sm:pb-6">
+                  <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+                    <ImageIcon className="h-4 w-4 sm:h-5 sm:w-5" />
                     Upload Images
                   </CardTitle>
-                  <CardDescription>Select multiple images to upload to the archive.</CardDescription>
+                  <CardDescription className="text-xs sm:text-sm">Select multiple images to upload to the archive.</CardDescription>
                 </CardHeader>
-                <CardContent className="space-y-4">
+                <CardContent className="space-y-3 sm:space-y-4">
                   <div className="space-y-2">
-                    <Label htmlFor="images">Images *</Label>
+                    <Label htmlFor="images" className="text-xs sm:text-sm">Images *</Label>
                     <div
-                      className={`border-2 border-dashed rounded-lg p-8 text-center transition-colors ${
+                      className={`border-2 border-dashed rounded-lg p-4 sm:p-8 text-center transition-colors ${
                         dragActive
                           ? "border-blue-500 bg-blue-50"
                           : "border-gray-300 hover:border-gray-400 hover:bg-gray-50"
@@ -329,10 +334,10 @@ export default function UploadImagesPage() {
                       onDragOver={handleDrag}
                       onDrop={handleDrop}
                     >
-                      <Upload className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                      <Upload className="h-8 w-8 sm:h-12 sm:w-12 text-gray-400 mx-auto mb-3 sm:mb-4" />
                       <div className="space-y-2">
-                        <p className="text-lg font-medium">Drag and drop images here</p>
-                        <p className="text-sm text-gray-600">or click to select files</p>
+                        <p className="text-base sm:text-lg font-medium">Drag and drop images here</p>
+                        <p className="text-xs sm:text-sm text-gray-600">or click to select files</p>
                         <Input
                           id="images"
                           type="file"
@@ -344,28 +349,30 @@ export default function UploadImagesPage() {
                         <Button
                           type="button"
                           variant="outline"
+                          size="sm"
                           onClick={() => document.getElementById("images")?.click()}
+                          className="text-xs sm:text-sm"
                         >
-                          <FileImage className="mr-2 h-4 w-4" />
+                          <FileImage className="mr-1 sm:mr-2 h-3 w-3 sm:h-4 sm:w-4" />
                           Select Images
                         </Button>
                       </div>
-                      <p className="text-xs text-gray-500 mt-4">Supported formats: JPG, PNG, GIF, WebP</p>
+                      <p className="text-xs text-gray-500 mt-3 sm:mt-4">Supported formats: JPG, PNG, GIF, WebP</p>
                     </div>
                   </div>
 
                   {selectedFiles.length > 0 && (
-                    <div className="space-y-4">
+                    <div className="space-y-3 sm:space-y-4">
                       <div className="flex items-center justify-between">
-                        <Label>Selected Images ({selectedFiles.length})</Label>
-                        <div className="text-sm text-muted-foreground">Total size: {formatFileSize(totalSize)}</div>
+                        <Label className="text-xs sm:text-sm">Selected Images ({selectedFiles.length})</Label>
+                        <div className="text-xs sm:text-sm text-muted-foreground">Total size: {formatFileSize(totalSize)}</div>
                       </div>
 
-                      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 max-h-96 overflow-y-auto">
+                      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4 max-h-64 sm:max-h-96 overflow-y-auto">
                         {selectedFiles.map((file, index) => (
-                          <div key={index} className="relative border rounded-lg p-3">
-                            <div className="flex items-center gap-3">
-                              <div className="w-16 h-16 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
+                          <div key={index} className="relative border rounded-lg p-2 sm:p-3">
+                            <div className="flex items-center gap-2 sm:gap-3">
+                              <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-lg overflow-hidden bg-gray-100 flex-shrink-0">
                                 <img
                                   src={URL.createObjectURL(file) || "/placeholder.svg"}
                                   alt={file.name}
@@ -373,7 +380,7 @@ export default function UploadImagesPage() {
                                 />
                               </div>
                               <div className="flex-1 min-w-0">
-                                <p className="text-sm font-medium truncate">{file.name}</p>
+                                <p className="text-xs sm:text-sm font-medium truncate">{file.name}</p>
                                 <p className="text-xs text-muted-foreground">{formatFileSize(file.size)}</p>
                                 <p className="text-xs text-muted-foreground">{file.type.split("/")[1].toUpperCase()}</p>
                               </div>
@@ -381,10 +388,10 @@ export default function UploadImagesPage() {
                                 type="button"
                                 variant="ghost"
                                 size="sm"
-                                className="flex-shrink-0"
+                                className="flex-shrink-0 h-6 w-6 sm:h-8 sm:w-8 p-0"
                                 onClick={() => removeFile(index)}
                               >
-                                <X className="h-4 w-4" />
+                                <X className="h-3 w-3 sm:h-4 sm:w-4" />
                               </Button>
                             </div>
                           </div>
@@ -395,7 +402,7 @@ export default function UploadImagesPage() {
 
                   {loading && (
                     <div className="space-y-2">
-                      <div className="flex items-center justify-between text-sm">
+                      <div className="flex items-center justify-between text-xs sm:text-sm">
                         <span>Uploading images...</span>
                         <span>{uploadProgress}%</span>
                       </div>
@@ -405,15 +412,15 @@ export default function UploadImagesPage() {
                 </CardContent>
               </Card>
 
-              <div className="flex gap-2">
-                <Button type="submit" disabled={loading || selectedFiles.length === 0 || success}>
+              <div className="flex flex-col sm:flex-row gap-2 sm:gap-2">
+                <Button type="submit" disabled={loading || selectedFiles.length === 0 || success} size="sm" className="text-xs sm:text-sm">
                   {loading
                     ? "Uploading..."
                     : success
                       ? "Uploaded Successfully!"
                       : `Upload ${selectedFiles.length} Image${selectedFiles.length !== 1 ? "s" : ""}`}
                 </Button>
-                <Button type="button" variant="outline" onClick={() => router.back()} disabled={loading}>
+                <Button type="button" variant="outline" onClick={() => router.back()} disabled={loading} size="sm" className="text-xs sm:text-sm">
                   Cancel
                 </Button>
                 {selectedFiles.length > 0 && !loading && (
@@ -421,7 +428,8 @@ export default function UploadImagesPage() {
                     type="button"
                     variant="outline"
                     onClick={() => setSelectedFiles([])}
-                    className="text-red-600 hover:text-red-700"
+                    className="text-red-600 hover:text-red-700 text-xs sm:text-sm"
+                    size="sm"
                   >
                     Clear All
                   </Button>

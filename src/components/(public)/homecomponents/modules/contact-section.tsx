@@ -3,8 +3,15 @@
 import { Button } from "@/components/ui/button"
 import { ArrowRight, ArrowUpRight } from "lucide-react"
 import Image from "next/image"
+import { useRouter } from "next/navigation"
 
 export default function Contactsection() {
+  const router = useRouter()
+
+  const handleContactClick = () => {
+    router.push("/contactus")
+  }
+
   return (
     <section className="relative w-full py-12 md:py-24 lg:py-32 bg-[#FDF6E9] overflow-hidden">
       {/* Decorative background elements - Diamonds */}
@@ -91,7 +98,10 @@ export default function Contactsection() {
           </p>
           <h2 className="text-3xl md:text-4xl lg:text-5xl font-bold uppercase text-[#6A1B1A] font-dm-serif">Contact Us</h2>
           <div className="mt-0 flex justify-center mb-12 relative z-10">
-           <button className="group relative flex items-center hover:scale-105 transition-transform duration-300 focus:outline-none">
+           <button 
+              onClick={handleContactClick}
+              className="group relative flex items-center hover:scale-105 transition-transform duration-300 focus:outline-none cursor-pointer"
+            >
               <span className="bg-[#6A1B1A] text-white px-6 py-3 pr-12 rounded-full text-lg font-medium font-bilo">
                 Get In Touch
               </span>
