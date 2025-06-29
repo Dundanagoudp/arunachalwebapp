@@ -4,7 +4,7 @@ import { useEffect, useState } from "react"
 import Image from "next/image"
 import { ChevronRight, ChevronLeft, ArrowUpRight } from "lucide-react"
 import { motion } from "framer-motion"
-import { SkeletonCard } from "@/components/skeleton-card"
+import { CarouselCardSkeleton } from "@/components/skeleton-card"
 import SunIcon from "../../archive/sun-icon"
 
 export default function Carousel() {
@@ -169,7 +169,7 @@ export default function Carousel() {
             >
               {isLoading
                 ? // Render skeletons while loading
-                  workshops.map((_, index) => <SkeletonCard key={index} />)
+                  workshops.map((_, index) => <CarouselCardSkeleton key={index} />)
                 : // Render actual cards once loaded
                   workshops.map((workshop, index) => (
                     <motion.div

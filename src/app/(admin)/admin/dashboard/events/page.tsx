@@ -39,6 +39,7 @@ import {
   DialogFooter,
   DialogClose,
 } from "@/components/ui/dialog"
+import { EventsPageSkeleton } from "@/components/admin/events/events-skeleton"
 
 export default function EventsPage() {
   const { toast } = useToast()
@@ -62,6 +63,13 @@ export default function EventsPage() {
       if (result.success && result.data) {
         setEvents(result.data)
         console.log("Events loaded:", result.data)
+        console.log("Event days:", result.data.days)
+        result.data.days?.forEach((day: EventDay) => {
+          console.log(`Day ${day.dayNumber} (${day._id}):`, day.times?.length || 0, "time slots")
+          day.times?.forEach((time, index) => {
+            console.log(`  Time slot ${index + 1}:`, { id: time._id, title: time.title })
+          })
+        })
       } else {
         toast({
           title: "Error",
@@ -162,12 +170,24 @@ export default function EventsPage() {
       <SidebarProvider>
         <AppSidebar />
         <SidebarInset>
-          <div className="flex items-center justify-center h-screen">
-            <div className="text-center">
-              <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
-              <p>Loading events...</p>
+          <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 border-b bg-white/80 backdrop-blur-sm sticky top-0 z-40">
+            <div className="flex items-center gap-2 px-4">
+              <SidebarTrigger className="-ml-1" />
+              <Separator orientation="vertical" className="mr-2 data-[orientation=vertical]:h-4" />
+              <Breadcrumb>
+                <BreadcrumbList>
+                  <BreadcrumbItem className="hidden md:block">
+                    <BreadcrumbLink href="/admin/dashboard">Admin Panel</BreadcrumbLink>
+                  </BreadcrumbItem>
+                  <BreadcrumbSeparator className="hidden md:block" />
+                  <BreadcrumbItem>
+                    <BreadcrumbPage>Events Management</BreadcrumbPage>
+                  </BreadcrumbItem>
+                </BreadcrumbList>
+              </Breadcrumb>
             </div>
-          </div>
+          </header>
+          <EventsPageSkeleton />
         </SidebarInset>
       </SidebarProvider>
     )
@@ -197,19 +217,19 @@ export default function EventsPage() {
 
         <div className="flex flex-1 flex-col gap-6 p-6 pt-0">
           {/* Header */}
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
             <div>
-              <h1 className="text-3xl font-bold tracking-tight">Events Management</h1>
+              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Events Management</h1>
               <p className="text-muted-foreground">Manage all events, schedules, and registrations.</p>
             </div>
-            <div className="flex gap-2">
-              <Button asChild>
+            <div className="flex flex-col gap-2 sm:flex-row">
+              <Button asChild className="w-full sm:w-auto">
                 <Link href="/admin/dashboard/events/create">
                   <Plus className="mr-2 h-4 w-4" />
                   Create Event
                 </Link>
               </Button>
-              <Button variant="outline" asChild>
+              <Button variant="outline" asChild className="w-full sm:w-auto">
                 <Link href="/admin/dashboard/events/add-time">
                   <Clock className="mr-2 h-4 w-4" />
                   Add Time Slot
@@ -219,7 +239,7 @@ export default function EventsPage() {
           </div>
 
           {/* Stats Cards */}
-          <div className="grid gap-4 md:grid-cols-4">
+          <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Current Event</CardTitle>
@@ -271,14 +291,14 @@ export default function EventsPage() {
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
-                  <div className="flex items-center justify-between p-4 border rounded-lg">
+                  <div className="flex flex-col gap-4 p-4 border rounded-lg lg:flex-row lg:items-center lg:justify-between">
                     <div className="flex-1 space-y-2">
-                      <div className="flex items-center gap-2">
-                        <h3 className="text-lg font-semibold">{events.event.name}</h3>
-                        <Badge className="bg-green-100 text-green-800">Active</Badge>
+                      <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                        <h3 className="text-lg font-semibold truncate">{events.event.name}</h3>
+                        <Badge className="bg-green-100 text-green-800 w-fit">Active</Badge>
                       </div>
                       <p className="text-sm text-muted-foreground">{events.event.description}</p>
-                      <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                      <div className="flex flex-col gap-2 text-sm text-muted-foreground sm:flex-row sm:items-center sm:gap-4">
                         <div className="flex items-center gap-1">
                           <Calendar className="h-4 w-4" />
                           <span>
@@ -381,8 +401,8 @@ export default function EventsPage() {
               <div className="space-y-4">
                 {filteredDays.map((day) => (
                   <div key={day._id} className="border rounded-lg p-4">
-                    <div className="flex items-center justify-between mb-3">
-                      <div>
+                    <div className="flex flex-col gap-3 mb-3 lg:flex-row lg:items-center lg:justify-between">
+                      <div className="flex-1">
                         <h3 className="text-lg font-semibold">
                           Day {day.dayNumber}: {day.name}
                         </h3>
@@ -443,20 +463,20 @@ export default function EventsPage() {
                     {day.times && day.times.length > 0 && (
                       <div className="space-y-2 mt-4">
                         <h4 className="font-medium text-sm">Sessions:</h4>
-                        <div className="grid gap-2 md:grid-cols-2">
+                        <div className="grid gap-2 grid-cols-1 lg:grid-cols-2">
                           {day.times.map((time) => (
                             <div key={time._id} className="bg-muted p-3 rounded-md">
-                              <div className="flex items-center justify-between">
+                              <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                                 <h5 className="font-medium">{time.title}</h5>
                                 <Badge variant="secondary">{time.type}</Badge>
                               </div>
                               <p className="text-xs text-muted-foreground mt-1">{time.description}</p>
-                              <div className="flex items-center gap-4 mt-2 text-xs text-muted-foreground">
+                              <div className="flex flex-col gap-2 mt-2 text-xs text-muted-foreground sm:flex-row sm:items-center sm:gap-4">
                                 <span>
                                   🕐 {time.startTime} - {time.endTime}
                                 </span>
                                 <span>👤 {time.speaker}</span>
-                                <Button asChild size="sm" variant="outline" className="ml-2">
+                                <Button asChild size="sm" variant="outline" className="w-fit">
                                   <Link href={`/admin/dashboard/events/edit-time/${day._id}/${time._id}`}>
                                     Edit
                                   </Link>

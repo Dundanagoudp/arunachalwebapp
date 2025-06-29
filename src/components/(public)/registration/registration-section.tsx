@@ -3,6 +3,8 @@ import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { ArrowRight, ArrowUpRight } from "lucide-react"
 import SunIcon from "@/components/sunicon-gif"
+import { getWorkshops } from "@/service/registrationService"
+import type { Workshop } from "@/types/workshop-types"
 
 // Skeleton shimmer loader for registration cards
 function RegistrationSkeleton() {
@@ -54,28 +56,78 @@ function RegistrationSkeleton() {
 
 export default function RegistrationSection() {
   const [loading, setLoading] = useState(true)
+  const [workshops, setWorkshops] = useState<Workshop[]>([])
+  const [error, setError] = useState<string | null>(null)
+
   useEffect(() => {
-    const timer = setTimeout(() => setLoading(false), 2500)
-    return () => clearTimeout(timer)
+    const fetchWorkshops = async () => {
+      try {
+        setLoading(true)
+        const response = await getWorkshops()
+        if (response.success && response.data) {
+          setWorkshops(response.data)
+        } else {
+          setError(response.error || "Failed to fetch workshops")
+        }
+      } catch (err) {
+        setError("Failed to fetch workshops")
+        console.error("Error fetching workshops:", err)
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchWorkshops()
   }, [])
 
-  const workshops = [
+  const handleWorkshopSelect = (workshop: Workshop) => {
+    if (workshop.registrationFormUrl) {
+      // Open registration form in new tab
+      window.open(workshop.registrationFormUrl, '_blank', 'noopener,noreferrer')
+    } else {
+      // Fallback to contact page if no form URL
+      window.open('/contactus', '_blank', 'noopener,noreferrer')
+    }
+  }
+
+  // Fallback workshops if API fails or returns empty
+  const fallbackWorkshops: Workshop[] = [
     {
-      title: "Screenwriting & film Studies",
-      image: "/registration/creative.png",
-      alt: "Creative illustration for screenwriting",
+      _id: "fallback-1",
+      eventRef: "fallback-event",
+      name: "Screenwriting & Film Studies",
+      imageUrl: "/registration/creative.png",
+      about: "Learn the art of screenwriting and film analysis",
+      registrationFormUrl: "/contactus",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      __v: 0
     },
     {
-      title: "Comics and Graphic Novels",
-      image: "/registration/books.png",
-      alt: "Books and writing illustration",
+      _id: "fallback-2", 
+      eventRef: "fallback-event",
+      name: "Comics and Graphic Novels",
+      imageUrl: "/registration/books.png", 
+      about: "Create compelling visual narratives",
+      registrationFormUrl: "/contactus",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      __v: 0
     },
     {
-      title: "Creative Writing & Literature",
-      image: "/registration/typewriter.png",
-      alt: "Typewriter illustration",
-    },
+      _id: "fallback-3",
+      eventRef: "fallback-event", 
+      name: "Creative Writing & Literature",
+      imageUrl: "/registration/typewriter.png",
+      about: "Develop your creative writing skills",
+      registrationFormUrl: "/contactus",
+      createdAt: new Date().toISOString(),
+      updatedAt: new Date().toISOString(),
+      __v: 0
+    }
   ]
+
+  const displayWorkshops = workshops.length > 0 ? workshops : fallbackWorkshops
 
   return (
     <div className="min-h-screen bg-[#FFFAEE] relative overflow-hidden">
@@ -114,7 +166,7 @@ export default function RegistrationSection() {
           <div className="text-center mb-12">
             <h3 className="text-xl font-semibold text-gray-800 mb-8 font-bilo">Select your Workshop:</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-              {workshops.map((workshop, index) => (
+              {displayWorkshops.map((workshop, index) => (
                 <div key={index} className="relative">
                   {/* Workshop Card */}
                   <div
@@ -123,8 +175,8 @@ export default function RegistrationSection() {
                     {/* Workshop Image */}
                     <div className="mb-6 flex-1 flex items-center justify-center w-full">
                       <Image
-                        src={workshop.image || "/placeholder.svg"}
-                        alt={workshop.alt}
+                        src={workshop.imageUrl || "/registration/creative.png"}
+                        alt={workshop.name}
                         width={180}
                         height={180}
                         className="object-contain drop-shadow-lg mt-2"
@@ -132,18 +184,21 @@ export default function RegistrationSection() {
                     </div>
                     {/* Workshop Title */}
                     <h4 className="text-lg font-bold text-gray-800 text-center leading-tight font-dm-serif mt-2">
-                      {workshop.title.split(" ").map((word, i) => (
+                      {workshop.name.split(" ").map((word, i) => (
                         <span key={i}>
                           {word}
                           {i === 0 && <br />}
-                          {i > 0 && i < workshop.title.split(" ").length - 1 && " "}
+                          {i > 0 && i < workshop.name.split(" ").length - 1 && " "}
                         </span>
                       ))}
                     </h4>
                   </div>
                   {/* Select Button */}
                   <div className="flex justify-center mt-6">
-                    <button className="group relative flex items-center hover:scale-105 transition-transform duration-300 focus:outline-none">
+                    <button 
+                      className="group relative flex items-center hover:scale-105 transition-transform duration-300 focus:outline-none"
+                      onClick={() => handleWorkshopSelect(workshop)}
+                    >
                       <span className="bg-[#1A3FA9] text-white px-6 py-2 pr-16 rounded-full text-lg font-medium text-center font-bilo">
                         select
                       </span>

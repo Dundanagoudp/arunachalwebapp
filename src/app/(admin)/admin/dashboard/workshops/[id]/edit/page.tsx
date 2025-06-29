@@ -17,57 +17,78 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { BookOpen, Save, ArrowLeft, Upload, Loader2, X, Plus, RefreshCw } from "lucide-react"
+import { BookOpen, Save, ArrowLeft, Upload, Loader2, X, RefreshCw } from "lucide-react"
 import Link from "next/link"
 import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
-import { addWorkshop, getEvents } from "@/service/registrationService"
+import { useRouter, useParams } from "next/navigation"
+import { updateWorkshop, getWorkshops, getEvents } from "@/service/registrationService"
+import type { Workshop, UpdateWorkshopData } from "@/types/workshop-types"
 import type { Event } from "@/types/events-types"
-import type { CreateWorkshopData } from "@/types/workshop-types"
 import { useToast } from "@/hooks/use-toast"
 import { FormSkeleton, PageHeaderSkeleton } from "@/components/skeleton-card"
 
-export default function CreateWorkshop() {
+export default function EditWorkshop() {
   const router = useRouter()
+  const params = useParams()
   const { toast } = useToast()
+  const [workshop, setWorkshop] = useState<Workshop | null>(null)
   const [events, setEvents] = useState<Event[]>([])
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [submitting, setSubmitting] = useState(false)
-  const [formData, setFormData] = useState<CreateWorkshopData>({
+  const [formData, setFormData] = useState<UpdateWorkshopData>({
     name: "",
     about: "",
     imageUrl: "",
     registrationFormUrl: "",
-    eventRef: "",
   })
   const [uploadedImage, setUploadedImage] = useState<string>("")
-  const [imageFile, setImageFile] = useState<File | null>(null)
-  const [uploading, setUploading] = useState(false)
 
   useEffect(() => {
-    fetchEvents()
-  }, [])
+    fetchData()
+  }, [params.id])
 
-  const fetchEvents = async () => {
+  const fetchData = async () => {
     setLoading(true)
     setError(null)
     try {
-      const response = await getEvents()
-      if (response.success && response.data) {
-        setEvents(response.data)
+      const [workshopsResponse, eventsResponse] = await Promise.all([getWorkshops(), getEvents()])
+
+      if (workshopsResponse.success && workshopsResponse.data) {
+        const foundWorkshop = workshopsResponse.data.find((w) => w._id === params.id)
+        if (foundWorkshop) {
+          setWorkshop(foundWorkshop)
+          setFormData({
+            name: foundWorkshop.name,
+            about: foundWorkshop.about,
+            imageUrl: foundWorkshop.imageUrl,
+            registrationFormUrl: foundWorkshop.registrationFormUrl,
+          })
+        } else {
+          setError("Workshop not found")
+          toast({
+            title: "Error",
+            description: "Workshop not found",
+          })
+          router.push("/admin/dashboard/workshops")
+        }
       } else {
-        setError(response.error || "Failed to fetch events")
+        setError(workshopsResponse.error || "Failed to fetch workshop")
         toast({
           title: "Error",
-          description: response.error || "Failed to fetch events",
+          description: workshopsResponse.error || "Failed to fetch workshop",
         })
       }
+
+      if (eventsResponse.success && eventsResponse.data) {
+        setEvents(eventsResponse.data)
+      } else {
+        // Don't set error for events, just log it
+        console.warn("Failed to fetch events:", eventsResponse.error)
+      }
     } catch (error) {
-      const errorMessage = "Failed to fetch events. Please check your connection."
+      const errorMessage = "Failed to fetch workshop. Please check your connection."
       setError(errorMessage)
-      console.error("Error fetching events:", error)
       toast({
         title: "Error",
         description: errorMessage,
@@ -77,10 +98,14 @@ export default function CreateWorkshop() {
     }
   }
 
+  const getEventName = (eventRef: string) => {
+    const event = events.find((e) => e._id === eventRef)
+    return event?.name || eventRef
+  }
+
   const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
-      // Validate file type
       if (!file.type.startsWith("image/")) {
         toast({
           title: "Error",
@@ -89,7 +114,6 @@ export default function CreateWorkshop() {
         return
       }
 
-      // Validate file size (5MB limit)
       if (file.size > 5 * 1024 * 1024) {
         toast({
           title: "Error",
@@ -98,13 +122,10 @@ export default function CreateWorkshop() {
         return
       }
 
-      setImageFile(file)
       const reader = new FileReader()
       reader.onload = (event) => {
-        const result = event.target?.result as string
-        console.log("Image uploaded, base64 length:", result?.length)
-        setUploadedImage(result)
-        setFormData((prev) => ({ ...prev, imageUrl: "" })) // Clear URL if file is uploaded
+        setUploadedImage(event.target?.result as string)
+        setFormData((prev) => ({ ...prev, imageUrl: "" }))
       }
       reader.readAsDataURL(file)
     }
@@ -112,20 +133,11 @@ export default function CreateWorkshop() {
 
   const removeImage = () => {
     setUploadedImage("")
-    setImageFile(null)
     setFormData((prev) => ({ ...prev, imageUrl: "" }))
   }
 
   const validateForm = () => {
-    console.log("Validating form:", {
-      name: formData.name,
-      about: formData.about,
-      eventRef: formData.eventRef,
-      uploadedImage: uploadedImage ? "present" : "missing",
-      registrationFormUrl: formData.registrationFormUrl
-    })
-
-    if (!formData.name.trim()) {
+    if (!formData.name?.trim()) {
       toast({
         title: "Validation Error",
         description: "Workshop name is required",
@@ -133,7 +145,7 @@ export default function CreateWorkshop() {
       return false
     }
 
-    if (!formData.about.trim()) {
+    if (!formData.about?.trim()) {
       toast({
         title: "Validation Error",
         description: "Workshop description is required",
@@ -141,25 +153,8 @@ export default function CreateWorkshop() {
       return false
     }
 
-    if (!formData.eventRef) {
-      toast({
-        title: "Validation Error",
-        description: "Please select an event",
-      })
-      return false
-    }
-
-    // Backend requires image upload (not URL)
-    if (!uploadedImage) {
-      toast({
-        title: "Validation Error",
-        description: "Please upload an image file (URLs are not supported)",
-      })
-      return false
-    }
-
     // Backend requires Google Forms URL
-    if (!formData.registrationFormUrl.trim() || !formData.registrationFormUrl.startsWith('https://docs.google.com/forms/')) {
+    if (!formData.registrationFormUrl?.trim() || !formData.registrationFormUrl.startsWith('https://docs.google.com/forms/')) {
       toast({
         title: "Validation Error",
         description: "A valid Google Forms URL is required (must start with https://docs.google.com/forms/)",
@@ -167,12 +162,13 @@ export default function CreateWorkshop() {
       return false
     }
 
-    console.log("Form validation passed")
     return true
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+
+    if (!workshop) return
 
     if (!validateForm()) {
       return
@@ -180,33 +176,47 @@ export default function CreateWorkshop() {
 
     setSubmitting(true)
     try {
-      // Prepare the data to send
-      const workshopData = {
-        name: formData.name.trim(),
-        about: formData.about.trim(),
-        registrationFormUrl: formData.registrationFormUrl.trim(),
-        imageUrl: uploadedImage, // This should be base64 data from file upload
-        eventRef: formData.eventRef,
+      const updateData: UpdateWorkshopData = {
+        name: formData.name?.trim() || "",
+        about: formData.about?.trim() || "",
+        registrationFormUrl: formData.registrationFormUrl?.trim() || "",
       }
 
-      console.log("Sending workshop data:", { 
-        ...workshopData, 
-        imageUrl: uploadedImage ? "base64_data_present" : "no_image" 
+      // Only include image if a new one is uploaded
+      if (uploadedImage) {
+        updateData.imageUrl = uploadedImage
+        console.log("Updating with new image, base64 length:", uploadedImage.length)
+      } else {
+        console.log("No new image uploaded, keeping existing image")
+      }
+
+      console.log("Sending update data:", { 
+        ...updateData, 
+        imageUrl: uploadedImage ? "base64_data_present" : "no_new_image" 
       })
 
-      const response = await addWorkshop(formData.eventRef, workshopData)
-
+      const response = await updateWorkshop(workshop._id, updateData)
       if (response.success) {
+        console.log("Update successful, redirecting to workshops list")
         toast({
           title: "Success",
-          description: "Workshop created successfully",
+          description: "Workshop updated successfully",
         })
-        router.push("/admin/dashboard/workshops")
+        
+        // Try different navigation approaches
+        try {
+          await router.push("/admin/dashboard/workshops")
+          console.log("Router push completed")
+        } catch (navError) {
+          console.error("Navigation error:", navError)
+          // Fallback to window.location
+          window.location.href = "/admin/dashboard/workshops"
+        }
       } else {
         console.error("API Error Response:", response)
         toast({
           title: "Error",
-          description: response.error || "Failed to create workshop",
+          description: response.error || "Failed to update workshop",
         })
       }
     } catch (error) {
@@ -224,13 +234,6 @@ export default function CreateWorkshop() {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
-    })
-  }
-
-  const handleSelectChange = (value: string) => {
-    setFormData({
-      ...formData,
-      eventRef: value,
     })
   }
 
@@ -256,7 +259,7 @@ export default function CreateWorkshop() {
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>
-                  <BreadcrumbPage>Create Workshop</BreadcrumbPage>
+                  <BreadcrumbPage>Edit Workshop</BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
@@ -271,19 +274,26 @@ export default function CreateWorkshop() {
           ) : (
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 w-full max-w-full">
               <div className="min-w-0">
-                <h1 className="text-2xl md:text-3xl font-bold tracking-tight truncate">Create New Workshop</h1>
-                <p className="text-muted-foreground text-sm md:text-base truncate">Add a new workshop to your events.</p>
+                <h1 className="text-2xl md:text-3xl font-bold tracking-tight truncate">Edit Workshop</h1>
+                <p className="text-muted-foreground text-sm md:text-base truncate">
+                  Update workshop information and details.
+                </p>
+                {workshop && (
+                  <p className="text-sm text-muted-foreground mt-1 truncate">
+                    Event: {getEventName(workshop.eventRef)}
+                  </p>
+                )}
               </div>
               {/* Responsive button group: stack on mobile, row on sm+ */}
               <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
                 <Button 
                   variant="outline" 
-                  onClick={fetchEvents} 
+                  onClick={fetchData} 
                   disabled={loading}
                   className="w-full sm:w-auto bg-transparent"
                 >
                   <RefreshCw className={`mr-2 h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
-                  Refresh Events
+                  Refresh
                 </Button>
                 <Button variant="outline" asChild className="w-full sm:w-auto bg-transparent" suppressHydrationWarning={true}>
                   <Link href="/admin/dashboard/workshops">
@@ -302,7 +312,7 @@ export default function CreateWorkshop() {
                 <BookOpen className="h-5 w-5" />
                 Workshop Details
               </CardTitle>
-              <CardDescription>Fill in the information for your new workshop.</CardDescription>
+              <CardDescription>Update the information for your workshop.</CardDescription>
             </CardHeader>
             <CardContent>
               {shouldShowSkeleton ? (
@@ -316,37 +326,22 @@ export default function CreateWorkshop() {
                         id="name"
                         name="name"
                         placeholder="Enter workshop name"
-                        value={formData.name}
+                        value={formData.name || ""}
                         onChange={handleChange}
                         required
                         suppressHydrationWarning={true}
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label htmlFor="eventRef">Associated Event *</Label>
-                      <Select value={formData.eventRef} onValueChange={handleSelectChange} required>
-                        <SelectTrigger suppressHydrationWarning={true}>
-                          <SelectValue placeholder="Select an event" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {loading ? (
-                            <SelectItem value="loading" disabled>
-                              <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                              Loading events...
-                            </SelectItem>
-                          ) : events.length === 0 ? (
-                            <SelectItem value="no-events" disabled>
-                              No events available
-                            </SelectItem>
-                          ) : (
-                            events.map((event) => (
-                              <SelectItem key={event._id} value={event._id}>
-                                {event.name} ({event.year})
-                              </SelectItem>
-                            ))
-                          )}
-                        </SelectContent>
-                      </Select>
+                      <Label htmlFor="eventRef">Associated Event</Label>
+                      <Input
+                        id="eventRef"
+                        value={workshop ? getEventName(workshop.eventRef) : ""}
+                        disabled
+                        className="bg-muted"
+                        suppressHydrationWarning={true}
+                      />
+                      <p className="text-xs text-muted-foreground">Event cannot be changed after creation</p>
                     </div>
                   </div>
 
@@ -356,7 +351,7 @@ export default function CreateWorkshop() {
                       id="about"
                       name="about"
                       placeholder="Enter workshop description and details"
-                      value={formData.about}
+                      value={formData.about || ""}
                       onChange={handleChange}
                       rows={6}
                       required
@@ -371,7 +366,7 @@ export default function CreateWorkshop() {
                       name="registrationFormUrl"
                       type="url"
                       placeholder="https://docs.google.com/forms/..."
-                      value={formData.registrationFormUrl}
+                      value={formData.registrationFormUrl || ""}
                       onChange={handleChange}
                       required
                       suppressHydrationWarning={true}
@@ -380,12 +375,35 @@ export default function CreateWorkshop() {
                   </div>
 
                   <div className="space-y-4">
-                    <Label>Workshop Image *</Label>
-                    <p className="text-xs text-muted-foreground">Image upload is required</p>
+                    <Label>Workshop Image</Label>
+                    <p className="text-xs text-muted-foreground">Upload a new image to replace the current one</p>
 
                     <div className="space-y-4">
                       <div className="space-y-2">
-                        <Label className="text-sm font-medium">Upload Image File</Label>
+                        <Label className="text-sm font-medium">Current Image</Label>
+                        <div className="w-full max-w-md h-48 bg-muted rounded-md overflow-hidden border">
+                          <img
+                            src={workshop?.imageUrl || "/placeholder.svg"}
+                            alt="Current workshop image"
+                            className="w-full h-full object-cover"
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement
+                              target.style.display = "none"
+                              const parent = target.parentElement
+                              if (parent) {
+                                parent.innerHTML = `
+                                  <div class="w-full h-full flex items-center justify-center text-muted-foreground">
+                                    <p>Image not found</p>
+                                  </div>
+                                `
+                              }
+                            }}
+                          />
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <Label className="text-sm font-medium">Upload New Image (Optional)</Label>
                         <div className="flex flex-col sm:flex-row gap-2">
                           <input
                             type="file"
@@ -393,7 +411,6 @@ export default function CreateWorkshop() {
                             accept="image/*"
                             onChange={handleImageUpload}
                             className="hidden"
-                            required
                             suppressHydrationWarning={true}
                           />
                           <Button
@@ -401,11 +418,10 @@ export default function CreateWorkshop() {
                             variant="outline"
                             className="w-full sm:w-auto bg-transparent"
                             onClick={() => document.getElementById("imageFile")?.click()}
-                            disabled={uploading}
                             suppressHydrationWarning={true}
                           >
                             <Upload className="mr-2 h-4 w-4" />
-                            {uploading ? "Uploading..." : "Choose Image File"}
+                            Choose New Image
                           </Button>
                           <p className="text-xs text-muted-foreground self-center">
                             Max size: 5MB. Supported: JPG, PNG, GIF
@@ -413,11 +429,11 @@ export default function CreateWorkshop() {
                         </div>
                       </div>
 
-                      {/* Image Preview */}
+                      {/* New Image Preview */}
                       {uploadedImage && (
                         <div className="space-y-2">
                           <div className="flex items-center justify-between">
-                            <Label className="text-sm font-medium">Image Preview</Label>
+                            <Label className="text-sm font-medium">New Image Preview</Label>
                             <Button type="button" variant="ghost" size="sm" onClick={removeImage} className="h-auto p-1" suppressHydrationWarning={true}>
                               <X className="h-4 w-4" />
                             </Button>
@@ -425,7 +441,7 @@ export default function CreateWorkshop() {
                           <div className="w-full max-w-md h-48 bg-muted rounded-md overflow-hidden border">
                             <img
                               src={uploadedImage}
-                              alt="Workshop preview"
+                              alt="New workshop preview"
                               className="w-full h-full object-cover"
                               onError={(e) => {
                                 const target = e.target as HTMLImageElement
@@ -441,23 +457,23 @@ export default function CreateWorkshop() {
                               }}
                             />
                           </div>
-                          <p className="text-xs text-muted-foreground">Uploaded file preview</p>
+                          <p className="text-xs text-muted-foreground">New image preview</p>
                         </div>
                       )}
                     </div>
                   </div>
 
                   <div className="flex flex-col sm:flex-row gap-4">
-                    <Button type="submit" disabled={submitting || uploading} className="w-full sm:w-auto" suppressHydrationWarning={true}>
+                    <Button type="submit" disabled={submitting} className="w-full sm:w-auto" suppressHydrationWarning={true}>
                       {submitting ? (
                         <>
                           <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Creating...
+                          Updating...
                         </>
                       ) : (
                         <>
                           <Save className="mr-2 h-4 w-4" />
-                          Create Workshop
+                          Update Workshop
                         </>
                       )}
                     </Button>
