@@ -17,7 +17,7 @@ import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { getMyProfile, updateMyProfile } from "@/service/userServices"
+import { getMyProfile, editUser } from "@/service/userServices"
 import type { EditUserData, User } from "@/types/user-types"
 import { toast } from "sonner"
 import { getCookie } from "@/lib/cookies"
@@ -31,6 +31,7 @@ export default function UserProfilePage() {
   const [fetchingProfile, setFetchingProfile] = useState(true)
   const [isEditing, setIsEditing] = useState(false)
   const [userRole, setUserRole] = useState<string | null>(null)
+  const [userId, setUserId] = useState<string>("")
   const [formData, setFormData] = useState<EditUserData>({
     name: "",
     email: "",
@@ -56,6 +57,7 @@ export default function UserProfilePage() {
     try {
       const response = await getMyProfile()
       if (response.success && response.data) {
+        setUserId(response.data._id)
         setFormData({
           name: response.data.name,
           email: response.data.email,
@@ -102,7 +104,7 @@ export default function UserProfilePage() {
         updateData.confirmPassword = formData.confirmPassword
       }
 
-      const response = await updateMyProfile(updateData)
+      const response = await editUser(userId, updateData)
 
       if (response.success) {
         toast.success("Profile updated successfully!")

@@ -86,19 +86,3 @@ export async function getMyProfile(): Promise<ApiResponse<User>> {
   }
 }
 
-// Update current user profile
-export async function updateMyProfile(data: EditUserData): Promise<ApiResponse<User>> {
-  try {
-    const response = await apiClient.put("/onboarding/updateMyProfile", data)
-    return {
-      success: true,
-      data: response.data.user,
-      message: "Profile updated successfully",
-    }
-  } catch (error: any) {
-    return {
-      success: false,
-      error: error.response?.data?.message || "Failed to update profile",
-    }
-  }
-}

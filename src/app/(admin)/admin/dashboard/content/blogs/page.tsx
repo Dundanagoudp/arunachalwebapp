@@ -38,8 +38,11 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 import { useState } from "react"
+import { useDeletePermission } from "@/hooks/use-delete-permission"
+import { ContactAdminModal } from "@/components/ui/contact-admin-modal"
 
 export default function NewsAndBlogsManagement() {
+  const { isAdmin } = useDeletePermission()
   const [searchTerm, setSearchTerm] = useState("")
   const [contentTypeFilter, setContentTypeFilter] = useState("all")
 
@@ -291,10 +294,22 @@ export default function NewsAndBlogsManagement() {
                               </a>
                             </DropdownMenuItem>
                           )}
-                          <DropdownMenuItem className="text-red-600">
-                            <Trash2 className="mr-2 h-4 w-4" />
-                            Delete
-                          </DropdownMenuItem>
+                          {isAdmin ? (
+                            <DropdownMenuItem className="text-red-600">
+                              <Trash2 className="mr-2 h-4 w-4" />
+                              Delete
+                            </DropdownMenuItem>
+                          ) : (
+                            <ContactAdminModal
+                              title="Delete Content Access Denied"
+                              description="You don't have permission to delete content. Please contact the administrator for assistance."
+                            >
+                              <DropdownMenuItem className="text-red-600">
+                                <Trash2 className="mr-2 h-4 w-4" />
+                                Delete
+                              </DropdownMenuItem>
+                            </ContactAdminModal>
+                          )}
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </div>

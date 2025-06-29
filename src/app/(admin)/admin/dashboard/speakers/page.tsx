@@ -41,7 +41,11 @@ import {
   PaginationPrevious,
 } from "@/components/ui/pagination"
 
+import { useDeletePermission } from "@/hooks/use-delete-permission"
+import { ContactAdminModal } from "@/components/ui/contact-admin-modal"
+
 export default function SpeakersPage() {
+  const { isAdmin } = useDeletePermission()
   const [speakers, setSpeakers] = useState<Speaker[]>([])
   const [events, setEvents] = useState<Event[]>([])
   const [loading, setLoading] = useState(true)
@@ -278,36 +282,48 @@ export default function SpeakersPage() {
                                   Edit
                                 </Link>
                               </Button>
-                              <AlertDialog>
-                                <AlertDialogTrigger asChild>
-                                  <Button variant="destructive" size="sm" disabled={deleteLoading === speaker._id}>
-                                    {deleteLoading === speaker._id ? (
-                                      <Loader2 className="mr-2 h-3 w-3 animate-spin" />
-                                    ) : (
-                                      <Trash2 className="mr-2 h-3 w-3" />
-                                    )}
+                              {isAdmin ? (
+                                <AlertDialog>
+                                  <AlertDialogTrigger asChild>
+                                    <Button variant="destructive" size="sm" disabled={deleteLoading === speaker._id}>
+                                      {deleteLoading === speaker._id ? (
+                                        <Loader2 className="mr-2 h-3 w-3 animate-spin" />
+                                      ) : (
+                                        <Trash2 className="mr-2 h-3 w-3" />
+                                      )}
+                                      Delete
+                                    </Button>
+                                  </AlertDialogTrigger>
+                                  <AlertDialogContent>
+                                    <AlertDialogHeader>
+                                      <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+                                      <AlertDialogDescription>
+                                        This action cannot be undone. This will permanently delete the speaker "
+                                        {speaker.name}".
+                                      </AlertDialogDescription>
+                                    </AlertDialogHeader>
+                                    <AlertDialogFooter>
+                                      <AlertDialogCancel>Cancel</AlertDialogCancel>
+                                      <AlertDialogAction
+                                        onClick={() => handleDelete(speaker._id)}
+                                        className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                                      >
+                                        Delete
+                                      </AlertDialogAction>
+                                    </AlertDialogFooter>
+                                  </AlertDialogContent>
+                                </AlertDialog>
+                              ) : (
+                                <ContactAdminModal
+                                  title="Delete Speaker Access Denied"
+                                  description="You don't have permission to delete speakers. Please contact the administrator for assistance."
+                                >
+                                  <Button variant="destructive" size="sm">
+                                    <Trash2 className="mr-2 h-3 w-3" />
                                     Delete
                                   </Button>
-                                </AlertDialogTrigger>
-                                <AlertDialogContent>
-                                  <AlertDialogHeader>
-                                    <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                                    <AlertDialogDescription>
-                                      This action cannot be undone. This will permanently delete the speaker "
-                                      {speaker.name}".
-                                    </AlertDialogDescription>
-                                  </AlertDialogHeader>
-                                  <AlertDialogFooter>
-                                    <AlertDialogCancel>Cancel</AlertDialogCancel>
-                                    <AlertDialogAction
-                                      onClick={() => handleDelete(speaker._id)}
-                                      className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
-                                    >
-                                      Delete
-                                    </AlertDialogAction>
-                                  </AlertDialogFooter>
-                                </AlertDialogContent>
-                              </AlertDialog>
+                                </ContactAdminModal>
+                              )}
                             </div>
                           </TableCell>
                         </TableRow>

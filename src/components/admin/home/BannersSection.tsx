@@ -8,6 +8,8 @@ import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, 
 import { Plus, Edit, Trash2, Loader2 } from "lucide-react"
 import { useToast } from "@/hooks/use-toast"
 import { addBanner, getBanner, updateBanner, deleteBanner } from "@/service/homeService"
+import { useDeletePermission } from "@/hooks/use-delete-permission"
+import { ContactAdminModal } from "@/components/ui/contact-admin-modal"
 
 interface Banner {
   _id: string
@@ -16,6 +18,7 @@ interface Banner {
 }
 
 export default function BannersSection() {
+  const { isAdmin } = useDeletePermission()
   const { toast } = useToast()
   const [banners, setBanners] = useState<Banner[]>([])
   const [loading, setLoading] = useState({ banners: false, action: false })
@@ -165,23 +168,34 @@ export default function BannersSection() {
                     <Button size="sm" variant="outline" onClick={() => openEditBannerDialog(banner)}>
                       <Edit className="h-4 w-4" />
                     </Button>
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
+                    {isAdmin ? (
+                      <AlertDialog>
+                        <AlertDialogTrigger asChild>
+                          <Button size="sm" variant="destructive">
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </AlertDialogTrigger>
+                        <AlertDialogContent>
+                          <AlertDialogHeader>
+                            <AlertDialogTitle>Delete Banner</AlertDialogTitle>
+                            <AlertDialogDescription>Are you sure you want to delete this banner? This action cannot be undone.</AlertDialogDescription>
+                          </AlertDialogHeader>
+                          <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <AlertDialogAction onClick={() => handleDeleteBanner(banner._id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">Delete</AlertDialogAction>
+                          </AlertDialogFooter>
+                        </AlertDialogContent>
+                      </AlertDialog>
+                    ) : (
+                      <ContactAdminModal
+                        title="Delete Banner Access Denied"
+                        description="You don't have permission to delete banners. Please contact the administrator for assistance."
+                      >
                         <Button size="sm" variant="destructive">
                           <Trash2 className="h-4 w-4" />
                         </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent>
-                        <AlertDialogHeader>
-                          <AlertDialogTitle>Delete Banner</AlertDialogTitle>
-                          <AlertDialogDescription>Are you sure you want to delete this banner? This action cannot be undone.</AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel>Cancel</AlertDialogCancel>
-                          <AlertDialogAction onClick={() => handleDeleteBanner(banner._id)} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">Delete</AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
+                      </ContactAdminModal>
+                    )}
                   </div>
                 </div>
               </CardContent>

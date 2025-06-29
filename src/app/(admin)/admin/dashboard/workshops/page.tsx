@@ -60,8 +60,11 @@ import {
   SearchSkeleton, 
   PageHeaderSkeleton 
 } from "@/components/skeleton-card"
+import { useDeletePermission } from "@/hooks/use-delete-permission"
+import { ContactAdminModal } from "@/components/ui/contact-admin-modal"
 
 export default function WorkshopsManagement() {
+  const { isAdmin } = useDeletePermission()
   const [searchTerm, setSearchTerm] = useState("")
   const [workshops, setWorkshops] = useState<Workshop[]>([])
   const [events, setEvents] = useState<Event[]>([])
@@ -390,10 +393,22 @@ export default function WorkshopsManagement() {
                                   </a>
                                 </DropdownMenuItem>
                               )}
-                              <DropdownMenuItem className="text-red-600" onClick={() => handleDeleteClick(workshop)}>
-                                <Trash2 className="mr-2 h-4 w-4" />
-                                Delete
-                              </DropdownMenuItem>
+                              {isAdmin ? (
+                                <DropdownMenuItem className="text-red-600" onClick={() => handleDeleteClick(workshop)}>
+                                  <Trash2 className="mr-2 h-4 w-4" />
+                                  Delete
+                                </DropdownMenuItem>
+                              ) : (
+                                <ContactAdminModal
+                                  title="Delete Workshop Access Denied"
+                                  description="You don't have permission to delete workshops. Please contact the administrator for assistance."
+                                >
+                                  <DropdownMenuItem className="text-red-600">
+                                    <Trash2 className="mr-2 h-4 w-4" />
+                                    Delete
+                                  </DropdownMenuItem>
+                                </ContactAdminModal>
+                              )}
                             </DropdownMenuContent>
                           </DropdownMenu>
                         </div>

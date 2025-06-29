@@ -15,10 +15,11 @@ import {
   Settings,
   Mic,
   Video,
-  User,
+  User as UserIcon,
 } from "lucide-react"
 import { toast } from "sonner"
 import { logoutUser } from "@/service/authService"
+import { getMyProfile } from "@/service/userServices"
 import { setCookie, getCookie } from "@/lib/cookies"
 import { useRouter } from "next/navigation"
 import { useCallback, useEffect, useState } from "react"
@@ -34,14 +35,10 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar"
+import type { User } from "@/types/user-types"
 
-// Admin-specific data
-const adminData = {
-  user: {
-    name: "Admin User",
-    email: "admin@arunachalliterature.com",
-    avatar: "/avatars/admin.jpg",
-  },
+// Admin-specific navigation data
+const adminNavData = {
   teams: [
     {
       name: "Arunachal Literature",
@@ -210,13 +207,8 @@ const adminData = {
   ],
 }
 
-// User-specific data (simplified navigation)
+// User-specific navigation data (simplified navigation)
 const userNavData = {
-  user: {
-    name: "User",
-    email: "user@arunachalliterature.com",
-    avatar: "/avatars/user.jpg",
-  },
   teams: [
     {
       name: "Arunachal Literature",
@@ -295,7 +287,7 @@ const userNavData = {
     {
       title: "My Profile",
       url: "/admin/dashboard/profile",
-      icon: User,
+      icon: UserIcon,
     },
   ],
   projects: [
@@ -310,18 +302,55 @@ const userNavData = {
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const router = useRouter()
   const [userRole, setUserRole] = useState<string | null>(null)
+  const [userData, setUserData] = useState<User | null>(null)
   const [sidebarData, setSidebarData] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    const role = getCookie("userRole")
-    setUserRole(role)
-    
-    // Set data based on role
-    if (role === "admin") {
-      setSidebarData(adminData)
-    } else {
-      setSidebarData(userNavData)
+    const fetchUserData = async () => {
+      try {
+        setLoading(true)
+        const profileResponse = await getMyProfile()
+        
+        if (profileResponse.success && profileResponse.data) {
+          const user = profileResponse.data
+          setUserData(user)
+          setUserRole(user.role)
+          
+          // Set navigation data based on user role
+          if (user.role === "admin") {
+            setSidebarData(adminNavData)
+          } else {
+            setSidebarData(userNavData)
+          }
+        } else {
+          // Fallback to cookie role if API fails
+          const role = getCookie("userRole")
+          setUserRole(role)
+          
+          if (role === "admin") {
+            setSidebarData(adminNavData)
+          } else {
+            setSidebarData(userNavData)
+          }
+        }
+      } catch (error) {
+        console.error("Failed to fetch user profile:", error)
+        // Fallback to cookie role
+        const role = getCookie("userRole")
+        setUserRole(role)
+        
+        if (role === "admin") {
+          setSidebarData(adminNavData)
+        } else {
+          setSidebarData(userNavData)
+        }
+      } finally {
+        setLoading(false)
+      }
     }
+
+    fetchUserData()
   }, [])
 
   const handleLogout = useCallback(async () => {
@@ -336,8 +365,22 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     }
   }, [router])
 
-  if (!sidebarData) {
+  if (loading || !sidebarData || !userData) {
     return null
+  }
+
+  // Create user object for NavUser component
+  const userForNav = {
+    name: userData.name,
+    email: userData.email,
+    avatar: "/avatars/default.jpg", // You can add avatar field to User type if needed
+    initials: userData.name
+      .split(' ')
+      .map(word => word.charAt(0))
+      .join('')
+      .toUpperCase()
+      .slice(0, 2),
+    role: userData.role
   }
 
   return (
@@ -350,7 +393,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
         <NavProjects projects={sidebarData.projects} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={sidebarData.user} onLogout={handleLogout} />
+        <NavUser user={userForNav} onLogout={handleLogout} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

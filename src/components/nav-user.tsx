@@ -38,10 +38,20 @@ export function NavUser({
     name: string
     email: string
     avatar: string
+    initials?: string
+    role?: string
   },
   onLogout?: () => void
 }) {
   const { isMobile } = useSidebar()
+
+  // Generate initials if not provided
+  const initials = user.initials || user.name
+    .split(' ')
+    .map(word => word.charAt(0))
+    .join('')
+    .toUpperCase()
+    .slice(0, 2)
 
   return (
     <SidebarMenu>
@@ -54,11 +64,14 @@ export function NavUser({
             >
               <Avatar className="h-8 w-8 rounded-lg">
                 <AvatarImage src={user.avatar} alt={user.name} />
-                <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                <AvatarFallback className="rounded-lg">{initials}</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">{user.name}</span>
                 <span className="truncate text-xs">{user.email}</span>
+                {user.role && (
+                  <span className="truncate text-xs text-muted-foreground capitalize">{user.role}</span>
+                )}
               </div>
               <ChevronsUpDown className="ml-auto size-4" />
             </SidebarMenuButton>
@@ -73,11 +86,14 @@ export function NavUser({
               <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                 <Avatar className="h-8 w-8 rounded-lg">
                   <AvatarImage src={user.avatar} alt={user.name} />
-                  <AvatarFallback className="rounded-lg">CN</AvatarFallback>
+                  <AvatarFallback className="rounded-lg">{initials}</AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
                   <span className="truncate font-medium">{user.name}</span>
                   <span className="truncate text-xs">{user.email}</span>
+                  {user.role && (
+                    <span className="truncate text-xs text-muted-foreground capitalize">{user.role}</span>
+                  )}
                 </div>
               </div>
             </DropdownMenuLabel>
