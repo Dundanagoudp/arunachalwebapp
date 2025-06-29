@@ -15,12 +15,13 @@ import {
   Settings,
   Mic,
   Video,
+  User,
 } from "lucide-react"
 import { toast } from "sonner"
 import { logoutUser } from "@/service/authService"
-import { setCookie } from "@/lib/cookies"
+import { setCookie, getCookie } from "@/lib/cookies"
 import { useRouter } from "next/navigation"
-import { useCallback } from "react"
+import { useCallback, useEffect, useState } from "react"
 
 import { NavMain } from "@/components/nav-main"
 import { NavProjects } from "@/components/nav-projects"
@@ -33,8 +34,6 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar"
-import { title } from "process"
-import { Item } from "@radix-ui/react-dropdown-menu"
 
 // Admin-specific data
 const adminData = {
@@ -211,8 +210,120 @@ const adminData = {
   ],
 }
 
+// User-specific data (simplified navigation)
+const userNavData = {
+  user: {
+    name: "User",
+    email: "user@arunachalliterature.com",
+    avatar: "/avatars/user.jpg",
+  },
+  teams: [
+    {
+      name: "Arunachal Literature",
+      logo: BookOpen,
+      plan: "User",
+    },
+  ],
+  navMain: [
+    {
+      title: "Dashboard",
+      url: "/admin/dashboard",
+      icon: Home,
+      isActive: true,
+      item:[
+        {
+          title: "Main",
+          url: "/admin/dashboard",
+        },
+      ]
+    },
+    {
+      title: "Events",
+      url: "/admin/dashboard/events",
+      icon: Calendar,
+      items: [
+        {
+          title: "All Events",
+          url: "/admin/dashboard/events",
+        },
+      ],
+    },
+    {
+      title: "Speakers",
+      url: "/admin/dashboard/speakers",
+      icon: Mic,
+      items: [
+        {
+          title: "All Speakers",
+          url: "/admin/dashboard/speakers",
+        },
+      ],
+    },
+    {
+      title: "Archives",
+      url: "/admin/dashboard/archive",
+      icon: Archive,
+      items: [
+        {
+          title: "All Archives",
+          url: "/admin/dashboard/archive",
+        },
+      ]
+    },
+    {
+      title: "Videos",
+      url: "/admin/dashboard/videos",
+      icon: Video,
+      items: [
+        {
+          title: "All Videos",
+          url: "/admin/dashboard/videos",
+        },
+      ],
+    },
+    {
+      title: "Content",
+      url: "/admin/dashboard/content",
+      icon: FileText,
+      items: [
+        {
+          title: "News & Blogs",
+          url: "/admin/dashboard/content/blogs",
+        },
+      ],
+    },
+    {
+      title: "My Profile",
+      url: "/admin/dashboard/profile",
+      icon: User,
+    },
+  ],
+  projects: [
+    {
+      name: "Website Frontend",
+      url: "/",
+      icon: Globe,
+    },
+  ],
+}
+
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const router = useRouter()
+  const [userRole, setUserRole] = useState<string | null>(null)
+  const [sidebarData, setSidebarData] = useState<any>(null)
+
+  useEffect(() => {
+    const role = getCookie("userRole")
+    setUserRole(role)
+    
+    // Set data based on role
+    if (role === "admin") {
+      setSidebarData(adminData)
+    } else {
+      setSidebarData(userNavData)
+    }
+  }, [])
+
   const handleLogout = useCallback(async () => {
     try {
       await logoutUser({ message: "", success: true })
@@ -224,17 +335,22 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       toast.error(error?.response?.data?.message || error.message || "Logout failed")
     }
   }, [router])
+
+  if (!sidebarData) {
+    return null
+  }
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <TeamSwitcher teams={adminData.teams} />
+        <TeamSwitcher teams={sidebarData.teams} />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={adminData.navMain} />
-        <NavProjects projects={adminData.projects} />
+        <NavMain items={sidebarData.navMain} />
+        <NavProjects projects={sidebarData.projects} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={adminData.user} onLogout={handleLogout} />
+        <NavUser user={sidebarData.user} onLogout={handleLogout} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>
