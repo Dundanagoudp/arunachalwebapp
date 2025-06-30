@@ -115,7 +115,7 @@ export default function Attendeessay() {
       </div>
 
       {/* Bottom Blurred Image */}
-      <div className="absolute bottom-0 left-0 w-full h-[120px] md:h-[180px] lg:h-[220px] overflow-hidden">
+      <div className="absolute bottom-0 left-0 w-full h-[120px] md:h-[180px] lg:h-[280px] overflow-hidden">
         <Image
           src="/attendeessay/bottom2.png"
           alt="Blurred forest trees"
@@ -150,7 +150,7 @@ function TestimonialCard({ name, title, quote, avatar, isLarge }: Testimonial) {
         </div>
         <div className="relative flex-grow mt-2">
           {/* Opening quote */}
-          <svg className="absolute -left-2 top-1 w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 24 24"><path d="M7.17 17.66c-1.1 0-2-.9-2-2v-3.34c0-2.21 1.79-4 4-4h.5c.28 0 .5.22.5.5v1c0 .28-.22.5-.5.5h-.5c-1.1 0-2 .9-2 2v3.34c0 .28-.22.5-.5.5s-.5-.22-.5-.5zm8 0c-1.1 0-2-.9-2-2v-3.34c0-2.21 1.79-4 4-4h.5c.28 0 .5.22.5.5v1c0 .28-.22.5-.5.5h-.5c-1.1 0-2 .9-2 2v3.34c0 .28-.22.5-.5.5s-.5-.22-.5-.5z"/></svg>
+          <svg className="absolute left-2 top-1 w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 24 24"><path d="M7.17 17.66c-1.1 0-2-.9-2-2v-3.34c0-2.21 1.79-4 4-4h.5c.28 0 .5.22.5.5v1c0 .28-.22.5-.5.5h-.5c-1.1 0-2 .9-2 2v3.34c0 .28-.22.5-.5.5s-.5-.22-.5-.5zm8 0c-1.1 0-2-.9-2-2v-3.34c0-2.21 1.79-4 4-4h.5c.28 0 .5.22.5.5v1c0 .28-.22.5-.5.5h-.5c-1.1 0-2 .9-2 2v3.34c0 .28-.22.5-.5.5s-.5-.22-.5-.5z"/></svg>
           <p className={`text-base leading-relaxed pl-6 pr-4 pt-1 pb-3 text-left ${isLarge ? 'text-lg' : ''}`}>
             {quote}
           </p>
