@@ -66,7 +66,7 @@ export default function Speakers() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-[#FFF8E7] to-[#FFFAEE] relative overflow-x-hidden">
+    <div className="min-h-0 md:min-h-screen bg-gradient-to-b from-[#FFF8E7] to-[#FFFAEE] relative overflow-x-hidden">
       {/* Background patterns */}
       <div className="absolute top-0 left-0 w-24 h-24 md:w-32 md:h-32">
         <Image src="/schedule/diamond-pattern.png" alt="Pattern" fill />
@@ -75,13 +75,13 @@ export default function Speakers() {
         <Image src="/schedule/diamond-pattern.png" alt="Pattern" fill />
       </div>
 
-      <div className="container mx-auto py-16 px-4 relative z-10">
+      <div className="container mx-auto py-8 md:py-16 px-2 md:px-4 pb-4 md:pb-16 relative z-10">
         {/* Header */}
-        <div className="text-center mb-16">
-          <h1 className="text-5xl md:text-7xl font-bold text-[#E67E22] font-serif">
+        <div className="text-center mb-8 md:mb-16">
+          <h1 className="text-3xl md:text-7xl font-bold text-[#E67E22] font-serif">
             SPEAKERS
           </h1>
-          <p className="mt-4 text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="mt-2 md:mt-4 text-base md:text-lg text-gray-600 max-w-2xl mx-auto">
             Meet our distinguished speakers who will share their knowledge and insights
           </p>
         </div>
@@ -92,7 +92,7 @@ export default function Speakers() {
             <LoadingDots />
           ) : (
             <>
-              <div className="relative px-16"> {/* Increased side padding */}
+              <div className="relative px-2 md:px-16"> {/* Reduced side padding on mobile */}
                 {/* Navigation arrows */}
                 <button
                   ref={navigationPrevRef}
@@ -159,7 +159,7 @@ export default function Speakers() {
                         <div className="relative bg-white p-1 rounded-lg h-full w-full transition-transform duration-300 group-hover:scale-[1.02]">
                           <div className="w-full h-full overflow-hidden rounded-lg shadow-2xl relative">
                             <Image
-                              src={speaker.image_url || "/images/speaker.png"}
+                              src={speaker.image_url}
                               alt={speaker.name || "Speaker"}
                               fill
                               className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
@@ -192,7 +192,7 @@ export default function Speakers() {
               </div>
 
               {/* View All button */}
-              <div className="mt-12 flex justify-center">
+              <div className="mt-6 md:mt-12 flex justify-center">
                 <button className="group relative flex items-center hover:scale-105 transition-transform duration-300 focus:outline-none">
                   <span className="bg-[#E67E22] text-white px-6 py-3 pr-12 rounded-full text-lg font-medium">
                     View All

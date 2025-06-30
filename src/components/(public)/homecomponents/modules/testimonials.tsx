@@ -80,7 +80,7 @@ export default function Testimonials() {
   // Show loading state
   if (loading) {
     return (
-      <div className="relative flex min-h-[80vh] lg:min-h-screen items-center justify-center bg-[#fdf8f0] p-2 overflow-hidden">
+      <div className="relative flex min-h-[60vh] lg:min-h-screen items-center justify-center bg-[#fdf8f0] p-2 overflow-hidden">
         {/* Decorative background patterns */}
         {[...Array(8)].map((_, i) => (
           <div
@@ -107,7 +107,7 @@ export default function Testimonials() {
           </div>
         ))}
 
-        <div className="relative mt-8 lg:mt-25 z-10 flex w-full max-w-4xl flex-col items-center justify-center p-6">
+        <div className="relative mt-2 md:mt-8 lg:mt-25 z-10 flex w-full max-w-4xl flex-col items-center justify-center p-6">
           <div className="flex flex-col items-center justify-center space-y-4">
             <Loader2 className="h-12 w-12 animate-spin text-amber-500" />
             <p className="text-lg text-gray-600">Loading beautiful poetry...</p>
@@ -120,7 +120,7 @@ export default function Testimonials() {
   // Show error state
   if (error) {
     return (
-      <div className="relative flex min-h-[80vh] lg:min-h-screen items-center justify-center bg-[#fdf8f0] p-2 overflow-hidden">
+      <div className="relative flex min-h-[60vh] lg:min-h-screen items-center justify-center bg-[#fdf8f0] p-2 overflow-hidden">
         {/* Decorative background patterns */}
         {[...Array(8)].map((_, i) => (
           <div
@@ -147,7 +147,7 @@ export default function Testimonials() {
           </div>
         ))}
 
-        <div className="relative mt-8 lg:mt-25 z-10 flex w-full max-w-4xl flex-col items-center justify-center p-6">
+        <div className="relative mt-2 md:mt-8 lg:mt-25 z-10 flex w-full max-w-4xl flex-col items-center justify-center p-6">
           <div className="flex flex-col items-center justify-center space-y-4 text-center">
             <p className="text-lg text-gray-600">Unable to load poetry at the moment.</p>
             <p className="text-sm text-gray-500">{error}</p>
@@ -160,7 +160,7 @@ export default function Testimonials() {
   // Show empty state
   if (total === 0) {
     return (
-      <div className="relative flex min-h-[80vh] lg:min-h-screen items-center justify-center bg-[#fdf8f0] p-2 overflow-hidden">
+      <div className="relative flex min-h-[60vh] lg:min-h-screen items-center justify-center bg-[#fdf8f0] p-2 overflow-hidden">
         {/* Decorative background patterns */}
         {[...Array(8)].map((_, i) => (
           <div
@@ -187,7 +187,7 @@ export default function Testimonials() {
           </div>
         ))}
 
-        <div className="relative mt-8 lg:mt-25 z-10 flex w-full max-w-4xl flex-col items-center justify-center p-6">
+        <div className="relative mt-2 md:mt-8 lg:mt-25 z-10 flex w-full max-w-4xl flex-col items-center justify-center p-6">
           <div className="flex flex-col items-center justify-center space-y-4 text-center">
             <p className="text-lg text-gray-600">No poetry available yet.</p>
             <p className="text-sm text-gray-500">Check back soon for beautiful verses.</p>
@@ -203,7 +203,7 @@ export default function Testimonials() {
   const shouldShowReadMore = currentPoetry.text.length > 150
 
   return (
-    <div className="relative flex min-h-[80vh] lg:min-h-screen items-center justify-center bg-[#fdf8f0] p-2 overflow-hidden">
+    <div className="relative flex min-h-[60vh] lg:min-h-screen items-center justify-center bg-[#fdf8f0] p-2 overflow-hidden">
       {/* Decorative background patterns */}
       {[...Array(8)].map((_, i) => (
         <div
@@ -230,7 +230,7 @@ export default function Testimonials() {
         </div>
       ))}
 
-      <div className="relative mt-8 lg:mt-25 z-10 flex w-full max-w-4xl flex-col items-center justify-center p-6">
+      <div className="relative mt-2 md:mt-8 lg:mt-25 z-10 flex w-full max-w-4xl flex-col items-center justify-center p-6">
         {/* Quote container */}
         <div className="relative flex w-full items-center justify-center">
           <Image
@@ -284,19 +284,19 @@ export default function Testimonials() {
         </div>
 
         {/* Books and pen image */}
-        <div className="mt-16 transition-opacity duration-500">
+        <div className="mt-4 md:mt-16 transition-opacity duration-500 flex justify-center">
           <Image
             src="/testimonials/book.png"
             alt="Stack of books and a pen"
-            width={200}
-            height={150}
-            className="object-contain"
+            width={100}
+            height={75}
+            className="object-contain w-[100px] h-[75px] md:w-[200px] md:h-[150px]"
             priority
           />
         </div>
 
         {/* Poetry counter */}
-        <div className="mt-8 text-center">
+        <div className="mt-4 md:mt-8 text-center">
           <p className="text-sm text-gray-600">
             {current + 1} of {total} poems
           </p>
