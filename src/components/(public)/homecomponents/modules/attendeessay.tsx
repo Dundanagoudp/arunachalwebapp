@@ -36,7 +36,7 @@ export default function Attendeessay() {
   // Loading state
   if (loading) {
     return (
-      <div className="relative min-h-screen flex items-center justify-center bg-blue-900 text-white pb-12">
+      <div className="relative min-h-0 md:min-h-screen flex items-center justify-center bg-blue-900 text-white pb-12">
         <div className="text-2xl font-bold">Loading testimonials...</div>
       </div>
     )
@@ -45,7 +45,7 @@ export default function Attendeessay() {
   // Error state
   if (error) {
     return (
-      <div className="relative min-h-screen flex items-center justify-center bg-blue-900 text-white pb-12">
+      <div className="relative min-h-0 md:min-h-screen flex items-center justify-center bg-blue-900 text-white pb-12">
         <div className="text-xl font-bold text-red-400">{error}</div>
       </div>
     )
@@ -54,7 +54,7 @@ export default function Attendeessay() {
   // No testimonials state
   if (!testimonials.length) {
     return (
-      <div className="relative min-h-screen flex items-center justify-center bg-blue-900 text-white pb-12">
+      <div className="relative min-h-0 md:min-h-screen flex items-center justify-center bg-blue-900 text-white pb-12">
         <div className="text-xl font-bold">No testimonials available yet.</div>
       </div>
     )
@@ -88,7 +88,7 @@ export default function Attendeessay() {
 
   return (
     <div 
-      className="relative min-h-screen overflow-hidden bg-blue-900 text-white pb-12 font-bilo text-base"
+      className="relative min-h-0 md:min-h-screen overflow-hidden bg-blue-900 text-white pb-12 font-bilo text-base"
     >
       
       {/* Top Blurred Image */}
