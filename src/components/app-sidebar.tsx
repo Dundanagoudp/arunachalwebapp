@@ -16,6 +16,7 @@ import {
   Mic,
   Video,
   User as UserIcon,
+  MessageSquare,
 } from "lucide-react"
 import { toast } from "sonner"
 import { logoutUser } from "@/service/authService"
@@ -36,6 +37,7 @@ import {
   SidebarRail,
 } from "@/components/ui/sidebar"
 import type { User } from "@/types/user-types"
+import { title } from "process"
 
 // Admin-specific navigation data
 const adminNavData = {
@@ -193,10 +195,16 @@ const adminNavData = {
       ],
     },
     {
-      title: "Settings",
-      url: "/admin/dashboard/settings",
-      icon: Settings,
-    },
+      title:"Contact Us",
+      url:"/admin/dashboard/contactus",
+      icon: MessageSquare,
+      items:[
+        {
+          title:"All Messages",
+          url:"/admin/dashboard/contactus"
+        },
+      ]
+    }
   ],
   projects: [
     {
