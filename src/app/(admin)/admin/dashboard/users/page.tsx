@@ -33,139 +33,94 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select"
-import { Users, UserPlus, Shield, Mail, Calendar, Plus, Edit, Trash2, Eye, Search, MoreHorizontal, Crown, User } from 'lucide-react'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
+import { Users, Mail, Plus, Edit, Trash2, Search, MoreHorizontal, Crown, User } from "lucide-react"
 import Link from "next/link"
 import { useState, useEffect } from "react"
-import { getCookie } from "@/lib/cookies"
+import { getAllUsers, deleteUser } from "@/service/userServices"
+import type { User as UserType } from "@/types/user-types"
+import { toast } from "sonner"
 
 export default function UsersManagement() {
   const [searchTerm, setSearchTerm] = useState("")
   const [roleFilter, setRoleFilter] = useState("all")
-  const [statusFilter, setStatusFilter] = useState("all")
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
-  const [selectedUser, setSelectedUser] = useState<any>(null)
-  const [userRole, setUserRole] = useState<string | null>(null)
+  const [selectedUser, setSelectedUser] = useState<UserType | null>(null)
+  const [users, setUsers] = useState<UserType[]>([])
+  const [loading, setLoading] = useState(true)
 
   useEffect(() => {
-    setUserRole(getCookie("userRole"))
+    fetchUsers()
   }, [])
 
-  // Mock data - replace with actual data from your backend
-  const users = [
-    {
-      id: 1,
-      name: "John Doe",
-      email: "john.doe@example.com",
-      role: "admin",
-      status: "active",
-      avatar: "/avatars/john.jpg",
-      createdAt: "2024-01-15",
-      lastLogin: "2024-01-20",
-      postsCount: 12,
-      eventsCount: 3,
-    },
-    {
-      id: 2,
-      name: "Jane Smith",
-      email: "jane.smith@example.com",
-      role: "editor",
-      status: "active",
-      avatar: "/avatars/jane.jpg",
-      createdAt: "2024-01-10",
-      lastLogin: "2024-01-19",
-      postsCount: 8,
-      eventsCount: 1,
-    },
-    {
-      id: 3,
-      name: "Mike Johnson",
-      email: "mike.johnson@example.com",
-      role: "author",
-      status: "active",
-      avatar: "/avatars/mike.jpg",
-      createdAt: "2024-01-05",
-      lastLogin: "2024-01-18",
-      postsCount: 15,
-      eventsCount: 0,
-    },
-    {
-      id: 4,
-      name: "Sarah Wilson",
-      email: "sarah.wilson@example.com",
-      role: "author",
-      status: "inactive",
-      avatar: "/avatars/sarah.jpg",
-      createdAt: "2023-12-20",
-      lastLogin: "2024-01-10",
-      postsCount: 5,
-      eventsCount: 2,
-    },
-    {
-      id: 5,
-      name: "David Brown",
-      email: "david.brown@example.com",
-      role: "subscriber",
-      status: "active",
-      avatar: "/avatars/david.jpg",
-      createdAt: "2024-01-12",
-      lastLogin: "2024-01-19",
-      postsCount: 0,
-      eventsCount: 0,
-    },
-  ]
+  const fetchUsers = async () => {
+    setLoading(true)
+    try {
+      const response = await getAllUsers()
+      if (response.success && response.data) {
+        setUsers(response.data)
+      } else {
+        toast.error(response.error || "Failed to fetch users")
+      }
+    } catch (error) {
+      console.error("Error fetching users:", error)
+      toast.error("Failed to fetch users")
+    } finally {
+      setLoading(false)
+    }
+  }
 
   const filteredUsers = users.filter((user) => {
     const matchesSearch =
       user.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
       user.email.toLowerCase().includes(searchTerm.toLowerCase())
     const matchesRole = roleFilter === "all" || user.role === roleFilter
-    const matchesStatus = statusFilter === "all" || user.status === statusFilter
-    return matchesSearch && matchesRole && matchesStatus
+    return matchesSearch && matchesRole
   })
 
-  const handleDelete = (user: any) => {
+  const handleDelete = (user: UserType) => {
     setSelectedUser(user)
     setDeleteDialogOpen(true)
   }
 
-  const confirmDelete = () => {
-    console.log("Deleting user:", selectedUser?.id)
-    setDeleteDialogOpen(false)
-    setSelectedUser(null)
+  const confirmDelete = async () => {
+    if (!selectedUser) return
+
+    try {
+      const response = await deleteUser(selectedUser._id)
+      if (response.success) {
+        toast.success("User deleted successfully")
+        fetchUsers() // Refresh the list
+      } else {
+        toast.error(response.error || "Failed to delete user")
+      }
+    } catch (error) {
+      console.error("Error deleting user:", error)
+      toast.error("Failed to delete user")
+    } finally {
+      setDeleteDialogOpen(false)
+      setSelectedUser(null)
+    }
   }
 
   const getRoleBadge = (role: string) => {
     switch (role) {
       case "admin":
-        return <Badge variant="destructive"><Crown className="w-3 h-3 mr-1" />Admin</Badge>
-      case "editor":
-        return <Badge variant="default"><Shield className="w-3 h-3 mr-1" />Editor</Badge>
-      case "author":
-        return <Badge variant="secondary"><Edit className="w-3 h-3 mr-1" />Author</Badge>
-      case "subscriber":
-        return <Badge variant="outline"><User className="w-3 h-3 mr-1" />Subscriber</Badge>
+        return (
+          <Badge variant="destructive">
+            <Crown className="w-3 h-3 mr-1" />
+            Admin
+          </Badge>
+        )
+      case "user":
+        return (
+          <Badge variant="outline">
+            <User className="w-3 h-3 mr-1" />
+            User
+          </Badge>
+        )
       default:
         return <Badge variant="outline">{role}</Badge>
-    }
-  }
-
-  const getStatusBadge = (status: string) => {
-    switch (status) {
-      case "active":
-        return <Badge variant="default">Active</Badge>
-      case "inactive":
-        return <Badge variant="secondary">Inactive</Badge>
-      case "suspended":
-        return <Badge variant="destructive">Suspended</Badge>
-      default:
-        return <Badge variant="outline">{status}</Badge>
     }
   }
 
@@ -177,12 +132,28 @@ export default function UsersManagement() {
       .toUpperCase()
   }
 
+  if (loading) {
+    return (
+      <SidebarProvider>
+        <AppSidebar />
+        <SidebarInset>
+          <div className="flex items-center justify-center h-screen">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
+              <p className="mt-4">Loading users...</p>
+            </div>
+          </div>
+        </SidebarInset>
+      </SidebarProvider>
+    )
+  }
+
   return (
     <SidebarProvider>
       <AppSidebar />
       <SidebarInset>
-      <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 border-b bg-white/80 backdrop-blur-sm sticky top-0 z-40">
-      <div className="flex items-center gap-2 px-4">
+        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 border-b bg-white/80 backdrop-blur-sm sticky top-0 z-40">
+          <div className="flex items-center gap-2 px-4">
             <SidebarTrigger className="-ml-1" />
             <Separator orientation="vertical" className="mr-2 data-[orientation=vertical]:h-4" />
             <Breadcrumb>
@@ -204,7 +175,7 @@ export default function UsersManagement() {
           <div className="flex items-center justify-between">
             <div>
               <h1 className="text-3xl font-bold tracking-tight">Users Management</h1>
-              <p className="text-muted-foreground">Manage user accounts, roles, and permissions.</p>
+              <p className="text-muted-foreground">Manage user accounts and roles.</p>
             </div>
             <Button asChild>
               <Link href="/admin/dashboard/users/create">
@@ -213,14 +184,9 @@ export default function UsersManagement() {
               </Link>
             </Button>
           </div>
-          {userRole !== "admin" && (
-            <div className="mb-4 text-xs text-muted-foreground">
-              Note: Only admins can delete or change user roles. You can add and edit users you have access to.
-            </div>
-          )}
 
           {/* Stats Cards */}
-          <div className="grid gap-4 md:grid-cols-4">
+          <div className="grid gap-4 md:grid-cols-3">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                 <CardTitle className="text-sm font-medium">Total Users</CardTitle>
@@ -228,17 +194,7 @@ export default function UsersManagement() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">{users.length}</div>
-                <p className="text-xs text-muted-foreground">+3 from last month</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Active Users</CardTitle>
-                <UserPlus className="h-4 w-4 text-green-600" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{users.filter((u) => u.status === "active").length}</div>
-                <p className="text-xs text-muted-foreground">Currently active</p>
+                <p className="text-xs text-muted-foreground">All registered users</p>
               </CardContent>
             </Card>
             <Card>
@@ -253,12 +209,12 @@ export default function UsersManagement() {
             </Card>
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Authors</CardTitle>
-                <Edit className="h-4 w-4 text-blue-600" />
+                <CardTitle className="text-sm font-medium">Regular Users</CardTitle>
+                <User className="h-4 w-4 text-blue-600" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{users.filter((u) => u.role === "author").length}</div>
-                <p className="text-xs text-muted-foreground">Content creators</p>
+                <div className="text-2xl font-bold">{users.filter((u) => u.role === "user").length}</div>
+                <p className="text-xs text-muted-foreground">Regular users</p>
               </CardContent>
             </Card>
           </div>
@@ -292,23 +248,7 @@ export default function UsersManagement() {
                     <SelectContent>
                       <SelectItem value="all">All Roles</SelectItem>
                       <SelectItem value="admin">Admin</SelectItem>
-                      <SelectItem value="editor">Editor</SelectItem>
-                      <SelectItem value="author">Author</SelectItem>
-                      <SelectItem value="subscriber">Subscriber</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div>
-                  <Label htmlFor="status">Status</Label>
-                  <Select value={statusFilter} onValueChange={setStatusFilter}>
-                    <SelectTrigger className="w-[150px]">
-                      <SelectValue placeholder="All Status" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="all">All Status</SelectItem>
-                      <SelectItem value="active">Active</SelectItem>
-                      <SelectItem value="inactive">Inactive</SelectItem>
-                      <SelectItem value="suspended">Suspended</SelectItem>
+                      <SelectItem value="user">User</SelectItem>
                     </SelectContent>
                   </Select>
                 </div>
@@ -327,36 +267,24 @@ export default function UsersManagement() {
             <CardContent>
               <div className="space-y-4">
                 {filteredUsers.map((user) => (
-                  <div key={user.id} className="flex items-center justify-between p-4 border rounded-lg">
+                  <div key={user._id} className="flex items-center justify-between p-4 border rounded-lg">
                     <div className="flex items-center gap-4">
                       <Avatar className="h-12 w-12">
-                        <AvatarImage src={user.avatar || "/placeholder.svg"} alt={user.name} />
+                        <AvatarImage src="/placeholder.svg" alt={user.name} />
                         <AvatarFallback>{getInitials(user.name)}</AvatarFallback>
                       </Avatar>
                       <div className="flex-1 space-y-1">
                         <div className="flex items-center gap-2">
                           <h3 className="text-sm font-medium leading-none">{user.name}</h3>
                           {getRoleBadge(user.role)}
-                          {getStatusBadge(user.status)}
                         </div>
                         <div className="flex items-center gap-1 text-sm text-muted-foreground">
                           <Mail className="h-3 w-3" />
                           {user.email}
                         </div>
-                        <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                          <span className="flex items-center gap-1">
-                            <Calendar className="h-3 w-3" />
-                            Joined {user.createdAt}
-                          </span>
-                          <span>•</span>
-                          <span>Last login {user.lastLogin}</span>
-                          <span>•</span>
-                          <span>{user.postsCount} posts</span>
-                          <span>•</span>
-                          <span>{user.eventsCount} events</span>
-                        </div>
                       </div>
                     </div>
+
                     <div className="flex items-center gap-2">
                       <DropdownMenu>
                         <DropdownMenuTrigger asChild>
@@ -368,29 +296,15 @@ export default function UsersManagement() {
                           <DropdownMenuLabel>Actions</DropdownMenuLabel>
                           <DropdownMenuSeparator />
                           <DropdownMenuItem asChild>
-                            <Link href={`/admin/dashboard/users/${user.id}`}>
-                              <Eye className="mr-2 h-4 w-4" />
-                              View Profile
-                            </Link>
-                          </DropdownMenuItem>
-                          <DropdownMenuItem asChild>
-                            <Link href={`/admin/dashboard/users/${user.id}/edit`}>
+                            <Link href={`/admin/dashboard/users/${user._id}/edit`}>
                               <Edit className="mr-2 h-4 w-4" />
                               Edit User
                             </Link>
                           </DropdownMenuItem>
-                          {userRole === "admin" && (
-                            <DropdownMenuItem>
-                              <Shield className="mr-2 h-4 w-4" />
-                              Change Role
-                            </DropdownMenuItem>
-                          )}
-                          {userRole === "admin" && (
-                            <DropdownMenuItem onClick={() => handleDelete(user)} className="text-red-600">
-                              <Trash2 className="mr-2 h-4 w-4" />
-                              Delete
-                            </DropdownMenuItem>
-                          )}
+                          <DropdownMenuItem onClick={() => handleDelete(user)} className="text-red-600">
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            Delete
+                          </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </div>
@@ -407,8 +321,7 @@ export default function UsersManagement() {
             <DialogHeader>
               <DialogTitle>Delete User</DialogTitle>
               <DialogDescription>
-                Are you sure you want to delete "{selectedUser?.name}"? This action cannot be undone and will remove
-                all user data including posts, comments, and activity history.
+                Are you sure you want to delete "{selectedUser?.name}"? This action cannot be undone.
               </DialogDescription>
             </DialogHeader>
             <DialogFooter>

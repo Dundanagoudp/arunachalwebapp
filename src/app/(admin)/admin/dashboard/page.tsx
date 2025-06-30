@@ -20,6 +20,7 @@ import Link from "next/link"
 import { useEffect, useState } from "react"
 import { getCookie } from "@/lib/cookies"
 import ProtectedRoute from "@/components/auth/protected-route"
+import UserProfileCard from "@/components/admin/UserProfileCard"
 
 export default function AdminDashboard() {
   // Mock data for dashboard
@@ -137,6 +138,8 @@ export default function AdminDashboard() {
     setUserRole(getCookie("userRole"))
   }, [])
 
+  const isAdmin = userRole === "admin"
+
   return (
     <ProtectedRoute allowedRoles={["admin", "user"]}>
       <SidebarProvider>
@@ -149,7 +152,7 @@ export default function AdminDashboard() {
               <Breadcrumb>
                 <BreadcrumbList>
                   <BreadcrumbItem className="hidden md:block">
-                    <BreadcrumbLink href="/admin">Admin Panel</BreadcrumbLink>
+                    <BreadcrumbLink href="/admin">Dashboard</BreadcrumbLink>
                   </BreadcrumbItem>
                   <BreadcrumbSeparator className="hidden md:block" />
                   <BreadcrumbItem>
@@ -165,83 +168,96 @@ export default function AdminDashboard() {
             <div className="flex items-center justify-between">
               <div>
                 <h1 className="text-3xl font-bold tracking-tight">
-                  Welcome back, {userRole === "admin" ? "Admin" : "User"}!
+                  Welcome back, {isAdmin ? "Admin" : "User"}!
                 </h1>
                 <p className="text-muted-foreground">
                   Here's what's happening with your Arunachal Literature platform today.
                 </p>
               </div>
-              <div className="flex gap-2">
-                <Button asChild>
-                  <Link href="/admin/dashboard/content/create">
-                    <Plus className="mr-2 h-4 w-4" />
-                    New Content
-                  </Link>
-                </Button>
-                <Button variant="outline" asChild>
-                  <Link href="/admin/dashboard/events/create">
-                    <Calendar className="mr-2 h-4 w-4" />
-                    New Event
-                  </Link>
-                </Button>
-              </div>
+              {isAdmin && (
+                <div className="flex gap-2">
+                  <Button asChild>
+                    <Link href="/admin/dashboard/content/create">
+                      <Plus className="mr-2 h-4 w-4" />
+                      New Content
+                    </Link>
+                  </Button>
+                  <Button variant="outline" asChild>
+                    <Link href="/admin/dashboard/events/create">
+                      <Calendar className="mr-2 h-4 w-4" />
+                      New Event
+                    </Link>
+                  </Button>
+                </div>
+              )}
             </div>
 
-            {/* Stats Cards */}
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-              {stats.map((stat, index) => (
-                <Card key={index}>
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">{stat.title}</CardTitle>
-                    <stat.icon className={`h-4 w-4 ${stat.color}`} />
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">{stat.value}</div>
-                    <div className="flex items-center text-xs text-muted-foreground">
-                      <TrendingUp className="mr-1 h-3 w-3 text-green-600" />
-                      {stat.change}
-                    </div>
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
+            {/* Stats Cards - Only show for admin */}
+            {isAdmin && (
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                {stats.map((stat, index) => (
+                  <Card key={index}>
+                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                      <CardTitle className="text-sm font-medium">{stat.title}</CardTitle>
+                      <stat.icon className={`h-4 w-4 ${stat.color}`} />
+                    </CardHeader>
+                    <CardContent>
+                      <div className="text-2xl font-bold">{stat.value}</div>
+                      <div className="flex items-center text-xs text-muted-foreground">
+                        <TrendingUp className="mr-1 h-3 w-3 text-green-600" />
+                        {stat.change}
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            )}
 
             {/* Main Content Grid */}
             <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {/* Recent Activity */}
-              <Card className="lg:col-span-2">
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <CardTitle className="flex items-center gap-2">
-                        <Activity className="h-5 w-5" />
-                        Recent Activity
-                      </CardTitle>
-                      <CardDescription>Latest actions and updates on your platform</CardDescription>
+              {/* User Profile Card - Show for users */}
+              {!isAdmin && (
+                <div className="lg:col-span-2">
+                  <UserProfileCard />
+                </div>
+              )}
+
+              {/* Recent Activity - Only show for admin */}
+              {isAdmin && (
+                <Card className="lg:col-span-2">
+                  <CardHeader>
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <CardTitle className="flex items-center gap-2">
+                          <Activity className="h-5 w-5" />
+                          Recent Activity
+                        </CardTitle>
+                        <CardDescription>Latest actions and updates on your platform</CardDescription>
+                      </div>
+                      <Button variant="outline" size="sm" asChild>
+                        <Link href="/admin/dashboard/content/blogs">View All</Link>
+                      </Button>
                     </div>
-                    <Button variant="outline" size="sm" asChild>
-                      <Link href="/admin/dashboard/content/blogs">View All</Link>
-                    </Button>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
-                    {recentActivity.map((activity) => (
-                      <div key={activity.id} className="flex items-start gap-3">
-                        <div className="w-2 h-2 bg-blue-600 rounded-full mt-2 flex-shrink-0" />
-                        <div className="flex-1 space-y-1">
-                          <p className="text-sm font-medium">{activity.title}</p>
-                          <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                            <span>{activity.time}</span>
-                            <span>•</span>
-                            <span>by {activity.user}</span>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-4">
+                      {recentActivity.map((activity) => (
+                        <div key={activity.id} className="flex items-start gap-3">
+                          <div className="w-2 h-2 bg-blue-600 rounded-full mt-2 flex-shrink-0" />
+                          <div className="flex-1 space-y-1">
+                            <p className="text-sm font-medium">{activity.title}</p>
+                            <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                              <span>{activity.time}</span>
+                              <span>•</span>
+                              <span>by {activity.user}</span>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
-                  </div>
-                </CardContent>
-              </Card>
+                      ))}
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
 
               {/* Top Speakers */}
               <Card>
@@ -326,29 +342,29 @@ export default function AdminDashboard() {
               <Card>
                 <CardHeader>
                   <CardTitle>Quick Actions</CardTitle>
-                  <CardDescription>Common administrative tasks</CardDescription>
+                  <CardDescription>{isAdmin ? "Common administrative tasks" : "Available actions"}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="grid gap-2">
                     <Button variant="outline" className="justify-start" asChild>
                       <Link href="/admin/dashboard/content/blogs">
                         <FileText className="mr-2 h-4 w-4" />
-                        Manage Content
+                        View Content
                       </Link>
                     </Button>
                     <Button variant="outline" className="justify-start" asChild>
                       <Link href="/admin/dashboard/events">
                         <Calendar className="mr-2 h-4 w-4" />
-                        Manage Events
+                        View Events
                       </Link>
                     </Button>
                     <Button variant="outline" className="justify-start" asChild>
                       <Link href="/admin/dashboard/speakers">
                         <Mic className="mr-2 h-4 w-4" />
-                        Manage Speakers
+                        View Speakers
                       </Link>
                     </Button>
-                    {userRole === "admin" && (
+                    {isAdmin && (
                       <Button variant="outline" className="justify-start" asChild>
                         <Link href="/admin/dashboard/users">
                           <Users className="mr-2 h-4 w-4" />
@@ -356,7 +372,7 @@ export default function AdminDashboard() {
                         </Link>
                       </Button>
                     )}
-                    {userRole === "admin" && (
+                    {isAdmin && (
                       <Button variant="outline" className="justify-start" asChild>
                         <Link href="/admin/dashboard/workshops">
                           <BookOpen className="mr-2 h-4 w-4" />
@@ -365,7 +381,7 @@ export default function AdminDashboard() {
                       </Button>
                     )}
                   </div>
-                  {userRole === "user" && (
+                  {!isAdmin && (
                     <div className="mt-2 text-xs text-muted-foreground">
                       Note: Some features are only available to admins.
                     </div>
@@ -374,40 +390,42 @@ export default function AdminDashboard() {
               </Card>
             </div>
 
-            {/* Analytics Overview */}
-            <Card>
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <BarChart3 className="h-5 w-5" />
-                  Platform Analytics
-                </CardTitle>
-                <CardDescription>Overview of platform performance and engagement</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="grid gap-4 md:grid-cols-4">
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-blue-600">2.4K</div>
-                    <div className="text-sm text-muted-foreground">Page Views</div>
-                    <div className="text-xs text-green-600">+12% this week</div>
+            {/* Analytics Overview - Only show for admin */}
+            {isAdmin && (
+              <Card>
+                <CardHeader>
+                  <CardTitle className="flex items-center gap-2">
+                    <BarChart3 className="h-5 w-5" />
+                    Platform Analytics
+                  </CardTitle>
+                  <CardDescription>Overview of platform performance and engagement</CardDescription>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid gap-4 md:grid-cols-4">
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-blue-600">2.4K</div>
+                      <div className="text-sm text-muted-foreground">Page Views</div>
+                      <div className="text-xs text-green-600">+12% this week</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-green-600">89%</div>
+                      <div className="text-sm text-muted-foreground">Event Attendance</div>
+                      <div className="text-xs text-green-600">+5% from last event</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-purple-600">156</div>
+                      <div className="text-sm text-muted-foreground">New Registrations</div>
+                      <div className="text-xs text-green-600">+23% this month</div>
+                    </div>
+                    <div className="text-center">
+                      <div className="text-2xl font-bold text-orange-600">4.8</div>
+                      <div className="text-sm text-muted-foreground">Avg. Rating</div>
+                      <div className="text-xs text-green-600">+0.2 from last month</div>
+                    </div>
                   </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-green-600">89%</div>
-                    <div className="text-sm text-muted-foreground">Event Attendance</div>
-                    <div className="text-xs text-green-600">+5% from last event</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-purple-600">156</div>
-                    <div className="text-sm text-muted-foreground">New Registrations</div>
-                    <div className="text-xs text-green-600">+23% this month</div>
-                  </div>
-                  <div className="text-center">
-                    <div className="text-2xl font-bold text-orange-600">4.8</div>
-                    <div className="text-sm text-muted-foreground">Avg. Rating</div>
-                    <div className="text-xs text-green-600">+0.2 from last month</div>
-                  </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            )}
           </div>
         </SidebarInset>
       </SidebarProvider>

@@ -15,12 +15,14 @@ import {
   Settings,
   Mic,
   Video,
+  User as UserIcon,
 } from "lucide-react"
 import { toast } from "sonner"
 import { logoutUser } from "@/service/authService"
-import { setCookie } from "@/lib/cookies"
+import { getMyProfile } from "@/service/userServices"
+import { setCookie, getCookie } from "@/lib/cookies"
 import { useRouter } from "next/navigation"
-import { useCallback } from "react"
+import { useCallback, useEffect, useState } from "react"
 
 import { NavMain } from "@/components/nav-main"
 import { NavProjects } from "@/components/nav-projects"
@@ -33,16 +35,10 @@ import {
   SidebarHeader,
   SidebarRail,
 } from "@/components/ui/sidebar"
-import { title } from "process"
-import { Item } from "@radix-ui/react-dropdown-menu"
+import type { User } from "@/types/user-types"
 
-// Admin-specific data
-const adminData = {
-  user: {
-    name: "Admin User",
-    email: "admin@arunachalliterature.com",
-    avatar: "/avatars/admin.jpg",
-  },
+// Admin-specific navigation data
+const adminNavData = {
   teams: [
     {
       name: "Arunachal Literature",
@@ -211,8 +207,152 @@ const adminData = {
   ],
 }
 
+// User-specific navigation data (simplified navigation)
+const userNavData = {
+  teams: [
+    {
+      name: "Arunachal Literature",
+      logo: BookOpen,
+      plan: "User",
+    },
+  ],
+  navMain: [
+    {
+      title: "Dashboard",
+      url: "/admin/dashboard",
+      icon: Home,
+      isActive: true,
+      item:[
+        {
+          title: "Main",
+          url: "/admin/dashboard",
+        },
+      ]
+    },
+    {
+      title: "Events",
+      url: "/admin/dashboard/events",
+      icon: Calendar,
+      items: [
+        {
+          title: "All Events",
+          url: "/admin/dashboard/events",
+        },
+      ],
+    },
+    {
+      title: "Speakers",
+      url: "/admin/dashboard/speakers",
+      icon: Mic,
+      items: [
+        {
+          title: "All Speakers",
+          url: "/admin/dashboard/speakers",
+        },
+      ],
+    },
+    {
+      title: "Archives",
+      url: "/admin/dashboard/archive",
+      icon: Archive,
+      items: [
+        {
+          title: "All Archives",
+          url: "/admin/dashboard/archive",
+        },
+      ]
+    },
+    {
+      title: "Videos",
+      url: "/admin/dashboard/videos",
+      icon: Video,
+      items: [
+        {
+          title: "All Videos",
+          url: "/admin/dashboard/videos",
+        },
+      ],
+    },
+    {
+      title: "Content",
+      url: "/admin/dashboard/content",
+      icon: FileText,
+      items: [
+        {
+          title: "News & Blogs",
+          url: "/admin/dashboard/content/blogs",
+        },
+      ],
+    },
+    {
+      title: "My Profile",
+      url: "/admin/dashboard/profile",
+      icon: UserIcon,
+    },
+  ],
+  projects: [
+    {
+      name: "Website Frontend",
+      url: "/",
+      icon: Globe,
+    },
+  ],
+}
+
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const router = useRouter()
+  const [userRole, setUserRole] = useState<string | null>(null)
+  const [userData, setUserData] = useState<User | null>(null)
+  const [sidebarData, setSidebarData] = useState<any>(null)
+  const [loading, setLoading] = useState(true)
+
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        setLoading(true)
+        const profileResponse = await getMyProfile()
+        
+        if (profileResponse.success && profileResponse.data) {
+          const user = profileResponse.data
+          setUserData(user)
+          setUserRole(user.role)
+          
+          // Set navigation data based on user role
+          if (user.role === "admin") {
+            setSidebarData(adminNavData)
+          } else {
+            setSidebarData(userNavData)
+          }
+        } else {
+          // Fallback to cookie role if API fails
+          const role = getCookie("userRole")
+          setUserRole(role)
+          
+          if (role === "admin") {
+            setSidebarData(adminNavData)
+          } else {
+            setSidebarData(userNavData)
+          }
+        }
+      } catch (error) {
+        console.error("Failed to fetch user profile:", error)
+        // Fallback to cookie role
+        const role = getCookie("userRole")
+        setUserRole(role)
+        
+        if (role === "admin") {
+          setSidebarData(adminNavData)
+        } else {
+          setSidebarData(userNavData)
+        }
+      } finally {
+        setLoading(false)
+      }
+    }
+
+    fetchUserData()
+  }, [])
+
   const handleLogout = useCallback(async () => {
     try {
       await logoutUser({ message: "", success: true })
@@ -224,17 +364,36 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       toast.error(error?.response?.data?.message || error.message || "Logout failed")
     }
   }, [router])
+
+  if (loading || !sidebarData || !userData) {
+    return null
+  }
+
+  // Create user object for NavUser component
+  const userForNav = {
+    name: userData.name,
+    email: userData.email,
+    avatar: "/avatars/default.jpg", // You can add avatar field to User type if needed
+    initials: userData.name
+      .split(' ')
+      .map(word => word.charAt(0))
+      .join('')
+      .toUpperCase()
+      .slice(0, 2),
+    role: userData.role
+  }
+
   return (
     <Sidebar collapsible="icon" {...props}>
       <SidebarHeader>
-        <TeamSwitcher teams={adminData.teams} />
+        <TeamSwitcher teams={sidebarData.teams} />
       </SidebarHeader>
       <SidebarContent>
-        <NavMain items={adminData.navMain} />
-        <NavProjects projects={adminData.projects} />
+        <NavMain items={sidebarData.navMain} />
+        <NavProjects projects={sidebarData.projects} />
       </SidebarContent>
       <SidebarFooter>
-        <NavUser user={adminData.user} onLogout={handleLogout} />
+        <NavUser user={userForNav} onLogout={handleLogout} />
       </SidebarFooter>
       <SidebarRail />
     </Sidebar>

@@ -32,6 +32,8 @@ import {
   PaginationNext,
   PaginationEllipsis,
 } from "@/components/ui/pagination"
+import { useDeletePermission } from "@/hooks/use-delete-permission"
+import { ContactAdminModal } from "@/components/ui/contact-admin-modal"
 
 // Helper to extract YouTube video ID
 function getYouTubeVideoId(url: string) {
@@ -39,6 +41,7 @@ function getYouTubeVideoId(url: string) {
 }
 
 export default function VideosPage() {
+  const { isAdmin } = useDeletePermission()
   const [allVideos, setAllVideos] = useState<VideoBlog[]>([])
   const [rawVideos, setRawVideos] = useState<VideoBlog[]>([])
   const [youtubeVideos, setYoutubeVideos] = useState<VideoBlog[]>([])
@@ -228,9 +231,20 @@ export default function VideosPage() {
                 <Edit className="h-3 w-3" />
               </Link>
             </Button>
-            <Button size="sm" variant="outline" onClick={() => handleDelete(video._id)}>
-              <Trash2 className="h-3 w-3" />
-            </Button>
+            {isAdmin ? (
+              <Button size="sm" variant="outline" onClick={() => handleDelete(video._id)}>
+                <Trash2 className="h-3 w-3" />
+              </Button>
+            ) : (
+              <ContactAdminModal
+                title="Delete Video Access Denied"
+                description="You don't have permission to delete videos. Please contact the administrator for assistance."
+              >
+                <Button size="sm" variant="outline">
+                  <Trash2 className="h-3 w-3" />
+                </Button>
+              </ContactAdminModal>
+            )}
           </div>
         </div>
         <CardTitle className="text-lg line-clamp-2">{video.title}</CardTitle>

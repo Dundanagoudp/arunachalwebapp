@@ -31,8 +31,11 @@ import { ArchiveFilters } from "@/components/admin/archivecomponets/archive-filt
 import { ImageGrid } from "@/components/admin/archivecomponets/image-grid"
 import type { ArchiveImage } from "@/types/archive-types"
 import { Skeleton } from "@/components/ui/skeleton"
+import { useDeletePermission } from "@/hooks/use-delete-permission"
+import { ContactAdminModal } from "@/components/ui/contact-admin-modal"
 
 export default function ArchiveManagement() {
+  const { isAdmin } = useDeletePermission()
   const [images, setImages] = useState<ArchiveImage[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")

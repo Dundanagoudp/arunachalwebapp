@@ -17,16 +17,19 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { useState } from "react"
-import { useRouter } from "next/navigation"
-import { addUser } from "@/service/userServices"
-import type { CreateUserData } from "@/types/user-types"
+import { useState, useEffect } from "react"
+import { useRouter, useParams } from "next/navigation"
+import { editUser, getAllUsers } from "@/service/userServices"
+import type { EditUserData, User } from "@/types/user-types"
 import { toast } from "sonner"
 
-export default function CreateUser() {
+export default function EditUser() {
   const router = useRouter()
+  const params = useParams()
+  const userId = params.id as string
   const [loading, setLoading] = useState(false)
-  const [formData, setFormData] = useState<CreateUserData>({
+  const [fetchingUser, setFetchingUser] = useState(true)
+  const [formData, setFormData] = useState<EditUserData>({
     name: "",
     email: "",
     password: "",
@@ -34,42 +37,101 @@ export default function CreateUser() {
     role: "user",
   })
 
+  useEffect(() => {
+    fetchUser()
+  }, [userId])
+
+  const fetchUser = async () => {
+    try {
+      const response = await getAllUsers()
+      if (response.success && response.data) {
+        const user = response.data.find((u: User) => u._id === userId)
+        if (user) {
+          setFormData({
+            name: user.name,
+            email: user.email,
+            password: "",
+            confirmPassword: "",
+            role: user.role,
+          })
+        } else {
+          toast.error("User not found")
+          router.push("/admin/dashboard/users")
+        }
+      }
+    } catch (error) {
+      console.error("Error fetching user:", error)
+      toast.error("Failed to fetch user details")
+    } finally {
+      setFetchingUser(false)
+    }
+  }
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     setLoading(true)
 
     try {
-      if (formData.password !== formData.confirmPassword) {
+      // If password is provided, validate it
+      if (formData.password && formData.password !== formData.confirmPassword) {
         toast.error("Passwords do not match")
         return
       }
 
-      if (formData.password.length < 6) {
+      if (formData.password && formData.password.length < 6) {
         toast.error("Password must be at least 6 characters long")
         return
       }
 
-      const response = await addUser(formData)
+      const updateData: EditUserData = {
+        name: formData.name,
+        email: formData.email,
+        role: formData.role,
+      }
+
+      // Only include password if it's provided
+      if (formData.password) {
+        updateData.password = formData.password
+        updateData.confirmPassword = formData.confirmPassword
+      }
+
+      const response = await editUser(userId, updateData)
 
       if (response.success) {
-        toast.success("User created successfully!")
+        toast.success("User updated successfully!")
         router.push("/admin/dashboard/users")
       } else {
-        toast.error(response.error || "Failed to create user")
+        toast.error(response.error || "Failed to update user")
       }
     } catch (error) {
-      console.error("Failed to create user:", error)
-      toast.error("Failed to create user")
+      console.error("Failed to update user:", error)
+      toast.error("Failed to update user")
     } finally {
       setLoading(false)
     }
   }
 
-  const handleInputChange = (field: keyof CreateUserData, value: string) => {
+  const handleInputChange = (field: keyof EditUserData, value: string) => {
     setFormData((prev) => ({
       ...prev,
       [field]: value,
     }))
+  }
+
+  if (fetchingUser) {
+    return (
+      <SidebarProvider>
+        <AppSidebar />
+        <SidebarInset>
+          <div className="flex items-center justify-center h-screen">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
+              <p className="mt-4">Loading user details...</p>
+            </div>
+          </div>
+        </SidebarInset>
+      </SidebarProvider>
+    )
   }
 
   return (
@@ -91,7 +153,7 @@ export default function CreateUser() {
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>
-                  <BreadcrumbPage>Create User</BreadcrumbPage>
+                  <BreadcrumbPage>Edit User</BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
@@ -101,8 +163,8 @@ export default function CreateUser() {
         <div className="flex flex-1 flex-col gap-6 p-6 pt-0">
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold tracking-tight">Create New User</h1>
-              <p className="text-muted-foreground">Add a new user account to your platform.</p>
+              <h1 className="text-3xl font-bold tracking-tight">Edit User</h1>
+              <p className="text-muted-foreground">Update user account information.</p>
             </div>
           </div>
 
@@ -110,7 +172,7 @@ export default function CreateUser() {
             <Card>
               <CardHeader>
                 <CardTitle>User Information</CardTitle>
-                <CardDescription>Basic information about the new user.</CardDescription>
+                <CardDescription>Update the user's basic information and role.</CardDescription>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="grid gap-4 md:grid-cols-2">
@@ -139,25 +201,23 @@ export default function CreateUser() {
 
                 <div className="grid gap-4 md:grid-cols-2">
                   <div className="space-y-2">
-                    <Label htmlFor="password">Password *</Label>
+                    <Label htmlFor="password">New Password (Optional)</Label>
                     <Input
                       id="password"
                       type="password"
                       value={formData.password}
                       onChange={(e) => handleInputChange("password", e.target.value)}
-                      placeholder="Enter password..."
-                      required
+                      placeholder="Leave blank to keep current password"
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label htmlFor="confirmPassword">Confirm Password *</Label>
+                    <Label htmlFor="confirmPassword">Confirm New Password</Label>
                     <Input
                       id="confirmPassword"
                       type="password"
                       value={formData.confirmPassword}
                       onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
-                      placeholder="Confirm password..."
-                      required
+                      placeholder="Confirm new password"
                     />
                   </div>
                 </div>
@@ -180,7 +240,7 @@ export default function CreateUser() {
 
                 <div className="flex gap-2 pt-4">
                   <Button type="submit" disabled={loading}>
-                    {loading ? "Creating..." : "Create User"}
+                    {loading ? "Updating..." : "Update User"}
                   </Button>
                   <Button type="button" variant="outline" onClick={() => router.back()}>
                     Cancel

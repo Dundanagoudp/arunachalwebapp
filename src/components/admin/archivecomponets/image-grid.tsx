@@ -9,6 +9,8 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { MoreHorizontal, Eye, Download, Edit, Trash2, Upload } from "lucide-react"
 import Link from "next/link"
 import type { ArchiveImage } from "@/types/archive-types"
+import { useDeletePermission } from "@/hooks/use-delete-permission"
+import { ContactAdminModal } from "@/components/ui/contact-admin-modal"
 
 interface ImageGridProps {
   images: ArchiveImage[]
@@ -19,6 +21,7 @@ interface ImageGridProps {
 }
 
 export function ImageGrid({ images, viewMode, selectedImages, onSelectImage, onDeleteImage }: ImageGridProps) {
+  const { isAdmin } = useDeletePermission()
   const [selectedImage, setSelectedImage] = useState<ArchiveImage | null>(null)
   const [imageViewOpen, setImageViewOpen] = useState(false)
 
@@ -164,11 +167,24 @@ export function ImageGrid({ images, viewMode, selectedImages, onSelectImage, onD
                                     <span className="hidden sm:inline">Replace Image</span>
                                     <span className="sm:hidden">Replace</span>
                                   </DropdownMenuItem>
-                                  <DropdownMenuItem onClick={() => onDeleteImage(image._id)} className="text-red-600">
-                                    <Trash2 className="mr-2 h-3 w-3 sm:h-4 sm:w-4" />
-                                    <span className="hidden sm:inline">Delete</span>
-                                    <span className="sm:hidden">Delete</span>
-                                  </DropdownMenuItem>
+                                  {isAdmin ? (
+                                    <DropdownMenuItem onClick={() => onDeleteImage(image._id)} className="text-red-600">
+                                      <Trash2 className="mr-2 h-3 w-3 sm:h-4 sm:w-4" />
+                                      <span className="hidden sm:inline">Delete</span>
+                                      <span className="sm:hidden">Delete</span>
+                                    </DropdownMenuItem>
+                                  ) : (
+                                    <ContactAdminModal
+                                      title="Delete Image Access Denied"
+                                      description="You don't have permission to delete images. Please contact the administrator for assistance."
+                                    >
+                                      <DropdownMenuItem className="text-red-600">
+                                        <Trash2 className="mr-2 h-3 w-3 sm:h-4 sm:w-4" />
+                                        <span className="hidden sm:inline">Delete</span>
+                                        <span className="sm:hidden">Delete</span>
+                                      </DropdownMenuItem>
+                                    </ContactAdminModal>
+                                  )}
                                 </DropdownMenuContent>
                               </DropdownMenu>
                             </div>
@@ -218,11 +234,24 @@ export function ImageGrid({ images, viewMode, selectedImages, onSelectImage, onD
                                   <span className="hidden sm:inline">Replace Image</span>
                                   <span className="sm:hidden">Replace</span>
                                 </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => onDeleteImage(image._id)} className="text-red-600">
-                                  <Trash2 className="mr-2 h-3 w-3 sm:h-4 sm:w-4" />
-                                  <span className="hidden sm:inline">Delete</span>
-                                  <span className="sm:hidden">Delete</span>
-                                </DropdownMenuItem>
+                                {isAdmin ? (
+                                  <DropdownMenuItem onClick={() => onDeleteImage(image._id)} className="text-red-600">
+                                    <Trash2 className="mr-2 h-3 w-3 sm:h-4 sm:w-4" />
+                                    <span className="hidden sm:inline">Delete</span>
+                                    <span className="sm:hidden">Delete</span>
+                                  </DropdownMenuItem>
+                                ) : (
+                                  <ContactAdminModal
+                                    title="Delete Image Access Denied"
+                                    description="You don't have permission to delete images. Please contact the administrator for assistance."
+                                  >
+                                    <DropdownMenuItem className="text-red-600">
+                                      <Trash2 className="mr-2 h-3 w-3 sm:h-4 sm:w-4" />
+                                      <span className="hidden sm:inline">Delete</span>
+                                      <span className="sm:hidden">Delete</span>
+                                    </DropdownMenuItem>
+                                  </ContactAdminModal>
+                                )}
                               </DropdownMenuContent>
                             </DropdownMenu>
                           </>

@@ -10,6 +10,8 @@ import { Checkbox } from "@/components/ui/checkbox"
 import { Search, Filter, Grid3X3, List, Trash2 } from "lucide-react"
 import { getYear } from "@/service/archive"
 import type { ArchiveYear, ArchiveDay } from "@/types/archive-types"
+import { useDeletePermission } from "@/hooks/use-delete-permission"
+import { ContactAdminModal } from "@/components/ui/contact-admin-modal"
 
 interface ArchiveFiltersProps {
   searchTerm: string
@@ -42,6 +44,7 @@ export function ArchiveFilters({
   onBulkDelete,
   onDeleteYear,
 }: ArchiveFiltersProps) {
+  const { isAdmin } = useDeletePermission()
   const [availableYears, setAvailableYears] = useState<ArchiveYear[]>([])
   const [availableDays, setAvailableDays] = useState<ArchiveDay[]>([])
   const [loading, setLoading] = useState(true)
@@ -118,18 +121,44 @@ export function ArchiveFilters({
               {viewMode === "grid" ? <List className="h-3 w-3 sm:h-4 sm:w-4" /> : <Grid3X3 className="h-3 w-3 sm:h-4 sm:w-4" />}
             </Button>
             {selectedCount > 0 && (
-              <Button variant="destructive" size="sm" onClick={onBulkDelete} className="text-xs sm:text-sm">
-                <Trash2 className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-                <span className="hidden sm:inline">Delete Selected ({selectedCount})</span>
-                <span className="sm:hidden">Delete ({selectedCount})</span>
-              </Button>
+              isAdmin ? (
+                <Button variant="destructive" size="sm" onClick={onBulkDelete} className="text-xs sm:text-sm">
+                  <Trash2 className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                  <span className="hidden sm:inline">Delete Selected ({selectedCount})</span>
+                  <span className="sm:hidden">Delete ({selectedCount})</span>
+                </Button>
+              ) : (
+                <ContactAdminModal
+                  title="Delete Images Access Denied"
+                  description="You don't have permission to delete images. Please contact the administrator for assistance."
+                >
+                  <Button variant="destructive" size="sm" className="text-xs sm:text-sm">
+                    <Trash2 className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                    <span className="hidden sm:inline">Delete Selected ({selectedCount})</span>
+                    <span className="sm:hidden">Delete ({selectedCount})</span>
+                  </Button>
+                </ContactAdminModal>
+              )
             )}
             {onDeleteYear && yearFilter !== "all" && (
-              <Button variant="destructive" size="sm" onClick={onDeleteYear} className="text-xs sm:text-sm">
-                <Trash2 className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
-                <span className="hidden sm:inline">Delete Year</span>
-                <span className="sm:hidden">Delete Year</span>
-              </Button>
+              isAdmin ? (
+                <Button variant="destructive" size="sm" onClick={onDeleteYear} className="text-xs sm:text-sm">
+                  <Trash2 className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                  <span className="hidden sm:inline">Delete Year</span>
+                  <span className="sm:hidden">Delete Year</span>
+                </Button>
+              ) : (
+                <ContactAdminModal
+                  title="Delete Year Access Denied"
+                  description="You don't have permission to delete years. Please contact the administrator for assistance."
+                >
+                  <Button variant="destructive" size="sm" className="text-xs sm:text-sm">
+                    <Trash2 className="h-3 w-3 sm:h-4 sm:w-4 mr-1 sm:mr-2" />
+                    <span className="hidden sm:inline">Delete Year</span>
+                    <span className="sm:hidden">Delete Year</span>
+                  </Button>
+                </ContactAdminModal>
+              )
             )}
           </div>
         </div>

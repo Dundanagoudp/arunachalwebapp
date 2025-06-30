@@ -30,9 +30,12 @@ import { useToast } from "@/hooks/use-toast"
 import Link from "next/link"
 import { getAllEvents, deleteEvent } from "@/service/events-apis"
 import type { EventWithDays, EventDay } from "@/types/events-types"
+import { useDeletePermission } from "@/hooks/use-delete-permission"
+import { ContactAdminModal } from "@/components/ui/contact-admin-modal"
 
 export default function EventsManagement() {
   const { toast } = useToast()
+  const { isAdmin } = useDeletePermission()
   const [searchTerm, setSearchTerm] = useState("")
   const [events, setEvents] = useState<EventWithDays | null>(null)
   const [isLoading, setIsLoading] = useState(true)
@@ -257,13 +260,25 @@ export default function EventsManagement() {
                             <Calendar className="mr-2 h-4 w-4" />
                             Manage Schedule
                           </DropdownMenuItem>
-                          <DropdownMenuItem
-                            className="text-red-600"
-                            onClick={() => handleDeleteEvent(events.event._id)}
-                          >
-                            <Trash2 className="mr-2 h-4 w-4" />
-                            Delete Event
-                          </DropdownMenuItem>
+                          {isAdmin ? (
+                            <DropdownMenuItem
+                              className="text-red-600"
+                              onClick={() => handleDeleteEvent(events.event._id)}
+                            >
+                              <Trash2 className="mr-2 h-4 w-4" />
+                              Delete Event
+                            </DropdownMenuItem>
+                          ) : (
+                            <ContactAdminModal
+                              title="Delete Event Access Denied"
+                              description="You don't have permission to delete events. Please contact the administrator for assistance."
+                            >
+                              <DropdownMenuItem className="text-red-600">
+                                <Trash2 className="mr-2 h-4 w-4" />
+                                Delete Event
+                              </DropdownMenuItem>
+                            </ContactAdminModal>
+                          )}
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </div>
