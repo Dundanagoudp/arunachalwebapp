@@ -6,9 +6,12 @@ import Link from "next/link"
 import { Button } from "@/components/ui/button"
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
 import { ArrowRight, ArrowUpRight, ChevronLeft, ChevronRight, X } from "lucide-react"
-import { SkeletonCard } from "@/components/skeleton-card"
 import { getAllImages } from "@/service/archive"
 import type { ArchiveImage } from "@/types/archive-types"
+import { Swiper, SwiperSlide } from "swiper/react"
+import { Pagination } from "swiper/modules"
+import "swiper/css"
+import "swiper/css/pagination"
 
 export default function GallerySection() {
   const [gallery, setGallery] = useState<ArchiveImage[]>([])
@@ -74,7 +77,7 @@ export default function GallerySection() {
   const currentImage = gallery[currentIndex]
 
   return (
-    <section className="min-h-screen bg-[#FDF8EE] py-12 md:py-24 lg:py-32">
+    <section className="min-h-0 md:min-h-screen bg-[#FDF8EE] py-12 md:py-24 lg:py-32">
       <div className="container px-4 md:px-6 max-w-7xl mx-auto">
         <div className="relative flex flex-col items-center justify-center text-center space-y-4 mb-12">
           {/* Diamond patterns */}
@@ -124,38 +127,86 @@ export default function GallerySection() {
           )}
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {isLoading
-            ? Array.from({ length: 6 }).map((_, idx) => (
-                <div
-                  key={idx}
-                  className="rounded-lg overflow-hidden shadow-md bg-gray-200 animate-pulse aspect-[3/2] flex items-center justify-center"
-                >
-                  {/* Image area shimmer only, no text */}
-                </div>
-              ))
-            : gallery.map((image, index) => (
-                <div
-                  key={image._id}
-                  className="rounded-lg overflow-hidden shadow-md cursor-pointer hover:opacity-90 transition-opacity aspect-[3/2] flex items-center justify-center bg-white"
-                  onClick={() => openLightbox(index)}
-                  role="button"
-                  tabIndex={0}
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter" || e.key === " ") {
-                      openLightbox(index)
-                    }
-                  }}
-                >
-                  <Image
-                    src={image.image_url || "/placeholder.svg"}
-                    alt={image.originalName || `Gallery Image ${index + 1}`}
-                    width={600}
-                    height={400}
-                    className="w-full h-full object-cover rounded-lg"
+        {/* Responsive Gallery: Carousel on mobile, grid on md+ */}
+        <div>
+          {/* Mobile Carousel */}
+          <div className="block md:hidden">
+            {isLoading ? (
+              <div className="flex space-x-4 overflow-x-auto pb-2">
+                {Array.from({ length: 6 }).map((_, idx) => (
+                  <div
+                    key={idx}
+                    className="rounded-lg overflow-hidden shadow-md bg-gray-200 animate-pulse aspect-[3/2] min-w-[80vw] max-w-[90vw] h-48 flex items-center justify-center"
                   />
-                </div>
-              ))}
+                ))}
+              </div>
+            ) : (
+              <Swiper
+                spaceBetween={16}
+                slidesPerView={1}
+                pagination={{ clickable: true }}
+                modules={[Pagination]}
+                className="w-full"
+              >
+                {gallery.map((image, index) => (
+                  <SwiperSlide key={image._id}>
+                    <div
+                      className="rounded-lg overflow-hidden shadow-md cursor-pointer hover:opacity-90 transition-opacity aspect-[3/2] flex items-center justify-center bg-white min-w-[80vw] max-w-[90vw] h-48 mx-auto"
+                      onClick={() => openLightbox(index)}
+                      role="button"
+                      tabIndex={0}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          openLightbox(index)
+                        }
+                      }}
+                    >
+                      <Image
+                        src={image.image_url || "/placeholder.svg"}
+                        alt={image.originalName || `Gallery Image ${index + 1}`}
+                        width={600}
+                        height={400}
+                        className="w-full h-full object-cover rounded-lg"
+                      />
+                    </div>
+                  </SwiperSlide>
+                ))}
+              </Swiper>
+            )}
+          </div>
+
+          {/* Desktop/Tablet Grid */}
+          <div className="hidden md:grid grid-cols-2 lg:grid-cols-3 gap-6">
+            {isLoading
+              ? Array.from({ length: 6 }).map((_, idx) => (
+                  <div
+                    key={idx}
+                    className="rounded-lg overflow-hidden shadow-md bg-gray-200 animate-pulse aspect-[3/2] flex items-center justify-center"
+                  />
+                ))
+              : gallery.map((image, index) => (
+                  <div
+                    key={image._id}
+                    className="rounded-lg overflow-hidden shadow-md cursor-pointer hover:opacity-90 transition-opacity aspect-[3/2] flex items-center justify-center bg-white"
+                    onClick={() => openLightbox(index)}
+                    role="button"
+                    tabIndex={0}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        openLightbox(index)
+                      }
+                    }}
+                  >
+                    <Image
+                      src={image.image_url || "/placeholder.svg"}
+                      alt={image.originalName || `Gallery Image ${index + 1}`}
+                      width={600}
+                      height={400}
+                      className="w-full h-full object-cover rounded-lg"
+                    />
+                  </div>
+                ))}
+          </div>
         </div>
       </div>
 

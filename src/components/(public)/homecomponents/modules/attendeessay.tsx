@@ -4,51 +4,91 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Card, CardContent } from "@/components/ui/card"
 import { Quote } from "lucide-react"
 import Image from "next/image"
-
-interface Testimonial {
-  name: string
-  title: string
-  quote: string
-  avatar: string
-  isLarge?: boolean
-}
-
-const testimonials: Testimonial[] = [
-  {
-    name: "Kiran Nagarkar",
-    title: "Acclaimed Novelist & Playwright",
-    quote: "The Arunachal Literature Festival is a wonderful platform that bridges cultures through literature. It's heartening to see such vibrant literary exchanges in this beautiful region.",
-    avatar: "/placeholder.svg?height=40&width=40",
-    isLarge: false,
-  },
-  
-  {
-    name: "Damodar Mauzo",
-    title: "Jnanpith Award Recipient 2022",
-    quote: "The Arunachal Literature Festival which I attended was an unforgettable experience. It provided a platform where I could intermingle with brilliant writers from the host state. I was deeply impressed by the intimate ambiance, focused deliberations, and the warmth of the organizers.",
-    avatar: "/placeholder.svg?height=40&width=40",
-    isLarge: true,
-  },
-  {
-    name: "Githa Hariharan",
-    title: "Renowned Author & Activist",
-    quote: "Our audience will continue to explore opportunities to bridge traditional culture and modern civilization, with themes that are now being recognized globally.",
-    avatar: "/placeholder.svg?height=40&width=40",
-    isLarge: false,
-  },
-  {
-    name: "Anita Desai",
-    title: "Renowned Author & Literary Figure",
-    quote: "The festival offers a unique perspective on literature from the Northeast, showcasing voices that deserve wider recognition in the national literary scene.",
-    avatar: "/placeholder.svg?height=40&width=40",
-    isLarge: false,
-  },
-]
+import { useEffect, useState } from "react"
+import { getTestimonials } from "@/service/testimonialService"
+import type { Testimonial as ApiTestimonial } from "@/types/testimonial-types"
 
 export default function Attendeessay() {
+  const [testimonials, setTestimonials] = useState<ApiTestimonial[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    async function fetchTestimonials() {
+      setLoading(true)
+      setError(null)
+      try {
+        const res = await getTestimonials()
+        if (res.success && res.data) {
+          setTestimonials(res.data)
+        } else {
+          setError(res.error || "Failed to fetch testimonials.")
+        }
+      } catch (err) {
+        setError("Failed to fetch testimonials.")
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchTestimonials()
+  }, [])
+
+  // Loading state
+  if (loading) {
+    return (
+      <div className="relative min-h-0 md:min-h-screen flex items-center justify-center bg-blue-900 text-white pb-12">
+        <div className="text-2xl font-bold">Loading testimonials...</div>
+      </div>
+    )
+  }
+
+  // Error state
+  if (error) {
+    return (
+      <div className="relative min-h-0 md:min-h-screen flex items-center justify-center bg-blue-900 text-white pb-12">
+        <div className="text-xl font-bold text-red-400">{error}</div>
+      </div>
+    )
+  }
+
+  // No testimonials state
+  if (!testimonials.length) {
+    return (
+      <div className="relative min-h-0 md:min-h-screen flex items-center justify-center bg-blue-900 text-white pb-12">
+        <div className="text-xl font-bold">No testimonials available yet.</div>
+      </div>
+    )
+  }
+
+  // Layout: 2 left, 1 center (large), 2 right (if enough), else fill as possible
+  let left: ApiTestimonial[] = []
+  let center: ApiTestimonial | null = null
+  let right: ApiTestimonial[] = []
+  if (testimonials.length >= 5) {
+    left = testimonials.slice(0, 2)
+    center = testimonials[2]
+    right = testimonials.slice(3, 5)
+  } else if (testimonials.length === 4) {
+    left = testimonials.slice(0, 2)
+    center = testimonials[2]
+    right = [testimonials[3]]
+  } else if (testimonials.length === 3) {
+    left = [testimonials[0]]
+    center = testimonials[1]
+    right = [testimonials[2]]
+  } else if (testimonials.length === 2) {
+    left = [testimonials[0]]
+    center = testimonials[1]
+    right = []
+  } else if (testimonials.length === 1) {
+    left = []
+    center = testimonials[0]
+    right = []
+  }
+
   return (
     <div 
-      className="relative min-h-screen overflow-hidden bg-blue-900 text-white pb-12"
+      className="relative min-h-0 md:min-h-screen overflow-hidden bg-blue-900 text-white pb-12 font-bilo text-base"
     >
       
       {/* Top Blurred Image */}
@@ -64,63 +104,109 @@ export default function Attendeessay() {
         <div className="absolute top-0 left-0 w-full h-24 bg-gradient-to-b from-[#fdf8f0] via-[#fdf8f0]/80 to-transparent z-20" />
       </div>
 
-      <div className="relative z-10 pt-[200px] md:pt-[300px] lg:pt-[400px] pb-10 md:pb-20 lg:pb-24 flex flex-col items-center px-4">
+      {/* Book image for mobile/tablet only */}
+      <div className="relative z-20 flex justify-center lg:hidden pt-[120px] md:pt-[180px] pb-6">
+        <Image
+          src="/attendeessay/book.png"
+          alt="Stack of books"
+          width={110}
+          height={110}
+          className="object-contain drop-shadow-2xl"
+        />
+      </div>
+
+      <div className="relative z-10  md:pt-[300px] lg:pt-[400px] pb-10 md:pb-20 lg:pb-24 flex flex-col items-center px-4 font-bilo text-base">
         {/* Header Text */}
-        <div className="text-center mb-12 max-w-4xl mx-auto">
-          <div className="flex items-center justify-center gap-2 mb-4">
-            <span 
-              className="w-2 h-2 rounded-full bg-yellow-400"
-            />
+        <div className="text-center mb-12 max-w-4xl mx-auto font-bilo">
+          <div className="flex items-center justify-center gap-4 mb-6">
+            <span className="w-3 h-3 rounded-full bg-yellow-400" />
             <h2 
-              className="text-lg md:text-xl font-semibold tracking-wider uppercase text-yellow-400"
+              className="text-2xl md:text-3xl font-extrabold tracking-wider uppercase text-yellow-400 drop-shadow-lg font-bilo"
             >
               Arunachal Literature Festival
             </h2>
-            <span 
-              className="w-2 h-2 rounded-full bg-yellow-400"
-            />
+            <span className="w-3 h-3 rounded-full bg-yellow-400" />
           </div>
-          <h1 
-            className="text-3xl md:text-5xl font-bold mb-6 text-yellow-400"
+          <h3 
+            className="text-2xl md:text-5xl font-bold mb-8 text-yellow-400 drop-shadow-lg font-bilo"
           >
             WHAT OUR ATTENDEES SAY
-          </h1>
-          <div className="w-20 h-1 mx-auto bg-yellow-400"></div>
+          </h3>
+
         </div>
 
         {/* Testimonial Cards Layout */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 max-w-6xl mx-auto w-full relative mb-80">
-          {/* Book Image Floating Above Center Card */}
-          <div className="hidden lg:flex absolute left-1/2 -translate-x-1/2 -top-16 z-20 justify-center w-full pointer-events-none mt-8">
-            <Image
-              src="/attendeessay/book.png"
-              alt="Stack of books"
-              width={90}
-              height={90}
-              className="object-contain drop-shadow-lg"
-            />
+        {/* Mobile: single column, edge-to-edge; Desktop: 3 columns as before */}
+        <div>
+          {/* Mobile/Tablet only: horizontal scrollable carousel */}
+          <div className="flex flex-row gap-4 w-screen pl-4 pr-4 sm:pl-8 sm:pr-8 lg:hidden overflow-x-auto scrollbar-hide pb-2">
+            {testimonials.map((t) => (
+              <div key={t._id} className="min-w-[85vw] max-w-[90vw] flex-shrink-0">
+                <TestimonialCard
+                  name={t.name}
+                  title={t.about}
+                  quote={t.description}
+                  avatar={t.image_url}
+                  mobilePadding
+                />
+              </div>
+            ))}
           </div>
-          {/* Left Column */}
-          <div className="flex flex-col gap-6">
-            <TestimonialCard {...testimonials[0]} />
-            <TestimonialCard {...testimonials[3]} />
-          </div>
-          
-          {/* Center Column - Large Card */}
-          <div className="flex justify-center">
-            <TestimonialCard {...testimonials[1]} isLarge={true} />
-          </div>
-          
-          {/* Right Column */}
-          <div className="flex flex-col gap-6">
-            <TestimonialCard {...testimonials[2]} />
-            <TestimonialCard {...testimonials[0]} />
+
+          {/* Desktop: 3 columns as before */}
+          <div className="hidden lg:grid grid-cols-3 gap-6 max-w-6xl mx-auto w-full relative mb-60">
+            {/* Left Column */}
+            <div className="flex flex-col gap-6">
+              {left.map((t) => (
+                <TestimonialCard
+                  key={t._id}
+                  name={t.name}
+                  title={t.about}
+                  quote={t.description}
+                  avatar={t.image_url}
+                />
+              ))}
+            </div>
+            {/* Center Column - Large Card */}
+            <div className="justify-center h-100 mt-30">
+              {/* Book image for desktop only */}
+              <div className="justify-center mb-8 ml-28 hidden lg:block">
+                <Image
+                  src="/attendeessay/book.png"
+                  alt="Stack of books"
+                  width={130}
+                  height={130}
+                  className="object-contain drop-shadow-2xl"
+                />
+              </div>
+              {center && (
+                <TestimonialCard
+                  key={center._id}
+                  name={center.name}
+                  title={center.about}
+                  quote={center.description}
+                  avatar={center.image_url}
+                />
+              )}
+            </div>
+            {/* Right Column */}
+            <div className="flex flex-col gap-6">
+              {right.map((t) => (
+                <TestimonialCard
+                  key={t._id}
+                  name={t.name}
+                  title={t.about}
+                  quote={t.description}
+                  avatar={t.image_url}
+                />
+              ))}
+            </div>
           </div>
         </div>
       </div>
 
       {/* Bottom Blurred Image */}
-      <div className="absolute bottom-0 left-0 w-full h-[150px] md:h-[250px] lg:h-[380px] overflow-hidden">
+      <div className="absolute bottom-0 left-0 w-full h-[120px] md:h-[180px] lg:h-[280px] overflow-hidden">
         <Image
           src="/attendeessay/bottom2.png"
           alt="Blurred forest trees"
@@ -132,37 +218,41 @@ export default function Attendeessay() {
   )
 }
 
-function TestimonialCard({ name, title, quote, avatar, isLarge }: Testimonial) {
+type TestimonialCardProps = {
+  name: string
+  title: string
+  quote: string
+  avatar: string
+  mobilePadding?: boolean
+}
+
+function TestimonialCard({ name, title, quote, avatar, mobilePadding }: TestimonialCardProps) {
   return (
     <Card
-      className={`rounded-xl shadow-lg p-6 relative ${
-        isLarge ? "lg:p-8 h-full" : "h-auto"
-      } flex flex-col transition-all hover:scale-[1.02] bg-blue-800 text-white border border-yellow-400`}
+      className={`rounded-4xl relative h-auto flex flex-col transition-all hover:scale-[1.02] bg-blue-800 text-white border-none font-bilo text-base ${mobilePadding ? 'p-4 sm:p-6' : 'p-6'}`}
     >
-      <CardContent className="p-0 flex flex-col h-full">
-        <div className="flex items-start gap-4 mb-4">
-          <Avatar className="w-12 h-12 border border-yellow-400">
+      <CardContent className="p-0 flex flex-col h-full font-bilo text-base">
+        <div className="flex items-start gap-4 mb-2 font-bilo text-base">
+          <Avatar className="w-14 h-14 min-w-[56px] min-h-[56px] border-1 border-white shadow-md">
             <AvatarImage src={avatar || "/placeholder.svg"} alt={`${name}'s avatar`} />
-            <AvatarFallback className="font-bold text-blue-900">
+            <AvatarFallback className="font-bold text-blue-900 text-xl font-bilo">
               {name.charAt(0)}
             </AvatarFallback>
           </Avatar>
-          <div className="flex-1">
-            <h3 className="font-bold text-lg">{name}</h3>
-            <p className="text-sm opacity-80">{title}</p>
+          <div className="flex flex-col flex-1 font-bilo text-base">
+            <h3 className="text-xl text-white leading-tight font-bilo">{quote}</h3>
+            <p className="text-sm text-white/80 mt-1 font-bilo">( {title} )</p>
+            <div className="w-32 border-t border-white/60 my-2" />
           </div>
         </div>
-        
-        <div className="relative flex-grow">
-          <Quote 
-            className="absolute -top-2 left-0 w-8 h-8 opacity-50 text-yellow-400" 
-          />
-          <p className={`text-base leading-relaxed pl-8 pr-2 pt-2 pb-4 ${isLarge ? 'text-lg' : ''}`}>
-            {quote}
+        <div className="relative flex-grow mt-2 font-bilo text-base">
+          {/* Opening quote */}
+          <svg className="absolute left-2 top-1 w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 24 24"><path d="M7.17 17.66c-1.1 0-2-.9-2-2v-3.34c0-2.21 1.79-4 4-4h.5c.28 0 .5.22.5.5v1c0 .28-.22.5-.5.5h-.5c-1.1 0-2 .9-2 2v3.34c0 .28-.22.5-.5.5s-.5-.22-.5-.5zm8 0c-1.1 0-2-.9-2-2v-3.34c0-2.21 1.79-4 4-4h.5c.28 0 .5.22.5.5v1c0 .28-.22.5-.5.5h-.5c-1.1 0-2 .9-2 2v3.34c0 .28-.22.5-.5.5s-.5-.22-.5-.5z"/></svg>
+          <p className={`text-base leading-relaxed pl-6 pr-4 pt-1 pb-3 text-left font-bilo`}>
+            {name}
           </p>
-          <Quote 
-            className="absolute bottom-0 right-0 w-8 h-8 opacity-50 rotate-180 text-yellow-400" 
-          />
+          {/* Closing quote (inverted) */}
+          <svg className="absolute -right-2 bottom-1 w-5 h-5 text-yellow-400 rotate-180" fill="currentColor" viewBox="0 0 24 24"><path d="M7.17 17.66c-1.1 0-2-.9-2-2v-3.34c0-2.21 1.79-4 4-4h.5c.28 0 .5.22.5.5v1c0 .28-.22.5-.5.5h-.5c-1.1 0-2 .9-2 2v3.34c0 .28-.22.5-.5.5s-.5-.22-.5-.5zm8 0c-1.1 0-2-.9-2-2v-3.34c0-2.21 1.79-4 4-4h.5c.28 0 .5.22.5.5v1c0 .28-.22.5-.5.5h-.5c-1.1 0-2 .9-2 2v3.34c0 .28-.22.5-.5.5s-.5-.22-.5-.5z"/></svg>
         </div>
       </CardContent>
     </Card>
