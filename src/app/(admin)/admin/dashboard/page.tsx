@@ -21,124 +21,171 @@ import { useEffect, useState } from "react"
 import { getCookie } from "@/lib/cookies"
 import ProtectedRoute from "@/components/auth/protected-route"
 import UserProfileCard from "@/components/admin/UserProfileCard"
+import { getAllEvents } from "@/service/events-apis"
+import { getAllUsers } from "@/service/userServices"
+import { getBlogs } from "@/service/newsAndBlogs"
+import { getSpeaker } from "@/service/speaker"
+import { getAllImages } from "@/service/archive"
+import DashboardLoading from "@/components/admin/dashboard/DashboardLoading"
+import DashboardError from "@/components/admin/dashboard/DashboardError"
 
 export default function AdminDashboard() {
-  // Mock data for dashboard
-  const stats = [
-    {
-      title: "Total Events",
-      value: "12",
-      change: "+2 from last month",
-      icon: Calendar,
-      color: "text-blue-600",
-      trend: "up",
-    },
-    {
-      title: "Active Users",
-      value: "1,234",
-      change: "+8% from last week",
-      icon: Users,
-      color: "text-green-600",
-      trend: "up",
-    },
-    {
-      title: "Published Content",
-      value: "45",
-      change: "+12% from last month",
-      icon: FileText,
-      color: "text-purple-600",
-      trend: "up",
-    },
-    {
-      title: "Total Speakers",
-      value: "28",
-      change: "5 new this month",
-      icon: Mic,
-      color: "text-orange-600",
-      trend: "up",
-    },
-  ]
-
-  const recentActivity = [
-    {
-      id: 1,
-      type: "event",
-      title: "New event created: Literature Festival 2024",
-      time: "2 hours ago",
-      user: "Admin User",
-    },
-    {
-      id: 2,
-      type: "speaker",
-      title: "Speaker added: Dr. Rajesh Kumar",
-      time: "4 hours ago",
-      user: "Admin User",
-    },
-    {
-      id: 3,
-      type: "content",
-      title: "Blog published: Traditional Stories Workshop",
-      time: "6 hours ago",
-      user: "Content Manager",
-    },
-    {
-      id: 4,
-      type: "user",
-      title: "New user registered: Jane Smith",
-      time: "8 hours ago",
-      user: "System",
-    },
-  ]
-
-  const upcomingEvents = [
-    {
-      id: 1,
-      name: "Arunachal Pradesh Literature Festival 2024",
-      date: "March 15-17, 2024",
-      location: "Itanagar Cultural Center",
-      status: "upcoming",
-      registrations: 245,
-    },
-    {
-      id: 2,
-      name: "Traditional Stories Workshop",
-      date: "February 20, 2024",
-      location: "Community Hall",
-      status: "planning",
-      registrations: 89,
-    },
-  ]
-
-  const topSpeakers = [
-    {
-      id: 1,
-      name: "Dr. Rajesh Kumar",
-      sessions: 5,
-      rating: 4.9,
-      avatar: "/placeholder.svg?height=40&width=40",
-    },
-    {
-      id: 2,
-      name: "Ms. Priya Sharma",
-      sessions: 3,
-      rating: 4.8,
-      avatar: "/placeholder.svg?height=40&width=40",
-    },
-    {
-      id: 3,
-      name: "Prof. Anand Tiwari",
-      sessions: 4,
-      rating: 4.7,
-      avatar: "/placeholder.svg?height=40&width=40",
-    },
-  ]
-
+  // State for API data
+  const [stats, setStats] = useState<any[]>([])
+  const [recentActivity, setRecentActivity] = useState<any[]>([])
+  const [upcomingEvents, setUpcomingEvents] = useState<any[]>([])
+  const [topSpeakers, setTopSpeakers] = useState<any[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState<string | null>(null)
   const [userRole, setUserRole] = useState<string | null>(null)
+  const [showAllSpeakers, setShowAllSpeakers] = useState(false)
+  const [archiveLoading, setArchiveLoading] = useState(true)
+  const [archiveError, setArchiveError] = useState<string | null>(null)
+  const [archiveStats, setArchiveStats] = useState<{ total: number; recent: any[] }>({ total: 0, recent: [] })
+
   useEffect(() => {
     setUserRole(getCookie("userRole"))
   }, [])
 
+  useEffect(() => {
+    async function fetchDashboardData() {
+      setLoading(true)
+      setError(null)
+      try {
+        // Fetch all data in parallel
+        const [eventsRes, usersRes, blogsRes, speakersRes] = await Promise.all([
+          getAllEvents(),
+          getAllUsers(),
+          getBlogs(),
+          getSpeaker(),
+        ])
+        // Stats
+        let totalEvents = 0;
+        if (eventsRes.success && eventsRes.data) {
+          if (Array.isArray(eventsRes.data)) {
+            totalEvents = eventsRes.data.length;
+          } else if (Array.isArray(eventsRes.data.event)) {
+            totalEvents = eventsRes.data.event.length;
+          } else {
+            totalEvents = 1;
+          }
+        }
+        setStats([
+          {
+            title: "Total Events",
+            value: totalEvents,
+            change: "-",
+            icon: Calendar,
+            color: "text-blue-600",
+            trend: "up",
+          },
+          {
+            title: "Active Users",
+            value: usersRes.success && usersRes.data ? usersRes.data.length : 0,
+            change: "-",
+            icon: Users,
+            color: "text-green-600",
+            trend: "up",
+          },
+          {
+            title: "Published Content",
+            value: blogsRes.success && blogsRes.data ? blogsRes.data.length : 0,
+            change: "-",
+            icon: FileText,
+            color: "text-purple-600",
+            trend: "up",
+          },
+          {
+            title: "Total Speakers",
+            value: speakersRes.success && speakersRes.data ? speakersRes.data.length : 0,
+            change: "-",
+            icon: Mic,
+            color: "text-orange-600",
+            trend: "up",
+          },
+        ])
+        // Recent Activity (example: show latest blogs, events, users, speakers)
+        setRecentActivity([
+          ...(blogsRes.success && blogsRes.data ? blogsRes.data.slice(0, 2).map((b: any) => ({
+            id: b._id,
+            type: "content",
+            title: `Blog published: ${b.title}`,
+            time: b.createdAt ? new Date(b.createdAt).toLocaleString() : "-",
+            user: b.author || "-",
+          })) : []),
+          ...(eventsRes.success && eventsRes.data && Array.isArray(eventsRes.data.event) ? eventsRes.data.event.slice(0, 2).map((e: any) => ({
+            id: e._id,
+            type: "event",
+            title: `Event: ${e.eventName || e.name}`,
+            time: e.createdAt ? new Date(e.createdAt).toLocaleString() : "-",
+            user: e.createdBy || "-",
+          })) : []),
+          ...(usersRes.success && usersRes.data ? usersRes.data.slice(0, 1).map((u: any) => ({
+            id: u._id,
+            type: "user",
+            title: `New user registered: ${u.name || u.email}`,
+            time: u.createdAt ? new Date(u.createdAt).toLocaleString() : "-",
+            user: "System",
+          })) : []),
+        ])
+        // Upcoming Events (show next 2 events)
+        setUpcomingEvents(eventsRes.success && eventsRes.data && Array.isArray(eventsRes.data.event) ? eventsRes.data.event.slice(0, 2).map((e: any) => ({
+          id: e._id,
+          name: e.eventName || e.name,
+          date: e.eventDate || e.startDate || "-",
+          location: e.venue || "-",
+          status: e.status || "upcoming",
+          registrations: e.registrationsCount || 0,
+        })) : [])
+        // Top Speakers (show top 3 by sessions or rating)
+        setTopSpeakers(speakersRes.success && speakersRes.data ? speakersRes.data.slice(0, 3).map((s: any, idx: number) => ({
+          id: s._id,
+          name: s.name,
+          sessions: s.sessionsCount || 0,
+          rating: s.rating || 0,
+          avatar: s.avatar || "/placeholder.svg?height=40&width=40",
+        })) : [])
+      } catch (err: any) {
+        setError("Failed to load dashboard data.")
+      } finally {
+        setLoading(false)
+      }
+    }
+    fetchDashboardData()
+  }, [])
+
+  useEffect(() => {
+    async function fetchArchive() {
+      setArchiveLoading(true)
+      setArchiveError(null)
+      try {
+        const res = await getAllImages()
+        if (res.success && res.data && Array.isArray(res.data.archive)) {
+          setArchiveStats({
+            total: res.data.archive.length,
+            recent: res.data.archive.slice(0, 3),
+          })
+        } else {
+          setArchiveStats({ total: 0, recent: [] })
+        }
+      } catch (err) {
+        setArchiveError("Failed to load archive data.")
+      } finally {
+        setArchiveLoading(false)
+      }
+    }
+    fetchArchive()
+  }, [])
+
   const isAdmin = userRole === "admin"
+
+  // Loading and error states
+  if (loading) {
+    return <DashboardLoading />;
+  }
+  if (error) {
+    return <DashboardError message={error} />;
+  }
 
   return (
     <ProtectedRoute allowedRoles={["admin", "user"]}>
@@ -270,7 +317,7 @@ export default function AdminDashboard() {
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-4">
-                    {topSpeakers.map((speaker, index) => (
+                    {(showAllSpeakers ? topSpeakers : topSpeakers.slice(0, 3)).map((speaker, index) => (
                       <div key={speaker.id} className="flex items-center gap-3">
                         <div className="flex items-center justify-center w-6 h-6 rounded-full bg-muted text-xs font-medium">
                           {index + 1}
@@ -280,61 +327,71 @@ export default function AdminDashboard() {
                           <AvatarFallback>
                             {speaker.name
                               .split(" ")
-                              .map((n) => n[0])
+                              .map((n: string) => n[0])
                               .join("")}
                           </AvatarFallback>
                         </Avatar>
                         <div className="flex-1">
                           <p className="text-sm font-medium">{speaker.name}</p>
-                          <p className="text-xs text-muted-foreground">
-                            {speaker.sessions} sessions • ⭐ {speaker.rating}
-                          </p>
                         </div>
                       </div>
                     ))}
+                    {topSpeakers.length > 3 && (
+                      <div className="flex justify-end pt-2">
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setShowAllSpeakers((prev) => !prev)}
+                          className="text-xs"
+                        >
+                          {showAllSpeakers ? "Show Less" : "See More"}
+                        </Button>
+                      </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>
 
-              {/* Upcoming Events */}
+              {/* Upcoming Events (replaced with Archive Overview) */}
               <Card className="lg:col-span-2">
                 <CardHeader>
                   <div className="flex items-center justify-between">
                     <div>
                       <CardTitle className="flex items-center gap-2">
-                        <Calendar className="h-5 w-5" />
-                        Upcoming Events
+                        <FileText className="h-5 w-5" />
+                        Archive Overview
                       </CardTitle>
-                      <CardDescription>Events scheduled for the next few weeks</CardDescription>
+                      <CardDescription>Recent uploads and archive stats</CardDescription>
                     </div>
-                    <Button variant="outline" size="sm" asChild>
-                      <Link href="/admin/dashboard/events">View All</Link>
-                    </Button>
                   </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-4">
-                    {upcomingEvents.map((event) => (
-                      <div key={event.id} className="flex items-center justify-between p-3 border rounded-lg">
-                        <div className="space-y-1">
-                          <h4 className="text-sm font-medium">{event.name}</h4>
-                          <div className="flex items-center gap-4 text-xs text-muted-foreground">
-                            <span>{event.date}</span>
-                            <span>•</span>
-                            <span>{event.location}</span>
-                            <span>•</span>
-                            <span>{event.registrations} registered</span>
+                  {archiveLoading ? (
+                    <div className="animate-pulse space-y-3">
+                      <div className="h-6 bg-gray-200 rounded w-1/2" />
+                      <div className="h-10 bg-gray-100 rounded w-full" />
+                      <div className="h-10 bg-gray-100 rounded w-full" />
+                    </div>
+                  ) : archiveError ? (
+                    <div className="text-red-500 text-sm">{archiveError}</div>
+                  ) : archiveStats.total === 0 ? (
+                    <div className="text-muted-foreground text-sm">No archive images found.</div>
+                  ) : (
+                    <>
+                      <div className="text-lg font-bold mb-2">Total Images: {archiveStats.total}</div>
+                      <div className="space-y-2">
+                        {archiveStats.recent.map((img: any) => (
+                          <div key={img._id} className="flex items-center gap-3">
+                            <img src={img.image_url || '/file.svg'} alt={img.originalName || 'Archive Image'} className="w-10 h-10 object-cover rounded" />
+                            <div className="flex-1 min-w-0">
+                              <div className="truncate text-sm font-medium">{img.originalName || 'Untitled'}</div>
+                              <div className="text-xs text-muted-foreground truncate">{img.createdAt ? new Date(img.createdAt).toLocaleDateString() : ''}</div>
+                            </div>
                           </div>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <Badge variant={event.status === "upcoming" ? "default" : "secondary"}>{event.status}</Badge>
-                          <Button variant="ghost" size="sm">
-                            <Eye className="h-4 w-4" />
-                          </Button>
-                        </div>
+                        ))}
                       </div>
-                    ))}
-                  </div>
+                    </>
+                  )}
                 </CardContent>
               </Card>
 

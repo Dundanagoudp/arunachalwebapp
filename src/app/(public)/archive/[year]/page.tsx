@@ -13,6 +13,9 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination"
+import { useParams, useSearchParams } from "next/navigation"
+import { getImagesByYear } from "@/service/archive"
+import SunIcon from "@/components/sunicon-gif"
 
 // Shimmer effect component
 const ShimmerEffect = ({ className }: { className?: string }) => (
@@ -120,12 +123,11 @@ interface YearImagesResponse {
   images: ImageData[]
 }
 
-
-
-export default function GalleryPage({ params }: { params: Promise<{ year: string }> }) {
-  const { year } = use(params)
-  const searchParams = useSearchParams()
-  const yearId = searchParams.get("yearId")
+export default function GalleryPage() {
+  const params = useParams();
+  const { year } = params as { year: string };
+  const searchParams = useSearchParams();
+  const yearId = searchParams.get("yearId");
 
   const [selectedImage, setSelectedImage] = useState<{ src: string; alt: string } | null>(null)
   const [currentPage, setCurrentPage] = useState(1)

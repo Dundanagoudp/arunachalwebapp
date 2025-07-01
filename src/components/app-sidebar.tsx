@@ -77,7 +77,12 @@ const adminNavData = {
         {
           title: "Add Time Slot",
           url: "/admin/dashboard/events/add-time",
+        },
+             {
+          title:"Add Pdf",
+          url:"/admin/dashboard/events/addpdf"
         }
+
       ],
     },
     {
