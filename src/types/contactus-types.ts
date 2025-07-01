@@ -14,6 +14,7 @@ export interface ContactMessage {
   message: string
   createdAt: string
   __v: number
+  isReplied: boolean
 }
 
 export interface SenderMail {

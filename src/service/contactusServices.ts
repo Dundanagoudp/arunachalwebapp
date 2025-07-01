@@ -123,3 +123,20 @@ export async function deleteContactMessage(id: string): Promise<ApiResponse<void
     }
   }
 }
+
+// replay 
+
+export async function replyToContactMessage(id: string, data: { message: string }): Promise<ApiResponse<void>> {
+  try {
+    const response = await apiClient.post(`/sendMail/replyEmail/${id}`, data)
+    return {
+      success: true,
+      message: response.data.message || "Reply sent successfully",
+    }
+  } catch (error: any) {
+    return {
+      success: false,
+      error: error.response?.data?.message || "Failed to send reply",
+    }
+  }
+}

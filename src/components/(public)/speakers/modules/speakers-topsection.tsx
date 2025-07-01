@@ -8,7 +8,7 @@ const DiamondPatternBackground = dynamic(() => import("../../../DiamondPatternBa
 
 export default function Speakerstopsection() {
   return (
-    <section className="relative w-full overflow-hidden bg-[#fdf8f0] min-h-[60vh] md:min-h-screen">
+    <section className="relative w-full overflow-hidden bg-[#fdf8f0] min-h-0 md:min-h-[60vh] lg:min-h-screen">
       {/* Diamond Pattern Background: hidden on mobile, visible on md+ */}
       <div className="hidden md:block">
         <DiamondPatternBackground />
