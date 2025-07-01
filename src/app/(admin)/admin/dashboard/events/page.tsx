@@ -1,18 +1,9 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { AppSidebar } from "@/components/app-sidebar"
 import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
-import { Separator } from "@/components/ui/separator"
-import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+  Card, CardContent, CardDescription, CardHeader, CardTitle
+} from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { Input } from "@/components/ui/input"
@@ -62,14 +53,6 @@ export default function EventsPage() {
       const result = await getAllEvents()
       if (result.success && result.data) {
         setEvents(result.data)
-        console.log("Events loaded:", result.data)
-        console.log("Event days:", result.data.days)
-        result.data.days?.forEach((day: EventDay) => {
-          console.log(`Day ${day.dayNumber} (${day._id}):`, day.times?.length || 0, "time slots")
-          day.times?.forEach((time, index) => {
-            console.log(`  Time slot ${index + 1}:`, { id: time._id, title: time.title })
-          })
-        })
       } else {
         toast({
           title: "Error",
@@ -166,364 +149,293 @@ export default function EventsPage() {
   }
 
   if (isLoading) {
-    return (
-      <SidebarProvider>
-        <AppSidebar />
-        <SidebarInset>
-          <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 border-b bg-white/80 backdrop-blur-sm sticky top-0 z-40">
-            <div className="flex items-center gap-2 px-4">
-              <SidebarTrigger className="-ml-1" />
-              <Separator orientation="vertical" className="mr-2 data-[orientation=vertical]:h-4" />
-              <Breadcrumb>
-                <BreadcrumbList>
-                  <BreadcrumbItem className="hidden md:block">
-                    <BreadcrumbLink href="/admin/dashboard">Admin Panel</BreadcrumbLink>
-                  </BreadcrumbItem>
-                  <BreadcrumbSeparator className="hidden md:block" />
-                  <BreadcrumbItem>
-                    <BreadcrumbPage>Events Management</BreadcrumbPage>
-                  </BreadcrumbItem>
-                </BreadcrumbList>
-              </Breadcrumb>
-            </div>
-          </header>
-          <EventsPageSkeleton />
-        </SidebarInset>
-      </SidebarProvider>
-    )
+    return <EventsPageSkeleton />
   }
 
   return (
-    <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset>
-      <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 border-b bg-white/80 backdrop-blur-sm sticky top-0 z-40">
-      <div className="flex items-center gap-2 px-4">
-            <SidebarTrigger className="-ml-1" />
-            <Separator orientation="vertical" className="mr-2 data-[orientation=vertical]:h-4" />
-            <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="/admin/dashboard">Admin Panel</BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block" />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>Events Management</BreadcrumbPage>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb>
-          </div>
-        </header>
+    <div className="flex flex-1 flex-col gap-6 p-6 pt-0">
+      {/* Header */}
+      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+        <div>
+          <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Events Management</h1>
+          <p className="text-muted-foreground">Manage all events, schedules, and registrations.</p>
+        </div>
+        <div className="flex flex-col gap-2 sm:flex-row">
+          <Button asChild className="w-full sm:w-auto">
+            <Link href="/admin/dashboard/events/create">
+              <Plus className="mr-2 h-4 w-4" />
+              Create Event
+            </Link>
+          </Button>
+          <Button variant="outline" asChild className="w-full sm:w-auto">
+            <Link href="/admin/dashboard/events/add-time">
+              <Clock className="mr-2 h-4 w-4" />
+              Add Time Slot
+            </Link>
+          </Button>
+        </div>
+      </div>
 
-        <div className="flex flex-1 flex-col gap-6 p-6 pt-0">
-          {/* Header */}
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">Events Management</h1>
-              <p className="text-muted-foreground">Manage all events, schedules, and registrations.</p>
-            </div>
-            <div className="flex flex-col gap-2 sm:flex-row">
-              <Button asChild className="w-full sm:w-auto">
-                <Link href="/admin/dashboard/events/create">
-                  <Plus className="mr-2 h-4 w-4" />
-                  Create Event
-                </Link>
-              </Button>
-              <Button variant="outline" asChild className="w-full sm:w-auto">
-                <Link href="/admin/dashboard/events/add-time">
-                  <Clock className="mr-2 h-4 w-4" />
-                  Add Time Slot
-                </Link>
-              </Button>
-            </div>
-          </div>
+      {/* Stats Cards */}
+      <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Current Event</CardTitle>
+            <Calendar className="h-4 w-4 text-muted-foreground" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{events?.event ? "1" : "0"}</div>
+            <p className="text-xs text-muted-foreground">Active event</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Days</CardTitle>
+            <Clock className="h-4 w-4 text-blue-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{events?.event?.totalDays || 0}</div>
+            <p className="text-xs text-muted-foreground">Event duration</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Event Days</CardTitle>
+            <Users className="h-4 w-4 text-green-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{events?.days?.length || 0}</div>
+            <p className="text-xs text-muted-foreground">Configured days</p>
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Total Sessions</CardTitle>
+            <Calendar className="h-4 w-4 text-gray-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{getTotalTimes(events?.days || [])}</div>
+            <p className="text-xs text-muted-foreground">Scheduled sessions</p>
+          </CardContent>
+        </Card>
+      </div>
 
-          {/* Stats Cards */}
-          <div className="grid gap-4 grid-cols-2 lg:grid-cols-4">
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Current Event</CardTitle>
-                <Calendar className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{events?.event ? "1" : "0"}</div>
-                <p className="text-xs text-muted-foreground">Active event</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Days</CardTitle>
-                <Clock className="h-4 w-4 text-blue-600" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{events?.event?.totalDays || 0}</div>
-                <p className="text-xs text-muted-foreground">Event duration</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Event Days</CardTitle>
-                <Users className="h-4 w-4 text-green-600" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{events?.days?.length || 0}</div>
-                <p className="text-xs text-muted-foreground">Configured days</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Sessions</CardTitle>
-                <Calendar className="h-4 w-4 text-gray-600" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{getTotalTimes(events?.days || [])}</div>
-                <p className="text-xs text-muted-foreground">Scheduled sessions</p>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Current Event Details */}
-          {events?.event && (
-            <Card>
-              <CardHeader>
-                <CardTitle>Current Event Details</CardTitle>
-                <CardDescription>Information about the active event</CardDescription>
-              </CardHeader>
-              <CardContent>
-                <div className="space-y-4">
-                  <div className="flex flex-col gap-4 p-4 border rounded-lg lg:flex-row lg:items-center lg:justify-between">
-                    <div className="flex-1 space-y-2">
-                      <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
-                        <h3 className="text-lg font-semibold truncate">{events.event.name}</h3>
-                        <Badge className="bg-green-100 text-green-800 w-fit">Active</Badge>
-                      </div>
-                      <p className="text-sm text-muted-foreground">{events.event.description}</p>
-                      <div className="flex flex-col gap-2 text-sm text-muted-foreground sm:flex-row sm:items-center sm:gap-4">
-                        <div className="flex items-center gap-1">
-                          <Calendar className="h-4 w-4" />
-                          <span>
-                            {formatDate(events.event.startDate)} - {formatDate(events.event.endDate)}
-                          </span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <Clock className="h-4 w-4" />
-                          <span>{events.event.totalDays} days</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <span>Year: {events.event.year}</span>
-                        </div>
-                        <div className="flex items-center gap-1">
-                          <span>Month: {events.event.month}</span>
-                        </div>
-                      </div>
+      {/* Current Event Details */}
+      {events?.event && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Current Event Details</CardTitle>
+            <CardDescription>Information about the active event</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-4">
+              <div className="flex flex-col gap-4 p-4 border rounded-lg lg:flex-row lg:items-center lg:justify-between">
+                <div className="flex-1 space-y-2">
+                  <div className="flex flex-col gap-2 sm:flex-row sm:items-center">
+                    <h3 className="text-lg font-semibold truncate">{events.event.name}</h3>
+                    <Badge className="bg-green-100 text-green-800 w-fit">Active</Badge>
+                  </div>
+                  <p className="text-sm text-muted-foreground">{events.event.description}</p>
+                  <div className="flex flex-col gap-2 text-sm text-muted-foreground sm:flex-row sm:items-center sm:gap-4">
+                    <div className="flex items-center gap-1">
+                      <Calendar className="h-4 w-4" />
+                      <span>
+                        {formatDate(events.event.startDate)} - {formatDate(events.event.endDate)}
+                      </span>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                          <Button variant="ghost" size="sm" disabled={isDeleting === events.event._id}>
-                            {isDeleting === events.event._id ? (
-                              <Loader2 className="h-4 w-4 animate-spin" />
-                            ) : (
-                              <MoreHorizontal className="h-4 w-4" />
-                            )}
-                          </Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent align="end">
-                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                          <DropdownMenuSeparator />
-                          <DropdownMenuItem asChild>
-                            <Link href={`/admin/dashboard/events/${events.event._id}`}>
-                              <Eye className="mr-2 h-4 w-4" />
-                              View Details
-                            </Link>
-                          </DropdownMenuItem>
-                          <DropdownMenuItem asChild>
-                            <Link href={`/admin/dashboard/events/edit/${events.event._id}`}>
-                              <Edit className="mr-2 h-4 w-4" />
-                              Edit Event
-                            </Link>
-                          </DropdownMenuItem>
-                          <DropdownMenuItem asChild>
-                            <Link href="/admin/dashboard/events/add-time">
-                              <Clock className="mr-2 h-4 w-4" />
-                              Add Time Slot
-                            </Link>
-                          </DropdownMenuItem>
-                          <DropdownMenuItem
-                            className="text-red-600"
-                            onClick={() => handleDeleteEvent(events.event._id)}
-                          >
-                            <Trash2 className="mr-2 h-4 w-4" />
-                            Delete Event
-                          </DropdownMenuItem>
-                        </DropdownMenuContent>
-                      </DropdownMenu>
+                    <div className="flex items-center gap-1">
+                      <Clock className="h-4 w-4" />
+                      <span>{events.event.totalDays} days</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <span>Year: {events.event.year}</span>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <span>Month: {events.event.month}</span>
                     </div>
                   </div>
                 </div>
-              </CardContent>
-            </Card>
-          )}
-
-          {/* Search */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Search Event Days</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex gap-4">
-                <div className="flex-1">
-                  <Label htmlFor="search">Search event days</Label>
-                  <div className="relative">
-                    <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      id="search"
-                      placeholder="Search by day name or description..."
-                      value={searchTerm}
-                      onChange={(e) => setSearchTerm(e.target.value)}
-                      className="pl-8"
-                    />
-                  </div>
+                <div className="flex items-center gap-2">
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="sm" disabled={isDeleting === events.event._id}>
+                        {isDeleting === events.event._id ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          <MoreHorizontal className="h-4 w-4" />
+                        )}
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end">
+                      <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem asChild>
+                        <Link href={`/admin/dashboard/events/${events.event._id}`}>
+                          <Eye className="mr-2 h-4 w-4" />
+                          View Details
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link href={`/admin/dashboard/events/edit/${events.event._id}`}>
+                          <Edit className="mr-2 h-4 w-4" />
+                          Edit Event
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem asChild>
+                        <Link href="/admin/dashboard/events/add-time">
+                          <Clock className="mr-2 h-4 w-4" />
+                          Add Time Slot
+                        </Link>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem
+                        className="text-red-600"
+                        onClick={() => handleDeleteEvent(events.event._id)}
+                      >
+                        <Trash2 className="mr-2 h-4 w-4" />
+                        Delete Event
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </div>
               </div>
-            </CardContent>
-          </Card>
+            </div>
+          </CardContent>
+        </Card>
+      )}
 
-          {/* Event Days List */}
-          <Card>
-            <CardHeader>
-              <CardTitle>Event Days & Sessions</CardTitle>
-              <CardDescription>
-                {filteredDays.length} day{filteredDays.length !== 1 ? "s" : ""} found
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
-                {filteredDays.map((day) => (
-                  <div key={day._id} className="border rounded-lg p-4">
-                    <div className="flex flex-col gap-3 mb-3 lg:flex-row lg:items-center lg:justify-between">
-                      <div className="flex-1">
-                        <h3 className="text-lg font-semibold">
-                          Day {day.dayNumber}: {day.name}
-                        </h3>
-                        <p className="text-sm text-muted-foreground">{day.description}</p>
-                        <p className="text-xs text-muted-foreground mt-1">
-                          Created: {new Date(day.createdAt).toLocaleDateString()}
-                        </p>
-                      </div>
-                      <div className="flex gap-2 items-center">
-                        <Badge variant="outline">{day.times?.length || 0} sessions</Badge>
-                        <Dialog open={editSheetOpen && editDay?._id === day._id} onOpenChange={setEditSheetOpen}>
-                          <DialogTrigger asChild>
-                            <Button size="sm" variant="outline" onClick={() => openEditSheet(day)}>
-                              Edit
-                            </Button>
-                          </DialogTrigger>
-                          <DialogContent>
-                            <DialogHeader>
-                              <DialogTitle>Edit Event Day</DialogTitle>
-                            </DialogHeader>
-                            <form onSubmit={handleEditSubmit} className="space-y-4 mt-4">
-                              <div>
-                                <Label htmlFor="edit-name">Name</Label>
-                                <Input
-                                  id="edit-name"
-                                  name="name"
-                                  value={editForm.name}
-                                  onChange={handleEditFormChange}
-                                  required
-                                  disabled={editLoading}
-                                />
-                              </div>
-                              <div>
-                                <Label htmlFor="edit-description">Description</Label>
-                                <Input
-                                  id="edit-description"
-                                  name="description"
-                                  value={editForm.description}
-                                  onChange={handleEditFormChange}
-                                  required
-                                  disabled={editLoading}
-                                />
-                              </div>
-                              <DialogFooter>
-                                <Button type="submit" disabled={editLoading}>
-                                  {editLoading ? "Saving..." : "Save Changes"}
-                                </Button>
-                                <DialogClose asChild>
-                                  <Button type="button" variant="outline">Cancel</Button>
-                                </DialogClose>
-                              </DialogFooter>
-                            </form>
-                          </DialogContent>
-                        </Dialog>
-                      </div>
-                    </div>
-
-                    {day.times && day.times.length > 0 && (
-                      <div className="space-y-2 mt-4">
-                        <h4 className="font-medium text-sm">Sessions:</h4>
-                        <div className="grid gap-2 grid-cols-1 lg:grid-cols-2">
-                          {day.times.map((time) => (
-                            <div key={time._id} className="bg-muted p-3 rounded-md">
-                              <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-                                <h5 className="font-medium">{time.title}</h5>
-                                <Badge variant="secondary">{time.type}</Badge>
-                              </div>
-                              <p className="text-xs text-muted-foreground mt-1">{time.description}</p>
-                              <div className="flex flex-col gap-2 mt-2 text-xs text-muted-foreground sm:flex-row sm:items-center sm:gap-4">
-                                <span>
-                                  🕐 {time.startTime} - {time.endTime}
-                                </span>
-                                <span>👤 {time.speaker}</span>
-                                <Button asChild size="sm" variant="outline" className="w-fit">
-                                  <Link href={`/admin/dashboard/events/edit-time/${day._id}/${time._id}`}>
-                                    Edit
-                                  </Link>
-                                </Button>
-                              </div>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    )}
-
-                    {(!day.times || day.times.length === 0) && (
-                      <div className="text-center py-4 text-muted-foreground">
-                        <Clock className="h-6 w-6 mx-auto mb-2 opacity-50" />
-                        <p className="text-sm">No sessions scheduled for this day</p>
-                        <Button variant="outline" size="sm" className="mt-2" asChild>
-                          <Link href="/admin/dashboard/events/add-time">Add Time Slot</Link>
-                        </Button>
-                      </div>
-                    )}
+      {/* Event Days List */}
+      <Card>
+        <CardHeader>
+          <CardTitle>Event Days & Sessions</CardTitle>
+          <CardDescription>
+            {filteredDays.length} day{filteredDays.length !== 1 ? "s" : ""} found
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <div className="space-y-4">
+            {filteredDays.map((day) => (
+              <div key={day._id} className="border rounded-lg p-4">
+                <div className="flex flex-col gap-3 mb-3 lg:flex-row lg:items-center lg:justify-between">
+                  <div className="flex-1">
+                    <h3 className="text-lg font-semibold">
+                      Day {day.dayNumber}: {day.name}
+                    </h3>
+                    <p className="text-sm text-muted-foreground">{day.description}</p>
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Created: {new Date(day.createdAt).toLocaleDateString()}
+                    </p>
                   </div>
-                ))}
+                  <div className="flex gap-2 items-center">
+                    <Badge variant="outline">{day.times?.length || 0} sessions</Badge>
+                    <Dialog open={editSheetOpen && editDay?._id === day._id} onOpenChange={setEditSheetOpen}>
+                      <DialogTrigger asChild>
+                        <Button size="sm" variant="outline" onClick={() => openEditSheet(day)}>
+                          Edit
+                        </Button>
+                      </DialogTrigger>
+                      <DialogContent>
+                        <DialogHeader>
+                          <DialogTitle>Edit Event Day</DialogTitle>
+                        </DialogHeader>
+                        <form onSubmit={handleEditSubmit} className="space-y-4 mt-4">
+                          <div>
+                            <Label htmlFor="edit-name">Name</Label>
+                            <Input
+                              id="edit-name"
+                              name="name"
+                              value={editForm.name}
+                              onChange={handleEditFormChange}
+                              required
+                              disabled={editLoading}
+                            />
+                          </div>
+                          <div>
+                            <Label htmlFor="edit-description">Description</Label>
+                            <Input
+                              id="edit-description"
+                              name="description"
+                              value={editForm.description}
+                              onChange={handleEditFormChange}
+                              required
+                              disabled={editLoading}
+                            />
+                          </div>
+                          <DialogFooter>
+                            <Button type="submit" disabled={editLoading}>
+                              {editLoading ? "Saving..." : "Save Changes"}
+                            </Button>
+                            <DialogClose asChild>
+                              <Button type="button" variant="outline">Cancel</Button>
+                            </DialogClose>
+                          </DialogFooter>
+                        </form>
+                      </DialogContent>
+                    </Dialog>
+                  </div>
+                </div>
 
-                {filteredDays.length === 0 && !events?.event && (
-                  <div className="text-center py-8 text-muted-foreground">
-                    <Calendar className="h-12 w-12 mx-auto mb-4 opacity-50" />
-                    <h3 className="text-lg font-medium mb-2">No Events Found</h3>
-                    <p className="mb-4">Create your first event to get started.</p>
-                    <Button asChild>
-                      <Link href="/admin/dashboard/events/create">
-                        <Plus className="mr-2 h-4 w-4" />
-                        Create Event
-                      </Link>
+                {day.times && day.times.length > 0 && (
+                  <div className="space-y-2 mt-4">
+                    <h4 className="font-medium text-sm">Sessions:</h4>
+                    <div className="grid gap-2 grid-cols-1 lg:grid-cols-2">
+                      {day.times.map((time) => (
+                        <div key={time._id} className="bg-muted p-3 rounded-md">
+                          <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
+                            <h5 className="font-medium">{time.title}</h5>
+                            <Badge variant="secondary">{time.type}</Badge>
+                          </div>
+                          <p className="text-xs text-muted-foreground mt-1">{time.description}</p>
+                          <div className="flex flex-col gap-2 mt-2 text-xs text-muted-foreground sm:flex-row sm:items-center sm:gap-4">
+                            <span>
+                              🕐 {time.startTime} - {time.endTime}
+                            </span>
+                            <span>👤 {time.speaker}</span>
+                            <Button asChild size="sm" variant="outline" className="w-fit">
+                              <Link href={`/admin/dashboard/events/edit-time/${day._id}/${time._id}`}>
+                                Edit
+                              </Link>
+                            </Button>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {(!day.times || day.times.length === 0) && (
+                  <div className="text-center py-4 text-muted-foreground">
+                    <Clock className="h-6 w-6 mx-auto mb-2 opacity-50" />
+                    <p className="text-sm">No sessions scheduled for this day</p>
+                    <Button variant="outline" size="sm" className="mt-2" asChild>
+                      <Link href="/admin/dashboard/events/add-time">Add Time Slot</Link>
                     </Button>
                   </div>
                 )}
-
-                {filteredDays.length === 0 && events?.event && (
-                  <div className="text-center py-8 text-muted-foreground">
-                    <p>No event days match your search criteria.</p>
-                  </div>
-                )}
               </div>
-            </CardContent>
-          </Card>
-        </div>
-      </SidebarInset>
-    </SidebarProvider>
+            ))}
+
+            {filteredDays.length === 0 && !events?.event && (
+              <div className="text-center py-8 text-muted-foreground">
+                <Calendar className="h-12 w-12 mx-auto mb-4 opacity-50" />
+                <h3 className="text-lg font-medium mb-2">No Events Found</h3>
+                <p className="mb-4">Create your first event to get started.</p>
+                <Button asChild>
+                  <Link href="/admin/dashboard/events/create">
+                    <Plus className="mr-2 h-4 w-4" />
+                    Create Event
+                  </Link>
+                </Button>
+              </div>
+            )}
+
+            {filteredDays.length === 0 && events?.event && (
+              <div className="text-center py-8 text-muted-foreground">
+                <p>No event days match your search criteria.</p>
+              </div>
+            )}
+          </div>
+        </CardContent>
+      </Card>
+    </div>
   )
 }

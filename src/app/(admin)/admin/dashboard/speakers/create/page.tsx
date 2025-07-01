@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-import { AppSidebar } from "@/components/app-sidebar"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -11,7 +10,6 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import { Separator } from "@/components/ui/separator"
-import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -146,167 +144,140 @@ export default function CreateSpeaker() {
   }
 
   return (
-    <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset>
-      <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 border-b bg-white/80 backdrop-blur-sm sticky top-0 z-40">
-      <div className="flex items-center gap-2 px-4">
-            <SidebarTrigger className="-ml-1" />
-            <Separator orientation="vertical" className="mr-2 data-[orientation=vertical]:h-4" />
-            <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="/admin/dashboard">Admin Panel</BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block" />
-                <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="/admin/dashboard/speakers">Speakers</BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block" />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>Add Speaker</BreadcrumbPage>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb>
-          </div>
-        </header>
-
-        <div className="flex flex-1 flex-col gap-6 p-6 pt-0">
-          {/* Header */}
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold tracking-tight">Add New Speaker</h1>
-              <p className="text-muted-foreground">Add a new speaker to your events.</p>
-            </div>
-            <Button variant="outline" asChild>
-              <Link href="/admin/dashboard/speakers">
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Back to Speakers
-              </Link>
-            </Button>
-          </div>
-
-          {/* Alerts */}
-          {error && (
-            <Alert variant="destructive">
-              <AlertDescription>{error}</AlertDescription>
-            </Alert>
-          )}
-
-          {success && (
-            <Alert className="border-green-200 bg-green-50 text-green-800">
-              <AlertDescription>{success}</AlertDescription>
-            </Alert>
-          )}
-
-          {/* Form */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Mic className="h-5 w-5" />
-                Speaker Details
-              </CardTitle>
-              <CardDescription>Fill in the information for the new speaker.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="space-y-2">
-                  <Label htmlFor="name">Speaker Name *</Label>
-                  <Input
-                    id="name"
-                    name="name"
-                    placeholder="Enter speaker name"
-                    value={formData.name}
-                    onChange={handleChange}
-                    required
-                    disabled={loading}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="about">About Speaker *</Label>
-                  <Textarea
-                    id="about"
-                    name="about"
-                    placeholder="Enter speaker biography and background"
-                    value={formData.about}
-                    onChange={handleChange}
-                    rows={6}
-                    required
-                    disabled={loading}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="event_ref">Associated Event *</Label>
-                  {eventsLoading ? (
-                    <div className="flex items-center gap-2 p-2">
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                      <span className="text-sm text-muted-foreground">Loading events...</span>
-                    </div>
-                  ) : (
-                    <select
-                      id="event_ref"
-                      name="event_ref"
-                      value={formData.event_ref}
-                      onChange={handleChange}
-                      required
-                      disabled={loading}
-                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                    >
-                      <option value="">Select an event</option>
-                      {events.map((event) => (
-                        <option key={event._id} value={event._id}>
-                          {event.name} ({event.year})
-                        </option>
-                      ))}
-                    </select>
-                  )}
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="image_file">Profile Image</Label>
-                  <div className="flex gap-2">
-                    <Input
-                      id="image_file"
-                      name="image_file"
-                      type="file"
-                      accept="image/*"
-                      onChange={handleFileChange}
-                      disabled={loading}
-                      className="flex-1"
-                    />
-                    <Button type="button" variant="outline" disabled>
-                      <Upload className="mr-2 h-4 w-4" />
-                      {selectedFile ? selectedFile.name : "No file selected"}
-                    </Button>
-                  </div>
-                  <p className="text-xs text-muted-foreground">Supported formats: JPG, PNG, GIF. Max size: 5MB</p>
-                </div>
-
-                <div className="flex gap-4">
-                  <Button type="submit" disabled={loading}>
-                    {loading ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Adding Speaker...
-                      </>
-                    ) : (
-                      <>
-                        <Save className="mr-2 h-4 w-4" />
-                        Add Speaker
-                      </>
-                    )}
-                  </Button>
-                  <Button type="button" variant="outline" asChild disabled={loading}>
-                    <Link href="/admin/dashboard/speakers">Cancel</Link>
-                  </Button>
-                </div>
-              </form>
-            </CardContent>
-          </Card>
+    <div className="flex flex-1 flex-col gap-6 p-6 pt-0">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Add New Speaker</h1>
+          <p className="text-muted-foreground">Add a new speaker to your events.</p>
         </div>
-      </SidebarInset>
-    </SidebarProvider>
+        <Button variant="outline" asChild>
+          <Link href="/admin/dashboard/speakers">
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back to Speakers
+          </Link>
+        </Button>
+      </div>
+
+      {/* Alerts */}
+      {error && (
+        <Alert variant="destructive">
+          <AlertDescription>{error}</AlertDescription>
+        </Alert>
+      )}
+
+      {success && (
+        <Alert className="border-green-200 bg-green-50 text-green-800">
+          <AlertDescription>{success}</AlertDescription>
+        </Alert>
+      )}
+
+      {/* Form */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Mic className="h-5 w-5" />
+            Speaker Details
+          </CardTitle>
+          <CardDescription>Fill in the information for the new speaker.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="space-y-2">
+              <Label htmlFor="name">Speaker Name *</Label>
+              <Input
+                id="name"
+                name="name"
+                placeholder="Enter speaker name"
+                value={formData.name}
+                onChange={handleChange}
+                required
+                disabled={loading}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="about">About Speaker *</Label>
+              <Textarea
+                id="about"
+                name="about"
+                placeholder="Enter speaker biography and background"
+                value={formData.about}
+                onChange={handleChange}
+                rows={6}
+                required
+                disabled={loading}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="event_ref">Associated Event *</Label>
+              {eventsLoading ? (
+                <div className="flex items-center gap-2 p-2">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <span className="text-sm text-muted-foreground">Loading events...</span>
+                </div>
+              ) : (
+                <select
+                  id="event_ref"
+                  name="event_ref"
+                  value={formData.event_ref}
+                  onChange={handleChange}
+                  required
+                  disabled={loading}
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  <option value="">Select an event</option>
+                  {events.map((event) => (
+                    <option key={event._id} value={event._id}>
+                      {event.name} ({event.year})
+                    </option>
+                  ))}
+                </select>
+              )}
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="image_file">Profile Image</Label>
+              <div className="flex gap-2">
+                <Input
+                  id="image_file"
+                  name="image_file"
+                  type="file"
+                  accept="image/*"
+                  onChange={handleFileChange}
+                  disabled={loading}
+                  className="flex-1"
+                />
+                <Button type="button" variant="outline" disabled>
+                  <Upload className="mr-2 h-4 w-4" />
+                  {selectedFile ? selectedFile.name : "No file selected"}
+                </Button>
+              </div>
+              <p className="text-xs text-muted-foreground">Supported formats: JPG, PNG, GIF. Max size: 5MB</p>
+            </div>
+
+            <div className="flex gap-4">
+              <Button type="submit" disabled={loading}>
+                {loading ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Adding Speaker...
+                  </>
+                ) : (
+                  <>
+                    <Save className="mr-2 h-4 w-4" />
+                    Add Speaker
+                  </>
+                )}
+              </Button>
+              <Button type="button" variant="outline" asChild disabled={loading}>
+                <Link href="/admin/dashboard/speakers">Cancel</Link>
+              </Button>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
+    </div>
   )
 }

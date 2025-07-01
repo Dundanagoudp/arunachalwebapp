@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { AppSidebar } from "@/components/app-sidebar"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -11,8 +10,13 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import { Separator } from "@/components/ui/separator"
-import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -527,66 +531,43 @@ export default function HomeManagementPage() {
   }, [])
 
   return (
-    <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 border-b bg-white/80 backdrop-blur-sm sticky top-0 z-40">
-          <div className="flex items-center gap-2 px-4">
-            <SidebarTrigger className="-ml-1" />
-            <Separator orientation="vertical" className="mr-2 data-[orientation=vertical]:h-4" />
-            <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="/admin/dashboard">Admin Panel</BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block" />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>Home Management</BreadcrumbPage>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb>
-          </div>
-        </header>
+    <div className="flex flex-1 flex-col gap-4 p-4 pt-0 bg-white min-h-screen">
+      <div className="mb-6">
+        <h1 className="text-3xl font-bold tracking-tight">Home Page Management</h1>
+        <p className="text-muted-foreground">Manage banners, text content, and buttons for the home page</p>
+      </div>
 
-        <div className="flex flex-1 flex-col gap-4 p-4 pt-0 bg-white min-h-screen">
-          <div className="mb-6">
-            <h1 className="text-3xl font-bold tracking-tight">Home Page Management</h1>
-            <p className="text-muted-foreground">Manage banners, text content, and buttons for the home page</p>
-          </div>
+      <Tabs defaultValue="banners" className="w-full">
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="banners" className="flex items-center gap-2">
+            <ImageIcon className="h-4 w-4" />
+            <span className="hidden sm:inline">Banners</span>
+          </TabsTrigger>
+          <TabsTrigger value="banner-text" className="flex items-center gap-2">
+            <Type className="h-4 w-4" />
+            <span className="hidden sm:inline">Banner Text</span>
+          </TabsTrigger>
+          <TabsTrigger value="button-text" className="flex items-center gap-2">
+            <MousePointer className="h-4 w-4" />
+            <span className="hidden sm:inline">Button Text</span>
+          </TabsTrigger>
+        </TabsList>
 
-          <Tabs defaultValue="banners" className="w-full">
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="banners" className="flex items-center gap-2">
-                <ImageIcon className="h-4 w-4" />
-                <span className="hidden sm:inline">Banners</span>
-              </TabsTrigger>
-              <TabsTrigger value="banner-text" className="flex items-center gap-2">
-                <Type className="h-4 w-4" />
-                <span className="hidden sm:inline">Banner Text</span>
-              </TabsTrigger>
-              <TabsTrigger value="button-text" className="flex items-center gap-2">
-                <MousePointer className="h-4 w-4" />
-                <span className="hidden sm:inline">Button Text</span>
-              </TabsTrigger>
-            </TabsList>
+        {/* Banners Tab */}
+        <TabsContent value="banners" className="space-y-4">
+          <BannersSection />
+        </TabsContent>
 
-            {/* Banners Tab */}
-            <TabsContent value="banners" className="space-y-4">
-              <BannersSection />
-            </TabsContent>
+        {/* Banner Text Tab */}
+        <TabsContent value="banner-text" className="space-y-4">
+          <BannerTextSection />
+        </TabsContent>
 
-            {/* Banner Text Tab */}
-            <TabsContent value="banner-text" className="space-y-4">
-              <BannerTextSection />
-            </TabsContent>
-
-            {/* Button Text Tab */}
-            <TabsContent value="button-text" className="space-y-4">
-              <ButtonTextSection />
-            </TabsContent>
-          </Tabs>
-        </div>
-      </SidebarInset>
-    </SidebarProvider>
+        {/* Button Text Tab */}
+        <TabsContent value="button-text" className="space-y-4">
+          <ButtonTextSection />
+        </TabsContent>
+      </Tabs>
+    </div>
   )
 }

@@ -1,6 +1,5 @@
 "use client"
 
-import { AppSidebar } from "@/components/app-sidebar"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -10,7 +9,6 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import { Separator } from "@/components/ui/separator"
-import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -189,303 +187,280 @@ export default function AdminDashboard() {
 
   return (
     <ProtectedRoute allowedRoles={["admin", "user"]}>
-      <SidebarProvider>
-        <AppSidebar />
-        <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 border-b bg-white/80 backdrop-blur-sm sticky top-0 z-40">
-        <div className="flex items-center gap-2 px-4">
-              <SidebarTrigger className="-ml-1" />
-              <Separator orientation="vertical" className="mr-2 data-[orientation=vertical]:h-4" />
-              <Breadcrumb>
-                <BreadcrumbList>
-                  <BreadcrumbItem className="hidden md:block">
-                    <BreadcrumbLink href="/admin">Dashboard</BreadcrumbLink>
-                  </BreadcrumbItem>
-                  <BreadcrumbSeparator className="hidden md:block" />
-                  <BreadcrumbItem>
-                    <BreadcrumbPage>Dashboard</BreadcrumbPage>
-                  </BreadcrumbItem>
-                </BreadcrumbList>
-              </Breadcrumb>
+      <div className="flex flex-1 flex-col gap-6 p-6 pt-0">
+        {/* Welcome Section */}
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">
+              Welcome back, {isAdmin ? "Admin" : "User"}!
+            </h1>
+            <p className="text-muted-foreground">
+              Here's what's happening with your Arunachal Literature platform today.
+            </p>
+          </div>
+          {isAdmin && (
+            <div className="flex gap-2">
+              <Button asChild>
+                <Link href="/admin/dashboard/content/create">
+                  <Plus className="mr-2 h-4 w-4" />
+                  New Content
+                </Link>
+              </Button>
+              <Button variant="outline" asChild>
+                <Link href="/admin/dashboard/events/create">
+                  <Calendar className="mr-2 h-4 w-4" />
+                  New Event
+                </Link>
+              </Button>
             </div>
-          </header>
+          )}
+        </div>
 
-          <div className="flex flex-1 flex-col gap-6 p-6 pt-0">
-            {/* Welcome Section */}
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-3xl font-bold tracking-tight">
-                  Welcome back, {isAdmin ? "Admin" : "User"}!
-                </h1>
-                <p className="text-muted-foreground">
-                  Here's what's happening with your Arunachal Literature platform today.
-                </p>
-              </div>
-              {isAdmin && (
-                <div className="flex gap-2">
-                  <Button asChild>
-                    <Link href="/admin/dashboard/content/create">
-                      <Plus className="mr-2 h-4 w-4" />
-                      New Content
-                    </Link>
-                  </Button>
-                  <Button variant="outline" asChild>
-                    <Link href="/admin/dashboard/events/create">
-                      <Calendar className="mr-2 h-4 w-4" />
-                      New Event
-                    </Link>
-                  </Button>
-                </div>
-              )}
-            </div>
-
-            {/* Stats Cards - Only show for admin */}
-            {isAdmin && (
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-                {stats.map((stat, index) => (
-                  <Card key={index}>
-                    <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                      <CardTitle className="text-sm font-medium">{stat.title}</CardTitle>
-                      <stat.icon className={`h-4 w-4 ${stat.color}`} />
-                    </CardHeader>
-                    <CardContent>
-                      <div className="text-2xl font-bold">{stat.value}</div>
-                      <div className="flex items-center text-xs text-muted-foreground">
-                        <TrendingUp className="mr-1 h-3 w-3 text-green-600" />
-                        {stat.change}
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
-            )}
-
-            {/* Main Content Grid */}
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-              {/* User Profile Card - Show for users */}
-              {!isAdmin && (
-                <div className="lg:col-span-2">
-                  <UserProfileCard />
-                </div>
-              )}
-
-              {/* Recent Activity - Only show for admin */}
-              {isAdmin && (
-                <Card className="lg:col-span-2">
-                  <CardHeader>
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <CardTitle className="flex items-center gap-2">
-                          <Activity className="h-5 w-5" />
-                          Recent Activity
-                        </CardTitle>
-                        <CardDescription>Latest actions and updates on your platform</CardDescription>
-                      </div>
-                      <Button variant="outline" size="sm" asChild>
-                        <Link href="/admin/dashboard/content/blogs">View All</Link>
-                      </Button>
-                    </div>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-4">
-                      {recentActivity.map((activity) => (
-                        <div key={activity.id} className="flex items-start gap-3">
-                          <div className="w-2 h-2 bg-blue-600 rounded-full mt-2 flex-shrink-0" />
-                          <div className="flex-1 space-y-1">
-                            <p className="text-sm font-medium">{activity.title}</p>
-                            <div className="flex items-center gap-2 text-xs text-muted-foreground">
-                              <span>{activity.time}</span>
-                              <span>•</span>
-                              <span>by {activity.user}</span>
-                            </div>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
-
-              {/* Top Speakers */}
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Mic className="h-5 w-5" />
-                    Top Speakers
-                  </CardTitle>
-                  <CardDescription>Most active speakers this month</CardDescription>
+        {/* Stats Cards - Only show for admin */}
+        {isAdmin && (
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+            {stats.map((stat, index) => (
+              <Card key={index}>
+                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                  <CardTitle className="text-sm font-medium">{stat.title}</CardTitle>
+                  <stat.icon className={`h-4 w-4 ${stat.color}`} />
                 </CardHeader>
                 <CardContent>
-                  <div className="space-y-4">
-                    {(showAllSpeakers ? topSpeakers : topSpeakers.slice(0, 3)).map((speaker, index) => (
-                      <div key={speaker.id} className="flex items-center gap-3">
-                        <div className="flex items-center justify-center w-6 h-6 rounded-full bg-muted text-xs font-medium">
-                          {index + 1}
+                  <div className="text-2xl font-bold">{stat.value}</div>
+                  <div className="flex items-center text-xs text-muted-foreground">
+                    <TrendingUp className="mr-1 h-3 w-3 text-green-600" />
+                    {stat.change}
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        )}
+
+        {/* Main Content Grid */}
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {/* User Profile Card - Show for users */}
+          {!isAdmin && (
+            <div className="lg:col-span-2">
+              <UserProfileCard />
+            </div>
+          )}
+
+          {/* Recent Activity - Only show for admin */}
+          {isAdmin && (
+            <Card className="lg:col-span-2">
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <div>
+                    <CardTitle className="flex items-center gap-2">
+                      <Activity className="h-5 w-5" />
+                      Recent Activity
+                    </CardTitle>
+                    <CardDescription>Latest actions and updates on your platform</CardDescription>
+                  </div>
+                  <Button variant="outline" size="sm" asChild>
+                    <Link href="/admin/dashboard/content/blogs">View All</Link>
+                  </Button>
+                </div>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  {recentActivity.map((activity) => (
+                    <div key={activity.id} className="flex items-start gap-3">
+                      <div className="w-2 h-2 bg-blue-600 rounded-full mt-2 flex-shrink-0" />
+                      <div className="flex-1 space-y-1">
+                        <p className="text-sm font-medium">{activity.title}</p>
+                        <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                          <span>{activity.time}</span>
+                          <span>•</span>
+                          <span>by {activity.user}</span>
                         </div>
-                        <Avatar className="h-8 w-8">
-                          <AvatarImage src={speaker.avatar || "/placeholder.svg"} alt={speaker.name} />
-                          <AvatarFallback>
-                            {speaker.name
-                              .split(" ")
-                              .map((n: string) => n[0])
-                              .join("")}
-                          </AvatarFallback>
-                        </Avatar>
-                        <div className="flex-1">
-                          <p className="text-sm font-medium">{speaker.name}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Top Speakers */}
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Mic className="h-5 w-5" />
+                Top Speakers
+              </CardTitle>
+              <CardDescription>Most active speakers this month</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="space-y-4">
+                {(showAllSpeakers ? topSpeakers : topSpeakers.slice(0, 3)).map((speaker, index) => (
+                  <div key={speaker.id} className="flex items-center gap-3">
+                    <div className="flex items-center justify-center w-6 h-6 rounded-full bg-muted text-xs font-medium">
+                      {index + 1}
+                    </div>
+                    <Avatar className="h-8 w-8">
+                      <AvatarImage src={speaker.avatar || "/placeholder.svg"} alt={speaker.name} />
+                      <AvatarFallback>
+                        {speaker.name
+                          .split(" ")
+                          .map((n: string) => n[0])
+                          .join("")}
+                      </AvatarFallback>
+                    </Avatar>
+                    <div className="flex-1">
+                      <p className="text-sm font-medium">{speaker.name}</p>
+                    </div>
+                  </div>
+                ))}
+                {topSpeakers.length > 3 && (
+                  <div className="flex justify-end pt-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setShowAllSpeakers((prev) => !prev)}
+                      className="text-xs"
+                    >
+                      {showAllSpeakers ? "Show Less" : "See More"}
+                    </Button>
+                  </div>
+                )}
+              </div>
+            </CardContent>
+          </Card>
+
+          {/* Upcoming Events (replaced with Archive Overview) */}
+          <Card className="lg:col-span-2">
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="flex items-center gap-2">
+                    <FileText className="h-5 w-5" />
+                    Archive Overview
+                  </CardTitle>
+                  <CardDescription>Recent uploads and archive stats</CardDescription>
+                </div>
+              </div>
+            </CardHeader>
+            <CardContent>
+              {archiveLoading ? (
+                <div className="animate-pulse space-y-3">
+                  <div className="h-6 bg-gray-200 rounded w-1/2" />
+                  <div className="h-10 bg-gray-100 rounded w-full" />
+                  <div className="h-10 bg-gray-100 rounded w-full" />
+                </div>
+              ) : archiveError ? (
+                <div className="text-red-500 text-sm">{archiveError}</div>
+              ) : archiveStats.total === 0 ? (
+                <div className="text-muted-foreground text-sm">No archive images found.</div>
+              ) : (
+                <>
+                  <div className="text-lg font-bold mb-2">Total Images: {archiveStats.total}</div>
+                  <div className="space-y-2">
+                    {archiveStats.recent.map((img: any) => (
+                      <div key={img._id} className="flex items-center gap-3">
+                        <img src={img.image_url || '/file.svg'} alt={img.originalName || 'Archive Image'} className="w-10 h-10 object-cover rounded" />
+                        <div className="flex-1 min-w-0">
+                          <div className="truncate text-sm font-medium">{img.originalName || 'Untitled'}</div>
+                          <div className="text-xs text-muted-foreground truncate">{img.createdAt ? new Date(img.createdAt).toLocaleDateString() : ''}</div>
                         </div>
                       </div>
                     ))}
-                    {topSpeakers.length > 3 && (
-                      <div className="flex justify-end pt-2">
-                        <Button
-                          variant="outline"
-                          size="sm"
-                          onClick={() => setShowAllSpeakers((prev) => !prev)}
-                          className="text-xs"
-                        >
-                          {showAllSpeakers ? "Show Less" : "See More"}
-                        </Button>
-                      </div>
-                    )}
                   </div>
-                </CardContent>
-              </Card>
+                </>
+              )}
+            </CardContent>
+          </Card>
 
-              {/* Upcoming Events (replaced with Archive Overview) */}
-              <Card className="lg:col-span-2">
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <CardTitle className="flex items-center gap-2">
-                        <FileText className="h-5 w-5" />
-                        Archive Overview
-                      </CardTitle>
-                      <CardDescription>Recent uploads and archive stats</CardDescription>
-                    </div>
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  {archiveLoading ? (
-                    <div className="animate-pulse space-y-3">
-                      <div className="h-6 bg-gray-200 rounded w-1/2" />
-                      <div className="h-10 bg-gray-100 rounded w-full" />
-                      <div className="h-10 bg-gray-100 rounded w-full" />
-                    </div>
-                  ) : archiveError ? (
-                    <div className="text-red-500 text-sm">{archiveError}</div>
-                  ) : archiveStats.total === 0 ? (
-                    <div className="text-muted-foreground text-sm">No archive images found.</div>
-                  ) : (
-                    <>
-                      <div className="text-lg font-bold mb-2">Total Images: {archiveStats.total}</div>
-                      <div className="space-y-2">
-                        {archiveStats.recent.map((img: any) => (
-                          <div key={img._id} className="flex items-center gap-3">
-                            <img src={img.image_url || '/file.svg'} alt={img.originalName || 'Archive Image'} className="w-10 h-10 object-cover rounded" />
-                            <div className="flex-1 min-w-0">
-                              <div className="truncate text-sm font-medium">{img.originalName || 'Untitled'}</div>
-                              <div className="text-xs text-muted-foreground truncate">{img.createdAt ? new Date(img.createdAt).toLocaleDateString() : ''}</div>
-                            </div>
-                          </div>
-                        ))}
-                      </div>
-                    </>
-                  )}
-                </CardContent>
-              </Card>
+          {/* Quick Actions */}
+          <Card>
+            <CardHeader>
+              <CardTitle>Quick Actions</CardTitle>
+              <CardDescription>{isAdmin ? "Common administrative tasks" : "Available actions"}</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-2">
+                <Button variant="outline" className="justify-start" asChild>
+                  <Link href="/admin/dashboard/content/blogs">
+                    <FileText className="mr-2 h-4 w-4" />
+                    View Content
+                  </Link>
+                </Button>
+                <Button variant="outline" className="justify-start" asChild>
+                  <Link href="/admin/dashboard/events">
+                    <Calendar className="mr-2 h-4 w-4" />
+                    View Events
+                  </Link>
+                </Button>
+                <Button variant="outline" className="justify-start" asChild>
+                  <Link href="/admin/dashboard/speakers">
+                    <Mic className="mr-2 h-4 w-4" />
+                    View Speakers
+                  </Link>
+                </Button>
+                {isAdmin && (
+                  <Button variant="outline" className="justify-start" asChild>
+                    <Link href="/admin/dashboard/users">
+                      <Users className="mr-2 h-4 w-4" />
+                      Manage Users
+                    </Link>
+                  </Button>
+                )}
+                {isAdmin && (
+                  <Button variant="outline" className="justify-start" asChild>
+                    <Link href="/admin/dashboard/workshops">
+                      <BookOpen className="mr-2 h-4 w-4" />
+                      Manage Workshops
+                    </Link>
+                  </Button>
+                )}
+              </div>
+              {!isAdmin && (
+                <div className="mt-2 text-xs text-muted-foreground">
+                  Note: Some features are only available to admins.
+                </div>
+              )}
+            </CardContent>
+          </Card>
+        </div>
 
-              {/* Quick Actions */}
-              <Card>
-                <CardHeader>
-                  <CardTitle>Quick Actions</CardTitle>
-                  <CardDescription>{isAdmin ? "Common administrative tasks" : "Available actions"}</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid gap-2">
-                    <Button variant="outline" className="justify-start" asChild>
-                      <Link href="/admin/dashboard/content/blogs">
-                        <FileText className="mr-2 h-4 w-4" />
-                        View Content
-                      </Link>
-                    </Button>
-                    <Button variant="outline" className="justify-start" asChild>
-                      <Link href="/admin/dashboard/events">
-                        <Calendar className="mr-2 h-4 w-4" />
-                        View Events
-                      </Link>
-                    </Button>
-                    <Button variant="outline" className="justify-start" asChild>
-                      <Link href="/admin/dashboard/speakers">
-                        <Mic className="mr-2 h-4 w-4" />
-                        View Speakers
-                      </Link>
-                    </Button>
-                    {isAdmin && (
-                      <Button variant="outline" className="justify-start" asChild>
-                        <Link href="/admin/dashboard/users">
-                          <Users className="mr-2 h-4 w-4" />
-                          Manage Users
-                        </Link>
-                      </Button>
-                    )}
-                    {isAdmin && (
-                      <Button variant="outline" className="justify-start" asChild>
-                        <Link href="/admin/dashboard/workshops">
-                          <BookOpen className="mr-2 h-4 w-4" />
-                          Manage Workshops
-                        </Link>
-                      </Button>
-                    )}
-                  </div>
-                  {!isAdmin && (
-                    <div className="mt-2 text-xs text-muted-foreground">
-                      Note: Some features are only available to admins.
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
-            </div>
-
-            {/* Analytics Overview - Only show for admin */}
-            {isAdmin && (
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <BarChart3 className="h-5 w-5" />
-                    Platform Analytics
-                  </CardTitle>
-                  <CardDescription>Overview of platform performance and engagement</CardDescription>
-                </CardHeader>
-                <CardContent>
-                  <div className="grid gap-4 md:grid-cols-4">
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-blue-600">2.4K</div>
-                      <div className="text-sm text-muted-foreground">Page Views</div>
-                      <div className="text-xs text-green-600">+12% this week</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-green-600">89%</div>
-                      <div className="text-sm text-muted-foreground">Event Attendance</div>
-                      <div className="text-xs text-green-600">+5% from last event</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-purple-600">156</div>
-                      <div className="text-sm text-muted-foreground">New Registrations</div>
-                      <div className="text-xs text-green-600">+23% this month</div>
-                    </div>
-                    <div className="text-center">
-                      <div className="text-2xl font-bold text-orange-600">4.8</div>
-                      <div className="text-sm text-muted-foreground">Avg. Rating</div>
-                      <div className="text-xs text-green-600">+0.2 from last month</div>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-            )}
-          </div>
-        </SidebarInset>
-      </SidebarProvider>
+        {/* Analytics Overview - Only show for admin */}
+        {isAdmin && (
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <BarChart3 className="h-5 w-5" />
+                Platform Analytics
+              </CardTitle>
+              <CardDescription>Overview of platform performance and engagement</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid gap-4 md:grid-cols-4">
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-blue-600">2.4K</div>
+                  <div className="text-sm text-muted-foreground">Page Views</div>
+                  <div className="text-xs text-green-600">+12% this week</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-green-600">89%</div>
+                  <div className="text-sm text-muted-foreground">Event Attendance</div>
+                  <div className="text-xs text-green-600">+5% from last event</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-purple-600">156</div>
+                  <div className="text-sm text-muted-foreground">New Registrations</div>
+                  <div className="text-xs text-green-600">+23% this month</div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-orange-600">4.8</div>
+                  <div className="text-sm text-muted-foreground">Avg. Rating</div>
+                  <div className="text-xs text-green-600">+0.2 from last month</div>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        )}
+      </div>
     </ProtectedRoute>
   )
 }

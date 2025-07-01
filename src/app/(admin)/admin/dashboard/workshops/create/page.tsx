@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-import { AppSidebar } from "@/components/app-sidebar"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -11,7 +10,6 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import { Separator } from "@/components/ui/separator"
-import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -238,239 +236,211 @@ export default function CreateWorkshop() {
   const shouldShowSkeleton = loading || error
 
   return (
-    <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 border-b bg-white/80 backdrop-blur-sm sticky top-0 z-40">
-          <div className="flex items-center gap-2 px-4">
-            <SidebarTrigger className="-ml-1" />
-            <Separator orientation="vertical" className="mr-2 data-[orientation=vertical]:h-4" />
-            <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="/admin/dashboard">Admin Panel</BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block" />
-                <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="/admin/dashboard/workshops">Workshops</BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block" />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>Create Workshop</BreadcrumbPage>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb>
+    <div className="flex flex-1 flex-col gap-4 p-2 sm:p-4 md:gap-6 md:p-6 pt-0 w-full max-w-full">
+      {/* Header */}
+      {shouldShowSkeleton ? (
+        <PageHeaderSkeleton />
+      ) : (
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 w-full max-w-full">
+          <div className="min-w-0">
+            <h1 className="text-2xl md:text-3xl font-bold tracking-tight truncate">Create New Workshop</h1>
+            <p className="text-muted-foreground text-sm md:text-base truncate">Add a new workshop to your events.</p>
           </div>
-        </header>
+          {/* Responsive button group: stack on mobile, row on sm+ */}
+          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+            <Button 
+              variant="outline" 
+              onClick={fetchEvents} 
+              disabled={loading}
+              className="w-full sm:w-auto bg-transparent"
+            >
+              <RefreshCw className={`mr-2 h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+              Refresh Events
+            </Button>
+            <Button variant="outline" asChild className="w-full sm:w-auto bg-transparent" suppressHydrationWarning={true}>
+              <Link href="/admin/dashboard/workshops">
+                <ArrowLeft className="mr-2 h-4 w-4" />
+                Back to Workshops
+              </Link>
+            </Button>
+          </div>
+        </div>
+      )}
 
-        {/* Main content wrapper, no horizontal scroll */}
-        <div className="flex flex-1 flex-col gap-4 p-2 sm:p-4 md:gap-6 md:p-6 pt-0 w-full max-w-full">
-          {/* Header */}
+      {/* Form */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <BookOpen className="h-5 w-5" />
+            Workshop Details
+          </CardTitle>
+          <CardDescription>Fill in the information for your new workshop.</CardDescription>
+        </CardHeader>
+        <CardContent>
           {shouldShowSkeleton ? (
-            <PageHeaderSkeleton />
+            <FormSkeleton />
           ) : (
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 w-full max-w-full">
-              <div className="min-w-0">
-                <h1 className="text-2xl md:text-3xl font-bold tracking-tight truncate">Create New Workshop</h1>
-                <p className="text-muted-foreground text-sm md:text-base truncate">Add a new workshop to your events.</p>
+            <form onSubmit={handleSubmit} className="space-y-6">
+              <div className="grid gap-6 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="name">Workshop Name *</Label>
+                  <Input
+                    id="name"
+                    name="name"
+                    placeholder="Enter workshop name"
+                    value={formData.name}
+                    onChange={handleChange}
+                    required
+                    suppressHydrationWarning={true}
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="eventRef">Associated Event *</Label>
+                  <Select value={formData.eventRef} onValueChange={handleSelectChange} required>
+                    <SelectTrigger suppressHydrationWarning={true}>
+                      <SelectValue placeholder="Select an event" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {loading ? (
+                        <SelectItem value="loading" disabled>
+                          <Loader2 className="h-4 w-4 animate-spin mr-2" />
+                          Loading events...
+                        </SelectItem>
+                      ) : events.length === 0 ? (
+                        <SelectItem value="no-events" disabled>
+                          No events available
+                        </SelectItem>
+                      ) : (
+                        events.map((event) => (
+                          <SelectItem key={event._id} value={event._id}>
+                            {event.name} ({event.year})
+                          </SelectItem>
+                        ))
+                      )}
+                    </SelectContent>
+                  </Select>
+                </div>
               </div>
-              {/* Responsive button group: stack on mobile, row on sm+ */}
-              <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-                <Button 
-                  variant="outline" 
-                  onClick={fetchEvents} 
-                  disabled={loading}
-                  className="w-full sm:w-auto bg-transparent"
-                >
-                  <RefreshCw className={`mr-2 h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
-                  Refresh Events
-                </Button>
-                <Button variant="outline" asChild className="w-full sm:w-auto bg-transparent" suppressHydrationWarning={true}>
-                  <Link href="/admin/dashboard/workshops">
-                    <ArrowLeft className="mr-2 h-4 w-4" />
-                    Back to Workshops
-                  </Link>
-                </Button>
-              </div>
-            </div>
-          )}
 
-          {/* Form */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <BookOpen className="h-5 w-5" />
-                Workshop Details
-              </CardTitle>
-              <CardDescription>Fill in the information for your new workshop.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              {shouldShowSkeleton ? (
-                <FormSkeleton />
-              ) : (
-                <form onSubmit={handleSubmit} className="space-y-6">
-                  <div className="grid gap-6 md:grid-cols-2">
-                    <div className="space-y-2">
-                      <Label htmlFor="name">Workshop Name *</Label>
-                      <Input
-                        id="name"
-                        name="name"
-                        placeholder="Enter workshop name"
-                        value={formData.name}
-                        onChange={handleChange}
+              <div className="space-y-2">
+                <Label htmlFor="about">About Workshop *</Label>
+                <Textarea
+                  id="about"
+                  name="about"
+                  placeholder="Enter workshop description and details"
+                  value={formData.about}
+                  onChange={handleChange}
+                  rows={6}
+                  required
+                  suppressHydrationWarning={true}
+                />
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="registrationFormUrl">Registration Form URL *</Label>
+                <Input
+                  id="registrationFormUrl"
+                  name="registrationFormUrl"
+                  type="url"
+                  placeholder="https://docs.google.com/forms/..."
+                  value={formData.registrationFormUrl}
+                  onChange={handleChange}
+                  required
+                  suppressHydrationWarning={true}
+                />
+                <p className="text-xs text-muted-foreground">Must be a valid Google Forms URL</p>
+              </div>
+
+              <div className="space-y-4">
+                <Label>Workshop Image *</Label>
+                <p className="text-xs text-muted-foreground">Image upload is required</p>
+
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label className="text-sm font-medium">Upload Image File</Label>
+                    <div className="flex flex-col sm:flex-row gap-2">
+                      <input
+                        type="file"
+                        id="imageFile"
+                        accept="image/*"
+                        onChange={handleImageUpload}
+                        className="hidden"
                         required
                         suppressHydrationWarning={true}
                       />
+                      <Button
+                        type="button"
+                        variant="outline"
+                        className="w-full sm:w-auto bg-transparent"
+                        onClick={() => document.getElementById("imageFile")?.click()}
+                        disabled={uploading}
+                        suppressHydrationWarning={true}
+                      >
+                        <Upload className="mr-2 h-4 w-4" />
+                        {uploading ? "Uploading..." : "Choose Image File"}
+                      </Button>
+                      <p className="text-xs text-muted-foreground self-center">
+                        Max size: 5MB. Supported: JPG, PNG, GIF
+                      </p>
                     </div>
+                  </div>
+
+                  {/* Image Preview */}
+                  {uploadedImage && (
                     <div className="space-y-2">
-                      <Label htmlFor="eventRef">Associated Event *</Label>
-                      <Select value={formData.eventRef} onValueChange={handleSelectChange} required>
-                        <SelectTrigger suppressHydrationWarning={true}>
-                          <SelectValue placeholder="Select an event" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {loading ? (
-                            <SelectItem value="loading" disabled>
-                              <Loader2 className="h-4 w-4 animate-spin mr-2" />
-                              Loading events...
-                            </SelectItem>
-                          ) : events.length === 0 ? (
-                            <SelectItem value="no-events" disabled>
-                              No events available
-                            </SelectItem>
-                          ) : (
-                            events.map((event) => (
-                              <SelectItem key={event._id} value={event._id}>
-                                {event.name} ({event.year})
-                              </SelectItem>
-                            ))
-                          )}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="about">About Workshop *</Label>
-                    <Textarea
-                      id="about"
-                      name="about"
-                      placeholder="Enter workshop description and details"
-                      value={formData.about}
-                      onChange={handleChange}
-                      rows={6}
-                      required
-                      suppressHydrationWarning={true}
-                    />
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="registrationFormUrl">Registration Form URL *</Label>
-                    <Input
-                      id="registrationFormUrl"
-                      name="registrationFormUrl"
-                      type="url"
-                      placeholder="https://docs.google.com/forms/..."
-                      value={formData.registrationFormUrl}
-                      onChange={handleChange}
-                      required
-                      suppressHydrationWarning={true}
-                    />
-                    <p className="text-xs text-muted-foreground">Must be a valid Google Forms URL</p>
-                  </div>
-
-                  <div className="space-y-4">
-                    <Label>Workshop Image *</Label>
-                    <p className="text-xs text-muted-foreground">Image upload is required</p>
-
-                    <div className="space-y-4">
-                      <div className="space-y-2">
-                        <Label className="text-sm font-medium">Upload Image File</Label>
-                        <div className="flex flex-col sm:flex-row gap-2">
-                          <input
-                            type="file"
-                            id="imageFile"
-                            accept="image/*"
-                            onChange={handleImageUpload}
-                            className="hidden"
-                            required
-                            suppressHydrationWarning={true}
-                          />
-                          <Button
-                            type="button"
-                            variant="outline"
-                            className="w-full sm:w-auto bg-transparent"
-                            onClick={() => document.getElementById("imageFile")?.click()}
-                            disabled={uploading}
-                            suppressHydrationWarning={true}
-                          >
-                            <Upload className="mr-2 h-4 w-4" />
-                            {uploading ? "Uploading..." : "Choose Image File"}
-                          </Button>
-                          <p className="text-xs text-muted-foreground self-center">
-                            Max size: 5MB. Supported: JPG, PNG, GIF
-                          </p>
-                        </div>
+                      <div className="flex items-center justify-between">
+                        <Label className="text-sm font-medium">Image Preview</Label>
+                        <Button type="button" variant="ghost" size="sm" onClick={removeImage} className="h-auto p-1" suppressHydrationWarning={true}>
+                          <X className="h-4 w-4" />
+                        </Button>
                       </div>
-
-                      {/* Image Preview */}
-                      {uploadedImage && (
-                        <div className="space-y-2">
-                          <div className="flex items-center justify-between">
-                            <Label className="text-sm font-medium">Image Preview</Label>
-                            <Button type="button" variant="ghost" size="sm" onClick={removeImage} className="h-auto p-1" suppressHydrationWarning={true}>
-                              <X className="h-4 w-4" />
-                            </Button>
-                          </div>
-                          <div className="w-full max-w-md h-48 bg-muted rounded-md overflow-hidden border">
-                            <img
-                              src={uploadedImage}
-                              alt="Workshop preview"
-                              className="w-full h-full object-cover"
-                              onError={(e) => {
-                                const target = e.target as HTMLImageElement
-                                target.style.display = "none"
-                                const parent = target.parentElement
-                                if (parent) {
-                                  parent.innerHTML = `
-                                    <div class="w-full h-full flex items-center justify-center text-muted-foreground">
-                                      <p>Image not found or invalid URL</p>
-                                    </div>
-                                  `
-                                }
-                              }}
-                            />
-                          </div>
-                          <p className="text-xs text-muted-foreground">Uploaded file preview</p>
-                        </div>
-                      )}
+                      <div className="w-full max-w-md h-48 bg-muted rounded-md overflow-hidden border">
+                        <img
+                          src={uploadedImage}
+                          alt="Workshop preview"
+                          className="w-full h-full object-cover"
+                          onError={(e) => {
+                            const target = e.target as HTMLImageElement
+                            target.style.display = "none"
+                            const parent = target.parentElement
+                            if (parent) {
+                              parent.innerHTML = `
+                                <div class="w-full h-full flex items-center justify-center text-muted-foreground">
+                                  <p>Image not found or invalid URL</p>
+                                </div>
+                              `
+                            }
+                          }}
+                        />
+                      </div>
+                      <p className="text-xs text-muted-foreground">Uploaded file preview</p>
                     </div>
-                  </div>
+                  )}
+                </div>
+              </div>
 
-                  <div className="flex flex-col sm:flex-row gap-4">
-                    <Button type="submit" disabled={submitting || uploading} className="w-full sm:w-auto" suppressHydrationWarning={true}>
-                      {submitting ? (
-                        <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Creating...
-                        </>
-                      ) : (
-                        <>
-                          <Save className="mr-2 h-4 w-4" />
-                          Create Workshop
-                        </>
-                      )}
-                    </Button>
-                    <Button type="button" variant="outline" asChild className="w-full sm:w-auto bg-transparent" suppressHydrationWarning={true}>
-                      <Link href="/admin/dashboard/workshops">Cancel</Link>
-                    </Button>
-                  </div>
-                </form>
-              )}
-            </CardContent>
-          </Card>
-        </div>
-      </SidebarInset>
-    </SidebarProvider>
+              <div className="flex flex-col sm:flex-row gap-4">
+                <Button type="submit" disabled={submitting || uploading} className="w-full sm:w-auto" suppressHydrationWarning={true}>
+                  {submitting ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Creating...
+                    </>
+                  ) : (
+                    <>
+                      <Save className="mr-2 h-4 w-4" />
+                      Create Workshop
+                    </>
+                  )}
+                </Button>
+                <Button type="button" variant="outline" asChild className="w-full sm:w-auto bg-transparent" suppressHydrationWarning={true}>
+                  <Link href="/admin/dashboard/workshops">Cancel</Link>
+                </Button>
+              </div>
+            </form>
+          )}
+        </CardContent>
+      </Card>
+    </div>
   )
 }

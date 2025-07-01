@@ -124,159 +124,127 @@ export default function EditYearPage() {
 
   if (fetchLoading) {
     return (
-      <SidebarProvider>
-        <AppSidebar />
-        <SidebarInset>
-          <div className="flex items-center justify-center h-screen">
-            <div className="text-center">
-              <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
-              <p>Loading year data...</p>
-            </div>
-          </div>
-        </SidebarInset>
-      </SidebarProvider>
+      <div className="flex items-center justify-center h-screen">
+        <div className="text-center">
+          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
+          <p>Loading year data...</p>
+        </div>
+      </div>
     )
   }
 
   return (
-    <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset>
-      <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 border-b bg-white/80 backdrop-blur-sm sticky top-0 z-40">
-      <div className="flex items-center gap-2 px-4">
-            <SidebarTrigger className="-ml-1" />
-            <Separator orientation="vertical" className="mr-2 data-[orientation=vertical]:h-4" />
-            <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="/admin/dashboard">Admin Panel</BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block" />
-                <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="/admin/dashboard/archive">Archive</BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block" />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>Edit Year {yearData?.year}</BreadcrumbPage>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb>
-          </div>
-        </header>
-
-        <div className="flex flex-1 flex-col gap-6 p-6 pt-0">
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold tracking-tight">Edit Year {yearData?.year}</h1>
-              <p className="text-muted-foreground">Update the year configuration in your archive.</p>
-            </div>
-          </div>
-
-          <div className="max-w-2xl">
-            {success && (
-              <Alert className="mb-6 border-green-200 bg-green-50">
-                <CheckCircle className="h-4 w-4 text-green-600" />
-                <AlertDescription className="text-green-800">
-                  Year updated successfully! You will be redirected to the archive page shortly.
-                </AlertDescription>
-              </Alert>
-            )}
-
-            {error && (
-              <Alert variant="destructive" className="mb-6">
-                <AlertCircle className="h-4 w-4" />
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
-            )}
-
-            <form onSubmit={handleSubmit} className="space-y-6">
-              <Card>
-                <CardHeader>
-                  <CardTitle className="flex items-center gap-2">
-                    <Calendar className="h-5 w-5" />
-                    Year Details
-                  </CardTitle>
-                  <CardDescription>Update the year and configuration for your archive.</CardDescription>
-                </CardHeader>
-                <CardContent className="space-y-6">
-                  <div className="grid gap-4 md:grid-cols-2">
-                    <div className="space-y-2">
-                      <Label htmlFor="year">Year *</Label>
-                      <Input
-                        id="year"
-                        type="number"
-                        value={formData.year}
-                        onChange={(e) => handleInputChange("year", Number.parseInt(e.target.value))}
-                        min="2000"
-                        max="2100"
-                        required
-                      />
-                      <p className="text-xs text-muted-foreground">Enter the year for your archive (2000-2100)</p>
-                    </div>
-                    <div className="space-y-2">
-                      <Label htmlFor="month">Month *</Label>
-                      <Select
-                        value={formData.month.toString()}
-                        onValueChange={(value) => handleInputChange("month", Number.parseInt(value))}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select month" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {months.map((month) => (
-                            <SelectItem key={month.value} value={month.value.toString()}>
-                              {month.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                      <p className="text-xs text-muted-foreground">Select the month for this archive period</p>
-                    </div>
-                  </div>
-
-                  <div className="space-y-2">
-                    <Label htmlFor="totalDays">Total Days *</Label>
-                    <Input
-                      id="totalDays"
-                      type="number"
-                      value={formData.totalDays}
-                      onChange={(e) => handleInputChange("totalDays", Number.parseInt(e.target.value))}
-                      min="1"
-                      max="366"
-                      required
-                    />
-                    <p className="text-xs text-muted-foreground">
-                      Update the total number of days for this archive period.
-                    </p>
-                  </div>
-
-                  <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
-                    <h4 className="font-medium text-blue-900 mb-2">Current Configuration</h4>
-                    <div className="text-sm text-blue-800">
-                      <p>
-                        <strong>Archive Period:</strong> {months.find((m) => m.value === formData.month)?.label}{" "}
-                        {formData.year}
-                      </p>
-                      <p>
-                        <strong>Total Days:</strong> {formData.totalDays} days
-                      </p>
-                    </div>
-                  </div>
-                </CardContent>
-              </Card>
-
-              <div className="flex gap-2">
-                <Button type="submit" disabled={loading || success}>
-                  {loading ? "Updating..." : success ? "Updated Successfully!" : "Update Year"}
-                </Button>
-                <Button type="button" variant="outline" onClick={() => router.back()} disabled={loading}>
-                  Cancel
-                </Button>
-              </div>
-            </form>
-          </div>
+    <div className="flex flex-1 flex-col gap-6 p-6 pt-0">
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Edit Year {yearData?.year}</h1>
+          <p className="text-muted-foreground">Update the year configuration in your archive.</p>
         </div>
-      </SidebarInset>
-    </SidebarProvider>
+      </div>
+
+      <div className="max-w-2xl">
+        {success && (
+          <Alert className="mb-6 border-green-200 bg-green-50">
+            <CheckCircle className="h-4 w-4 text-green-600" />
+            <AlertDescription className="text-green-800">
+              Year updated successfully! You will be redirected to the archive page shortly.
+            </AlertDescription>
+          </Alert>
+        )}
+
+        {error && (
+          <Alert variant="destructive" className="mb-6">
+            <AlertCircle className="h-4 w-4" />
+            <AlertDescription>{error}</AlertDescription>
+          </Alert>
+        )}
+
+        <form onSubmit={handleSubmit} className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Calendar className="h-5 w-5" />
+                Year Details
+              </CardTitle>
+              <CardDescription>Update the year and configuration for your archive.</CardDescription>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid gap-4 md:grid-cols-2">
+                <div className="space-y-2">
+                  <Label htmlFor="year">Year *</Label>
+                  <Input
+                    id="year"
+                    type="number"
+                    value={formData.year}
+                    onChange={(e) => handleInputChange("year", Number.parseInt(e.target.value))}
+                    min="2000"
+                    max="2100"
+                    required
+                  />
+                  <p className="text-xs text-muted-foreground">Enter the year for your archive (2000-2100)</p>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="month">Month *</Label>
+                  <Select
+                    value={formData.month.toString()}
+                    onValueChange={(value) => handleInputChange("month", Number.parseInt(value))}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select month" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {months.map((month) => (
+                        <SelectItem key={month.value} value={month.value.toString()}>
+                          {month.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                  <p className="text-xs text-muted-foreground">Select the month for this archive period</p>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label htmlFor="totalDays">Total Days *</Label>
+                <Input
+                  id="totalDays"
+                  type="number"
+                  value={formData.totalDays}
+                  onChange={(e) => handleInputChange("totalDays", Number.parseInt(e.target.value))}
+                  min="1"
+                  max="366"
+                  required
+                />
+                <p className="text-xs text-muted-foreground">
+                  Update the total number of days for this archive period.
+                </p>
+              </div>
+
+              <div className="p-4 bg-blue-50 rounded-lg border border-blue-200">
+                <h4 className="font-medium text-blue-900 mb-2">Current Configuration</h4>
+                <div className="text-sm text-blue-800">
+                  <p>
+                    <strong>Archive Period:</strong> {months.find((m) => m.value === formData.month)?.label}{" "}
+                    {formData.year}
+                  </p>
+                  <p>
+                    <strong>Total Days:</strong> {formData.totalDays} days
+                  </p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+
+          <div className="flex gap-2">
+            <Button type="submit" disabled={loading || success}>
+              {loading ? "Updating..." : success ? "Updated Successfully!" : "Update Year"}
+            </Button>
+            <Button type="button" variant="outline" onClick={() => router.back()} disabled={loading}>
+              Cancel
+            </Button>
+          </div>
+        </form>
+      </div>
+    </div>
   )
 }
