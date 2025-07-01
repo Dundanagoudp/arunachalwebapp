@@ -1,6 +1,6 @@
 import { Skeleton } from "@/components/ui/skeleton";
 
-export default function ArchiveLoading() {
+export default function ContentLoading() {
   return (
     <div className="flex flex-col gap-6 p-6">
       <div className="space-y-2 mb-4">
@@ -18,4 +18,4 @@ export default function ArchiveLoading() {
       </div>
     </div>
   );
-}
+} 
