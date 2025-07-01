@@ -252,20 +252,22 @@ export function SenderMailManagement() {
             {senderMails.map((mail) => (
               <div
                 key={mail._id}
-                className="flex items-center justify-between p-3 border rounded-lg hover:bg-gray-50 transition-colors"
+                className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 p-3 border rounded-lg hover:bg-gray-50 transition-colors"
               >
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-3 min-w-0">
                   <Mail className="h-4 w-4 text-blue-500" />
-                  <span className="font-medium">{mail.mail}</span>
+                  <span className="font-medium truncate">{mail.mail}</span>
                   <Badge variant="secondary" className="text-xs">
                     Active
                   </Badge>
                 </div>
-                <SenderMailActions
-                  onEdit={() => openEditDialog(mail)}
-                  onDelete={() => handleDeleteSenderMail(mail._id)}
-                  isDeleting={false}
-                />
+                <div className="w-full sm:w-auto">
+                  <SenderMailActions
+                    onEdit={() => openEditDialog(mail)}
+                    onDelete={() => handleDeleteSenderMail(mail._id)}
+                    isDeleting={false}
+                  />
+                </div>
               </div>
             ))}
           </div>
