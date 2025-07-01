@@ -1,6 +1,5 @@
  "use client";
-
-import BlogsLayout from "@/components/(public)/blogs/blogspage";
+import BlogsLayout from "@/components/(public)/blogpages/blogspage";
 
 
 export default function page() {

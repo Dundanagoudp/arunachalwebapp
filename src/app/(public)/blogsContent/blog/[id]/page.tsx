@@ -1,5 +1,5 @@
  "use client";
-import BlogById from '@/components/(public)/blog/[id]/blogById';
+import BlogById from '@/components/(public)/blogpages/blog/[id]/blogById';
 import React from 'react'
 
 function page() {

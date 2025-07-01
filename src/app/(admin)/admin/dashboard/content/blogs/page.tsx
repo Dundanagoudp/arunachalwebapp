@@ -51,6 +51,14 @@ import { useState, useEffect } from "react"
 import { getBlogs, deleteBlog } from "@/service/newsAndBlogs"
 import type { Blog } from "@/types/newAndBlogTypes"
 import { useRouter } from "next/navigation"
+import {
+  Pagination,
+  PaginationContent,
+  PaginationItem,
+  PaginationLink,
+  PaginationPrevious,
+  PaginationNext,
+} from "@/components/ui/pagination";
 
 export default function NewsAndBlogsManagement() {
   const [searchTerm, setSearchTerm] = useState("")
@@ -61,6 +69,8 @@ export default function NewsAndBlogsManagement() {
   const [deleteLoading, setDeleteLoading] = useState<string | null>(null)
   const [success, setSuccess] = useState("")
   const router = useRouter()
+  const [currentPage, setCurrentPage] = useState(1);
+  const pageSize = 10;
 
   useEffect(() => {
     async function fetchBlogs() {
@@ -82,6 +92,11 @@ export default function NewsAndBlogsManagement() {
     fetchBlogs()
   }, [])
 
+  // Reset to first page on search/filter change
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, contentTypeFilter, newsAndBlogs]);
+
   const handleEdit = (id: string) => {
     router.push(`/admin/dashboard/content/edit/${id}`);
   };
@@ -94,6 +109,13 @@ export default function NewsAndBlogsManagement() {
       contentTypeFilter === "all" || content.contentType === contentTypeFilter;
     return matchesSearch && matchesType;
   });
+
+  // Pagination logic
+  const totalPages = Math.ceil(filteredContent.length / pageSize);
+  const paginatedContent = filteredContent.slice(
+    (currentPage - 1) * pageSize,
+    currentPage * pageSize
+  );
 
   const handleDelete = async (contentId: string) => {
     try {
@@ -273,13 +295,13 @@ export default function NewsAndBlogsManagement() {
             <CardHeader>
               <CardTitle>All Content</CardTitle>
               <CardDescription>
-                {newsAndBlogs.length} content piece
-                {newsAndBlogs.length !== 1 ? "s" : ""} found
+                {filteredContent.length} content piece
+                {filteredContent.length !== 1 ? "s" : ""} found
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {newsAndBlogs.map((content) => (
+                {paginatedContent.map((content) => (
                   <div
                     key={content._id}
                     className="flex items-start gap-4 p-4 border rounded-lg"
@@ -383,6 +405,51 @@ export default function NewsAndBlogsManagement() {
                   </div>
                 ))}
               </div>
+              {/* Pagination Controls */}
+              {totalPages > 1 && (
+                <div className="mt-6 flex justify-center">
+                  <Pagination>
+                    <PaginationContent>
+                      <PaginationItem>
+                        <PaginationPrevious
+                          href="#"
+                          onClick={e => {
+                            e.preventDefault();
+                            setCurrentPage((prev) => Math.max(prev - 1, 1));
+                          }}
+                          aria-disabled={currentPage === 1}
+                          className={currentPage === 1 ? 'pointer-events-none opacity-50' : ''}
+                        />
+                      </PaginationItem>
+                      {Array.from({ length: totalPages }, (_, i) => (
+                        <PaginationItem key={i}>
+                          <PaginationLink
+                            href="#"
+                            isActive={currentPage === i + 1}
+                            onClick={e => {
+                              e.preventDefault();
+                              setCurrentPage(i + 1);
+                            }}
+                          >
+                            {i + 1}
+                          </PaginationLink>
+                        </PaginationItem>
+                      ))}
+                      <PaginationItem>
+                        <PaginationNext
+                          href="#"
+                          onClick={e => {
+                            e.preventDefault();
+                            setCurrentPage((prev) => Math.min(prev + 1, totalPages));
+                          }}
+                          aria-disabled={currentPage === totalPages}
+                          className={currentPage === totalPages ? 'pointer-events-none opacity-50' : ''}
+                        />
+                      </PaginationItem>
+                    </PaginationContent>
+                  </Pagination>
+                </div>
+              )}
             </CardContent>
           </Card>
 

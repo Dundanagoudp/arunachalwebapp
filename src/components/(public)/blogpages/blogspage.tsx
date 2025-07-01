@@ -273,7 +273,7 @@ export default function BlogsLayout() {
                         : ""}
                     </p>
                     <Link
-                      href={`/blog/${blog._id}`}
+                      href={`/blogsContent/blog/${blog._id}`}
                       className="text-[#D96D34] font-semibold hover:underline text-sm sm:text-base"
                     >
                       Read More
