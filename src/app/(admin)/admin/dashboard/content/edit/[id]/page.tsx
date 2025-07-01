@@ -26,7 +26,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "@/components/ui/popover";
-import { addBlog, getCategory } from "@/service/newsAndBlogs";
+import { getCategory, updateBlogs, getBlogById } from "@/service/newsAndBlogs";
 import { AppSidebar } from "@/components/app-sidebar";
 import {
   Breadcrumb,
@@ -57,15 +57,21 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@radix-ui/react-separator";
 import { Toggle } from "@/components/ui/toggle";
+import { useParams } from "next/navigation";
+import { Blog } from "@/types/newAndBlogTypes";
 
 const formSchema = z.object({
-  title: z.string().min(1, "Title is required"),
+  title: z.string().min(2, {
+    message: "Title must be at least 2 characters.",
+  }),
   contentType: z.enum(["blog", "link"]),
-  publishedDate: z.date(),
+  publishedDate: z.date({
+    required_error: "A published date is required.",
+  }),
   contents: z.string().optional(),
   link: z.string().url("Please enter a valid URL").optional(),
   image: z.instanceof(File).optional(),
-  category_ref: z.string().min(1, "Category is required"),
+  category_ref: z.string().min(1, "Please select a category"),
 }).refine((data) => {
   return data.contentType !== "blog" || (data.contents && data.contents.length > 0);
 }, {
@@ -78,18 +84,24 @@ const formSchema = z.object({
   path: ["link"],
 });
 
+
 type FormValues = z.infer<typeof formSchema>;
 
 interface Category {
   _id: string;
   name: string;
 }
-export default function NewsBlogForm() {
+
+export default function EditNewsBlogForm() {
+  const params = useParams();
+  const id = params.id as string;
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [options, setOptions] = useState<Category[]>([]);
   const [loading, setLoading] = useState(false);
+  const [blogLoading, setBlogLoading] = useState(true);
+  const [blog, setBlog] = useState<Blog | null>(null);
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -120,27 +132,55 @@ export default function NewsBlogForm() {
   const triggerFileInput = () => {
     fileInputRef.current?.click();
   };
+
+  // Fetch blog data
   useEffect(() => {
-    const fetchOptions = async () => {
-      setLoading(true);
+    const fetchData = async () => {
+      if (!id) return;
+
+      setBlogLoading(true);
       try {
-        // Replace with your actual API endpoint
-        const response = await getCategory();
-        const category = response.data;
-        if (category && Array.isArray(category)) {
-          setOptions(category);
+        // Fetch blog data
+        const blogResponse = await getBlogById(id);
+        if (blogResponse.success && blogResponse.data) {
+          const blogData = blogResponse.data;
+          setBlog(blogData);
+
+          // Update form with existing data
+          form.reset({
+            title: blogData.title || "",
+            contentType: blogData.contentType || "blog",
+            publishedDate: blogData.publishedDate
+              ? new Date(blogData.publishedDate)
+              : new Date(),
+            contents: blogData.contents || "",
+            link: blogData.link || "",
+            category_ref: blogData.category_ref || "",
+          });
+
+          // Set preview image
+          if (blogData.image_url) {
+            setPreviewImage(blogData.image_url);
+          }
+        }
+
+        // Fetch categories
+        const categoryResponse = await getCategory();
+        if (categoryResponse.data && Array.isArray(categoryResponse.data)) {
+          setOptions(categoryResponse.data);
         }
       } catch (error) {
-        console.error("Error fetching options:", error);
+        console.error("Error fetching data:", error);
       } finally {
-        setLoading(false);
+        setBlogLoading(false);
       }
     };
 
-    fetchOptions();
-  }, []);
+    fetchData();
+  }, [id, form]);
 
   const onSubmit = async (values: FormValues) => {
+    console.log('Form submission triggered with values:', values);
     setIsSubmitting(true);
     try {
       const formData = new FormData();
@@ -149,32 +189,59 @@ export default function NewsBlogForm() {
       formData.append("contentType", values.contentType);
       formData.append("publishedDate", values.publishedDate.toISOString());
 
-      if (values.contentType === "blog" && values.contents) {
-        formData.append("contents", values.contents);
-      } else if (values.contentType === "link" && values.link) {
-        formData.append("link", values.link);
+      // Preserve existing image if no new image is uploaded
+      if (!values.image && blog?.image_url) {
+        formData.append("existingImage", blog.image_url);
       }
 
+      // Handle content based on type
+      if (values.contentType === "blog") {
+        // Always send contents, even if empty
+        formData.append("contents", values.contents || "");
+      } else if (values.contentType === "link") {
+        formData.append("link", values.link || "");
+      }
+
+      // Add new image if uploaded
       if (values.image) {
         formData.append("image_url", values.image);
       }
 
-      const response = await addBlog(formData);
+      const response = await updateBlogs(id, formData);
 
       if (!response.success) {
-        throw new Error("Failed to add blog: " + response.message);
+        throw new Error("Failed to update blog: " + response.message);
       }
+      console.log("Success:", response.data);
 
-      const result = response.data;
-      console.log("Success:", result);
-      // Handle success (e.g., show toast, redirect, etc.)
+      // Success handling...
     } catch (error) {
       console.error("Error:", error);
-      // Handle error
     } finally {
       setIsSubmitting(false);
     }
   };
+  const handleRemoveImage = () => {
+    setPreviewImage(null);
+    form.setValue("image", undefined);
+    if (fileInputRef.current) fileInputRef.current.value = "";
+  };
+
+  if (blogLoading) {
+    return (
+      <SidebarProvider>
+        <AppSidebar />
+        <SidebarInset>
+          <div className="flex items-center justify-center h-full">
+            <div className="flex items-center gap-2">
+              <Loader2 className="h-6 w-6 animate-spin" />
+              <span>Loading blog data...</span>
+            </div>
+          </div>
+        </SidebarInset>
+      </SidebarProvider>
+    );
+  }
 
   return (
     <SidebarProvider>
@@ -200,7 +267,7 @@ export default function NewsBlogForm() {
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>
-                  <BreadcrumbPage>Create Content</BreadcrumbPage>
+                  <BreadcrumbPage>Edit Content</BreadcrumbPage>
                 </BreadcrumbItem>
               </BreadcrumbList>
             </Breadcrumb>
@@ -211,10 +278,10 @@ export default function NewsBlogForm() {
           <Card className="w-full">
             <CardHeader>
               <CardTitle className="text-2xl font-bold mb-6">
-                Create New Content
+                Edit Content
               </CardTitle>
               <CardDescription>
-                Add new blog posts, news articles, or external links..
+                Update your blog post, article, or external link.
               </CardDescription>
             </CardHeader>
 
@@ -230,6 +297,14 @@ export default function NewsBlogForm() {
                     render={({ field }) => (
                       <FormItem>
                         <FormLabel>Category</FormLabel>
+                        {blog?.category_ref && (
+                          <div className="text-sm text-muted-foreground mb-2">
+                            Current:{" "}
+                            {options.find(
+                              (cat) => cat._id === blog.category_ref
+                            )?.name || "Unknown"}
+                          </div>
+                        )}
                         <FormControl>
                           {loading ? (
                             <div className="flex items-center gap-2">
@@ -272,6 +347,14 @@ export default function NewsBlogForm() {
                             <FormLabel className="mb-2 block text-sm font-medium text-muted-foreground">
                               Select Content Type
                             </FormLabel>
+                            {blog?.contentType && (
+                              <div className="text-sm text-muted-foreground mb-2">
+                                Current:{" "}
+                                {blog.contentType === "blog"
+                                  ? "📝 Blog Post"
+                                  : "🔗 External Link"}
+                              </div>
+                            )}
                             <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 p-2 rounded-lg w-full sm:w-fit shadow-sm bg-muted">
                               <Toggle
                                 variant={
@@ -308,7 +391,14 @@ export default function NewsBlogForm() {
                       <FormItem>
                         <FormLabel>Title</FormLabel>
                         <FormControl>
-                          <Input placeholder="Enter title" {...field} />
+                          <Input
+                            placeholder={
+                              blog?.title
+                                ? `Current: ${blog.title}`
+                                : "Enter title"
+                            }
+                            {...field}
+                          />
                         </FormControl>
                         <FormMessage />
                       </FormItem>
@@ -324,7 +414,14 @@ export default function NewsBlogForm() {
                           <FormLabel>Content</FormLabel>
                           <FormControl>
                             <Textarea
-                              placeholder="Write your blog content here..."
+                              placeholder={
+                                blog?.contents
+                                  ? `Current content: ${blog.contents.substring(
+                                      0,
+                                      100
+                                    )}...`
+                                  : "Write your blog content here..."
+                              }
                               className="min-h-[200px]"
                               {...field}
                             />
@@ -342,7 +439,11 @@ export default function NewsBlogForm() {
                           <FormLabel>Link URL</FormLabel>
                           <FormControl>
                             <Input
-                              placeholder="https://example.com"
+                              placeholder={
+                                blog?.link
+                                  ? `Current: ${blog.link}`
+                                  : "https://example.com"
+                              }
                               {...field}
                             />
                           </FormControl>
@@ -351,12 +452,19 @@ export default function NewsBlogForm() {
                       )}
                     />
                   )}
+
                   <FormField
                     control={form.control}
                     name="publishedDate"
                     render={({ field }) => (
                       <FormItem className="flex flex-col">
                         <FormLabel>Published Date</FormLabel>
+                        {blog?.publishedDate && (
+                          <div className="text-sm text-muted-foreground mb-2">
+                            Current:{" "}
+                            {format(new Date(blog.publishedDate), "PPP")}
+                          </div>
+                        )}
                         <Popover>
                           <PopoverTrigger asChild>
                             <FormControl>
@@ -393,8 +501,14 @@ export default function NewsBlogForm() {
                       </FormItem>
                     )}
                   />
+
                   <div className="space-y-2">
                     <Label>Featured Image</Label>
+                    {blog?.image_url && !previewImage && (
+                      <div className="text-sm text-muted-foreground mb-2">
+                        Current image is set. Upload a new one to replace it.
+                      </div>
+                    )}
                     <div className="flex items-center gap-4">
                       <input
                         type="file"
@@ -408,12 +522,14 @@ export default function NewsBlogForm() {
                         variant="outline"
                         onClick={triggerFileInput}
                       >
-                        Upload Image
+                        {previewImage || blog?.image_url
+                          ? "Change Image"
+                          : "Upload Image"}
                       </Button>
-                      {previewImage && (
+                      {(previewImage || blog?.image_url) && (
                         <div className="w-20 h-20 rounded-md overflow-hidden border">
                           <img
-                            src={previewImage}
+                            src={previewImage || blog?.image_url}
                             alt="Preview"
                             className="w-full h-full object-cover"
                           />
@@ -425,8 +541,8 @@ export default function NewsBlogForm() {
                     </p>
                   </div>
 
-                  <Button type="submit" disabled={isSubmitting}>
-                    {isSubmitting ? "Submitting..." : "Submit"}
+                  <Button type="submit" disabled={isSubmitting }>
+                    {isSubmitting ? "Updating..." : "Update Content"}
                   </Button>
                 </form>
               </Form>
@@ -437,3 +553,7 @@ export default function NewsBlogForm() {
     </SidebarProvider>
   );
 }
+function refine(arg0: (data: { contentType: string; contents: string; }) => boolean, arg1: { message: string; path: string[]; }) {
+  throw new Error("Function not implemented.");
+}
+

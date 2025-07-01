@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import { AppSidebar } from "@/components/app-sidebar"
+import { AppSidebar } from "@/components/app-sidebar";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -8,14 +8,24 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
-import { Separator } from "@/components/ui/separator"
-import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+} from "@/components/ui/breadcrumb";
+import { Separator } from "@/components/ui/separator";
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,7 +33,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
 import {
   FileText,
   LinkIcon,
@@ -38,11 +48,8 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 import { useState } from "react"
-import { useDeletePermission } from "@/hooks/use-delete-permission"
-import { ContactAdminModal } from "@/components/ui/contact-admin-modal"
 
 export default function NewsAndBlogsManagement() {
-  const { isAdmin } = useDeletePermission()
   const [searchTerm, setSearchTerm] = useState("")
   const [contentTypeFilter, setContentTypeFilter] = useState("all")
 
@@ -52,7 +59,8 @@ export default function NewsAndBlogsManagement() {
       id: 1,
       title: "Arunachal Pradesh Literature Festival 2024 Announcement",
       contentType: "blog",
-      contents: "We are excited to announce the upcoming Arunachal Pradesh Literature Festival 2024...",
+      contents:
+        "We are excited to announce the upcoming Arunachal Pradesh Literature Festival 2024...",
       link: null,
       image_url: "/placeholder.svg?height=200&width=300",
       publishedDate: "2024-01-15",
@@ -74,22 +82,49 @@ export default function NewsAndBlogsManagement() {
       id: 3,
       title: "Preserving Oral Traditions in Digital Age",
       contentType: "blog",
-      contents: "In today's digital world, preserving our rich oral traditions has become more important than ever...",
+      contents:
+        "In today's digital world, preserving our rich oral traditions has become more important than ever...",
       link: null,
       image_url: "/placeholder.svg?height=200&width=300",
       publishedDate: "2024-01-08",
       createdAt: "2024-01-08",
       views: 2341,
     },
-  ]
+  ];
+  const handleDelete = async (contentId: string) => {
+    try {
+      setDeleteLoading(contentId);
+      console.log("Attempting to delete:", contentId);
 
+      const response = await deleteBlog(contentId);
+      console.log("Delete response:", response);
+      if (response.success) {
+        setSuccess("Speaker deleted successfully!");
+        setContents(contents.filter((content) => content._id !== contentId));
+        setTimeout(() => setSuccess(""), 3000);
+      } else {
+        setError(response.error || "Failed to delete speaker");
+        setTimeout(() => setError(""), 3000);
+      }
+    } catch (err) {
+      setError("Failed to delete speaker");
+      setTimeout(() => setError(""), 3000);
+    } finally {
+      setDeleteLoading(null);
+    }
+  };
+  const handelEdit = (id: string) => {
+    router.push(`/admin/dashboard/content/edit/${id}`);
+  };
   const filteredContent = newsAndBlogs.filter((content) => {
     const matchesSearch =
       content.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (content.contents && content.contents.toLowerCase().includes(searchTerm.toLowerCase()))
-    const matchesType = contentTypeFilter === "all" || content.contentType === contentTypeFilter
-    return matchesSearch && matchesType
-  })
+      (content.contents &&
+        content.contents.toLowerCase().includes(searchTerm.toLowerCase()));
+    const matchesType =
+      contentTypeFilter === "all" || content.contentType === contentTypeFilter;
+    return matchesSearch && matchesType;
+  });
 
   return (
     <SidebarProvider>
@@ -98,11 +133,16 @@ export default function NewsAndBlogsManagement() {
         <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
           <div className="flex items-center gap-2 px-4">
             <SidebarTrigger className="-ml-1" />
-            <Separator orientation="vertical" className="mr-2 data-[orientation=vertical]:h-4" />
+            <Separator
+              orientation="vertical"
+              className="mr-2 data-[orientation=vertical]:h-4"
+            />
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="/admin/dashboard">Admin Panel</BreadcrumbLink>
+                  <BreadcrumbLink href="/admin/dashboard">
+                    Admin Panel
+                  </BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem className="hidden md:block">
@@ -121,8 +161,12 @@ export default function NewsAndBlogsManagement() {
           {/* Header */}
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold tracking-tight">News & Blogs Management</h1>
-              <p className="text-muted-foreground">Manage news articles, blog posts, and external links.</p>
+              <h1 className="text-3xl font-bold tracking-tight">
+                News & Blogs Management
+              </h1>
+              <p className="text-muted-foreground">
+                Manage news articles, blog posts, and external links.
+              </p>
             </div>
             <Button asChild>
               <Link href="/admin/content/create">
@@ -136,45 +180,59 @@ export default function NewsAndBlogsManagement() {
           <div className="grid gap-4 md:grid-cols-4">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Content</CardTitle>
+                <CardTitle className="text-sm font-medium">
+                  Total Content
+                </CardTitle>
                 <FileText className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{newsAndBlogs.length}</div>
-                <p className="text-xs text-muted-foreground">All content pieces</p>
+                <div className="text-2xl font-bold">{contents.length}</div>
+                <p className="text-xs text-muted-foreground">
+                  All content pieces
+                </p>
               </CardContent>
             </Card>
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Blog Posts</CardTitle>
+                <CardTitle className="text-sm font-medium">
+                  Blog Posts
+                </CardTitle>
                 <FileText className="h-4 w-4 text-blue-600" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{newsAndBlogs.filter((c) => c.contentType === "blog").length}</div>
+                <div className="text-2xl font-bold">
+                  {contents.filter((c) => c.contentType === "blog").length}
+                </div>
                 <p className="text-xs text-muted-foreground">Full articles</p>
               </CardContent>
             </Card>
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">News Links</CardTitle>
+                <CardTitle className="text-sm font-medium">
+                  News Links
+                </CardTitle>
                 <LinkIcon className="h-4 w-4 text-green-600" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{newsAndBlogs.filter((c) => c.contentType === "link").length}</div>
+                <div className="text-2xl font-bold">
+                  {contents.filter((c) => c.contentType === "link").length}
+                </div>
                 <p className="text-xs text-muted-foreground">External links</p>
               </CardContent>
             </Card>
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Views</CardTitle>
+                <CardTitle className="text-sm font-medium">
+                  Total Views
+                </CardTitle>
                 <Eye className="h-4 w-4 text-purple-600" />
               </CardHeader>
-              <CardContent>
+              {/* <CardContent>
                 <div className="text-2xl font-bold">
-                  {newsAndBlogs.reduce((sum, content) => sum + content.views, 0).toLocaleString()}
+                  {contents.reduce((sum, content) => sum + content.views, 0).toLocaleString()}
                 </div>
                 <p className="text-xs text-muted-foreground">All time views</p>
-              </CardContent>
+              </CardContent> */}
             </Card>
           </div>
 
@@ -220,13 +278,17 @@ export default function NewsAndBlogsManagement() {
             <CardHeader>
               <CardTitle>All Content</CardTitle>
               <CardDescription>
-                {filteredContent.length} content piece{filteredContent.length !== 1 ? "s" : ""} found
+                {contents.length} content piece
+                {contents.length !== 1 ? "s" : ""} found
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {filteredContent.map((content) => (
-                  <div key={content.id} className="flex items-start gap-4 p-4 border rounded-lg">
+                {contents.map((content) => (
+                  <div
+                    key={content._id}
+                    className="flex items-start gap-4 p-4 border rounded-lg"
+                  >
                     <div className="w-24 h-16 bg-muted rounded-md overflow-hidden flex-shrink-0">
                       <img
                         src={content.image_url || "/placeholder.svg"}
@@ -236,8 +298,16 @@ export default function NewsAndBlogsManagement() {
                     </div>
                     <div className="flex-1 space-y-2">
                       <div className="flex items-center gap-2">
-                        <h3 className="text-lg font-semibold line-clamp-1">{content.title}</h3>
-                        <Badge variant={content.contentType === "blog" ? "default" : "secondary"}>
+                        <h3 className="text-lg font-semibold line-clamp-1">
+                          {content.title}
+                        </h3>
+                        <Badge
+                          variant={
+                            content.contentType === "blog"
+                              ? "default"
+                              : "secondary"
+                          }
+                        >
                           <div className="flex items-center gap-1">
                             {content.contentType === "blog" ? (
                               <FileText className="h-3 w-3" />
@@ -249,7 +319,9 @@ export default function NewsAndBlogsManagement() {
                         </Badge>
                       </div>
                       {content.contentType === "blog" && content.contents && (
-                        <p className="text-sm text-muted-foreground line-clamp-2">{content.contents}</p>
+                        <p className="text-sm text-muted-foreground line-clamp-2">
+                          {content.contents}
+                        </p>
                       )}
                       {content.contentType === "link" && content.link && (
                         <div className="flex items-center gap-2 text-sm text-blue-600">
@@ -260,11 +332,13 @@ export default function NewsAndBlogsManagement() {
                       <div className="flex items-center gap-4 text-sm text-muted-foreground">
                         <div className="flex items-center gap-1">
                           <Calendar className="h-4 w-4" />
-                          <span>Published: {content.publishedDate}</span>
+                          <span>
+                            Published: {content.publishedDate?.toLocaleString()}
+                          </span>
                         </div>
                         <div className="flex items-center gap-1">
                           <Eye className="h-4 w-4" />
-                          <span>{content.views} views</span>
+                          {/* <span>{content.views} views</span> */}
                         </div>
                       </div>
                     </div>
@@ -282,34 +356,29 @@ export default function NewsAndBlogsManagement() {
                             <Eye className="mr-2 h-4 w-4" />
                             View
                           </DropdownMenuItem>
-                          <DropdownMenuItem>
+
+                          <DropdownMenuItem
+                            onClick={() => handelEdit(content._id)}
+                          >
                             <Edit className="mr-2 h-4 w-4" />
                             Edit
                           </DropdownMenuItem>
                           {content.contentType === "link" && content.link && (
                             <DropdownMenuItem asChild>
-                              <a href={content.link} target="_blank" rel="noopener noreferrer">
+                              <a
+                                href={content.link}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
                                 <ExternalLink className="mr-2 h-4 w-4" />
                                 Open Link
                               </a>
                             </DropdownMenuItem>
                           )}
-                          {isAdmin ? (
-                            <DropdownMenuItem className="text-red-600">
-                              <Trash2 className="mr-2 h-4 w-4" />
-                              Delete
-                            </DropdownMenuItem>
-                          ) : (
-                            <ContactAdminModal
-                              title="Delete Content Access Denied"
-                              description="You don't have permission to delete content. Please contact the administrator for assistance."
-                            >
-                              <DropdownMenuItem className="text-red-600">
-                                <Trash2 className="mr-2 h-4 w-4" />
-                                Delete
-                              </DropdownMenuItem>
-                            </ContactAdminModal>
-                          )}
+                          <DropdownMenuItem className="text-red-600">
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            Delete
+                          </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </div>
@@ -321,5 +390,5 @@ export default function NewsAndBlogsManagement() {
         </div>
       </SidebarInset>
     </SidebarProvider>
-  )
+  );
 }

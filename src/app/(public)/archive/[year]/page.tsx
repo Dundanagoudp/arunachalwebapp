@@ -13,12 +13,6 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination"
-import { getImagesByYear } from "@/service/archive"
-import SunIcon from "@/components/sunicon-gif"
-import { useSearchParams } from "next/navigation"
-import { use } from "react"
-
-
 
 // Shimmer effect component
 const ShimmerEffect = ({ className }: { className?: string }) => (
