@@ -60,26 +60,31 @@ import { Toggle } from "@/components/ui/toggle";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 
-const formSchema = z.object({
-  title: z.string().min(1, "Title is required"),
-  contentType: z.enum(["blog", "link"]),
-  publishedDate: z.date(),
-  contents: z.string().optional(),
-  link: z.string().url("Please enter a valid URL").optional(),
-  image: z.instanceof(File).optional(),
-  category_ref: z.string().min(1, "Category is required"),
-}).refine((data) => {
-  return data.contentType !== "blog" || (data.contents && data.contents.length > 0);
-}, {
-  message: "Contents is required for blog posts",
-  path: ["contents"],
-}).refine((data) => {
-  return data.contentType !== "link" || (data.link && data.link.length > 0);
-}, {
-  message: "Link is required for link posts",
-  path: ["link"],
-});
+export const formSchema = z
+  .object({
+    title: z.string().min(1, "Title is required"),
+    contentType: z.enum(["blog", "link"]),
+    publishedDate: z.date(),
+    contents: z.string().optional(),
+    link: z.string().optional(),
+    image: z.instanceof(File).optional(),
+    category_ref: z.string().min(1, "Category is required"),
+  })
+  .refine((data) => {
+    return data.contentType === "blog" ? !!data.contents?.trim() : true;
+  }, {
+    message: "Contents are required for blog type",
+    path: ["contents"],
+  })
+  .refine((data) => {
+    return data.contentType === "link" ? !!data.link?.trim() : true;
+  }, {
+    message: "Link is required for link type",
+    path: ["link"],
+  });
 
+
+  
 type FormValues = z.infer<typeof formSchema>;
 
 interface Category {
@@ -146,6 +151,7 @@ export default function NewsBlogForm() {
 
   const onSubmit = async (values: FormValues) => {
     setIsSubmitting(true);
+    console.log('Form submission triggered with values:', values);
     try {
       const formData = new FormData();
       formData.append("category_ref", values.category_ref);

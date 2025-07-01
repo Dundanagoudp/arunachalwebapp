@@ -73,16 +73,18 @@ const formSchema = z.object({
   image: z.instanceof(File).optional(),
   category_ref: z.string().min(1, "Please select a category"),
 }).refine((data) => {
-  return data.contentType !== "blog" || (data.contents && data.contents.length > 0);
-}, {
-  message: "Contents is required for blog posts",
-  path: ["contents"],
-}).refine((data) => {
-  return data.contentType !== "link" || (data.link && data.link.length > 0);
-}, {
-  message: "Link is required for link posts",
-  path: ["link"],
-});
+    return data.contentType === "blog" ? !!data.contents?.trim() : true;
+  }, {
+    message: "Contents are required for blog type",
+    path: ["contents"],
+  })
+  .refine((data) => {
+    return data.contentType === "link" ? !!data.link?.trim() : true;
+  }, {
+    message: "Link is required for link type",
+    path: ["link"],
+  });
+
 
 
 type FormValues = z.infer<typeof formSchema>;
