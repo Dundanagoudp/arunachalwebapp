@@ -143,6 +143,10 @@ const adminNavData = {
           title: "Create Content",
           url: "/admin/dashboard/content/create",
         },
+        {
+          title: "Categories",
+          url: "/admin/dashboard/content/category",
+        },
       ],
     },
     {
