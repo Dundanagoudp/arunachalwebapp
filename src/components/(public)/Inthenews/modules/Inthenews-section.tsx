@@ -78,7 +78,7 @@ export default function Inthenews() {
   const [isLoading, setIsLoading] = useState(true); 
   const [currentPage, setCurrentPage] = useState(1);
   const [posts, setPosts] = useState<Blog[]>([]);
-  const blogsPerPage = 9;
+  const blogsPerPage = 12;
 
   useEffect(() => {
     setMounted(true);
@@ -188,7 +188,7 @@ export default function Inthenews() {
           </>
         ) : (
           <>
-            {posts.map((blog, idx) => (
+            {currentBlogs.map((blog: Blog, idx: number) => (
               <div
                 key={idx}
                 className="bg-white rounded-xl overflow-hidden shadow-md transition-shadow duration-300 hover:shadow-xl"

@@ -80,6 +80,7 @@ export default function BlogsLayout() {
   const [currentPage, setCurrentPage] = useState(1);
   const [content, setContent] = useState<Blog[]>([]);
   const [searchTerm, setSearchTerm] = useState<string>("");
+  const [pendingSearchTerm, setPendingSearchTerm] = useState<string>("");
   const [filteredBlogs, setFilteredBlogs] = useState<Blog[]>([]);
   const blogsPerPage = 9;
 
@@ -116,6 +117,14 @@ export default function BlogsLayout() {
     setFilteredBlogs(results);
   }, [searchTerm, content]);
 
+  // Auto-show all blogs when input is cleared
+  useEffect(() => {
+    if (pendingSearchTerm === "") {
+      setSearchTerm("");
+      setCurrentPage(1);
+    }
+  }, [pendingSearchTerm]);
+
   const truncateText = (text: string, wordLimit: number) => {
     const words = text.split(" ");
     if (words.length > wordLimit) {
@@ -124,10 +133,10 @@ export default function BlogsLayout() {
     return text;
   };
 
-  const totalPages = Math.ceil(content.length / blogsPerPage);
+  const totalPages = Math.ceil(filteredBlogs.length / blogsPerPage);
   const indexOfLastBlog = currentPage * blogsPerPage;
   const indexOfFirstBlog = indexOfLastBlog - blogsPerPage;
-  const currentBlogs = content.slice(indexOfFirstBlog, indexOfLastBlog);
+  const currentBlogs = filteredBlogs.slice(indexOfFirstBlog, indexOfLastBlog);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
@@ -179,12 +188,18 @@ export default function BlogsLayout() {
           <Input
             type="text"
             placeholder="Search by Blog Name"
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
+            value={pendingSearchTerm}
+            onChange={(e) => setPendingSearchTerm(e.target.value)}
             className="w-full pl-4 pr-4 py-4 sm:py-6 lg:py-7 border-2 border-gray-300 rounded-xl focus:ring-orange-500 focus:border-orange-500 text-base sm:text-lg bg-transparent"
           />
           <div className="mt-4 sm:mt-6 flex items-center">
-            <button className="group relative flex items-center hover:scale-105 transition-transform duration-300 focus:outline-none">
+            <button
+              className="group relative flex items-center hover:scale-105 transition-transform duration-300 focus:outline-none"
+              onClick={() => {
+                setSearchTerm(pendingSearchTerm);
+                setCurrentPage(1);
+              }}
+            >
               <span className="bg-[#D96D34] text-white px-4 sm:px-6 py-2 sm:py-3 pr-8 sm:pr-12 rounded-full text-sm sm:text-lg font-medium">
                 Search
               </span>
@@ -192,16 +207,6 @@ export default function BlogsLayout() {
                 <ArrowUpRight className="w-3 h-3 sm:w-4 sm:h-4 text-white transition-transform duration-300 group-hover:rotate-45" />
               </span>
             </button>
-            <ul className="space-y-2">
-              {filteredBlogs.map((blog) => (
-                <li key={blog._id} className="p-2 border rounded shadow-sm">
-                  <div className="font-bold">{blog.title}</div>
-                  <div className="text-gray-600">
-                    {truncateText(blog.contents ?? "", 10)}
-                  </div>
-                </li>
-              ))}
-            </ul>
           </div>
         </div>
       )}
@@ -233,9 +238,9 @@ export default function BlogsLayout() {
           </>
         ) : (
           <>
-            {content.map((blog, idx) => (
+            {currentBlogs.map((blog, idx) => (
               <div
-                key={idx}
+                key={blog._id || idx}
                 className="bg-white rounded-xl overflow-hidden shadow-md transition-shadow duration-300 hover:shadow-xl"
               >
                 <div className="p-3 sm:p-4">
