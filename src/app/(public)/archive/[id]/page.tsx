@@ -4,7 +4,6 @@ import Link from "next/link"
 import Image from "next/image"
 import { ArrowLeft, Download, X } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
-import SunIcon from "@/components/archive/sun-icon"
 import {
   Pagination,
   PaginationContent,
@@ -14,6 +13,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination"
+import SunIcon from "@/components/sunicon-gif"
 
 // Shimmer effect component
 const ShimmerEffect = ({ className }: { className?: string }) => (

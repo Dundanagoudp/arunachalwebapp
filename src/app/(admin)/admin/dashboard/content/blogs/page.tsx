@@ -1,6 +1,6 @@
-"use client"
+"use client";
 
-import { AppSidebar } from "@/components/app-sidebar"
+import { AppSidebar } from "@/components/app-sidebar";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -8,14 +8,24 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
-import { Separator } from "@/components/ui/separator"
-import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
+} from "@/components/ui/breadcrumb";
+import { Separator } from "@/components/ui/separator";
+import {
+  SidebarInset,
+  SidebarProvider,
+  SidebarTrigger,
+} from "@/components/ui/sidebar";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,7 +33,7 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
 import {
   FileText,
   LinkIcon,
@@ -35,13 +45,67 @@ import {
   MoreHorizontal,
   Calendar,
   ExternalLink,
-} from "lucide-react"
-import Link from "next/link"
-import { useState } from "react"
+  Loader2,
+} from "lucide-react";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { deleteBlog, getBlogs } from "@/service/newsAndBlogs";
+import { useRouter } from "next/navigation";
+import {
+  AlertDialogHeader,
+  AlertDialogFooter,
+} from "@/components/ui/alert-dialog";
+import {
+  AlertDialog,
+  AlertDialogTrigger,
+  AlertDialogContent,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from "@radix-ui/react-alert-dialog";
 
+interface ContentItem {
+  _id: string;
+  title: string;
+  contentType: "blog" | "link";
+  link?: string;
+  image_url?: string;
+  contents?: string;
+  publishedDate?: Date;
+}
 export default function NewsAndBlogsManagement() {
-  const [searchTerm, setSearchTerm] = useState("")
-  const [contentTypeFilter, setContentTypeFilter] = useState("all")
+  const [searchTerm, setSearchTerm] = useState("");
+  const [contentTypeFilter, setContentTypeFilter] = useState("all");
+  const [contents, setContents] = useState<ContentItem[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [success, setSuccess] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const router = useRouter();
+  const [deleteLoading, setDeleteLoading] = useState<string | null>(null);
+  useEffect(() => {
+    const fetchContent = async () => {
+      try {
+        // Replace this with your actual API endpoint
+        const response = await getBlogs();
+
+        if (!response.data) {
+          throw new Error("Failed to fetch content");
+        }
+
+        const data = response.data;
+        setContents(data);
+      } catch (err) {
+        setError(
+          err instanceof Error ? err.message : "An unknown error occurred"
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchContent();
+  }, []);
 
   // Mock data - replace with actual API calls
   const newsAndBlogs = [
@@ -49,7 +113,8 @@ export default function NewsAndBlogsManagement() {
       id: 1,
       title: "Arunachal Pradesh Literature Festival 2024 Announcement",
       contentType: "blog",
-      contents: "We are excited to announce the upcoming Arunachal Pradesh Literature Festival 2024...",
+      contents:
+        "We are excited to announce the upcoming Arunachal Pradesh Literature Festival 2024...",
       link: null,
       image_url: "/placeholder.svg?height=200&width=300",
       publishedDate: "2024-01-15",
@@ -71,22 +136,49 @@ export default function NewsAndBlogsManagement() {
       id: 3,
       title: "Preserving Oral Traditions in Digital Age",
       contentType: "blog",
-      contents: "In today's digital world, preserving our rich oral traditions has become more important than ever...",
+      contents:
+        "In today's digital world, preserving our rich oral traditions has become more important than ever...",
       link: null,
       image_url: "/placeholder.svg?height=200&width=300",
       publishedDate: "2024-01-08",
       createdAt: "2024-01-08",
       views: 2341,
     },
-  ]
+  ];
+  const handleDelete = async (contentId: string) => {
+    try {
+      setDeleteLoading(contentId);
+      console.log("Attempting to delete:", contentId);
 
+      const response = await deleteBlog(contentId);
+      console.log("Delete response:", response);
+      if (response.success) {
+        setSuccess("Speaker deleted successfully!");
+        setContents(contents.filter((content) => content._id !== contentId));
+        setTimeout(() => setSuccess(""), 3000);
+      } else {
+        setError(response.error || "Failed to delete speaker");
+        setTimeout(() => setError(""), 3000);
+      }
+    } catch (err) {
+      setError("Failed to delete speaker");
+      setTimeout(() => setError(""), 3000);
+    } finally {
+      setDeleteLoading(null);
+    }
+  };
+  const handelEdit = (id: string) => {
+    router.push(`/admin/dashboard/content/edit/${id}`);
+  };
   const filteredContent = newsAndBlogs.filter((content) => {
     const matchesSearch =
       content.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-      (content.contents && content.contents.toLowerCase().includes(searchTerm.toLowerCase()))
-    const matchesType = contentTypeFilter === "all" || content.contentType === contentTypeFilter
-    return matchesSearch && matchesType
-  })
+      (content.contents &&
+        content.contents.toLowerCase().includes(searchTerm.toLowerCase()));
+    const matchesType =
+      contentTypeFilter === "all" || content.contentType === contentTypeFilter;
+    return matchesSearch && matchesType;
+  });
 
   return (
     <SidebarProvider>
@@ -95,11 +187,16 @@ export default function NewsAndBlogsManagement() {
         <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12">
           <div className="flex items-center gap-2 px-4">
             <SidebarTrigger className="-ml-1" />
-            <Separator orientation="vertical" className="mr-2 data-[orientation=vertical]:h-4" />
+            <Separator
+              orientation="vertical"
+              className="mr-2 data-[orientation=vertical]:h-4"
+            />
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="/admin/dashboard">Admin Panel</BreadcrumbLink>
+                  <BreadcrumbLink href="/admin/dashboard">
+                    Admin Panel
+                  </BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem className="hidden md:block">
@@ -118,8 +215,12 @@ export default function NewsAndBlogsManagement() {
           {/* Header */}
           <div className="flex items-center justify-between">
             <div>
-              <h1 className="text-3xl font-bold tracking-tight">News & Blogs Management</h1>
-              <p className="text-muted-foreground">Manage news articles, blog posts, and external links.</p>
+              <h1 className="text-3xl font-bold tracking-tight">
+                News & Blogs Management
+              </h1>
+              <p className="text-muted-foreground">
+                Manage news articles, blog posts, and external links.
+              </p>
             </div>
             <Button asChild>
               <Link href="/admin/content/create">
@@ -133,45 +234,59 @@ export default function NewsAndBlogsManagement() {
           <div className="grid gap-4 md:grid-cols-4">
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Content</CardTitle>
+                <CardTitle className="text-sm font-medium">
+                  Total Content
+                </CardTitle>
                 <FileText className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{newsAndBlogs.length}</div>
-                <p className="text-xs text-muted-foreground">All content pieces</p>
+                <div className="text-2xl font-bold">{contents.length}</div>
+                <p className="text-xs text-muted-foreground">
+                  All content pieces
+                </p>
               </CardContent>
             </Card>
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Blog Posts</CardTitle>
+                <CardTitle className="text-sm font-medium">
+                  Blog Posts
+                </CardTitle>
                 <FileText className="h-4 w-4 text-blue-600" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{newsAndBlogs.filter((c) => c.contentType === "blog").length}</div>
+                <div className="text-2xl font-bold">
+                  {contents.filter((c) => c.contentType === "blog").length}
+                </div>
                 <p className="text-xs text-muted-foreground">Full articles</p>
               </CardContent>
             </Card>
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">News Links</CardTitle>
+                <CardTitle className="text-sm font-medium">
+                  News Links
+                </CardTitle>
                 <LinkIcon className="h-4 w-4 text-green-600" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{newsAndBlogs.filter((c) => c.contentType === "link").length}</div>
+                <div className="text-2xl font-bold">
+                  {contents.filter((c) => c.contentType === "link").length}
+                </div>
                 <p className="text-xs text-muted-foreground">External links</p>
               </CardContent>
             </Card>
             <Card>
               <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Views</CardTitle>
+                <CardTitle className="text-sm font-medium">
+                  Total Views
+                </CardTitle>
                 <Eye className="h-4 w-4 text-purple-600" />
               </CardHeader>
-              <CardContent>
+              {/* <CardContent>
                 <div className="text-2xl font-bold">
-                  {newsAndBlogs.reduce((sum, content) => sum + content.views, 0).toLocaleString()}
+                  {contents.reduce((sum, content) => sum + content.views, 0).toLocaleString()}
                 </div>
                 <p className="text-xs text-muted-foreground">All time views</p>
-              </CardContent>
+              </CardContent> */}
             </Card>
           </div>
 
@@ -217,13 +332,17 @@ export default function NewsAndBlogsManagement() {
             <CardHeader>
               <CardTitle>All Content</CardTitle>
               <CardDescription>
-                {filteredContent.length} content piece{filteredContent.length !== 1 ? "s" : ""} found
+                {contents.length} content piece
+                {contents.length !== 1 ? "s" : ""} found
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {filteredContent.map((content) => (
-                  <div key={content.id} className="flex items-start gap-4 p-4 border rounded-lg">
+                {contents.map((content) => (
+                  <div
+                    key={content._id}
+                    className="flex items-start gap-4 p-4 border rounded-lg"
+                  >
                     <div className="w-24 h-16 bg-muted rounded-md overflow-hidden flex-shrink-0">
                       <img
                         src={content.image_url || "/placeholder.svg"}
@@ -233,8 +352,16 @@ export default function NewsAndBlogsManagement() {
                     </div>
                     <div className="flex-1 space-y-2">
                       <div className="flex items-center gap-2">
-                        <h3 className="text-lg font-semibold line-clamp-1">{content.title}</h3>
-                        <Badge variant={content.contentType === "blog" ? "default" : "secondary"}>
+                        <h3 className="text-lg font-semibold line-clamp-1">
+                          {content.title}
+                        </h3>
+                        <Badge
+                          variant={
+                            content.contentType === "blog"
+                              ? "default"
+                              : "secondary"
+                          }
+                        >
                           <div className="flex items-center gap-1">
                             {content.contentType === "blog" ? (
                               <FileText className="h-3 w-3" />
@@ -246,7 +373,9 @@ export default function NewsAndBlogsManagement() {
                         </Badge>
                       </div>
                       {content.contentType === "blog" && content.contents && (
-                        <p className="text-sm text-muted-foreground line-clamp-2">{content.contents}</p>
+                        <p className="text-sm text-muted-foreground line-clamp-2">
+                          {content.contents}
+                        </p>
                       )}
                       {content.contentType === "link" && content.link && (
                         <div className="flex items-center gap-2 text-sm text-blue-600">
@@ -257,11 +386,13 @@ export default function NewsAndBlogsManagement() {
                       <div className="flex items-center gap-4 text-sm text-muted-foreground">
                         <div className="flex items-center gap-1">
                           <Calendar className="h-4 w-4" />
-                          <span>Published: {content.publishedDate}</span>
+                          <span>
+                            Published: {content.publishedDate?.toLocaleString()}
+                          </span>
                         </div>
                         <div className="flex items-center gap-1">
                           <Eye className="h-4 w-4" />
-                          <span>{content.views} views</span>
+                          {/* <span>{content.views} views</span> */}
                         </div>
                       </div>
                     </div>
@@ -279,22 +410,84 @@ export default function NewsAndBlogsManagement() {
                             <Eye className="mr-2 h-4 w-4" />
                             View
                           </DropdownMenuItem>
-                          <DropdownMenuItem>
+
+                          <DropdownMenuItem
+                            onClick={() => handelEdit(content._id)}
+                          >
                             <Edit className="mr-2 h-4 w-4" />
                             Edit
                           </DropdownMenuItem>
                           {content.contentType === "link" && content.link && (
                             <DropdownMenuItem asChild>
-                              <a href={content.link} target="_blank" rel="noopener noreferrer">
+                              <a
+                                href={content.link}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                              >
                                 <ExternalLink className="mr-2 h-4 w-4" />
                                 Open Link
                               </a>
                             </DropdownMenuItem>
                           )}
-                          <DropdownMenuItem className="text-red-600">
-                            <Trash2 className="mr-2 h-4 w-4" />
-                            Delete
-                          </DropdownMenuItem>
+                          <AlertDialog>
+                            <AlertDialogTrigger asChild>
+                              <DropdownMenuItem
+                                className="text-red-600 focus:bg-red-50 focus:text-red-700"
+                                onSelect={(e) => e.preventDefault()}
+                              >
+                                <Trash2 className="mr-2 h-4 w-4" />
+                                Delete
+                              </DropdownMenuItem>
+                            </AlertDialogTrigger>
+
+                            <AlertDialogContent className="sm:max-w-[425px] border-2 border-red-100">
+                              <AlertDialogHeader className="space-y-4">
+                                <div className="flex items-center gap-3">
+                                  <AlertDialogTitle className="text-lg font-semibold text-destructive">
+                                    Confirm Deletion
+                                  </AlertDialogTitle>
+                                  <Trash2 className="h-5 w-5 text-destructive" />
+                                </div>
+                                <AlertDialogDescription className="text-foreground/80">
+                                  You're about to permanently delete{" "}
+                                  <span className="font-medium text-foreground">
+                                    "{content.title}"
+                                  </span>
+                                  .
+                                  <br />
+                                  <span className="text-destructive">
+                                    This action cannot be undone.
+                                  </span>
+                                </AlertDialogDescription>
+                              </AlertDialogHeader>
+
+                              <AlertDialogFooter className="mt-4 flex flex-col sm:flex-row gap-2">
+                                <AlertDialogCancel className="w-full mt-0">
+                                  Cancel
+                                </AlertDialogCancel>
+                                <AlertDialogAction asChild>
+                                  <Button
+                                    variant="destructive"
+                                    onClick={() => handleDelete(content._id)}
+                                    disabled={deleteLoading === content._id}
+                                    className="w-full"
+                                  >
+                                    {deleteLoading === content._id ? (
+                                      <>
+                                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                                        Deleting...
+                                      </>
+                                    ) : (
+                                      <>
+                                        <Trash2 className="mr-2 h-4 w-4" />
+                                        Delete Permanently
+                                      </>
+                                    )}
+                                  </Button>
+                                </AlertDialogAction>
+                              </AlertDialogFooter>
+                            </AlertDialogContent>
+                          </AlertDialog>
                         </DropdownMenuContent>
                       </DropdownMenu>
                     </div>
@@ -306,5 +499,5 @@ export default function NewsAndBlogsManagement() {
         </div>
       </SidebarInset>
     </SidebarProvider>
-  )
+  );
 }
