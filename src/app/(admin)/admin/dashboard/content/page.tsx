@@ -47,7 +47,7 @@ export default function ContentManagement() {
               <p className="text-muted-foreground">Manage all your content including blogs, news, and articles.</p>
             </div>
             <Button asChild>
-              <Link href="/admin/content/create">
+              <Link href="/admin/dashboard/content/create">
                 <Plus className="mr-2 h-4 w-4" />
                 Create Content
               </Link>
@@ -70,13 +70,13 @@ export default function ContentManagement() {
                   <p className="text-sm text-muted-foreground">Total articles published</p>
                   <div className="flex gap-2">
                     <Button size="sm" asChild>
-                      <Link href="/admin/content/blogs">
+                      <Link href="/admin/dashboard/content/blogs">
                         <Eye className="mr-2 h-4 w-4" />
                         View All
                       </Link>
                     </Button>
                     <Button size="sm" variant="outline" asChild>
-                      <Link href="/admin/content/create">
+                      <Link href="/admin/dashboard/content/create">
                         <Plus className="mr-2 h-4 w-4" />
                         Create
                       </Link>
@@ -114,13 +114,13 @@ export default function ContentManagement() {
               <CardContent>
                 <div className="space-y-2">
                   <Button variant="outline" className="w-full justify-start" asChild>
-                    <Link href="/admin/content/blogs">
+                    <Link href="/admin/dashboard/content/blogs">
                       <FileText className="mr-2 h-4 w-4" />
                       Manage Blogs
                     </Link>
                   </Button>
                   <Button variant="outline" className="w-full justify-start" asChild>
-                    <Link href="/admin/content/create">
+                    <Link href="/admin/dashboard/content/create">
                       <Plus className="mr-2 h-4 w-4" />
                       Create New
                     </Link>

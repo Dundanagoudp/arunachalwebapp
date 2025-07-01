@@ -263,7 +263,7 @@ export default function EditNewsBlogForm() {
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="/admin/content">Content</BreadcrumbLink>
+                  <BreadcrumbLink href="/admin/dashboard/content">Content</BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>

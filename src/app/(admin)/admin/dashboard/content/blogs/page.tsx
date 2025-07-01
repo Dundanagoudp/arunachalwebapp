@@ -47,74 +47,39 @@ import {
   ExternalLink,
 } from "lucide-react"
 import Link from "next/link"
-import { useState } from "react"
+import { useState, useEffect } from "react"
+import { getBlogs } from "@/service/newsAndBlogs"
+import type { Blog } from "@/types/newAndBlogTypes"
 
 export default function NewsAndBlogsManagement() {
   const [searchTerm, setSearchTerm] = useState("")
   const [contentTypeFilter, setContentTypeFilter] = useState("all")
+  const [newsAndBlogs, setNewsAndBlogs] = useState<Blog[]>([])
+  const [loading, setLoading] = useState(true)
+  const [error, setError] = useState("")
 
-  // Mock data - replace with actual API calls
-  const newsAndBlogs = [
-    {
-      id: 1,
-      title: "Arunachal Pradesh Literature Festival 2024 Announcement",
-      contentType: "blog",
-      contents:
-        "We are excited to announce the upcoming Arunachal Pradesh Literature Festival 2024...",
-      link: null,
-      image_url: "/placeholder.svg?height=200&width=300",
-      publishedDate: "2024-01-15",
-      createdAt: "2024-01-15",
-      views: 1234,
-    },
-    {
-      id: 2,
-      title: "Traditional Stories Workshop Registration Open",
-      contentType: "link",
-      contents: null,
-      link: "https://example.com/workshop-registration",
-      image_url: "/placeholder.svg?height=200&width=300",
-      publishedDate: "2024-01-10",
-      createdAt: "2024-01-10",
-      views: 856,
-    },
-    {
-      id: 3,
-      title: "Preserving Oral Traditions in Digital Age",
-      contentType: "blog",
-      contents:
-        "In today's digital world, preserving our rich oral traditions has become more important than ever...",
-      link: null,
-      image_url: "/placeholder.svg?height=200&width=300",
-      publishedDate: "2024-01-08",
-      createdAt: "2024-01-08",
-      views: 2341,
-    },
-  ];
-  const handleDelete = async (contentId: string) => {
-    try {
-      setDeleteLoading(contentId);
-      console.log("Attempting to delete:", contentId);
-
-      const response = await deleteBlog(contentId);
-      console.log("Delete response:", response);
-      if (response.success) {
-        setSuccess("Speaker deleted successfully!");
-        setContents(contents.filter((content) => content._id !== contentId));
-        setTimeout(() => setSuccess(""), 3000);
-      } else {
-        setError(response.error || "Failed to delete speaker");
-        setTimeout(() => setError(""), 3000);
+  useEffect(() => {
+    async function fetchBlogs() {
+      setLoading(true)
+      setError("")
+      try {
+        const response = await getBlogs()
+        if (response.success && Array.isArray(response.data)) {
+          setNewsAndBlogs(response.data)
+        } else {
+          setError(response.message || "Failed to fetch blogs")
+        }
+      } catch (err) {
+        setError("Failed to fetch blogs")
+      } finally {
+        setLoading(false)
       }
-    } catch (err) {
-      setError("Failed to delete speaker");
-      setTimeout(() => setError(""), 3000);
-    } finally {
-      setDeleteLoading(null);
     }
-  };
+    fetchBlogs()
+  }, [])
+
   const handelEdit = (id: string) => {
-    router.push(`/admin/dashboard/content/edit/${id}`);
+    alert('Edit not implemented in mock data');
   };
   const filteredContent = newsAndBlogs.filter((content) => {
     const matchesSearch =
@@ -125,6 +90,13 @@ export default function NewsAndBlogsManagement() {
       contentTypeFilter === "all" || content.contentType === contentTypeFilter;
     return matchesSearch && matchesType;
   });
+
+  if (loading) {
+    return <div className="p-6">Loading...</div>;
+  }
+  if (error) {
+    return <div className="p-6 text-red-600">{error}</div>;
+  }
 
   return (
     <SidebarProvider>
@@ -146,7 +118,7 @@ export default function NewsAndBlogsManagement() {
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="/admin/content">Content</BreadcrumbLink>
+                  <BreadcrumbLink href="/admin/dashboard/content">Content</BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>
@@ -169,7 +141,7 @@ export default function NewsAndBlogsManagement() {
               </p>
             </div>
             <Button asChild>
-              <Link href="/admin/content/create">
+              <Link href="/admin/dashboard/content/create">
                 <Plus className="mr-2 h-4 w-4" />
                 Create Content
               </Link>
@@ -186,7 +158,7 @@ export default function NewsAndBlogsManagement() {
                 <FileText className="h-4 w-4 text-muted-foreground" />
               </CardHeader>
               <CardContent>
-                <div className="text-2xl font-bold">{contents.length}</div>
+                <div className="text-2xl font-bold">{newsAndBlogs.length}</div>
                 <p className="text-xs text-muted-foreground">
                   All content pieces
                 </p>
@@ -201,7 +173,7 @@ export default function NewsAndBlogsManagement() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">
-                  {contents.filter((c) => c.contentType === "blog").length}
+                  {newsAndBlogs.filter((c) => c.contentType === "blog").length}
                 </div>
                 <p className="text-xs text-muted-foreground">Full articles</p>
               </CardContent>
@@ -215,7 +187,7 @@ export default function NewsAndBlogsManagement() {
               </CardHeader>
               <CardContent>
                 <div className="text-2xl font-bold">
-                  {contents.filter((c) => c.contentType === "link").length}
+                  {newsAndBlogs.filter((c) => c.contentType === "link").length}
                 </div>
                 <p className="text-xs text-muted-foreground">External links</p>
               </CardContent>
@@ -278,13 +250,13 @@ export default function NewsAndBlogsManagement() {
             <CardHeader>
               <CardTitle>All Content</CardTitle>
               <CardDescription>
-                {contents.length} content piece
-                {contents.length !== 1 ? "s" : ""} found
+                {newsAndBlogs.length} content piece
+                {newsAndBlogs.length !== 1 ? "s" : ""} found
               </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {contents.map((content) => (
+                {newsAndBlogs.map((content) => (
                   <div
                     key={content._id}
                     className="flex items-start gap-4 p-4 border rounded-lg"
@@ -375,7 +347,7 @@ export default function NewsAndBlogsManagement() {
                               </a>
                             </DropdownMenuItem>
                           )}
-                          <DropdownMenuItem className="text-red-600">
+                          <DropdownMenuItem className="text-red-600" onClick={() => alert('Delete not implemented in mock data')}>
                             <Trash2 className="mr-2 h-4 w-4" />
                             Delete
                           </DropdownMenuItem>

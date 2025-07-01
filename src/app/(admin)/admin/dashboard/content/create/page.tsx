@@ -57,6 +57,8 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@radix-ui/react-separator";
 import { Toggle } from "@/components/ui/toggle";
+import { useRouter } from "next/navigation";
+import { useToast } from "@/hooks/use-toast";
 
 const formSchema = z.object({
   title: z.string().min(1, "Title is required"),
@@ -90,6 +92,8 @@ export default function NewsBlogForm() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [options, setOptions] = useState<Category[]>([]);
   const [loading, setLoading] = useState(false);
+  const router = useRouter();
+  const { toast } = useToast();
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -149,11 +153,9 @@ export default function NewsBlogForm() {
       formData.append("contentType", values.contentType);
       formData.append("publishedDate", values.publishedDate.toISOString());
 
-      if (values.contentType === "blog" && values.contents) {
-        formData.append("contents", values.contents);
-      } else if (values.contentType === "link" && values.link) {
-        formData.append("link", values.link);
-      }
+      // Always send both fields, empty if not used
+      formData.append("contents", values.contents || "");
+      formData.append("link", values.link || "");
 
       if (values.image) {
         formData.append("image_url", values.image);
@@ -162,15 +164,24 @@ export default function NewsBlogForm() {
       const response = await addBlog(formData);
 
       if (!response.success) {
+        toast({
+          title: "Failed to add blog",
+          description: response.message || "Something went wrong."
+        });
         throw new Error("Failed to add blog: " + response.message);
       }
 
-      const result = response.data;
-      console.log("Success:", result);
-      // Handle success (e.g., show toast, redirect, etc.)
+      toast({
+        title: "Blog created successfully!",
+        description: "Your blog post has been added."
+      });
+      router.push("/admin/dashboard/content/blogs");
     } catch (error) {
+      toast({
+        title: "Error",
+        description: (error as Error).message || "Something went wrong."
+      });
       console.error("Error:", error);
-      // Handle error
     } finally {
       setIsSubmitting(false);
     }
@@ -196,7 +207,7 @@ export default function NewsBlogForm() {
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="/admin/content">Content</BreadcrumbLink>
+                  <BreadcrumbLink href="/admin/dashboard/content">Content</BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>

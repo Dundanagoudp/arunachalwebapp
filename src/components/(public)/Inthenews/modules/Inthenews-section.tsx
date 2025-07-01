@@ -2,8 +2,8 @@
 import Image from "next/image";
 import Link from "next/link"; // Import Link
 import { useState, useEffect } from "react";
-import { ArrowUpRight } from "lucide-react"; // Change to ArrowRight
-import { BlogCardSkeleton } from "@/components/blog-card-skeleton"; // Import the new skeleton component
+import { ArrowUpRight } from "lucide-react"; 
+import { BlogCardSkeleton } from "@/components/blog-card-skeleton"; 
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -75,7 +75,7 @@ const SectionTitleShimmer = () => (
 
 export default function Inthenews() {
   const [mounted, setMounted] = useState(false);
-  const [isLoading, setIsLoading] = useState(true); // Changed to true for demonstration
+  const [isLoading, setIsLoading] = useState(true); 
   const [currentPage, setCurrentPage] = useState(1);
   const [posts, setPosts] = useState<Blog[]>([]);
   const blogsPerPage = 9;
@@ -102,80 +102,6 @@ export default function Inthenews() {
 
     return () => clearTimeout(timer);
   }, []);
-
-  // Blog data array
-  // const blogs = [
-  //   {
-  //     image: "/blogs/blog1.png",
-  //     alt: "Arunachal Literature Festival 2022",
-  //     title: "The Rise of Indigenous Literature in Arunachal Pradesh",
-  //     date: "30 October 2023",
-  //     link: "#",
-  //   },
-  //   {
-  //     image: "/blogs/blog2.png",
-  //     alt: "Literary Icons",
-  //     title: "Meet the Literary Icons Gracing This Year's Festival",
-  //     date: "30 October 2023",
-  //     link: "#",
-  //   },
-  //   {
-  //     image: "/blogs/blog3.png",
-  //     alt: "Arunachal Literature Festival 2019",
-  //     title: "5 Must-Attend Sessions at This Year's Festival",
-  //     date: "30 October 2023",
-  //     link: "#",
-  //   },
-  //   {
-  //     image: "/blogs/blog1.png",
-  //     alt: "Arunachal Literature Festival 2022",
-  //     title: "The Rise of Indigenous Literature in Arunachal Pradesh",
-  //     date: "30 October 2023",
-  //     link: "#",
-  //   },
-  //   {
-  //     image: "/blogs/blog2.png",
-  //     alt: "Literary Icons",
-  //     title: "Meet the Literary Icons Gracing This Year's Festival",
-  //     date: "30 October 2023",
-  //     link: "#",
-  //   },
-  //   {
-  //     image: "/blogs/blog3.png",
-  //     alt: "Arunachal Literature Festival 2019",
-  //     title: "5 Must-Attend Sessions at This Year's Festival",
-  //     date: "30 October 2023",
-  //     link: "#",
-  //   },
-  //   {
-  //     image: "/blogs/blog1.png",
-  //     alt: "Arunachal Literature Festival 2022",
-  //     title: "The Rise of Indigenous Literature in Arunachal Pradesh",
-  //     date: "30 October 2023",
-  //     link: "#",
-  //   },
-  //   {
-  //     image: "/blogs/blog2.png",
-  //     alt: "Literary Icons",
-  //     title: "Meet the Literary Icons Gracing This Year's Festival",
-  //     date: "30 October 2023",
-  //     link: "#",
-  //   },
-  //   {
-  //     image: "/blogs/blog3.png",
-  //     alt: "Arunachal Literature Festival 2019",
-  //     title: "5 Must-Attend Sessions at This Year's Festival",
-  //     date: "30 October 2023",
-  //     link: "#",
-  //   },
-  //   {
-  //     image: "/blogs/blog2.png",
-  //     alt: "Literary Icons",
-  //     title: "Meet the Literary Icons Gracing This Year's Festival",
-  //     date: "30 October 2023",
-  //     link: "#",
-  //   },
-  // ];
 
   const totalPages = Math.ceil(posts.length / blogsPerPage);
   const indexOfLastBlog = currentPage * blogsPerPage;
