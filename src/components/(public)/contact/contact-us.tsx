@@ -11,9 +11,9 @@ import { useToast } from "@/hooks/use-toast"
 export default function ContactUsPage() {
   const inputWrapperClass = "relative"
   const labelClass =
-    "absolute left-4 -top-2.5 text-xs text-gray-700 bg-white px-1 transition-all peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-focus:-top-2.5 peer-focus:text-xs"
+    "absolute left-6 -top-2.5 text-xs text-gray-700 bg-white px-2 transition-all peer-placeholder-shown:top-3.5 peer-placeholder-shown:text-sm peer-focus:-top-2.5 peer-focus:text-xs"
   const inputClass =
-    "peer w-full border border-black rounded-lg p-3 pt-4 text-gray-900 placeholder-transparent focus:outline-none focus:border-black"
+    "peer w-full border border-black rounded-lg p-3 pt-4 pl-6 text-gray-900 placeholder-transparent focus:outline-none focus:border-black"
 
   const [fullName, setFullName] = useState("")
   const [email, setEmail] = useState("")
