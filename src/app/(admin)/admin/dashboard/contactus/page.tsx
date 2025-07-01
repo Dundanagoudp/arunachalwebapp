@@ -31,7 +31,7 @@ import type { ContactMessage } from "@/types/contactus-types"
 import { ContactMessageCard } from "@/components/admin/contact-us/contact-message-card"
 import { SenderMailManagement } from "@/components/admin/contact-us/sender-mail-management"
 // Use the clean service that works with your API
-import {  deleteContactMessage, getAllContactMessages } from "@/service/contactusServices"
+import {  deleteContactMessage, getAllContactMessages, replyToContactMessage } from "@/service/contactusServices"
 
 const ITEMS_PER_PAGE = 6
 
@@ -112,6 +112,23 @@ export default function ContactManagement() {
     }
   }
 
+  // Reply handler
+  const handleReplyToContact = async (contactId: string, data: { message: string }) => {
+    const response = await replyToContactMessage(contactId, data)
+    if (response.success) {
+      setContacts(prev => prev.map(msg => msg._id === contactId ? { ...msg, isReplied: true } : msg))
+      toast({
+        title: "Reply Sent",
+        description: response.message || "Reply sent successfully",
+      })
+    } else {
+      toast({
+        title: "Error",
+        description: response.error || "Failed to send reply",
+      })
+    }
+  }
+
   const totalPages = Math.ceil(filteredContacts.length / ITEMS_PER_PAGE)
   const startIndex = (currentPage - 1) * ITEMS_PER_PAGE
   const endIndex = startIndex + ITEMS_PER_PAGE
@@ -173,11 +190,16 @@ export default function ContactManagement() {
             </div>
 
             <Tabs defaultValue="senders" className="space-y-4">
-              <TabsList className="grid w-full grid-cols-2 lg:w-[400px]">
+              <TabsList className="grid w-full grid-cols-3 lg:w-[600px]">
                 <TabsTrigger value="messages" className="flex items-center gap-2">
                   <MessageSquare className="h-4 w-4" />
                   <span className="hidden sm:inline">Contact Messages</span>
                   <span className="sm:hidden">Messages</span>
+                </TabsTrigger>
+                <TabsTrigger value="replied" className="flex items-center gap-2">
+                  <Mail className="h-4 w-4" />
+                  <span className="hidden sm:inline">Replied Messages</span>
+                  <span className="sm:hidden">Replied</span>
                 </TabsTrigger>
                 <TabsTrigger value="senders" className="flex items-center gap-2">
                   <Mail className="h-4 w-4" />
@@ -260,33 +282,33 @@ export default function ContactManagement() {
                       <ContactSkeleton key={i} />
                     ))}
                   </div>
-                ) : filteredContacts.length === 0 ? (
+                ) : filteredContacts.filter(c => !c.isReplied).length === 0 ? (
                   <Card>
                     <CardContent className="flex flex-col items-center justify-center py-12">
                       <MessageSquare className="h-12 w-12 text-gray-400 mb-4" />
-                      <h3 className="text-lg font-semibold text-gray-900 mb-2">No contact messages found</h3>
+                      <h3 className="text-lg font-semibold text-gray-900 mb-2">No unreplied messages found</h3>
                       <p className="text-gray-500 text-center max-w-sm">
                         {searchTerm
                           ? "Try adjusting your search terms"
-                          : "Contact messages will appear here when received"}
+                          : "Unreplied contact messages will appear here when received"}
                       </p>
                     </CardContent>
                   </Card>
                 ) : (
                   <>
                     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
-                      {currentContacts.map((contact) => (
+                      {filteredContacts.filter(c => !c.isReplied).slice(startIndex, endIndex).map((contact) => (
                         <ContactMessageCard
                           key={contact._id}
                           contact={contact}
                           onDelete={handleDeleteContact}
                           isDeleting={deletingIds.has(contact._id)}
+                          onReply={handleReplyToContact}
                         />
                       ))}
                     </div>
-
                     {/* Pagination */}
-                    {totalPages > 1 && (
+                    {Math.ceil(filteredContacts.filter(c => !c.isReplied).length / ITEMS_PER_PAGE) > 1 && (
                       <div className="flex justify-center">
                         <Pagination>
                           <PaginationContent>
@@ -296,7 +318,7 @@ export default function ContactManagement() {
                                 className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
                               />
                             </PaginationItem>
-                            {[...Array(totalPages)].map((_, i) => (
+                            {[...Array(Math.ceil(filteredContacts.filter(c => !c.isReplied).length / ITEMS_PER_PAGE))].map((_, i) => (
                               <PaginationItem key={i + 1}>
                                 <PaginationLink
                                   onClick={() => setCurrentPage(i + 1)}
@@ -309,9 +331,80 @@ export default function ContactManagement() {
                             ))}
                             <PaginationItem>
                               <PaginationNext
-                                onClick={() => setCurrentPage(Math.min(totalPages, currentPage + 1))}
+                                onClick={() => setCurrentPage(Math.min(Math.ceil(filteredContacts.filter(c => !c.isReplied).length / ITEMS_PER_PAGE), currentPage + 1))}
                                 className={
-                                  currentPage === totalPages ? "pointer-events-none opacity-50" : "cursor-pointer"
+                                  currentPage === Math.ceil(filteredContacts.filter(c => !c.isReplied).length / ITEMS_PER_PAGE) ? "pointer-events-none opacity-50" : "cursor-pointer"
+                                }
+                              />
+                            </PaginationItem>
+                          </PaginationContent>
+                        </Pagination>
+                      </div>
+                    )}
+                  </>
+                )}
+              </TabsContent>
+
+              <TabsContent value="replied" className="space-y-4">
+                {/* Replied Messages Grid */}
+                {loading ? (
+                  <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                    {[...Array(ITEMS_PER_PAGE)].map((_, i) => (
+                      <ContactSkeleton key={i} />
+                    ))}
+                  </div>
+                ) : filteredContacts.filter(c => c.isReplied).length === 0 ? (
+                  <Card>
+                    <CardContent className="flex flex-col items-center justify-center py-12">
+                      <Mail className="h-12 w-12 text-gray-400 mb-4" />
+                      <h3 className="text-lg font-semibold text-gray-900 mb-2">No replied messages found</h3>
+                      <p className="text-gray-500 text-center max-w-sm">
+                        {searchTerm
+                          ? "Try adjusting your search terms"
+                          : "Replied contact messages will appear here after you reply"}
+                      </p>
+                    </CardContent>
+                  </Card>
+                ) : (
+                  <>
+                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                      {filteredContacts.filter(c => c.isReplied).slice(startIndex, endIndex).map((contact) => (
+                        <ContactMessageCard
+                          key={contact._id}
+                          contact={contact}
+                          onDelete={handleDeleteContact}
+                          isDeleting={deletingIds.has(contact._id)}
+                          // No reply button for replied messages
+                        />
+                      ))}
+                    </div>
+                    {/* Pagination */}
+                    {Math.ceil(filteredContacts.filter(c => c.isReplied).length / ITEMS_PER_PAGE) > 1 && (
+                      <div className="flex justify-center">
+                        <Pagination>
+                          <PaginationContent>
+                            <PaginationItem>
+                              <PaginationPrevious
+                                onClick={() => setCurrentPage(Math.max(1, currentPage - 1))}
+                                className={currentPage === 1 ? "pointer-events-none opacity-50" : "cursor-pointer"}
+                              />
+                            </PaginationItem>
+                            {[...Array(Math.ceil(filteredContacts.filter(c => c.isReplied).length / ITEMS_PER_PAGE))].map((_, i) => (
+                              <PaginationItem key={i + 1}>
+                                <PaginationLink
+                                  onClick={() => setCurrentPage(i + 1)}
+                                  isActive={currentPage === i + 1}
+                                  className="cursor-pointer"
+                                >
+                                  {i + 1}
+                                </PaginationLink>
+                              </PaginationItem>
+                            ))}
+                            <PaginationItem>
+                              <PaginationNext
+                                onClick={() => setCurrentPage(Math.min(Math.ceil(filteredContacts.filter(c => c.isReplied).length / ITEMS_PER_PAGE), currentPage + 1))}
+                                className={
+                                  currentPage === Math.ceil(filteredContacts.filter(c => c.isReplied).length / ITEMS_PER_PAGE) ? "pointer-events-none opacity-50" : "cursor-pointer"
                                 }
                               />
                             </PaginationItem>

@@ -24,6 +24,33 @@ import { useToast } from "@/hooks/use-toast"
 import type { SenderMail } from "@/types/contactus-types"
 import { getAllSenderMail, addSenderMail, updateSenderMail, deleteSenderMail } from "@/service/contactusServices"
 
+// Add a helper component for action buttons
+interface SenderMailActionsProps {
+  onEdit: () => void;
+  onDelete: () => void;
+  isDeleting?: boolean;
+}
+function SenderMailActions({ onEdit, onDelete, isDeleting }: SenderMailActionsProps) {
+  return (
+    <div className="flex flex-col sm:flex-row gap-2 w-full">
+      <Button variant="outline" size="sm" onClick={onEdit} className="flex-1">
+        <Edit className="h-4 w-4 mr-1" />
+        Edit
+      </Button>
+      <Button
+        variant="outline"
+        size="sm"
+        className="text-red-600 hover:text-red-700 bg-transparent flex-1"
+        onClick={onDelete}
+        disabled={isDeleting}
+      >
+        <Trash2 className="h-4 w-4 mr-1" />
+        Delete
+      </Button>
+    </div>
+  )
+}
+
 export function SenderMailManagement() {
   const [senderMails, setSenderMails] = useState<SenderMail[]>([])
   const [loading, setLoading] = useState(true)
@@ -234,37 +261,11 @@ export function SenderMailManagement() {
                     Active
                   </Badge>
                 </div>
-                <div className="flex flex-col sm:flex-row gap-2">
-                  <Button variant="outline" size="sm" onClick={() => openEditDialog(mail)}>
-                    <Edit className="h-4 w-4 mr-1" />
-                    Edit
-                  </Button>
-                  <AlertDialog>
-                    <AlertDialogTrigger asChild>
-                      <Button variant="outline" size="sm" className="text-red-600 hover:text-red-700 bg-transparent">
-                        <Trash2 className="h-4 w-4 mr-1" />
-                        Delete
-                      </Button>
-                    </AlertDialogTrigger>
-                    <AlertDialogContent>
-                      <AlertDialogHeader>
-                        <AlertDialogTitle>Delete Sender Email</AlertDialogTitle>
-                        <AlertDialogDescription>
-                          Are you sure you want to delete "{mail.mail}"? This action cannot be undone.
-                        </AlertDialogDescription>
-                      </AlertDialogHeader>
-                      <AlertDialogFooter>
-                        <AlertDialogCancel>Cancel</AlertDialogCancel>
-                        <AlertDialogAction
-                          onClick={() => handleDeleteSenderMail(mail._id)}
-                          className="bg-red-600 hover:bg-red-700"
-                        >
-                          Delete
-                        </AlertDialogAction>
-                      </AlertDialogFooter>
-                    </AlertDialogContent>
-                  </AlertDialog>
-                </div>
+                <SenderMailActions
+                  onEdit={() => openEditDialog(mail)}
+                  onDelete={() => handleDeleteSenderMail(mail._id)}
+                  isDeleting={false}
+                />
               </div>
             ))}
           </div>
@@ -272,7 +273,7 @@ export function SenderMailManagement() {
 
         {/* Add Email Dialog */}
         <Dialog open={isAddOpen} onOpenChange={setIsAddOpen}>
-          <DialogContent>
+          <DialogContent className="w-full max-w-md sm:max-w-lg">
             <DialogHeader>
               <DialogTitle>Add Sender Email</DialogTitle>
             </DialogHeader>
@@ -308,7 +309,7 @@ export function SenderMailManagement() {
 
         {/* Edit Email Dialog */}
         <Dialog open={isEditOpen} onOpenChange={setIsEditOpen}>
-          <DialogContent>
+          <DialogContent className="w-full max-w-md sm:max-w-lg">
             <DialogHeader>
               <DialogTitle>Edit Sender Email</DialogTitle>
             </DialogHeader>

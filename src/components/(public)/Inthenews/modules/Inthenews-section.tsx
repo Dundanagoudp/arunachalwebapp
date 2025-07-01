@@ -195,12 +195,21 @@ export default function Inthenews() {
               >
                 <div className="p-3 sm:p-4">
                   <div className="relative w-full h-48 sm:h-56 lg:h-64 mb-3 sm:mb-4 overflow-hidden rounded-lg">
-                    <Image
-                      src={blog.image_url || ""}
-                      alt={blog.title}
-                      fill
-                      className="object-cover transition-transform duration-300 hover:scale-105"
-                    />
+                    {blog.image_url ? (
+                      <Image
+                        src={blog.image_url}
+                        alt={blog.title}
+                        fill
+                        className="object-cover transition-transform duration-300 hover:scale-105"
+                      />
+                    ) : (
+                      <Image
+                        src="/file.svg" // fallback placeholder image in public/
+                        alt="No image available"
+                        fill
+                        className="object-cover transition-transform duration-300 hover:scale-105 opacity-50"
+                      />
+                    )}
                   </div>
                   <h3 className="text-lg sm:text-xl font-bold mt-3 sm:mt-4 mb-2 min-h-[3rem] sm:min-h-[4rem] lg:min-h-[5rem] line-clamp-2">
                     {blog.title}

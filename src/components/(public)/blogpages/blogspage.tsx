@@ -223,7 +223,7 @@ export default function BlogsLayout() {
       )}
 
       {/* Blog Cards or Shimmer Skeletons */}
-      <div className="grid grid-cols-1 gap-4 sm:gap-6 lg:gap-8 max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="grid grid-cols-1 gap-4 sm:gap-6 lg:gap-8 max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10 sm:grid-cols-2 lg:grid-cols-3 items-stretch">
         {isLoading ? (
           <>
             <BlogCardShimmer />
@@ -241,9 +241,9 @@ export default function BlogsLayout() {
             {currentBlogs.map((blog, idx) => (
               <div
                 key={blog._id || idx}
-                className="bg-white rounded-xl overflow-hidden shadow-md transition-shadow duration-300 hover:shadow-xl"
+                className="bg-white rounded-xl overflow-hidden shadow-md transition-shadow duration-300 hover:shadow-xl h-full flex flex-col"
               >
-                <div className="p-3 sm:p-4">
+                <div className="p-3 sm:p-4 flex flex-col flex-1">
                   <div className="relative w-full h-48 sm:h-56 lg:h-64 mb-3 sm:mb-4 overflow-hidden rounded-lg">
                     <Image
                       src={blog.image_url || ""}
@@ -252,14 +252,14 @@ export default function BlogsLayout() {
                       className="object-cover transition-transform duration-300 group-hover:scale-105"
                     />
                   </div>
-                  <h3 className="text-lg sm:text-xl font-bold mt-3 sm:mt-4 mb-2 min-h-[3rem] sm:min-h-[4rem] lg:min-h-[5rem] line-clamp-2">
+                  <h3 className="text-lg sm:text-xl font-bold mt-3 sm:mt-4 mb-1 line-clamp-2">
                     {blog.title}
                   </h3>
-                  <p className="text-gray-500 text-xs sm:text-sm">
-                    {truncateText(blog.contents || "", 20)}
+                  <p className="text-gray-500 text-xs sm:text-sm flex-1 line-clamp-2 mb-0">
+                    {blog.contents || ""}
                   </p>
 
-                  <div className="flex justify-between items-center mt-4 sm:mt-6">
+                  <div className="flex justify-between items-center mt-2 sm:mt-2">
                     <p className="text-gray-500 text-xs sm:text-sm">
                       {blog.publishedDate
                         ? new Date(blog.publishedDate).toLocaleDateString(
