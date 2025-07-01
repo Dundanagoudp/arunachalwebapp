@@ -48,8 +48,9 @@ import {
 } from "lucide-react"
 import Link from "next/link"
 import { useState, useEffect } from "react"
-import { getBlogs } from "@/service/newsAndBlogs"
+import { getBlogs, deleteBlog } from "@/service/newsAndBlogs"
 import type { Blog } from "@/types/newAndBlogTypes"
+import { useRouter } from "next/navigation"
 
 export default function NewsAndBlogsManagement() {
   const [searchTerm, setSearchTerm] = useState("")
@@ -57,6 +58,9 @@ export default function NewsAndBlogsManagement() {
   const [newsAndBlogs, setNewsAndBlogs] = useState<Blog[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
+  const [deleteLoading, setDeleteLoading] = useState<string | null>(null)
+  const [success, setSuccess] = useState("")
+  const router = useRouter()
 
   useEffect(() => {
     async function fetchBlogs() {
@@ -78,8 +82,8 @@ export default function NewsAndBlogsManagement() {
     fetchBlogs()
   }, [])
 
-  const handelEdit = (id: string) => {
-    alert('Edit not implemented in mock data');
+  const handleEdit = (id: string) => {
+    router.push(`/admin/dashboard/content/edit/${id}`);
   };
   const filteredContent = newsAndBlogs.filter((content) => {
     const matchesSearch =
@@ -90,6 +94,25 @@ export default function NewsAndBlogsManagement() {
       contentTypeFilter === "all" || content.contentType === contentTypeFilter;
     return matchesSearch && matchesType;
   });
+
+  const handleDelete = async (contentId: string) => {
+    try {
+      setDeleteLoading(contentId);
+      setSuccess("");
+      const response = await deleteBlog(contentId);
+      if (response.success) {
+        setSuccess("Content deleted successfully!");
+        setNewsAndBlogs(newsAndBlogs.filter((content) => content._id !== contentId));
+        setTimeout(() => setSuccess(""), 3000);
+      } else {
+        setSuccess(response.error || "Failed to delete content");
+      }
+    } catch (error) {
+      setSuccess("Failed to delete content");
+    } finally {
+      setDeleteLoading(null);
+    }
+  };
 
   if (loading) {
     return <div className="p-6">Loading...</div>;
@@ -330,7 +353,7 @@ export default function NewsAndBlogsManagement() {
                           </DropdownMenuItem>
 
                           <DropdownMenuItem
-                            onClick={() => handelEdit(content._id)}
+                            onClick={() => handleEdit(content._id)}
                           >
                             <Edit className="mr-2 h-4 w-4" />
                             Edit
@@ -347,9 +370,12 @@ export default function NewsAndBlogsManagement() {
                               </a>
                             </DropdownMenuItem>
                           )}
-                          <DropdownMenuItem className="text-red-600" onClick={() => alert('Delete not implemented in mock data')}>
-                            <Trash2 className="mr-2 h-4 w-4" />
-                            Delete
+                          <DropdownMenuItem className="text-red-600" onClick={() => handleDelete(content._id)}>
+                            {deleteLoading === content._id ? (
+                              <span className="flex items-center"><Trash2 className="mr-2 h-4 w-4 animate-spin" /> Deleting...</span>
+                            ) : (
+                              <><Trash2 className="mr-2 h-4 w-4" /> Delete</>
+                            )}
                           </DropdownMenuItem>
                         </DropdownMenuContent>
                       </DropdownMenu>
@@ -359,6 +385,10 @@ export default function NewsAndBlogsManagement() {
               </div>
             </CardContent>
           </Card>
+
+          {success && (
+            <div className="p-2 bg-green-100 text-green-800 rounded mb-2">{success}</div>
+          )}
         </div>
       </SidebarInset>
     </SidebarProvider>
