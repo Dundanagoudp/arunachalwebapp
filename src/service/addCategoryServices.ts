@@ -27,7 +27,6 @@ export async function getCategory(): Promise<ApiResponse<Category[]>> {
       data: response.data,
     };
   } catch (error: any) {
-    console.error("API Error:", error);
     return {
       success: false,
       error: error.response?.data?.message || "Failed to fetch categories",
@@ -44,7 +43,6 @@ export async function getCategoryById(id: string): Promise<ApiResponse<Category>
       data: response.data,
     };
   } catch (error: any) {
-    console.error("API Error:", error);
     return {
       success: false,
       error: error.response?.data?.message || "Failed to fetch category",
@@ -62,7 +60,6 @@ export async function updateCategory(id: string, data: Category): Promise<ApiRes
       message: "Category updated successfully",
     };
   } catch (error: any) {
-    console.error("API Error:", error);
     return {
       success: false,
       error: error.response?.data?.message || "Failed to update category",
@@ -79,7 +76,6 @@ export async function deleteCategory(id: string): Promise<ApiResponse<null>> {
       message: "Category deleted successfully",
     };
   } catch (error: any) {
-    console.error("API Error:", error);
     return {
       success: false,
       error: error.response?.data?.message || "Failed to delete category",
