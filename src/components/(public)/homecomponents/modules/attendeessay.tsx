@@ -247,12 +247,24 @@ function TestimonialCard({ name, title, quote, avatar, mobilePadding }: Testimon
         </div>
         <div className="relative flex-grow mt-2 font-bilo text-base">
           {/* Opening quote */}
-          <svg className="absolute left-2 top-1 w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 24 24"><path d="M7.17 17.66c-1.1 0-2-.9-2-2v-3.34c0-2.21 1.79-4 4-4h.5c.28 0 .5.22.5.5v1c0 .28-.22.5-.5.5h-.5c-1.1 0-2 .9-2 2v3.34c0 .28-.22.5-.5.5s-.5-.22-.5-.5zm8 0c-1.1 0-2-.9-2-2v-3.34c0-2.21 1.79-4 4-4h.5c.28 0 .5.22.5.5v1c0 .28-.22.5-.5.5h-.5c-1.1 0-2 .9-2 2v3.34c0 .28-.22.5-.5.5s-.5-.22-.5-.5z"/></svg>
-          <p className={`text-base leading-relaxed pl-6 pr-4 pt-1 pb-3 text-left font-bilo`}>
+          <Image
+            src="/attendeessay/Closing quote.png"
+            alt="Opening quote"
+            width={20}
+            height={20}
+            className="absolute left-2 top-1 w-5 h-5 object-contain"
+          />
+          <p className={`text-base leading-relaxed pl-8 pr-2 pt-1 pb-4 text-left font-bilo`}>
             {name}
           </p>
           {/* Closing quote (inverted) */}
-          <svg className="absolute -right-2 bottom-1 w-5 h-5 text-yellow-400 rotate-180" fill="currentColor" viewBox="0 0 24 24"><path d="M7.17 17.66c-1.1 0-2-.9-2-2v-3.34c0-2.21 1.79-4 4-4h.5c.28 0 .5.22.5.5v1c0 .28-.22.5-.5.5h-.5c-1.1 0-2 .9-2 2v3.34c0 .28-.22.5-.5.5s-.5-.22-.5-.5zm8 0c-1.1 0-2-.9-2-2v-3.34c0-2.21 1.79-4 4-4h.5c.28 0 .5.22.5.5v1c0 .28-.22.5-.5.5h-.5c-1.1 0-2 .9-2 2v3.34c0 .28-.22.5-.5.5s-.5-.22-.5-.5z"/></svg>
+          <Image
+            src="/attendeessay/Closing quote.png"
+            alt="Closing quote"
+            width={20}
+            height={20}
+            className="absolute right-2 bottom-1 w-5 h-5 object-contain rotate-180"
+          />
         </div>
       </CardContent>
     </Card>
