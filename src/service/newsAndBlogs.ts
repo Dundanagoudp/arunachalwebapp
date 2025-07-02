@@ -21,7 +21,6 @@ export async function addBlog(data: any): Promise<ApiResponse<Blog>> {
       errorMessage = error.message;
     }
 
-    console.error("API Error:", error);
     return {
       success: false,
       message: errorMessage,
@@ -45,7 +44,6 @@ export async function getBlogs(): Promise<ApiResponse<Blog[]>> {
       errorMessage = error.message;
     }
 
-    console.error("API Error:", error);
     return {
       success: false,
       message: errorMessage,
@@ -75,7 +73,6 @@ export async function updateBlogs(
       errorMessage = error.message;
     }
 
-    console.error("API Error:", error);
     return {
       success: false,
       message: errorMessage,
@@ -99,7 +96,6 @@ export async function getCategory(): Promise<ApiResponse<Category>> {
       errorMessage = error.message;
     }
 
-    console.error("API Error:", error);
     return {
       success: false,
       error: error.response?.data?.message || "Failed to fetch category",
@@ -121,7 +117,6 @@ export async function getBlogById(id: string): Promise<ApiResponse<Blog>> {
     } else if (error.message) {
       errorMessage = error.message;
     }
-    console.error("API Error:", error);
     return {
       success: false,
 
@@ -143,7 +138,6 @@ export async function getBlogOnly(id: string): Promise<ApiResponse<Blog>> {
     } else if (error.message) {
       errorMessage = error.message;
     }
-    console.error("API Error:", error);
     return {
       success: false,
 

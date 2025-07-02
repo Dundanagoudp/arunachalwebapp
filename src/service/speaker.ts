@@ -22,14 +22,11 @@ export async function getSpeaker(): Promise<ApiResponse<Speaker[]>> {
   try {
     const response = await apiClient.get("/speaker/getSpeaker")
 
-    console.log("Raw API response:", response.data) // Debug log
-
     // Based on your API response structure: {"message": "Speaker found", "speaker": [...]}
     const speakersData = response.data.speaker
 
     // Ensure it's an array
     if (!Array.isArray(speakersData)) {
-      console.error("Expected array but got:", typeof speakersData, speakersData)
       return {
         success: false,
         error: "Invalid response format - expected array of speakers",
@@ -42,7 +39,6 @@ export async function getSpeaker(): Promise<ApiResponse<Speaker[]>> {
       message: response.data.message || "Speakers fetched successfully",
     }
   } catch (error: any) {
-    console.error("getSpeaker error:", error)
     return {
       success: false,
       error: error.response?.data?.message || "Failed to fetch speakers",

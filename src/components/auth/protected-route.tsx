@@ -13,7 +13,7 @@ type ProtectedRouteProps = {
 export default function ProtectedRoute({
   children,
   allowedRoles,
-  authPage = false, // Default to false
+  authPage = false, 
 }: ProtectedRouteProps) {
   const router = useRouter();
   const [isChecking, setIsChecking] = useState(true);
@@ -29,7 +29,7 @@ export default function ProtectedRoute({
             router.replace("/admin/dashboard");
             break;
           default:
-            router.replace("/user/dashboard");
+            router.replace("/admin/dashboard");
         }
         return;
       }
