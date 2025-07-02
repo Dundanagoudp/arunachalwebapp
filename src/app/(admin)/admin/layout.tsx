@@ -16,7 +16,7 @@ import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
 import { usePathname } from 'next/navigation';
 import { DynamicBreadcrumb } from "@/components/admin/DynamicBreadcrumb";
-import ProtectedRoute from "@/components/auth/protected-route";
+import ProtectedRoute from '@/components/auth/protected-route'
 
 // Loading component for admin layout
 function AdminLayoutLoading() {

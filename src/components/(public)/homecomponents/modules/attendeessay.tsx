@@ -121,14 +121,14 @@ export default function Attendeessay() {
           <div className="flex items-center justify-center gap-4 mb-6">
             <span className="w-3 h-3 rounded-full bg-yellow-400" />
             <h2 
-              className="text-2xl md:text-3xl font-extrabold tracking-wider uppercase text-yellow-400 drop-shadow-lg font-bilo"
+              className="text-2xl md:text-3xl font-bold font-serif tracking-wide uppercase text-yellow-400 drop-shadow-lg font-bilo"
             >
               Arunachal Literature Festival
             </h2>
             <span className="w-3 h-3 rounded-full bg-yellow-400" />
           </div>
           <h3 
-            className="text-2xl md:text-5xl font-bold mb-8 text-yellow-400 drop-shadow-lg font-bilo"
+            className="text-2xl md:text-5xl font-bold mb-8 text-yellow-400 drop-shadow-lg font-serif tracking-wide"
           >
             WHAT OUR ATTENDEES SAY
           </h3>
