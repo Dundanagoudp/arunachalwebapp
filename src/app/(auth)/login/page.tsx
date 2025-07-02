@@ -20,13 +20,13 @@ export default function LoginPage() {
           </div>
         </div>
       </div>
-      <div className="bg-muted relative hidden lg:block">
+      <div className="bg-muted hidden lg:flex items-center justify-center">
         <Image
-          src="/placeholder.svg"
-          alt="Image"
-          width={1920}  // Added width
-          height={1080} // Added height
-          className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
+          src="/login.gif"
+          alt="Login Illustration"
+          width={500}
+          height={450}
+          className="object-contain dark:brightness-[0.2] dark:grayscale"
         />
       </div>
     </div>

@@ -11,6 +11,7 @@ import { setCookie } from "@/lib/cookies";
 import { useEffect, useState } from "react";
 import { getCookie } from "@/lib/cookies";
 import Cookies from "js-cookie";
+import { loginUser } from "@/service/authService";
 
 type LoginFormValues = {
   email: string;
@@ -40,27 +41,11 @@ export function LoginForm({
     }
   }, [router]);
 
-  if (!mounted) return null; // Prevent hydration mismatch
+  if (!mounted) return null; 
 
   const onSubmit = async (data: LoginFormValues) => {
     try {
-      const response = await fetch(
-        "http://localhost:8000/api/v1/onboarding/login",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(data),
-          credentials: "include", 
-        }
-      );
-
-      const result = await response.json();
-
-      if (!response.ok) {
-        throw new Error(result.message || "Login failed");
-      }
+      const result = await loginUser(data);
 
       console.log("[LoginForm] Account type from backend:", result.data.user.accountType); // Debug log
       // Use the imported setCookie function with the correct signature
@@ -75,8 +60,8 @@ export function LoginForm({
       router.replace("/admin/dashboard");
       // Force reload to ensure token is available for all requests
       window.location.reload();
-    } catch (error) {
-      toast.error(error instanceof Error ? error.message : "Login failed");
+    } catch (error: any) {
+      toast.error(error?.response?.data?.message || error.message || "Login failed");
     }
   };
 

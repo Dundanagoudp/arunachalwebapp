@@ -13,7 +13,7 @@ type ProtectedRouteProps = {
 export default function ProtectedRoute({
   children,
   allowedRoles,
-  authPage = false, // Default to false
+  authPage = false, 
 }: ProtectedRouteProps) {
   const router = useRouter();
   const [isChecking, setIsChecking] = useState(true);
