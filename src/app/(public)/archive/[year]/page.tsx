@@ -16,6 +16,7 @@ import {
 import { useParams, useSearchParams } from "next/navigation"
 import { getImagesByYear } from "@/service/archive"
 import SunIcon from "@/components/sunicon-gif"
+import React, { Suspense } from 'react';
 
 // Shimmer effect component
 const ShimmerEffect = ({ className }: { className?: string }) => (
@@ -123,7 +124,7 @@ interface YearImagesResponse {
   images: ImageData[]
 }
 
-export default function GalleryPage() {
+function GalleryPageContent() {
   const params = useParams();
   const { year } = params as { year: string };
   const searchParams = useSearchParams();
@@ -136,33 +137,17 @@ export default function GalleryPage() {
   const [error, setError] = useState<string | null>(null)
   const imagesPerPage = 12
 
-  if (!yearId) {
-    return (
-      <div className="min-h-screen bg-[#FFFAEE] flex items-center justify-center">
-        <div className="text-center">
-          <h2 className="text-2xl font-bold text-red-600 mb-4">Invalid URL</h2>
-          <p className="text-gray-600 mb-4">Year ID is required to view this gallery</p>
-          <Link href="/archive" className="text-blue-600 hover:underline">
-            ← Back to Archive
-          </Link>
-        </div>
-      </div>
-    )
-  }
-
   useEffect(() => {
+    if (!yearId) {
+      setError("Year ID is required to view this gallery");
+      setIsLoading(false);
+      return;
+    }
     const fetchYearImages = async () => {
       try {
         setIsLoading(true)
-
-        if (!yearId) {
-          setError("Year ID is required")
-          return
-        }
-
         // Only use the specific year ID API
         const response = await getImagesByYear(yearId)
-
         if (response.success && response.data) {
           // Handle both possible API response shapes
           let imageUrls: string[] = [];
@@ -197,7 +182,6 @@ export default function GalleryPage() {
         setIsLoading(false)
       }
     }
-
     fetchYearImages()
   }, [year, yearId])
 
@@ -469,4 +453,12 @@ export default function GalleryPage() {
       />
     </div>
   )
+}
+
+export default function GalleryPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <GalleryPageContent />
+    </Suspense>
+  );
 }

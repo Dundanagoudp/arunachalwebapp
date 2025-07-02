@@ -1,11 +1,15 @@
- 'use client';
-
+import React, { Suspense } from 'react';
 import Archive from "@/components/(public)/archive/archive";
+
+function ArchiveClientWrapper() {
+  'use client';
+  return <Archive />;
+}
 
 export default function Archivepage() {
   return (
-    <div >
-  <Archive/>
-    </div>
+    <Suspense fallback={<div>Loading...</div>}>
+      <ArchiveClientWrapper />
+    </Suspense>
   );
 } 

@@ -1,6 +1,6 @@
 "use client"
 
-import type React from "react"
+import React, { Suspense } from 'react';
 
 import { useState, useEffect } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
@@ -42,7 +42,7 @@ const getMonthName = (monthNumber: number) => {
   return months[monthNumber - 1] || `Month ${monthNumber}`
 }
 
-export default function UploadImagesPage() {
+function UploadImagesPageContent() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const [loading, setLoading] = useState(false)
@@ -412,4 +412,12 @@ export default function UploadImagesPage() {
       </div>
     </div>
   )
+}
+
+export default function UploadImagesPage() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <UploadImagesPageContent />
+    </Suspense>
+  );
 }

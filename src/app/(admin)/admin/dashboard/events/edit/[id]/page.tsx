@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -22,7 +22,9 @@ import Link from "next/link";
 import { getAllEvents, updateEvent } from "@/service/events-apis";
 import type { Event } from "@/types/events-types";
 
-export default function EditEventPage({ params }: { params: { id: string } }) {
+export default function EditEventPage() {
+  const params = useParams() as { id?: string };
+  const id = params.id ?? "";
   const router = useRouter();
   const { toast } = useToast();
   const [event, setEvent] = useState<Event | null>(null);
@@ -42,7 +44,7 @@ export default function EditEventPage({ params }: { params: { id: string } }) {
       setIsLoading(true);
       try {
         const result = await getAllEvents();
-        if (result.success && result.data && result.data.event && result.data.event._id === params.id) {
+        if (result.success && result.data && result.data.event && result.data.event._id === id) {
           const ev = result.data.event;
           setEvent(ev);
           setFormData({
@@ -65,8 +67,7 @@ export default function EditEventPage({ params }: { params: { id: string } }) {
       }
     };
     fetchEvent();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [params.id]);
+  }, [id]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const { name, value } = e.target;

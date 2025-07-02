@@ -1,7 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, useParams } from "next/navigation"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -22,31 +22,35 @@ import type { VideoBlog } from "@/types/videos-types"
 import { useToast } from "@/hooks/use-toast"
 import { VideoDetailSkeleton } from "@/components/video-skeleton"
 
-export default function VideoDetailPage({ params }: { params: Promise<{ id: string }> }) {
+export default function VideoDetailPage() {
+  const params = useParams() as { id?: string }
+  const id = params.id ?? ""
+  const router = useRouter()
+  const { toast } = useToast()
   const [video, setVideo] = useState<VideoBlog | null>(null)
   const [loading, setLoading] = useState(true)
   const [isPlaying, setIsPlaying] = useState(false)
-  const { toast } = useToast()
-  const router = useRouter()
 
   useEffect(() => {
     const fetchVideo = async () => {
-      const resolvedParams = await params
-      const response = await getVideoById(resolvedParams.id)
-      if (response.success && response.data) {
-        setVideo(response.data)
-      } else {
-        toast({
-          title: "Error",
-          description: "Failed to fetch video details"
-        })
-        router.push("/admin/dashboard/videos")
+      setLoading(true)
+      try {
+        const result = await getVideoById(id)
+        if (result.success && result.data) {
+          setVideo(result.data)
+        } else {
+          toast({ title: "Error", description: "Video not found" })
+          router.replace("/admin/dashboard/videos")
+        }
+      } catch (error) {
+        toast({ title: "Error", description: "Failed to fetch video" })
+        router.replace("/admin/dashboard/videos")
+      } finally {
+        setLoading(false)
       }
-      setLoading(false)
     }
-
     fetchVideo()
-  }, [params, router, toast])
+  }, [id])
 
   const handleDelete = async () => {
     if (!video || !confirm("Are you sure you want to delete this video?")) return
