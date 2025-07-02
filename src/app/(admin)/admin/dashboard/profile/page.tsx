@@ -1,6 +1,5 @@
 "use client"
 
-import { AppSidebar } from "@/components/app-sidebar"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -10,7 +9,6 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import { Separator } from "@/components/ui/separator"
-import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -146,177 +144,148 @@ export default function UserProfilePage() {
   if (fetchingProfile) {
     return (
       <ProtectedRoute allowedRoles={["user"]}>
-        <SidebarProvider>
-          <AppSidebar />
-          <SidebarInset>
-            <div className="flex items-center justify-center h-screen">
-              <div className="text-center">
-                <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
-                <p className="mt-4">Loading profile...</p>
-              </div>
-            </div>
-          </SidebarInset>
-        </SidebarProvider>
+        <div className="flex items-center justify-center h-screen">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-gray-900"></div>
+            <p className="mt-4">Loading profile...</p>
+          </div>
+        </div>
       </ProtectedRoute>
     )
   }
 
   return (
     <ProtectedRoute allowedRoles={["user"]}>
-      <SidebarProvider>
-        <AppSidebar />
-        <SidebarInset>
-          <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 border-b bg-white/80 backdrop-blur-sm sticky top-0 z-40">
-            <div className="flex items-center gap-2 px-4">
-              <SidebarTrigger className="-ml-1" />
-              <Separator orientation="vertical" className="mr-2 data-[orientation=vertical]:h-4" />
-              <Breadcrumb>
-                <BreadcrumbList>
-                  <BreadcrumbItem className="hidden md:block">
-                    <BreadcrumbLink href="/admin/dashboard">Dashboard</BreadcrumbLink>
-                  </BreadcrumbItem>
-                  <BreadcrumbSeparator className="hidden md:block" />
-                  <BreadcrumbItem>
-                    <BreadcrumbPage>My Profile</BreadcrumbPage>
-                  </BreadcrumbItem>
-                </BreadcrumbList>
-              </Breadcrumb>
-            </div>
-          </header>
-
-          <div className="flex flex-1 flex-col gap-6 p-6 pt-0">
-            <div className="flex items-center justify-between">
-              <div>
-                <h1 className="text-3xl font-bold tracking-tight">My Profile</h1>
-                <p className="text-muted-foreground">Manage your account information and settings.</p>
-              </div>
-              <Button variant="outline" asChild>
-                <Link href="/admin/dashboard">
-                  <ArrowLeft className="mr-2 h-4 w-4" />
-                  Back to Dashboard
-                </Link>
-              </Button>
-            </div>
-
-            <div className="max-w-4xl">
-              <Card>
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <CardTitle className="flex items-center gap-2">
-                        <UserIcon className="h-5 w-5" />
-                        Profile Information
-                      </CardTitle>
-                      <CardDescription>Your personal account details</CardDescription>
-                    </div>
-                    {!isEditing && (
-                      <Button onClick={() => setIsEditing(true)} variant="outline">
-                        <Edit className="mr-2 h-4 w-4" />
-                        Edit Profile
-                      </Button>
-                    )}
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  <form onSubmit={handleSubmit} className="space-y-6">
-                    <div className="grid gap-4 md:grid-cols-2">
-                      <div className="space-y-2">
-                        <Label htmlFor="name">Full Name *</Label>
-                        <Input
-                          id="name"
-                          value={formData.name}
-                          onChange={(e) => handleInputChange("name", e.target.value)}
-                          placeholder="Enter full name..."
-                          required
-                          disabled={!isEditing}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="email">Email Address *</Label>
-                        <Input
-                          id="email"
-                          type="email"
-                          value={formData.email}
-                          onChange={(e) => handleInputChange("email", e.target.value)}
-                          placeholder="user@example.com"
-                          required
-                          disabled={!isEditing}
-                        />
-                      </div>
-                    </div>
-
-                    {isEditing && (
-                      <>
-                        <div className="border-t pt-6">
-                          <h3 className="text-lg font-medium mb-4">Change Password (Optional)</h3>
-                          <div className="grid gap-4 md:grid-cols-2">
-                            <div className="space-y-2">
-                              <Label htmlFor="password">New Password</Label>
-                              <Input
-                                id="password"
-                                type="password"
-                                value={formData.password}
-                                onChange={(e) => handleInputChange("password", e.target.value)}
-                                placeholder="Enter new password..."
-                              />
-                            </div>
-                            <div className="space-y-2">
-                              <Label htmlFor="confirmPassword">Confirm New Password</Label>
-                              <Input
-                                id="confirmPassword"
-                                type="password"
-                                value={formData.confirmPassword}
-                                onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
-                                placeholder="Confirm new password..."
-                              />
-                            </div>
-                          </div>
-                          <p className="text-sm text-muted-foreground mt-2">
-                            Leave password fields empty if you don't want to change your password.
-                          </p>
-                        </div>
-
-                        <div className="flex gap-3 pt-4">
-                          <Button type="submit" disabled={loading}>
-                            {loading ? (
-                              <>
-                                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                                Saving...
-                              </>
-                            ) : (
-                              <>
-                                <Save className="mr-2 h-4 w-4" />
-                                Save Changes
-                              </>
-                            )}
-                          </Button>
-                          <Button type="button" variant="outline" onClick={handleCancelEdit}>
-                            <X className="mr-2 h-4 w-4" />
-                            Cancel
-                          </Button>
-                        </div>
-                      </>
-                    )}
-
-                    {!isEditing && (
-                      <div className="grid gap-4 md:grid-cols-2 pt-4">
-                        <div>
-                          <Label className="text-sm font-medium text-muted-foreground">Account Status</Label>
-                          <p className="text-sm text-green-600">Active</p>
-                        </div>
-                        <div>
-                          <Label className="text-sm font-medium text-muted-foreground">Member Since</Label>
-                          <p className="text-sm text-muted-foreground">Recently</p>
-                        </div>
-                      </div>
-                    )}
-                  </form>
-                </CardContent>
-              </Card>
-            </div>
+      <div className="flex flex-1 flex-col gap-6 p-6 pt-0">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold tracking-tight">My Profile</h1>
+            <p className="text-muted-foreground">Manage your account information and settings.</p>
           </div>
-        </SidebarInset>
-      </SidebarProvider>
+          <Button variant="outline" asChild>
+            <Link href="/admin/dashboard">
+              <ArrowLeft className="mr-2 h-4 w-4" />
+              Back to Dashboard
+            </Link>
+          </Button>
+        </div>
+        <div className="max-w-4xl">
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <div>
+                  <CardTitle className="flex items-center gap-2">
+                    <UserIcon className="h-5 w-5" />
+                    Profile Information
+                  </CardTitle>
+                  <CardDescription>Your personal account details</CardDescription>
+                </div>
+                {!isEditing && (
+                  <Button onClick={() => setIsEditing(true)} variant="outline">
+                    <Edit className="mr-2 h-4 w-4" />
+                    Edit Profile
+                  </Button>
+                )}
+              </div>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="grid gap-4 md:grid-cols-2">
+                  <div className="space-y-2">
+                    <Label htmlFor="name">Full Name *</Label>
+                    <Input
+                      id="name"
+                      value={formData.name}
+                      onChange={(e) => handleInputChange("name", e.target.value)}
+                      placeholder="Enter full name..."
+                      required
+                      disabled={!isEditing}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="email">Email Address *</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      value={formData.email}
+                      onChange={(e) => handleInputChange("email", e.target.value)}
+                      placeholder="user@example.com"
+                      required
+                      disabled={!isEditing}
+                    />
+                  </div>
+                </div>
+
+                {isEditing && (
+                  <>
+                    <div className="border-t pt-6">
+                      <h3 className="text-lg font-medium mb-4">Change Password (Optional)</h3>
+                      <div className="grid gap-4 md:grid-cols-2">
+                        <div className="space-y-2">
+                          <Label htmlFor="password">New Password</Label>
+                          <Input
+                            id="password"
+                            type="password"
+                            value={formData.password}
+                            onChange={(e) => handleInputChange("password", e.target.value)}
+                            placeholder="Enter new password..."
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="confirmPassword">Confirm New Password</Label>
+                          <Input
+                            id="confirmPassword"
+                            type="password"
+                            value={formData.confirmPassword}
+                            onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
+                            placeholder="Confirm new password..."
+                          />
+                        </div>
+                      </div>
+                      <p className="text-sm text-muted-foreground mt-2">
+                        Leave password fields empty if you don't want to change your password.
+                      </p>
+                    </div>
+
+                    <div className="flex gap-3 pt-4">
+                      <Button type="submit" disabled={loading}>
+                        {loading ? (
+                          <>
+                            <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                            Saving...
+                          </>
+                        ) : (
+                          <>
+                            <Save className="mr-2 h-4 w-4" />
+                            Save Changes
+                          </>
+                        )}
+                      </Button>
+                      <Button type="button" variant="outline" onClick={handleCancelEdit}>
+                        <X className="mr-2 h-4 w-4" />
+                        Cancel
+                      </Button>
+                    </div>
+                  </>
+                )}
+
+                {!isEditing && (
+                  <div className="grid gap-4 md:grid-cols-2 pt-4">
+                    <div>
+                      <Label className="text-sm font-medium text-muted-foreground">Account Status</Label>
+                      <p className="text-sm text-green-600">Active</p>
+                    </div>
+                    <div>
+                      <Label className="text-sm font-medium text-muted-foreground">Member Since</Label>
+                      <p className="text-sm text-muted-foreground">Recently</p>
+                    </div>
+                  </div>
+                )}
+              </form>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
     </ProtectedRoute>
   )
 } 

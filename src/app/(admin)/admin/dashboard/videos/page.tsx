@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { AppSidebar } from "@/components/app-sidebar"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -11,7 +10,6 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import { Separator } from "@/components/ui/separator"
-import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
@@ -286,187 +284,158 @@ export default function VideosPage() {
 
   if (loading) {
     return (
-      <SidebarProvider>
-        <AppSidebar />
-        <SidebarInset>
-          <div className="flex items-center justify-center h-screen">
-            <div className="text-center">
-              <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
-              <p>Loading videos...</p>
-            </div>
-          </div>
-        </SidebarInset>
-      </SidebarProvider>
+      <div className="flex items-center justify-center h-screen">
+        <div className="text-center">
+          <Loader2 className="h-8 w-8 animate-spin mx-auto mb-4" />
+          <p>Loading videos...</p>
+        </div>
+      </div>
     )
   }
 
   return (
-    <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset>
-               <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 border-b bg-white/80 backdrop-blur-sm sticky top-0 z-40">
-          <div className="flex items-center gap-2 px-4">
-            <SidebarTrigger className="-ml-1" />
-            <Separator orientation="vertical" className="mr-2 data-[orientation=vertical]:h-4" />
-            <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="/admin/dashboard">Admin Panel</BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block" />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>Videos Management</BreadcrumbPage>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb>
-          </div>
-        </header>
-
-
-        <div className="flex flex-1 flex-col gap-6 p-6 pt-0">
-          <div className="flex justify-between items-center mb-6">
-            <div>
-              <h1 className="text-3xl font-bold">Video Blog Management</h1>
-              <p className="text-gray-600 mt-1">Manage your video content</p>
-            </div>
-            <Button asChild>
-              <Link href="/admin/dashboard/videos/add">
-                <Plus className="h-4 w-4 mr-2" />
-                Add Video
-              </Link>
-            </Button>
-          </div>
-
-          {/* Dashboard Card Grid */}
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-            <Card className="border-0 shadow-md bg-gradient-to-br from-blue-50 to-blue-100/50">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-blue-700">Total Videos</CardTitle>
-                <Video className="h-4 w-4 text-blue-600" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-blue-900">{getVideoCount("all")}</div>
-                <p className="text-xs text-blue-600">All video content</p>
-              </CardContent>
-            </Card>
-
-            <Card className="border-0 shadow-md bg-gradient-to-br from-green-50 to-green-100/50">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-green-700">Raw Videos</CardTitle>
-                <Video className="h-4 w-4 text-green-600" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-green-900">{getVideoCount("raw")}</div>
-                <p className="text-xs text-green-600">Uploaded files</p>
-              </CardContent>
-            </Card>
-
-            <Card className="border-0 shadow-md bg-gradient-to-br from-red-50 to-red-100/50">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-red-700">YouTube Videos</CardTitle>
-                <Youtube className="h-4 w-4 text-red-600" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-red-900">{getVideoCount("youtube")}</div>
-                <p className="text-xs text-red-600">YouTube links</p>
-              </CardContent>
-            </Card>
-
-            <Card className="border-0 shadow-md bg-gradient-to-br from-purple-50 to-purple-100/50">
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium text-purple-700">Recent</CardTitle>
-                <TrendingUp className="h-4 w-4 text-purple-600" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold text-purple-900">
-                  {allVideos.filter((v) => new Date(v.addedAt) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)).length}
-                </div>
-                <p className="text-xs text-purple-600">Added this week</p>
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Search and Filter */}
-          <Card className="border-0 bg-white/80 backdrop-blur-sm">
-            <CardHeader>
-              <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-                <div>
-                  <CardTitle className="text-xl">Video Library</CardTitle>
-                  <CardDescription>Browse and manage your video collection</CardDescription>
-                </div>
-                <div className="relative w-full sm:w-80">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    placeholder="Search videos..."
-                    value={searchQuery}
-                    onChange={(e) => setSearchQuery(e.target.value)}
-                    className="pl-10 bg-white/80 backdrop-blur-sm border-gray-200"
-                  />
-                </div>
-              </div>
-            </CardHeader>
-          </Card>
-
-          <Tabs defaultValue="all" className="w-full" onValueChange={handleTabChange}>
-            <TabsList className="grid w-full grid-cols-3">
-              <TabsTrigger value="all">All Videos ({allVideos.length})</TabsTrigger>
-              <TabsTrigger value="raw">Raw Videos ({rawVideos.length})</TabsTrigger>
-              <TabsTrigger value="youtube">YouTube ({youtubeVideos.length})</TabsTrigger>
-            </TabsList>
-
-            <TabsContent value="all" className="mt-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {currentTab === "all" && paginatedVideos().map((video) => (
-                  <VideoCard key={video._id} video={video} />
-                ))}
-              </div>
-              {currentTab === "all" && allVideos.length > videosPerPage && (
-                <div className="flex justify-center">{renderPagination()}</div>
-              )}
-              {allVideos.length === 0 && (
-                <div className="text-center py-12">
-                  <Video className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                  <p className="text-gray-600">No videos found</p>
-                </div>
-              )}
-            </TabsContent>
-
-            <TabsContent value="raw" className="mt-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {currentTab === "raw" && paginatedVideos().map((video) => (
-                  <VideoCard key={video._id} video={video} />
-                ))}
-              </div>
-              {currentTab === "raw" && rawVideos.length > videosPerPage && (
-                <div className="flex justify-center">{renderPagination()}</div>
-              )}
-              {rawVideos.length === 0 && (
-                <div className="text-center py-12">
-                  <Video className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                  <p className="text-gray-600">No raw videos found</p>
-                </div>
-              )}
-            </TabsContent>
-
-            <TabsContent value="youtube" className="mt-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {currentTab === "youtube" && paginatedVideos().map((video) => (
-                  <VideoCard key={video._id} video={video} />
-                ))}
-              </div>
-              {currentTab === "youtube" && youtubeVideos.length > videosPerPage && (
-                <div className="flex justify-center">{renderPagination()}</div>
-              )}
-              {youtubeVideos.length === 0 && (
-                <div className="text-center py-12">
-                  <Youtube className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                  <p className="text-gray-600">No YouTube videos found</p>
-                </div>
-              )}
-            </TabsContent>
-          </Tabs>
+    <div className="flex flex-1 flex-col gap-6 p-6 pt-0">
+      <div className="flex justify-between items-center mb-6">
+        <div>
+          <h1 className="text-3xl font-bold">Video Blog Management</h1>
+          <p className="text-gray-600 mt-1">Manage your video content</p>
         </div>
-      </SidebarInset>
-    </SidebarProvider>
+        <Button asChild>
+          <Link href="/admin/dashboard/videos/add">
+            <Plus className="h-4 w-4 mr-2" />
+            Add Video
+          </Link>
+        </Button>
+      </div>
+
+      {/* Dashboard Card Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+        <Card className="border-0 shadow-md bg-gradient-to-br from-blue-50 to-blue-100/50">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium text-blue-700">Total Videos</CardTitle>
+            <Video className="h-4 w-4 text-blue-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-blue-900">{getVideoCount("all")}</div>
+            <p className="text-xs text-blue-600">All video content</p>
+          </CardContent>
+        </Card>
+
+        <Card className="border-0 shadow-md bg-gradient-to-br from-green-50 to-green-100/50">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium text-green-700">Raw Videos</CardTitle>
+            <Video className="h-4 w-4 text-green-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-green-900">{getVideoCount("raw")}</div>
+            <p className="text-xs text-green-600">Uploaded files</p>
+          </CardContent>
+        </Card>
+
+        <Card className="border-0 shadow-md bg-gradient-to-br from-red-50 to-red-100/50">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium text-red-700">YouTube Videos</CardTitle>
+            <Youtube className="h-4 w-4 text-red-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-red-900">{getVideoCount("youtube")}</div>
+            <p className="text-xs text-red-600">YouTube links</p>
+          </CardContent>
+        </Card>
+
+        <Card className="border-0 shadow-md bg-gradient-to-br from-purple-50 to-purple-100/50">
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium text-purple-700">Recent</CardTitle>
+            <TrendingUp className="h-4 w-4 text-purple-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-purple-900">
+              {allVideos.filter((v) => new Date(v.addedAt) > new Date(Date.now() - 7 * 24 * 60 * 60 * 1000)).length}
+            </div>
+            <p className="text-xs text-purple-600">Added this week</p>
+          </CardContent>
+        </Card>
+      </div>
+
+      {/* Search and Filter */}
+      <Card className="border-0 bg-white/80 backdrop-blur-sm">
+        <CardHeader>
+          <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+            <div>
+              <CardTitle className="text-xl">Video Library</CardTitle>
+              <CardDescription>Browse and manage your video collection</CardDescription>
+            </div>
+            <div className="relative w-full sm:w-80">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search videos..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-10 bg-white/80 backdrop-blur-sm border-gray-200"
+              />
+            </div>
+          </div>
+        </CardHeader>
+      </Card>
+
+      <Tabs defaultValue="all" className="w-full" onValueChange={handleTabChange}>
+        <TabsList className="grid w-full grid-cols-3">
+          <TabsTrigger value="all">All Videos ({allVideos.length})</TabsTrigger>
+          <TabsTrigger value="raw">Raw Videos ({rawVideos.length})</TabsTrigger>
+          <TabsTrigger value="youtube">YouTube ({youtubeVideos.length})</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="all" className="mt-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {currentTab === "all" && paginatedVideos().map((video) => (
+              <VideoCard key={video._id} video={video} />
+            ))}
+          </div>
+          {currentTab === "all" && allVideos.length > videosPerPage && (
+            <div className="flex justify-center">{renderPagination()}</div>
+          )}
+          {allVideos.length === 0 && (
+            <div className="text-center py-12">
+              <Video className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-600">No videos found</p>
+            </div>
+          )}
+        </TabsContent>
+
+        <TabsContent value="raw" className="mt-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {currentTab === "raw" && paginatedVideos().map((video) => (
+              <VideoCard key={video._id} video={video} />
+            ))}
+          </div>
+          {currentTab === "raw" && rawVideos.length > videosPerPage && (
+            <div className="flex justify-center">{renderPagination()}</div>
+          )}
+          {rawVideos.length === 0 && (
+            <div className="text-center py-12">
+              <Video className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-600">No raw videos found</p>
+            </div>
+          )}
+        </TabsContent>
+
+        <TabsContent value="youtube" className="mt-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {currentTab === "youtube" && paginatedVideos().map((video) => (
+              <VideoCard key={video._id} video={video} />
+            ))}
+          </div>
+          {currentTab === "youtube" && youtubeVideos.length > videosPerPage && (
+            <div className="flex justify-center">{renderPagination()}</div>
+          )}
+          {youtubeVideos.length === 0 && (
+            <div className="text-center py-12">
+              <Youtube className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+              <p className="text-gray-600">No YouTube videos found</p>
+            </div>
+          )}
+        </TabsContent>
+      </Tabs>
+    </div>
   )
 }

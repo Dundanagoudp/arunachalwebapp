@@ -1,10 +1,9 @@
 'use client'
 
-import { Suspense } from 'react'
+import React, { Suspense, useEffect, useState } from 'react'
 import { AppSidebar } from "@/components/app-sidebar"
-import { SidebarInset, SidebarProvider } from "@/components/ui/sidebar"
+import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { Separator } from "@/components/ui/separator"
-import { SidebarTrigger } from "@/components/ui/sidebar"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -15,6 +14,8 @@ import {
 } from "@/components/ui/breadcrumb"
 import { Card, CardContent, CardHeader } from "@/components/ui/card"
 import { Skeleton } from "@/components/ui/skeleton"
+import { usePathname } from 'next/navigation';
+import { DynamicBreadcrumb } from "@/components/admin/DynamicBreadcrumb";
 
 // Loading component for admin layout
 function AdminLayoutLoading() {
@@ -39,7 +40,6 @@ function AdminLayoutLoading() {
             </Breadcrumb>
           </div>
         </header>
-
         <div className="flex flex-1 flex-col gap-4 p-2 sm:gap-6 sm:p-4 md:p-6 pt-0">
           {/* Header Skeleton */}
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-2">
@@ -52,7 +52,6 @@ function AdminLayoutLoading() {
               <Skeleton className="h-8 w-20 sm:h-10 sm:w-32" />
             </div>
           </div>
-
           {/* Stats Cards Skeleton */}
           <div className="grid gap-2 sm:gap-4 grid-cols-2 md:grid-cols-4">
             {Array.from({ length: 4 }).map((_, i) => (
@@ -68,7 +67,6 @@ function AdminLayoutLoading() {
               </Card>
             ))}
           </div>
-
           {/* Content Grid Skeleton */}
           <div className="grid gap-4 sm:gap-6 md:grid-cols-2 lg:grid-cols-3">
             <Card className="lg:col-span-2">
@@ -90,7 +88,6 @@ function AdminLayoutLoading() {
                 </div>
               </CardContent>
             </Card>
-
             <Card>
               <CardHeader className="pb-3 sm:pb-6">
                 <Skeleton className="h-4 w-24 sm:h-6 sm:w-32" />
@@ -124,8 +121,20 @@ export default function AdminLayout({
   children: React.ReactNode
 }) {
   return (
-    <Suspense fallback={<AdminLayoutLoading />}>
-      {children}
-    </Suspense>
+    <SidebarProvider>
+      <AppSidebar />
+      <SidebarInset>
+        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 border-b bg-white/80 backdrop-blur-sm sticky top-0 z-40">
+          <div className="flex items-center gap-2 px-2 sm:px-4">
+            <SidebarTrigger className="-ml-1" />
+            <Separator orientation="vertical" className="mr-2 data-[orientation=vertical]:h-4" />
+            <DynamicBreadcrumb />
+          </div>
+        </header>
+        <Suspense fallback={<AdminLayoutLoading />}>
+          {children}
+        </Suspense>
+      </SidebarInset>
+    </SidebarProvider>
   )
 } 

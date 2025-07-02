@@ -1,6 +1,5 @@
 "use client"
 
-import { AppSidebar } from "@/components/app-sidebar"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -10,7 +9,6 @@ import {
   BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb"
 import { Separator } from "@/components/ui/separator"
-import { SidebarInset, SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -164,292 +162,268 @@ export default function WorkshopsManagement() {
   const shouldShowSkeleton = loading || error
 
   return (
-    <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset>
-        <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 border-b bg-white/80 backdrop-blur-sm sticky top-0 z-40">
-          <div className="flex items-center gap-2 px-4">
-            <SidebarTrigger className="-ml-1" />
-            <Separator orientation="vertical" className="mr-2 data-[orientation=vertical]:h-4" />
-            <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="/admin/dashboard">Admin Panel</BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block" />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>Workshops Management</BreadcrumbPage>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb>
+    <div className="flex flex-1 flex-col gap-4 p-2 sm:p-4 md:gap-6 md:p-6 pt-0 w-full max-w-full">
+      {/* Header */}
+      {shouldShowSkeleton ? (
+        <PageHeaderSkeleton />
+      ) : (
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 w-full max-w-full">
+          <div className="min-w-0">
+            <h1 className="text-2xl md:text-3xl font-bold tracking-tight truncate">Workshops Management</h1>
+            <p className="text-muted-foreground text-sm md:text-base truncate">
+              Manage workshops, registrations, and participant data.
+            </p>
           </div>
-        </header>
+          {/* Responsive button group: stack on mobile, row on sm+ */}
+          <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
+            <Button 
+              variant="outline" 
+              onClick={fetchData} 
+              disabled={loading}
+              className="w-full sm:w-auto"
+            >
+              <RefreshCw className={`mr-2 h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
+              Refresh
+            </Button>
+            <Button asChild className="w-full sm:w-auto" suppressHydrationWarning={true}>
+              <Link href="/admin/dashboard/workshops/create">
+                <Plus className="mr-2 h-4 w-4" />
+                Create Workshop
+              </Link>
+            </Button>
+          </div>
+        </div>
+      )}
 
-        {/* Main content wrapper, no horizontal scroll */}
-        <div className="flex flex-1 flex-col gap-4 p-2 sm:p-4 md:gap-6 md:p-6 pt-0 w-full max-w-full">
-          {/* Header */}
+      {/* Stats Cards */}
+      <div className="overflow-x-auto w-full">
+        {shouldShowSkeleton ? (
+          <StatsCardsSkeleton />
+        ) : (
+          <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 w-full min-w-[320px]">
+            <Card className="w-full">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Total Workshops</CardTitle>
+                <BookOpen className="h-4 w-4 text-muted-foreground" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{workshops.length}</div>
+                <p className="text-xs text-muted-foreground">Across all events</p>
+              </CardContent>
+            </Card>
+            <Card className="w-full">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Active Events</CardTitle>
+                <Calendar className="h-4 w-4 text-blue-600" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">{events.length}</div>
+                <p className="text-xs text-muted-foreground">Total events</p>
+              </CardContent>
+            </Card>
+            <Card className="sm:col-span-2 lg:col-span-1 w-full">
+              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+                <CardTitle className="text-sm font-medium">Recent Activity</CardTitle>
+                <Users className="h-4 w-4 text-green-600" />
+              </CardHeader>
+              <CardContent>
+                <div className="text-2xl font-bold">
+                  {workshops.length > 0 ? new Date(workshops[0].createdAt).toLocaleDateString() : "N/A"}
+                </div>
+                <p className="text-xs text-muted-foreground">Last workshop created</p>
+              </CardContent>
+            </Card>
+          </div>
+        )}
+      </div>
+
+      {/* Search */}
+      <Card className="w-full max-w-full">
+        <CardHeader>
+          <CardTitle className="text-lg">Search Workshops</CardTitle>
+        </CardHeader>
+        <CardContent>
           {shouldShowSkeleton ? (
-            <PageHeaderSkeleton />
+            <SearchSkeleton />
           ) : (
-            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 w-full max-w-full">
-              <div className="min-w-0">
-                <h1 className="text-2xl md:text-3xl font-bold tracking-tight truncate">Workshops Management</h1>
-                <p className="text-muted-foreground text-sm md:text-base truncate">
-                  Manage workshops, registrations, and participant data.
-                </p>
-              </div>
-              {/* Responsive button group: stack on mobile, row on sm+ */}
-              <div className="flex flex-col sm:flex-row gap-2 w-full sm:w-auto">
-                <Button 
-                  variant="outline" 
-                  onClick={fetchData} 
-                  disabled={loading}
-                  className="w-full sm:w-auto"
-                >
-                  <RefreshCw className={`mr-2 h-4 w-4 ${loading ? 'animate-spin' : ''}`} />
-                  Refresh
-                </Button>
-                <Button asChild className="w-full sm:w-auto" suppressHydrationWarning={true}>
-                  <Link href="/admin/dashboard/workshops/create">
-                    <Plus className="mr-2 h-4 w-4" />
-                    Create Workshop
-                  </Link>
-                </Button>
+            <div className="flex gap-4 w-full max-w-full">
+              <div className="flex-1 min-w-0">
+                <Label htmlFor="search" className="sr-only">
+                  Search workshops
+                </Label>
+                <div className="relative">
+                  <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                  <Input
+                    id="search"
+                    placeholder="Search by name, description, or event..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-8 w-full"
+                  />
+                </div>
               </div>
             </div>
           )}
+        </CardContent>
+      </Card>
 
-          {/* Stats Cards */}
-          <div className="overflow-x-auto w-full">
-            {shouldShowSkeleton ? (
-              <StatsCardsSkeleton />
-            ) : (
-              <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 w-full min-w-[320px]">
-                <Card className="w-full">
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Total Workshops</CardTitle>
-                    <BookOpen className="h-4 w-4 text-muted-foreground" />
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">{workshops.length}</div>
-                    <p className="text-xs text-muted-foreground">Across all events</p>
-                  </CardContent>
-                </Card>
-                <Card className="w-full">
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Active Events</CardTitle>
-                    <Calendar className="h-4 w-4 text-blue-600" />
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">{events.length}</div>
-                    <p className="text-xs text-muted-foreground">Total events</p>
-                  </CardContent>
-                </Card>
-                <Card className="sm:col-span-2 lg:col-span-1 w-full">
-                  <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                    <CardTitle className="text-sm font-medium">Recent Activity</CardTitle>
-                    <Users className="h-4 w-4 text-green-600" />
-                  </CardHeader>
-                  <CardContent>
-                    <div className="text-2xl font-bold">
-                      {workshops.length > 0 ? new Date(workshops[0].createdAt).toLocaleDateString() : "N/A"}
+      {/* Workshops List */}
+      <Card className="w-full max-w-full">
+        <CardHeader>
+          <CardTitle className="text-lg">All Workshops</CardTitle>
+          <CardDescription>
+            {shouldShowSkeleton ? "Loading..." : `${filteredWorkshops.length} workshop${filteredWorkshops.length !== 1 ? "s" : ""} found`}
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {shouldShowSkeleton ? (
+            <WorkshopListSkeleton />
+          ) : (
+            <div className="space-y-4 w-full max-w-full">
+              {filteredWorkshops.length === 0 ? (
+                <div className="text-center py-8">
+                  <BookOpen className="mx-auto h-12 w-12 text-muted-foreground" />
+                  <h3 className="mt-2 text-sm font-semibold text-gray-900">No workshops found</h3>
+                  <p className="mt-1 text-sm text-muted-foreground">
+                    {searchTerm ? "Try adjusting your search terms." : "Get started by creating a new workshop."}
+                  </p>
+                  {!searchTerm && (
+                    <div className="mt-6">
+                      <Button asChild>
+                        <Link href="/admin/dashboard/workshops/create" suppressHydrationWarning={true}>
+                          <Plus className="mr-2 h-4 w-4" />
+                          Create Workshop
+                        </Link>
+                      </Button>
                     </div>
-                    <p className="text-xs text-muted-foreground">Last workshop created</p>
-                  </CardContent>
-                </Card>
-              </div>
-            )}
-          </div>
-
-          {/* Search */}
-          <Card className="w-full max-w-full">
-            <CardHeader>
-              <CardTitle className="text-lg">Search Workshops</CardTitle>
-            </CardHeader>
-            <CardContent>
-              {shouldShowSkeleton ? (
-                <SearchSkeleton />
+                  )}
+                </div>
               ) : (
-                <div className="flex gap-4 w-full max-w-full">
-                  <div className="flex-1 min-w-0">
-                    <Label htmlFor="search" className="sr-only">
-                      Search workshops
-                    </Label>
-                    <div className="relative">
-                      <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
-                      <Input
-                        id="search"
-                        placeholder="Search by name, description, or event..."
-                        value={searchTerm}
-                        onChange={(e) => setSearchTerm(e.target.value)}
-                        className="pl-8 w-full"
+                filteredWorkshops.map((workshop) => (
+                  <div
+                    key={workshop._id}
+                    className="flex flex-col lg:flex-row items-start gap-4 p-4 border rounded-lg w-full max-w-full"
+                  >
+                    <div className="w-full lg:w-32 h-32 lg:h-24 bg-muted rounded-md overflow-hidden flex-shrink-0">
+                      <img
+                        src={workshop.imageUrl || "/placeholder.svg"}
+                        alt={workshop.name}
+                        className="w-full h-full object-cover"
                       />
                     </div>
-                  </div>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          {/* Workshops List */}
-          <Card className="w-full max-w-full">
-            <CardHeader>
-              <CardTitle className="text-lg">All Workshops</CardTitle>
-              <CardDescription>
-                {shouldShowSkeleton ? "Loading..." : `${filteredWorkshops.length} workshop${filteredWorkshops.length !== 1 ? "s" : ""} found`}
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              {shouldShowSkeleton ? (
-                <WorkshopListSkeleton />
-              ) : (
-                <div className="space-y-4 w-full max-w-full">
-                  {filteredWorkshops.length === 0 ? (
-                    <div className="text-center py-8">
-                      <BookOpen className="mx-auto h-12 w-12 text-muted-foreground" />
-                      <h3 className="mt-2 text-sm font-semibold text-gray-900">No workshops found</h3>
-                      <p className="mt-1 text-sm text-muted-foreground">
-                        {searchTerm ? "Try adjusting your search terms." : "Get started by creating a new workshop."}
-                      </p>
-                      {!searchTerm && (
-                        <div className="mt-6">
-                          <Button asChild>
-                            <Link href="/admin/dashboard/workshops/create" suppressHydrationWarning={true}>
-                              <Plus className="mr-2 h-4 w-4" />
-                              Create Workshop
-                            </Link>
-                          </Button>
+                    <div className="flex-1 space-y-2 w-full lg:w-auto min-w-0">
+                      <div className="flex flex-col sm:flex-row sm:items-center gap-2 min-w-0">
+                        <h3 className="text-lg font-semibold truncate">{workshop.name}</h3>
+                        <Badge variant="secondary" className="w-fit">
+                          {getEventName(workshop.eventRef)}
+                        </Badge>
+                      </div>
+                      <p className="text-sm text-muted-foreground line-clamp-2 truncate">{workshop.about}</p>
+                      <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-sm text-muted-foreground">
+                        <div className="flex items-center gap-1">
+                          <Calendar className="h-4 w-4" />
+                          <span>Created: {new Date(workshop.createdAt).toLocaleDateString()}</span>
+                        </div>
+                      </div>
+                      {workshop.registrationFormUrl && (
+                        <div className="flex items-center gap-2 text-sm">
+                          <ExternalLink className="h-4 w-4 text-blue-600" />
+                          <a
+                            href={workshop.registrationFormUrl}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="text-blue-600 hover:underline truncate"
+                          >
+                            Registration Form
+                          </a>
                         </div>
                       )}
                     </div>
-                  ) : (
-                    filteredWorkshops.map((workshop) => (
-                      <div
-                        key={workshop._id}
-                        className="flex flex-col lg:flex-row items-start gap-4 p-4 border rounded-lg w-full max-w-full"
-                      >
-                        <div className="w-full lg:w-32 h-32 lg:h-24 bg-muted rounded-md overflow-hidden flex-shrink-0">
-                          <img
-                            src={workshop.imageUrl || "/placeholder.svg"}
-                            alt={workshop.name}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                        <div className="flex-1 space-y-2 w-full lg:w-auto min-w-0">
-                          <div className="flex flex-col sm:flex-row sm:items-center gap-2 min-w-0">
-                            <h3 className="text-lg font-semibold truncate">{workshop.name}</h3>
-                            <Badge variant="secondary" className="w-fit">
-                              {getEventName(workshop.eventRef)}
-                            </Badge>
-                          </div>
-                          <p className="text-sm text-muted-foreground line-clamp-2 truncate">{workshop.about}</p>
-                          <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-sm text-muted-foreground">
-                            <div className="flex items-center gap-1">
-                              <Calendar className="h-4 w-4" />
-                              <span>Created: {new Date(workshop.createdAt).toLocaleDateString()}</span>
-                            </div>
-                          </div>
+                    <div className="flex items-center gap-2 w-full lg:w-auto justify-end">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="sm" suppressHydrationWarning={true}>
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end">
+                          <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem asChild>
+                            <Link href={`/admin/dashboard/workshops/${workshop._id}`}>
+                              <Eye className="mr-2 h-4 w-4" />
+                              View Details
+                            </Link>
+                          </DropdownMenuItem>
+                          <DropdownMenuItem asChild>
+                            <Link href={`/admin/dashboard/workshops/${workshop._id}/edit`}>
+                              <Edit className="mr-2 h-4 w-4" />
+                              Edit
+                            </Link>
+                          </DropdownMenuItem>
                           {workshop.registrationFormUrl && (
-                            <div className="flex items-center gap-2 text-sm">
-                              <ExternalLink className="h-4 w-4 text-blue-600" />
-                              <a
-                                href={workshop.registrationFormUrl}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-blue-600 hover:underline truncate"
-                              >
-                                Registration Form
+                            <DropdownMenuItem asChild>
+                              <a href={workshop.registrationFormUrl} target="_blank" rel="noopener noreferrer">
+                                <ExternalLink className="mr-2 h-4 w-4" />
+                                Open Form
                               </a>
-                            </div>
+                            </DropdownMenuItem>
                           )}
-                        </div>
-                        <div className="flex items-center gap-2 w-full lg:w-auto justify-end">
-                          <DropdownMenu>
-                            <DropdownMenuTrigger asChild>
-                              <Button variant="ghost" size="sm" suppressHydrationWarning={true}>
-                                <MoreHorizontal className="h-4 w-4" />
-                              </Button>
-                            </DropdownMenuTrigger>
-                            <DropdownMenuContent align="end">
-                              <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                              <DropdownMenuSeparator />
-                              <DropdownMenuItem asChild>
-                                <Link href={`/admin/dashboard/workshops/${workshop._id}`}>
-                                  <Eye className="mr-2 h-4 w-4" />
-                                  View Details
-                                </Link>
+                          {isAdmin ? (
+                            <DropdownMenuItem className="text-red-600" onClick={() => handleDeleteClick(workshop)}>
+                              <Trash2 className="mr-2 h-4 w-4" />
+                              Delete
+                            </DropdownMenuItem>
+                          ) : (
+                            <ContactAdminModal
+                              title="Delete Workshop Access Denied"
+                              description="You don't have permission to delete workshops. Please contact the administrator for assistance."
+                            >
+                              <DropdownMenuItem className="text-red-600">
+                                <Trash2 className="mr-2 h-4 w-4" />
+                                Delete
                               </DropdownMenuItem>
-                              <DropdownMenuItem asChild>
-                                <Link href={`/admin/dashboard/workshops/${workshop._id}/edit`}>
-                                  <Edit className="mr-2 h-4 w-4" />
-                                  Edit
-                                </Link>
-                              </DropdownMenuItem>
-                              {workshop.registrationFormUrl && (
-                                <DropdownMenuItem asChild>
-                                  <a href={workshop.registrationFormUrl} target="_blank" rel="noopener noreferrer">
-                                    <ExternalLink className="mr-2 h-4 w-4" />
-                                    Open Form
-                                  </a>
-                                </DropdownMenuItem>
-                              )}
-                              {isAdmin ? (
-                                <DropdownMenuItem className="text-red-600" onClick={() => handleDeleteClick(workshop)}>
-                                  <Trash2 className="mr-2 h-4 w-4" />
-                                  Delete
-                                </DropdownMenuItem>
-                              ) : (
-                                <ContactAdminModal
-                                  title="Delete Workshop Access Denied"
-                                  description="You don't have permission to delete workshops. Please contact the administrator for assistance."
-                                >
-                                  <DropdownMenuItem className="text-red-600">
-                                    <Trash2 className="mr-2 h-4 w-4" />
-                                    Delete
-                                  </DropdownMenuItem>
-                                </ContactAdminModal>
-                              )}
-                            </DropdownMenuContent>
-                          </DropdownMenu>
-                        </div>
-                      </div>
-                    ))
-                  )}
-                </div>
+                            </ContactAdminModal>
+                          )}
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
+                  </div>
+                ))
               )}
-            </CardContent>
-          </Card>
-        </div>
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
-        <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-          <AlertDialogContent>
-            <AlertDialogHeader>
-              <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-              <AlertDialogDescription>
-                This action cannot be undone. This will permanently delete the workshop "{workshopToDelete?.name}".
-              </AlertDialogDescription>
-            </AlertDialogHeader>
-            <AlertDialogFooter>
-              <AlertDialogCancel>Cancel</AlertDialogCancel>
-              <AlertDialogAction
-                onClick={handleDeleteConfirm}
-                className="bg-red-600 hover:bg-red-700"
-                disabled={deleting}
-                suppressHydrationWarning={true}
-              >
-                {deleting ? (
-                  <>
-                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Deleting...
-                  </>
-                ) : (
-                  "Delete"
-                )}
-              </AlertDialogAction>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialog>
-      </SidebarInset>
-    </SidebarProvider>
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the workshop "{workshopToDelete?.name}".
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteConfirm}
+              className="bg-red-600 hover:bg-red-700"
+              disabled={deleting}
+              suppressHydrationWarning={true}
+            >
+              {deleting ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                  Deleting...
+                </>
+              ) : (
+                "Delete"
+              )}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+    </div>
   )
 }

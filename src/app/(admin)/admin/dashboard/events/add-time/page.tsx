@@ -157,227 +157,174 @@ export default function AddTimeSlotPage() {
 
   if (isLoading) {
     return (
-      <SidebarProvider>
-        <AppSidebar />
-        <SidebarInset>
-          <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 border-b bg-white/80 backdrop-blur-sm sticky top-0 z-40">
-            <div className="flex items-center gap-2 px-4">
-              <SidebarTrigger className="-ml-1" />
-              <Separator orientation="vertical" className="mr-2 data-[orientation=vertical]:h-4" />
-              <Breadcrumb>
-                <BreadcrumbList>
-                  <BreadcrumbItem className="hidden md:block">
-                    <BreadcrumbLink href="/admin/dashboard">Admin Panel</BreadcrumbLink>
-                  </BreadcrumbItem>
-                  <BreadcrumbSeparator className="hidden md:block" />
-                  <BreadcrumbItem className="hidden md:block">
-                    <BreadcrumbLink href="/admin/dashboard/events">Events</BreadcrumbLink>
-                  </BreadcrumbItem>
-                  <BreadcrumbSeparator className="hidden md:block" />
-                  <BreadcrumbItem>
-                    <BreadcrumbPage>Add Time Slot</BreadcrumbPage>
-                  </BreadcrumbItem>
-                </BreadcrumbList>
-              </Breadcrumb>
-            </div>
-          </header>
-          <TimeSlotPageSkeleton />
-        </SidebarInset>
-      </SidebarProvider>
+      <TimeSlotPageSkeleton />
     )
   }
 
   return (
-    <SidebarProvider>
-      <AppSidebar />
-      <SidebarInset>
-      <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-data-[collapsible=icon]/sidebar-wrapper:h-12 border-b bg-white/80 backdrop-blur-sm sticky top-0 z-40">
-      <div className="flex items-center gap-2 px-4">
-            <SidebarTrigger className="-ml-1" />
-            <Separator orientation="vertical" className="mr-2 data-[orientation=vertical]:h-4" />
-            <Breadcrumb>
-              <BreadcrumbList>
-                <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="/admin/dashboard">Admin Panel</BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block" />
-                <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="/admin/dashboard/events">Events</BreadcrumbLink>
-                </BreadcrumbItem>
-                <BreadcrumbSeparator className="hidden md:block" />
-                <BreadcrumbItem>
-                  <BreadcrumbPage>Add Time Slot</BreadcrumbPage>
-                </BreadcrumbItem>
-              </BreadcrumbList>
-            </Breadcrumb>
-          </div>
-        </header>
-
-        <div className="flex flex-1 flex-col gap-6 p-6 pt-0">
-          {/* Header */}
-          <div className="flex items-center justify-between">
-            <div>
-              <h1 className="text-3xl font-bold tracking-tight">Add Time Slot</h1>
-              <p className="text-muted-foreground">Add a new session to an event day.</p>
-            </div>
-            <Button variant="outline" asChild>
-              <Link href="/admin/dashboard/events">
-                <ArrowLeft className="mr-2 h-4 w-4" />
-                Back to Events
-              </Link>
-            </Button>
-          </div>
-
-          {/* Form */}
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Clock className="h-5 w-5" />
-                Time Slot Details
-              </CardTitle>
-              <CardDescription>Fill in the information for the new time slot.</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid gap-4 md:grid-cols-2">
-                  <div className="space-y-2">
-                    <Label htmlFor="eventDay_ref">Event Day *</Label>
-                    <Select
-                      value={formData.eventDay_ref}
-                      onValueChange={(value) => handleSelectChange("eventDay_ref", value)}
-                      disabled={isSubmitting}
-                    >
-                      <SelectTrigger>
-                        <SelectValue placeholder="Select an event day" />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {eventDays.map((day) => (
-                          <SelectItem key={day._id} value={day._id}>
-                            Day {day.dayNumber}: {day.name}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="type">Session Type *</Label>
-                    <Select
-                      value={formData.type}
-                      onValueChange={(value) => handleSelectChange("type", value)}
-                      disabled={isSubmitting}
-                    >
-                      <SelectTrigger>
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        <SelectItem value="event">Event</SelectItem>
-                        <SelectItem value="workshop">Workshop</SelectItem>
-                        <SelectItem value="session">Session</SelectItem>
-                        <SelectItem value="break">Break</SelectItem>
-                      </SelectContent>
-                    </Select>
-                  </div>
-                </div>
-
-                <div className="grid gap-4 md:grid-cols-2">
-                  <div className="space-y-2">
-                    <Label htmlFor="startTime">Start Time *</Label>
-                    <Input
-                      id="startTime"
-                      name="startTime"
-                      type="time"
-                      value={formData.startTime}
-                      onChange={handleChange}
-                      required
-                      disabled={isSubmitting}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="endTime">End Time *</Label>
-                    <Input
-                      id="endTime"
-                      name="endTime"
-                      type="time"
-                      value={formData.endTime}
-                      onChange={handleChange}
-                      required
-                      disabled={isSubmitting}
-                    />
-                  </div>
-                </div>
-
-                <div className="grid gap-4 md:grid-cols-2">
-                  <div className="space-y-2">
-                    <Label htmlFor="title">Session Title *</Label>
-                    <Input
-                      id="title"
-                      name="title"
-                      placeholder="e.g., Opening Ceremony"
-                      value={formData.title}
-                      onChange={handleChange}
-                      required
-                      disabled={isSubmitting}
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="speaker">Speaker/Host</Label>
-                    <Input
-                      id="speaker"
-                      name="speaker"
-                      placeholder="e.g., John Doe"
-                      value={formData.speaker}
-                      onChange={handleChange}
-                      disabled={isSubmitting}
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="description">Description</Label>
-                  <Textarea
-                    id="description"
-                    name="description"
-                    placeholder="Brief description of the session..."
-                    value={formData.description}
-                    onChange={handleChange}
-                    rows={4}
-                    disabled={isSubmitting}
-                  />
-                </div>
-
-                {selectedDay && (
-                  <div className="p-4 bg-muted rounded-lg">
-                    <h4 className="font-medium mb-2">Selected Event Day:</h4>
-                    <p className="text-sm text-muted-foreground">
-                      Day {selectedDay.dayNumber}: {selectedDay.name}
-                    </p>
-                    <p className="text-sm text-muted-foreground">{selectedDay.description}</p>
-                  </div>
-                )}
-
-                <div className="flex gap-2">
-                  <Button type="submit" disabled={isSubmitting}>
-                    {isSubmitting ? (
-                      <>
-                        <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                        Adding Time Slot...
-                      </>
-                    ) : (
-                      <>
-                        <Save className="mr-2 h-4 w-4" />
-                        Add Time Slot
-                      </>
-                    )}
-                  </Button>
-                  <Button type="button" variant="outline" asChild>
-                    <Link href="/admin/dashboard/events">Cancel</Link>
-                  </Button>
-                </div>
-              </form>
-            </CardContent>
-          </Card>
+    <div className="flex flex-1 flex-col gap-6 p-6 pt-0">
+      {/* Header */}
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Add Time Slot</h1>
+          <p className="text-muted-foreground">Add a new session to an event day.</p>
         </div>
-      </SidebarInset>
-    </SidebarProvider>
+        <Button variant="outline" asChild>
+          <Link href="/admin/dashboard/events">
+            <ArrowLeft className="mr-2 h-4 w-4" />
+            Back to Events
+          </Link>
+        </Button>
+      </div>
+
+      {/* Form */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Clock className="h-5 w-5" />
+            Time Slot Details
+          </CardTitle>
+          <CardDescription>Fill in the information for the new time slot.</CardDescription>
+        </CardHeader>
+        <CardContent>
+          <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="eventDay_ref">Event Day *</Label>
+                <Select
+                  value={formData.eventDay_ref}
+                  onValueChange={(value) => handleSelectChange("eventDay_ref", value)}
+                  disabled={isSubmitting}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select an event day" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {eventDays.map((day) => (
+                      <SelectItem key={day._id} value={day._id}>
+                        Day {day.dayNumber}: {day.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="type">Session Type *</Label>
+                <Select
+                  value={formData.type}
+                  onValueChange={(value) => handleSelectChange("type", value)}
+                  disabled={isSubmitting}
+                >
+                  <SelectTrigger>
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="event">Event</SelectItem>
+                    <SelectItem value="workshop">Workshop</SelectItem>
+                    <SelectItem value="session">Session</SelectItem>
+                    <SelectItem value="break">Break</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="startTime">Start Time *</Label>
+                <Input
+                  id="startTime"
+                  name="startTime"
+                  type="time"
+                  value={formData.startTime}
+                  onChange={handleChange}
+                  required
+                  disabled={isSubmitting}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="endTime">End Time *</Label>
+                <Input
+                  id="endTime"
+                  name="endTime"
+                  type="time"
+                  value={formData.endTime}
+                  onChange={handleChange}
+                  required
+                  disabled={isSubmitting}
+                />
+              </div>
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-2">
+              <div className="space-y-2">
+                <Label htmlFor="title">Session Title *</Label>
+                <Input
+                  id="title"
+                  name="title"
+                  placeholder="e.g., Opening Ceremony"
+                  value={formData.title}
+                  onChange={handleChange}
+                  required
+                  disabled={isSubmitting}
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="speaker">Speaker/Host</Label>
+                <Input
+                  id="speaker"
+                  name="speaker"
+                  placeholder="e.g., John Doe"
+                  value={formData.speaker}
+                  onChange={handleChange}
+                  disabled={isSubmitting}
+                />
+              </div>
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="description">Description</Label>
+              <Textarea
+                id="description"
+                name="description"
+                placeholder="Brief description of the session..."
+                value={formData.description}
+                onChange={handleChange}
+                rows={4}
+                disabled={isSubmitting}
+              />
+            </div>
+
+            {selectedDay && (
+              <div className="p-4 bg-muted rounded-lg">
+                <h4 className="font-medium mb-2">Selected Event Day:</h4>
+                <p className="text-sm text-muted-foreground">
+                  Day {selectedDay.dayNumber}: {selectedDay.name}
+                </p>
+                <p className="text-sm text-muted-foreground">{selectedDay.description}</p>
+              </div>
+            )}
+
+            <div className="flex gap-2">
+              <Button type="submit" disabled={isSubmitting}>
+                {isSubmitting ? (
+                  <>
+                    <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                    Adding Time Slot...
+                  </>
+                ) : (
+                  <>
+                    <Save className="mr-2 h-4 w-4" />
+                    Add Time Slot
+                  </>
+                )}
+              </Button>
+              <Button type="button" variant="outline" asChild>
+                <Link href="/admin/dashboard/events">Cancel</Link>
+              </Button>
+            </div>
+          </form>
+        </CardContent>
+      </Card>
+    </div>
   )
 }
