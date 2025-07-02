@@ -29,7 +29,7 @@ export default function ProtectedRoute({
             router.replace("/admin/dashboard");
             break;
           default:
-            router.replace("/user/dashboard");
+            router.replace("/admin/dashboard");
         }
         return;
       }
