@@ -88,6 +88,78 @@ export default function Carousel() {
 
   return (
     <main className="min-h-screen bg-[#fdf8f0] relative overflow-hidden">
+      {/* Decorative Diamond Elements - Like Footer */}
+      <Image
+        src="/dimond-white.png"
+        alt="Decorative diamond pattern"
+        width={100}
+        height={100}
+        className="absolute top-4 left-4 opacity-50 hidden sm:block pointer-events-none select-none"
+      />
+      <Image
+        src="/dimond-white.png"
+        alt="Decorative diamond pattern"
+        width={100}
+        height={100}
+        className="absolute top-4 right-4 opacity-50 hidden sm:block pointer-events-none select-none"
+      />
+      <Image
+        src="/dimond-white.png"
+        alt="Decorative diamond pattern"
+        width={100}
+        height={100}
+        className="absolute bottom-4 left-4 opacity-50 hidden sm:block pointer-events-none select-none"
+      />
+      <Image
+        src="/dimond-white.png"
+        alt="Decorative diamond pattern"
+        width={100}
+        height={100}
+        className="absolute bottom-4 right-4 opacity-50 hidden sm:block pointer-events-none select-none"
+      />
+      <Image
+        src="/dimond-white.png"
+        alt="Decorative diamond pattern"
+        width={100}
+        height={100}
+        className="absolute top-1/2 left-4 -translate-y-1/2 opacity-50 hidden md:block pointer-events-none select-none"
+      />
+      <Image
+        src="/dimond-white.png"
+        alt="Decorative diamond pattern"
+        width={100}
+        height={100}
+        className="absolute top-1/2 right-4 -translate-y-1/2 opacity-50 hidden md:block pointer-events-none select-none"
+      />
+      <Image
+        src="/dimond-white.png"
+        alt="Decorative diamond pattern"
+        width={100}
+        height={100}
+        className="absolute top-1/4 left-[10%] opacity-50 hidden lg:block pointer-events-none select-none"
+      />
+      <Image
+        src="/dimond-white.png"
+        alt="Decorative diamond pattern"
+        width={100}
+        height={100}
+        className="absolute top-1/4 right-[10%] opacity-50 hidden lg:block pointer-events-none select-none"
+      />
+      <Image
+        src="/dimond-white.png"
+        alt="Decorative diamond pattern"
+        width={100}
+        height={100}
+        className="absolute bottom-1/4 left-[10%] opacity-50 hidden lg:block pointer-events-none select-none"
+      />
+      <Image
+        src="/dimond-white.png"
+        alt="Decorative diamond pattern"
+        width={100}
+        height={100}
+        className="absolute bottom-1/4 right-[10%] opacity-50 hidden lg:block pointer-events-none select-none"
+      />
+
       {/* Decorative Sun Elements - Using placeholder.svg */}
       <div className="absolute top-24 left-12">
         <SunIcon size={60} src="/images/sun.gif" />

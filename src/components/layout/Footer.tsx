@@ -1,6 +1,7 @@
 import Image from "next/image"
 import Link from "next/link"
 import { Linkedin, Instagram, Facebook } from "lucide-react"
+import DiamondBackground from "./DiamondBackground"
 
 export default function Footer() {
   return (
@@ -12,6 +13,7 @@ export default function Footer() {
         backgroundSize: "200px", // Adjusted size to make the pattern very sparse and subtle
       }}
     >
+      <DiamondBackground />
       <div className="container mx-auto max-w-7xl">
         {/* Top Section: Logo and Main Heading */}
         <div className="flex flex-col md:flex-row items-center justify-between mb-12 text-center md:text-left">
@@ -19,8 +21,8 @@ export default function Footer() {
             <Image
               src="/images/Footerlogo.png"
               alt="Arunachal Lit-Fest Logo"
-              width={120} // Adjusted width based on visual
-              height={50} // Adjusted height based on visual
+              width={120} 
+              height={50} 
               className="object-contain"
             />
           </div>
