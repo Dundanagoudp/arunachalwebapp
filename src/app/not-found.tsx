@@ -6,9 +6,19 @@ import Link from "next/link"
 
 export default function NotFound() {
   const [isVisible, setIsVisible] = useState(false)
+  const [dots, setDots] = useState<any[]>([])
 
   useEffect(() => {
     setIsVisible(true)
+    // Generate random dot styles only on client
+    setDots(
+      Array.from({ length: 8 }).map((_, i) => ({
+        left: `${Math.random() * 100}%`,
+        top: `${Math.random() * 100}%`,
+        animationDelay: `${i * 0.5}s`,
+        animationDuration: `${3 + Math.random() * 2}s`,
+      }))
+    )
   }, [])
 
   return (
@@ -16,16 +26,11 @@ export default function NotFound() {
       <div className="max-w-4xl mx-auto text-center relative">
         {/* Floating dots animation */}
         <div className="absolute inset-0 overflow-hidden pointer-events-none">
-          {[...Array(8)].map((_, i) => (
+          {dots.map((style, i) => (
             <div
               key={i}
               className="absolute w-2 h-2 bg-yellow-400 rounded-full animate-float"
-              style={{
-                left: `${Math.random() * 100}%`,
-                top: `${Math.random() * 100}%`,
-                animationDelay: `${i * 0.5}s`,
-                animationDuration: `${3 + Math.random() * 2}s`,
-              }}
+              style={style}
             />
           ))}
         </div>
