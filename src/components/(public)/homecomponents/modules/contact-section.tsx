@@ -4,6 +4,7 @@ import { Button } from "@/components/ui/button"
 import { ArrowRight, ArrowUpRight } from "lucide-react"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
+import DiamondBackground from "./DiamondBackground"
 
 export default function Contactsection() {
   const router = useRouter()
@@ -15,76 +16,7 @@ export default function Contactsection() {
   return (
     <section className="relative w-full py-12 md:py-24 lg:py-32 bg-[#FDF6E9] overflow-hidden">
       {/* Decorative background elements - Diamonds */}
-      <Image
-        src="/gallery/diamond-pattern.png"
-        alt="Decorative diamond pattern"
-        width={100}
-        height={100}
-        className="absolute top-4 left-4 opacity-50 hidden sm:block"
-      />
-      <Image
-        src="/gallery/diamond-pattern.png"
-        alt="Decorative diamond pattern"
-        width={100}
-        height={100}
-        className="absolute top-4 right-4 opacity-50 hidden sm:block"
-      />
-      <Image
-        src="/gallery/diamond-pattern.png"
-        alt="Decorative diamond pattern"
-        width={100}
-        height={100}
-        className="absolute bottom-4 left-4 opacity-50 hidden sm:block"
-      />
-      <Image
-        src="/gallery/diamond-pattern.png"
-        alt="Decorative diamond pattern"
-        width={100}
-        height={100}
-        className="absolute bottom-4 right-4 opacity-50 hidden sm:block"
-      />
-      <Image
-        src="/gallery/diamond-pattern.png"
-        alt="Decorative diamond pattern"
-        width={100}
-        height={100}
-        className="absolute top-1/2 left-4 -translate-y-1/2 opacity-50 hidden md:block"
-      />
-      <Image
-        src="/gallery/diamond-pattern.png"
-        alt="Decorative diamond pattern"
-        width={100}
-        height={100}
-        className="absolute top-1/2 right-4 -translate-y-1/2 opacity-50 hidden md:block"
-      />
-      <Image
-        src="/gallery/diamond-pattern.png"
-        alt="Decorative diamond pattern"
-        width={100}
-        height={100}
-        className="absolute top-1/4 left-[10%] opacity-50 hidden lg:block"
-      />
-      <Image
-        src="/gallery/diamond-pattern.png"
-        alt="Decorative diamond pattern"
-        width={100}
-        height={100}
-        className="absolute top-1/4 right-[10%] opacity-50 hidden lg:block"
-      />
-      <Image
-        src="/gallery/diamond-pattern.png"
-        alt="Decorative diamond pattern"
-        width={100}
-        height={100}
-        className="absolute bottom-1/4 left-[10%] opacity-50 hidden lg:block"
-      />
-      <Image
-        src="/gallery/diamond-pattern.png"
-        alt="Decorative diamond pattern"
-        width={100}
-        height={100}
-        className="absolute bottom-1/4 right-[10%] opacity-50 hidden lg:block"
-      />
+      <DiamondBackground />
 
       {/* Decorative background elements - Dots */}
       <div className="absolute top-8 left-1/2 -translate-x-1/2 w-2 h-2 bg-[#6A1B1A] rounded-full" />

@@ -1,37 +1,34 @@
 "use client"
 import Image from "next/image"
 import Link from "next/link" // Import Link
-import { ArrowRight, ArrowUpRight } from "lucide-react" // Change to ArrowRight
-import { BlogCardSkeleton } from "@/components/blog-card-skeleton" // Import the new skeleton component
+import { ArrowRight, ArrowUpRight } from "lucide-react" 
+import { BlogCardSkeleton } from "@/components/blog-card-skeleton" 
 import SunIcon from "../../archive/sun-icon"
+import { useEffect, useState } from "react"
+import { getBlogs } from "@/service/newsAndBlogs"
+import type { Blog } from "@/types/newAndBlogTypes"
 
 export default function Blogs() {
-  const isLoading = false // For demonstration, set to false. In a real app, this would come from data fetching.
+  const [blogs, setBlogs] = useState<Blog[]>([])
+  const [isLoading, setIsLoading] = useState(true)
 
-  // Blog data array
-  const blogs = [
-    {
-      image: "/blogs/blog1.png",
-      alt: "Arunachal Literature Festival 2022",
-      title: "The Rise of Indigenous Literature in Arunachal Pradesh",
-      date: "30 October 2023",
-      link: "#",
-    },
-    {
-      image: "/blogs/blog2.png",
-      alt: "Literary Icons",
-      title: "Meet the Literary Icons Gracing This Year's Festival",
-      date: "30 October 2023",
-      link: "#",
-    },
-    {
-      image: "/blogs/blog3.png",
-      alt: "Arunachal Literature Festival 2019",
-      title: "5 Must-Attend Sessions at This Year's Festival",
-      date: "30 October 2023",
-      link: "#",
-    },
-  ];
+  useEffect(() => {
+    async function fetchBlogs() {
+      setIsLoading(true)
+      const res = await getBlogs()
+      if (res.success && Array.isArray(res.data)) {
+        // Sort by publishedDate descending, fallback to original order if not present
+        const sorted = [...res.data].sort((a, b) => {
+          const dateA = a.publishedDate ? new Date(a.publishedDate).getTime() : 0
+          const dateB = b.publishedDate ? new Date(b.publishedDate).getTime() : 0
+          return dateB - dateA
+        })
+        setBlogs(sorted.slice(0, 3))
+      }
+      setIsLoading(false)
+    }
+    fetchBlogs()
+  }, [])
 
   return (
     <div className="min-h-screen bg-[#FDF6E9] p-8 relative overflow-hidden">
@@ -65,14 +62,16 @@ export default function Blogs() {
 
       {/* View All Button */}
       <div className="mt-0 flex justify-center mb-12 relative z-10">
-           <button className="group relative flex items-center hover:scale-105 transition-transform duration-300 focus:outline-none">
-              <span className="bg-[#4F8049] text-white px-6 py-3 pr-12 rounded-full text-lg font-medium">
-                View All
-              </span>
-              <span className="absolute right-0 left-30 translate-x-1/2 bg-[#4F8049] w-10 h-10 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 group-hover:translate-x-6 group-hover:rotate-12">
-                <ArrowUpRight className="w-4 h-4 text-white transition-transform duration-300 group-hover:rotate-45" />
-              </span>
-            </button>
+        <Link href="/blogsContent" passHref>
+          <button className="group relative flex items-center hover:scale-105 transition-transform duration-300 focus:outline-none">
+            <span className="bg-[#4F8049] text-white px-6 py-3 pr-12 rounded-full text-lg font-medium">
+              View All
+            </span>
+            <span className="absolute right-0 left-30 translate-x-1/2 bg-[#4F8049] w-10 h-10 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 group-hover:translate-x-6 group-hover:rotate-12">
+              <ArrowUpRight className="w-4 h-4 text-white transition-transform duration-300 group-hover:rotate-45" />
+            </span>
+          </button>
+        </Link>
       </div>
 
       {/* Blog Cards or Skeletons */}
@@ -86,29 +85,52 @@ export default function Blogs() {
             <BlogCardSkeleton />
             <BlogCardSkeleton />
           </>
+        ) : blogs.length === 0 ? (
+          <div className="col-span-full text-center text-gray-500">No blogs found.</div>
         ) : (
           <>
-{blogs.map((blog, idx) => (
-  <div key={idx} className="bg-white rounded-xl overflow-hidden shadow-md lg:h-[450px] group"> {/* Changed from 500px to 600px */}
-    <div className="p-2">
-      <div className="relative w-full h-72 mb-4 flex-shrink-0 overflow-hidden rounded-xl">
-        <Image
-          src={blog.image}
-          alt={blog.alt}
-          fill
-          className="object-cover"
-        />
-      </div>
-      <h3 className="text-xl font-bold mt-4 mb-2">{blog.title}</h3>
-      <div className="flex justify-between items-center mt-9">
-        <p className="text-gray-500">{blog.date}</p>
-        <Link href={blog.link} className="text-[#4F8049] font-medium hover:underline group-hover:text-[#3A6035]">
-          Read More
-        </Link>
-      </div>
-    </div>
-  </div>
-))}
+            {blogs.map((blog) => (
+              <div key={blog._id} className="bg-white rounded-xl overflow-hidden shadow-md lg:h-[450px] group">
+                <div className="p-2">
+                  <div className="relative w-full h-72 mb-4 flex-shrink-0 overflow-hidden rounded-xl">
+                    <Image
+                      src={blog.image_url || "/blogs/blog1.png"}
+                      alt={blog.title}
+                      fill
+                      className="object-cover"
+                    />
+                  </div>
+                  <h3 className="text-xl font-bold mt-4 mb-2">{blog.title}</h3>
+                  {blog.contents && (
+                    <p className="text-gray-700 text-base mb-2 line-clamp-3">
+                      {blog.contents.length > 40 ? blog.contents.slice(0, 40) + '...' : blog.contents}
+                    </p>
+                  )}
+                  <div className="flex justify-between items-center mt-9">
+                    <p className="text-gray-500">{blog.publishedDate ? new Date(blog.publishedDate).toLocaleDateString() : ""}</p>
+                    {blog.contentType === 'link' && blog.link ? (
+                      <a
+                        href={blog.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="text-[#4F8049] font-semibold hover:underline text-sm sm:text-base"
+                      >
+                        Read More
+                      </a>
+                    ) : blog._id ? (
+                      <Link
+                        href={`/blogsContent/blog/${blog._id}`}
+                        className="text-[#4F8049] font-semibold hover:underline text-sm sm:text-base"
+                      >
+                        Read More
+                      </Link>
+                    ) : (
+                      <span className="px-4 py-2 bg-gray-300 text-gray-500 rounded-full font-medium cursor-not-allowed" title="Blog ID or link missing">Read More</span>
+                    )}
+                  </div>
+                </div>
+              </div>
+            ))}
           </>
         )}
       </div>

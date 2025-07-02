@@ -1,6 +1,7 @@
 import Image from "next/image"
 import Link from "next/link"
 import { Linkedin, Instagram, Facebook } from "lucide-react"
+import DiamondBackground from "./DiamondBackground"
 
 export default function Footer() {
   return (
@@ -9,32 +10,33 @@ export default function Footer() {
       style={{
         // backgroundImage: "url('/images/Footer.png')",
         // backgroundRepeat: "",
-        backgroundSize: "200px", // Adjusted size to make the pattern very sparse and subtle
+        backgroundSize: "200px", 
       }}
     >
+      <DiamondBackground />
       <div className="container mx-auto max-w-7xl">
         {/* Top Section: Logo and Main Heading */}
-        <div className="flex flex-col md:flex-row items-center justify-between mb-12 text-center md:text-left">
+        <div className="flex flex-col md:flex-row items-start md:items-center justify-between mb-12 text-left md:text-left">
           <div className="mb-6 md:mb-0">
             <Image
               src="/images/Footerlogo.png"
               alt="Arunachal Lit-Fest Logo"
-              width={120} // Adjusted width based on visual
-              height={50} // Adjusted height based on visual
+              width={120} 
+              height={50} 
               className="object-contain"
             />
           </div>
-          <h2 className="text-2xl md:text-3xl lg:text-4xl font-bold tracking-wider uppercase text-center md:flex-1 text-[#FF9900]">
+          <h2 className="text-lg md:text-3xl lg:text-4xl font-bold font-serif tracking-wide uppercase text-left md:text-center md:flex-1 text-[#FF9900] whitespace-nowrap md:whitespace-normal">
             ARUNACHAL LITERATURE FESTIVAL
           </h2>
           <div className="md:w-[180px] md:h-[90px] hidden md:block" /> {/* Placeholder to balance layout */}
         </div>
 
         {/* Bottom Section: Navigation, Assistance, Socials, Office Address */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 text-center md:text-left">
+        <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-8 text-left">
           {/* Navigate Section */}
-          <div>
-            <h3 className="text-xl font-semibold mb-4 text-[#FF9900] font-bilo">Navigate</h3>
+          <div className="col-span-1">
+            <h3 className="text-xl font-semibold mb-4 text-[#FF9900] font-serif tracking-wide">Navigate</h3>
             <ul className="space-y-2">
               <li>
                 <Link href="/registration" className="hover:underline">
@@ -75,8 +77,8 @@ export default function Footer() {
           </div>
 
           {/* Assistance Section */}
-          <div>
-            <h3 className="text-xl font-semibold mb-4 text-[#FF9900] font-bilo">Assistance</h3>
+          <div className="col-span-1">
+            <h3 className="text-xl font-semibold mb-4 text-[#FF9900] font-serif tracking-wide">Assistance</h3>
             <ul className="space-y-2">
               <li>
                 <Link href="/contactus" className="hover:underline">
@@ -91,12 +93,12 @@ export default function Footer() {
             </ul>
           </div>
 
-          {/* New parent div for Socials and Office Address */}
-          <div className="flex flex-col gap-8">
+          {/* Socials & Office Address Section - spans both columns on mobile */}
+          <div className="col-span-2 md:col-span-2 lg:col-span-1 flex flex-col gap-8">
             {/* Socials Section */}
             <div>
-              <h3 className="text-xl font-semibold mb-4 text-[#FF9900] font-bilo">Socials</h3>
-              <div className="flex justify-center md:justify-start space-x-4">
+              <h3 className="text-xl font-semibold mb-4 text-[#FF9900] font-serif tracking-wide">Socials</h3>
+              <div className="flex justify-start space-x-4">
                 <Link href="#" aria-label="LinkedIn" className="hover:text-gray-300">
                   <Linkedin className="size-6" />
                 </Link>
@@ -111,7 +113,7 @@ export default function Footer() {
 
             {/* Office Address Section */}
             <div>
-              <h3 className="text-xl font-semibold mb-4 text-[#FF9900] font-bilo">Office Address</h3>
+              <h3 className="text-xl font-semibold mb-4 text-[#FF9900] font-serif tracking-wide">Office Address</h3>
               <p className="text-sm leading-relaxed">
                 Directorate of Information and Public Relations (Soochna bhawan), papu nallah, Naharlagun, Arunachal
                 Pradesh Pin - 791110
