@@ -67,7 +67,7 @@ export function NavUser({
                 <AvatarFallback className="rounded-lg">{initials}</AvatarFallback>
               </Avatar>
               <div className="grid flex-1 text-left text-sm leading-tight">
-                <span className="truncate font-medium">{user.name}</span>
+                {/* <span className="truncate font-medium">{user.name}</span> */}
                 <span className="truncate text-xs">{user.email}</span>
                 {user.role && (
                   <span className="truncate text-xs text-muted-foreground capitalize">{user.role}</span>
@@ -89,7 +89,7 @@ export function NavUser({
                   <AvatarFallback className="rounded-lg">{initials}</AvatarFallback>
                 </Avatar>
                 <div className="grid flex-1 text-left text-sm leading-tight">
-                  <span className="truncate font-medium">{user.name}</span>
+                  {/* <span className="truncate font-medium">{user.name}</span> */}
                   <span className="truncate text-xs">{user.email}</span>
                   {user.role && (
                     <span className="truncate text-xs text-muted-foreground capitalize">{user.role}</span>
@@ -99,10 +99,6 @@ export function NavUser({
             </DropdownMenuLabel>
             <DropdownMenuSeparator />
             <DropdownMenuGroup>
-              <DropdownMenuItem>
-                <Sparkles />
-                Upgrade to Pro
-              </DropdownMenuItem>
             </DropdownMenuGroup>
             <DropdownMenuSeparator />
             <DropdownMenuSeparator />
