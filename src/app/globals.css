@@ -431,3 +431,16 @@ swiper-button-prev,
   border: none !important;
 }
 
+@keyframes bgshadow-pulse {
+  0%, 100% {
+    box-shadow: 0 0 40px 0 #f5e6c8, 0 0 0 0 #fdf6e9;
+  }
+  50% {
+    box-shadow: 0 0 80px 10px #f5e6c8, 0 0 0 0 #fdf6e9;
+  }
+}
+
+.animate-bgshadow {
+  animation: bgshadow-pulse 2.5s ease-in-out infinite;
+}
+

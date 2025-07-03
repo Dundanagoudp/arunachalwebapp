@@ -20,7 +20,7 @@ export default function LoginPage() {
           </div>
         </div>
       </div>
-      <div className="bg-muted hidden lg:flex items-center justify-center">
+      <div className="bg-[#FDF6E9] hidden lg:flex items-center justify-center">
         <Image
           src="/login.gif"
           alt="Login Illustration"
