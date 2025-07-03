@@ -52,7 +52,7 @@ const adminNavData = {
       url: "/admin/dashboard",
       icon: Home,
       isActive: true,
-      item:[
+      items:[
         {
           title: "Main",
           url: "/admin/dashboard",
@@ -237,7 +237,7 @@ const userNavData = {
       url: "/admin/dashboard",
       icon: Home,
       isActive: true,
-      item:[
+      items:[
         {
           title: "Main",
           url: "/admin/dashboard",
