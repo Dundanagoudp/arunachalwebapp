@@ -1,5 +1,5 @@
 {
-  "version": 3,
+  "version": 2,
   "rewrites": [
     { "source": "/attendeessay/:path*", "destination": "/attendeessay/:path*" },
     { "source": "/registration/:path*", "destination": "/registration/:path*" },
