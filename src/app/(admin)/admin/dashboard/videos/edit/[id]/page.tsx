@@ -54,13 +54,13 @@ export default function EditVideoPage() {
             title: result.data.title,
           });
           setVideoType(result.data.videoType)
-          
-          // Initialize YouTube URL if it exists
+        
+        // Initialize YouTube URL if it exists
           if (result.data.youtubeUrl) {
             setYoutubeUrl(result.data.youtubeUrl)
             fetchYouTubeData(result.data.youtubeUrl)
-          }
-        } else {
+        }
+      } else {
           toast({ title: "Error", description: "Video not found" });
           router.replace("/admin/dashboard/videos");
         }
@@ -70,7 +70,7 @@ export default function EditVideoPage() {
       } finally {
         setLoading(false);
         setFetchLoading(false);
-      }
+    }
     };
     fetchVideo();
   }, [id]);
