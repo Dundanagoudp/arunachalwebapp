@@ -1,11 +1,13 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import { usePathname } from "next/navigation"
 import { Progress } from "@/components/ui/progress"
 
 const LoadingProgress = () => {
   const [progress, setProgress] = useState(0)
   const [isLoading, setIsLoading] = useState(false)
+  const pathname = usePathname()
 
   useEffect(() => {
     // Start loading when route changes
@@ -29,7 +31,7 @@ const LoadingProgress = () => {
       clearTimeout(timer3)
       clearTimeout(timer4)
     }
-  }, [])
+  }, [pathname])
 
   if (!isLoading) return null
 
