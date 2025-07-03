@@ -4,6 +4,9 @@ import Image from "next/image"
 import { useState, useEffect } from "react"
 import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react"
 import { getPoetry } from "@/service/poetryService"
+import { Skeleton } from "@/components/ui/skeleton"
+import AOS from 'aos'
+import 'aos/dist/aos.css'
 
 interface Poetry {
   _id: string
@@ -19,6 +22,14 @@ export default function Testimonials() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const [expandedTexts, setExpandedTexts] = useState<Set<string>>(new Set())
+
+  useEffect(() => {
+    AOS.init({
+      duration: 1200,
+      easing: 'ease-in-out',
+      once: true,
+    })
+  }, [])
 
   // Fetch poetry from API
   useEffect(() => {
@@ -39,7 +50,6 @@ export default function Testimonials() {
         setLoading(false)
       }
     }
-
     fetchPoetry()
   }, [])
 
@@ -77,11 +87,11 @@ export default function Testimonials() {
     })
   }
 
-  // Show loading state
+  // Main poetry display
   if (loading) {
     return (
       <div className="relative flex min-h-[60vh] lg:min-h-screen items-center justify-center bg-[#fdf8f0] p-2 overflow-hidden">
-        {/* Decorative background patterns */}
+        {/* Decorative background patterns (always visible) */}
         {[...Array(8)].map((_, i) => (
           <div
             key={i}
@@ -108,9 +118,50 @@ export default function Testimonials() {
         ))}
 
         <div className="relative mt-2 md:mt-8 lg:mt-25 z-10 flex w-full max-w-4xl flex-col items-center justify-center p-6">
-          <div className="flex flex-col items-center justify-center space-y-4">
-            <Loader2 className="h-12 w-12 animate-spin text-amber-500" />
-            <p className="text-lg text-gray-600">Loading beautiful poetry...</p>
+          {/* Quote container with decorative blob shape (matches loaded layout) */}
+          <div className="relative flex w-full items-center justify-center">
+            <Image
+              src="/testimonials/Vector3.png"
+              alt="Decorative blob shape"
+              width={400}
+              height={200}
+              className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 max-w-[320px] md:max-w-[400px] lg:max-w-[790px] w-full h-auto opacity-60 object-contain pointer-events-none transition-opacity duration-300"
+            />
+            {/* Left arrow skeleton */}
+            <div className="absolute left-0 top-1/2 -translate-y-1/2 z-20">
+              <Skeleton className="h-12 w-12 md:h-14 md:w-14 rounded-full bg-white/80 animate-pulse transition-all duration-500" />
+            </div>
+            {/* Quote text and author skeleton */}
+            <div className="relative z-10 flex flex-col items-center justify-center p-25 text-center w-full">
+              <span className="absolute -top-8 -left-8 text-8xl font-serif text-[#000000] opacity-70 md:-top-12 md:-left-12 md:text-9xl select-none">
+                &ldquo;
+              </span>
+              <div className="max-w-2xl mx-auto flex flex-col items-center">
+                <Skeleton className="h-12 md:h-16 w-3/4 md:w-2/3 mb-4 rounded-lg bg-white/80 animate-pulse transition-all duration-500" />
+                <Skeleton className="h-6 w-40 md:w-56 rounded bg-white/80 animate-pulse transition-all duration-500" />
+              </div>
+              <span className="absolute -bottom-8 -right-8 text-8xl font-serif text-[#000000] opacity-70 md:-bottom-18 md:-right-25 md:text-9xl select-none">
+                &rdquo;
+              </span>
+            </div>
+            {/* Right arrow skeleton */}
+            <div className="absolute right-0 top-1/2 -translate-y-1/2 z-20">
+              <Skeleton className="h-12 w-12 md:h-14 md:w-14 rounded-full bg-white/80 animate-pulse transition-all duration-500" />
+            </div>
+          </div>
+          {/* Books and pen image shimmer overlay */}
+          <div className="mt-4 md:mt-16 transition-opacity duration-500 flex justify-center">
+            <div className="relative">
+              <Image
+                src="/testimonials/book.png"
+                alt="Stack of books and a pen"
+                width={200}
+                height={150}
+                className="object-contain w-[100px] h-[75px] md:w-[200px] md:h-[150px]"
+                priority
+              />
+              <Skeleton className="absolute top-0 left-0 w-full h-full rounded-lg bg-white/80 animate-pulse transition-all duration-500" />
+            </div>
           </div>
         </div>
       </div>
@@ -204,7 +255,7 @@ export default function Testimonials() {
 
   return (
     <div className="relative flex min-h-[60vh] lg:min-h-screen items-center justify-center bg-[#fdf8f0] p-2 overflow-hidden">
-      {/* Decorative background patterns */}
+      {/* Decorative background patterns (always visible) */}
       {[...Array(8)].map((_, i) => (
         <div
           key={i}
@@ -250,6 +301,7 @@ export default function Testimonials() {
           </button>
 
           <div
+            data-aos="fade-up" data-aos-delay="0" data-aos-duration="1200"
             className={`relative z-10 flex flex-col items-center justify-center p-25 text-center w-full transition-opacity duration-500 ${isTransitioning ? "opacity-0" : "opacity-100"}`}
           >
             <span className="absolute -top-8 -left-8 text-8xl font-serif text-[#000000] opacity-70 md:-top-12 md:-left-12 md:text-9xl select-none">
@@ -284,7 +336,7 @@ export default function Testimonials() {
         </div>
 
         {/* Books and pen image */}
-        <div className="mt-4 md:mt-16 transition-opacity duration-500 flex justify-center">
+        <div data-aos="fade-up" data-aos-delay="200" data-aos-duration="1200" className="mt-4 md:mt-16 flex justify-center">
           <Image
             src="/testimonials/book.png"
             alt="Stack of books and a pen"

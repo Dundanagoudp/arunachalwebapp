@@ -7,11 +7,21 @@ import Image from "next/image"
 import { useEffect, useState } from "react"
 import { getTestimonials } from "@/service/testimonialService"
 import type { Testimonial as ApiTestimonial } from "@/types/testimonial-types"
+import AOS from 'aos'
+import 'aos/dist/aos.css'
 
 export default function Attendeessay() {
   const [testimonials, setTestimonials] = useState<ApiTestimonial[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+
+  useEffect(() => {
+    AOS.init({
+      duration: 1200,
+      easing: 'ease-in-out',
+      once: true,
+    })
+  }, [])
 
   useEffect(() => {
     async function fetchTestimonials() {
@@ -68,6 +78,7 @@ export default function Attendeessay() {
             <div className="flex items-center justify-center gap-4 mb-6">
               <span className="w-3 h-3 rounded-full bg-yellow-400" />
               <h2 
+                data-aos="fade-up" data-aos-delay="0" data-aos-duration="1000"
                 className="text-2xl md:text-3xl font-bold font-serif tracking-wide uppercase text-yellow-400 drop-shadow-lg font-bilo"
               >
                 Arunachal Literature Festival
@@ -75,6 +86,7 @@ export default function Attendeessay() {
               <span className="w-3 h-3 rounded-full bg-yellow-400" />
             </div>
             <h3 
+              data-aos="fade-up" data-aos-delay="100" data-aos-duration="1000"
               className="text-2xl md:text-5xl font-bold mb-8 text-yellow-400 drop-shadow-lg font-serif tracking-wide"
             >
               WHAT OUR ATTENDEES SAY
@@ -214,6 +226,7 @@ export default function Attendeessay() {
           <div className="flex items-center justify-center gap-4 mb-6">
             <span className="w-3 h-3 rounded-full bg-yellow-400" />
             <h2 
+              data-aos="fade-up" data-aos-delay="0" data-aos-duration="1000"
               className="text-2xl md:text-3xl font-bold font-serif tracking-wide uppercase text-yellow-400 drop-shadow-lg font-bilo"
             >
               Arunachal Literature Festival
@@ -221,6 +234,7 @@ export default function Attendeessay() {
             <span className="w-3 h-3 rounded-full bg-yellow-400" />
           </div>
           <h3 
+            data-aos="fade-up" data-aos-delay="100" data-aos-duration="1000"
             className="text-2xl md:text-5xl font-bold mb-8 text-yellow-400 drop-shadow-lg font-serif tracking-wide"
           >
             WHAT OUR ATTENDEES SAY
@@ -233,8 +247,14 @@ export default function Attendeessay() {
         <div>
           {/* Mobile/Tablet only: horizontal scrollable carousel */}
           <div className="flex flex-row gap-4 w-screen pl-4 pr-4 sm:pl-8 sm:pr-8 lg:hidden overflow-x-auto scrollbar-hide pb-2">
-            {testimonials.map((t) => (
-              <div key={t._id} className="min-w-[85vw] max-w-[90vw] flex-shrink-0">
+            {testimonials.map((t, idx) => (
+              <div
+                key={t._id}
+                data-aos="fade-up"
+                data-aos-delay={idx * 120}
+                data-aos-duration="1000"
+                className="min-w-[85vw] max-w-[90vw] flex-shrink-0"
+              >
                 <TestimonialCard
                   name={t.name}
                   title={t.about}
@@ -250,14 +270,20 @@ export default function Attendeessay() {
           <div className="hidden lg:grid grid-cols-3 gap-6 max-w-6xl mx-auto w-full relative mb-60">
             {/* Left Column */}
             <div className="flex flex-col gap-6">
-              {left.map((t) => (
-                <TestimonialCard
+              {left.map((t, idx) => (
+                <div
                   key={t._id}
-                  name={t.name}
-                  title={t.about}
-                  quote={t.description}
-                  avatar={t.image_url}
-                />
+                  data-aos="fade-right"
+                  data-aos-delay={idx * 120}
+                  data-aos-duration="1000"
+                >
+                  <TestimonialCard
+                    name={t.name}
+                    title={t.about}
+                    quote={t.description}
+                    avatar={t.image_url}
+                  />
+                </div>
               ))}
             </div>
             {/* Center Column - Large Card */}
@@ -273,25 +299,36 @@ export default function Attendeessay() {
                 />
               </div>
               {center && (
-                <TestimonialCard
-                  key={center._id}
-                  name={center.name}
-                  title={center.about}
-                  quote={center.description}
-                  avatar={center.image_url}
-                />
+                <div
+                  data-aos="fade-up"
+                  data-aos-delay={left.length * 120}
+                  data-aos-duration="1000"
+                >
+                  <TestimonialCard
+                    name={center.name}
+                    title={center.about}
+                    quote={center.description}
+                    avatar={center.image_url}
+                  />
+                </div>
               )}
             </div>
             {/* Right Column */}
             <div className="flex flex-col gap-6">
-              {right.map((t) => (
-                <TestimonialCard
+              {right.map((t, idx) => (
+                <div
                   key={t._id}
-                  name={t.name}
-                  title={t.about}
-                  quote={t.description}
-                  avatar={t.image_url}
-                />
+                  data-aos="fade-left"
+                  data-aos-delay={idx * 120}
+                  data-aos-duration="1000"
+                >
+                  <TestimonialCard
+                    name={t.name}
+                    title={t.about}
+                    quote={t.description}
+                    avatar={t.image_url}
+                  />
+                </div>
               ))}
             </div>
           </div>

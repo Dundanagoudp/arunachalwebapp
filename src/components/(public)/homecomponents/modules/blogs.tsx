@@ -7,10 +7,20 @@ import SunIcon from "../../archive/sun-icon"
 import { useEffect, useState } from "react"
 import { getBlogs } from "@/service/newsAndBlogs"
 import type { Blog } from "@/types/newAndBlogTypes"
+import AOS from 'aos'
+import 'aos/dist/aos.css'
 
 export default function Blogs() {
   const [blogs, setBlogs] = useState<Blog[]>([])
   const [isLoading, setIsLoading] = useState(true)
+
+  useEffect(() => {
+    AOS.init({
+      duration: 1200,
+      easing: 'ease-in-out',
+      once: true,
+    })
+  }, [])
 
   useEffect(() => {
     async function fetchBlogs() {
@@ -33,27 +43,27 @@ export default function Blogs() {
   return (
     <div className="min-h-screen bg-[#FDF6E9] p-8 relative overflow-hidden">
       {/* Decorative Sun Icons */}
-      <div className="absolute top-10 left-10 z-0">
+      <div data-aos="fade-right" data-aos-delay="0" data-aos-duration="1000" className="absolute top-10 left-10 z-0">
         <SunIcon size={50} src="/blogs/sun.gif" />
       </div>
-      <div className="absolute top-10 right-10 z-0">
+      <div data-aos="fade-left" data-aos-delay="0" data-aos-duration="1000" className="absolute top-10 right-10 z-0">
         <SunIcon size={50} src="/blogs/sun.gif" />
       </div>
-      <div className="absolute top-1/2 -translate-y-1/2 left-65 -ml-0 -0 z-0 lg:-ml-4">
+      <div data-aos="fade-right" data-aos-delay="200" data-aos-duration="1000" className="absolute top-1/2 -translate-y-1/2 left-65 -ml-0 -0 z-0 lg:-ml-4">
         <SunIcon size={50} src="/blogs/sun.gif" />
       </div>
-      <div className="absolute top-1/2 -translate-y-1/2 right-45 right-0 -mr-4 z-0">
+      <div data-aos="fade-left" data-aos-delay="200" data-aos-duration="1000" className="absolute top-1/2 -translate-y-1/2 right-45 right-0 -mr-4 z-0">
         <SunIcon size={50} src="/blogs/sun.gif" />
       </div>
 
       {/* Header */}
       <div className="text-center mt-16 mb-12 relative z-10">
-        <h1 className="text-[#4F8049] text-xl md:text4xl lg:text-4xl font-serif font-medium uppercase tracking-wide mb-1">
+        <h1 data-aos="fade-up" data-aos-delay="0" data-aos-duration="1000" className="text-[#4F8049] text-xl md:text4xl lg:text-4xl font-serif font-medium uppercase tracking-wide mb-1">
           ARUNACHAL LITERATURE FESTIVAL
         </h1>
         <div className="flex justify-center items-center gap-6">
           <div className="w-4 h-4 rounded-full bg-[#4F8049]"></div>
-          <h2 className="text-[#4F8049] text-3xl md:text-4xl lg:text-5xl font-serif font-bold uppercase font-serif tracking-wide">
+          <h2 data-aos="fade-up" data-aos-delay="100" data-aos-duration="1000" className="text-[#4F8049] text-3xl md:text-4xl lg:text-5xl font-serif font-bold uppercase font-serif tracking-wide">
             BLOGS AND MEDIA
           </h2>
           <div className="w-4 h-4 rounded-full bg-[#4F8049]"></div>
@@ -61,7 +71,7 @@ export default function Blogs() {
       </div>
 
       {/* View All Button */}
-      <div className="mt-0 flex justify-center mb-12 relative z-10">
+      <div data-aos="fade-up" data-aos-delay="200" data-aos-duration="1000" className="mt-0 flex justify-center mb-12 relative z-10">
         <Link href="/blogsContent" passHref>
           <button className="group relative flex items-center hover:scale-105 transition-transform duration-300 focus:outline-none">
             <span className="bg-[#4F8049] text-white px-6 py-3 pr-12 rounded-full text-lg font-medium">
@@ -89,8 +99,14 @@ export default function Blogs() {
           <div className="col-span-full text-center text-gray-500">No blogs found.</div>
         ) : (
           <>
-            {blogs.map((blog) => (
-              <div key={blog._id} className="bg-white rounded-xl overflow-hidden shadow-md lg:h-[450px] group">
+            {blogs.map((blog, idx) => (
+              <div
+                key={blog._id}
+                data-aos="fade-up"
+                data-aos-delay={300 + idx * 120}
+                data-aos-duration="1000"
+                className="bg-white rounded-xl overflow-hidden shadow-md lg:h-[450px] group"
+              >
                 <div className="p-2">
                   <div className="relative w-full h-72 mb-4 flex-shrink-0 overflow-hidden rounded-xl">
                     <Image
