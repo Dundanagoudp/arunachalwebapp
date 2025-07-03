@@ -298,7 +298,7 @@ export default function Testimonials() {
         {/* Poetry counter */}
         <div className="mt-4 md:mt-8 text-center">
           <p className="text-sm text-gray-600">
-            {current + 1} of {total} poems
+            {/* {current + 1} of {total} poems */}
           </p>
         </div>
       </div>

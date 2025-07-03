@@ -39,7 +39,7 @@ export default function Speakers() {
   }, [])
 
   // Loading dots animation
-  const LoadingDots = () => (
+const LoadingDots = () => (
     <div className="flex flex-col items-center justify-center min-h-[300px]">
       <div className="flex space-x-2 mt-10">
         <span className="w-3 h-3 bg-yellow-400 rounded-full animate-bounce [animation-delay:-0.3s]"></span>
@@ -102,7 +102,7 @@ export default function Speakers() {
                   <ArrowLeft className="w-6 h-6" />
                 </button>
 
-                <Swiper
+                               <Swiper
                   effect={"coverflow"}
                   grabCursor={true}
                   centeredSlides={true}
@@ -114,9 +114,9 @@ export default function Speakers() {
                   }}
                   coverflowEffect={{
                     rotate: 0,
-                    stretch: 0,  // No stretching to prevent overlap
+                    stretch: 0,
                     depth: 100,
-                    modifier: 2,  // Increased modifier for better spacing
+                    modifier: 2,
                     slideShadows: false,
                   }}
                   pagination={{
@@ -134,22 +134,23 @@ export default function Speakers() {
                       coverflowEffect: {
                         stretch: 0,
                         depth: 200,
-                        modifier: 2.5
-                      }
+                        modifier: 2.5,
+                      },
                     },
                     1024: {
                       coverflowEffect: {
                         stretch: 0,
                         depth: 300,
-                        modifier: 3
-                      }
-                    }
+                        modifier: 3,
+                      },
+                    },
                   }}
                   onSwiper={(swiper) => {
                     swiperRef.current = swiper
                   }}
                 >
-                  {speakers.map((speaker) => (
+                  {speakers.map((speaker, index) => {
+                    return (
                     <SwiperSlide
                       key={speaker._id || speaker.id}
                       className="!w-[280px] !h-[380px] md:!w-[320px] md:!h-[420px] lg:!w-[360px] lg:!h-[460px] mx-4"  // Added horizontal margin
@@ -179,7 +180,8 @@ export default function Speakers() {
                         </div>
                       </div>
                     </SwiperSlide>
-                  ))}
+                    )
+                  })}
                 </Swiper>
 
                 <button

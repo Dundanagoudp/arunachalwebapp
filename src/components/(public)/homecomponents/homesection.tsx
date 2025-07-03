@@ -13,7 +13,7 @@ import Contactsection from './modules/contact-section'
 export default function Homesection() {
   return (
     <div>
-       <FestivalInfo />
+      <FestivalInfo />
       <Carousel/>
       <Schedule/>
       <Speakers/>
