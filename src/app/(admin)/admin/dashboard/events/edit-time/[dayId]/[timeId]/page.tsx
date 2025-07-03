@@ -2,7 +2,7 @@
 
 import React from "react";
 import { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useParams } from "next/navigation";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
@@ -11,15 +11,10 @@ import { useToast } from "@/hooks/use-toast";
 import { getEventDays, updateTime, getAllEvents } from "@/service/events-apis";
 import type { EventDay, EventTime } from "@/types/events-types";
 
-interface PageProps {
-  params: Promise<{
-    dayId: string;
-    timeId: string;
-  }>;
-}
-
-export default function EditTimeSlotPage({ params }: PageProps) {
-  const { dayId, timeId } = React.use(params);
+export default function EditTimeSlotPage() {
+  const params = useParams() as { dayId?: string; timeId?: string };
+  const dayId = params.dayId ?? "";
+  const timeId = params.timeId ?? "";
   const router = useRouter();
   const { toast } = useToast();
   const [eventDay, setEventDay] = useState<EventDay | null>(null);

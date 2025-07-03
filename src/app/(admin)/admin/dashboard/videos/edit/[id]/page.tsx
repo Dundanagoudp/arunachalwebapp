@@ -3,7 +3,7 @@
 import type React from "react"
 
 import { useState, useEffect } from "react"
-import { useRouter } from "next/navigation"
+import { useRouter, useParams } from "next/navigation"
 import { AppSidebar } from "@/components/app-sidebar"
 import {
   Breadcrumb,
@@ -27,7 +27,11 @@ import { getVideoById, updateVideoBlog } from "@/service/videosService"
 import type { VideoBlog } from "@/types/videos-types"
 import { useToast } from "@/hooks/use-toast"
 
-export default function EditVideoPage({ params }: { params: Promise<{ id: string }> }) {
+export default function EditVideoPage() {
+  const params = useParams() as { id?: string };
+  const id = params.id ?? "";
+  const router = useRouter();
+  const { toast } = useToast();
   const [video, setVideo] = useState<VideoBlog | null>(null)
   const [loading, setLoading] = useState(false)
   const [fetchLoading, setFetchLoading] = useState(true)
@@ -35,34 +39,41 @@ export default function EditVideoPage({ params }: { params: Promise<{ id: string
   const [youtubeUrl, setYoutubeUrl] = useState("")
   const [youtubeData, setYoutubeData] = useState<any>(null)
   const [fetchingYoutube, setFetchingYoutube] = useState(false)
-  const router = useRouter()
-  const { toast } = useToast()
+  const [formData, setFormData] = useState({
+    title: "",
+  });
 
   useEffect(() => {
     const fetchVideo = async () => {
-      const resolvedParams = await params
-      const response = await getVideoById(resolvedParams.id)
-      if (response.success && response.data) {
-        setVideo(response.data)
-        setVideoType(response.data.videoType)
+      setLoading(true);
+      try {
+        const result = await getVideoById(id);
+        if (result.success && result.data) {
+          setVideo(result.data);
+          setFormData({
+            title: result.data.title,
+          });
+          setVideoType(result.data.videoType)
         
         // Initialize YouTube URL if it exists
-        if (response.data.youtubeUrl) {
-          setYoutubeUrl(response.data.youtubeUrl)
-          fetchYouTubeData(response.data.youtubeUrl)
+          if (result.data.youtubeUrl) {
+            setYoutubeUrl(result.data.youtubeUrl)
+            fetchYouTubeData(result.data.youtubeUrl)
         }
       } else {
-        toast({
-          title: "Error",
-          description: "Failed to fetch video details",
-        })
-        router.push("/admin/dashboard/videos")
-      }
-      setFetchLoading(false)
+          toast({ title: "Error", description: "Video not found" });
+          router.replace("/admin/dashboard/videos");
+        }
+      } catch (error) {
+        toast({ title: "Error", description: "Failed to fetch video" });
+        router.replace("/admin/dashboard/videos");
+      } finally {
+        setLoading(false);
+        setFetchLoading(false);
     }
-
-    fetchVideo()
-  }, [params, router, toast])
+    };
+    fetchVideo();
+  }, [id]);
 
   // Function to extract YouTube video ID
   const getYouTubeVideoId = (url: string) => {

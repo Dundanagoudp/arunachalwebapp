@@ -1,12 +1,15 @@
- 'use client';
+"use client";
+import React, { Suspense } from 'react';
+import LoadingProgress from '@/components/LoadingProgress';
+import InthenewsSection from '@/components/(public)/Inthenews/modules/Inthenews-section';
 
-import Inthenews from '@/components/(public)/Inthenews/modules/Inthenews-section';
-import React from 'react';
-
-export default function Inthenewspage() {
+export default function InthenewsPage() {
   return (
-    <div >
-     <Inthenews/>
-    </div>
+    <>
+      <LoadingProgress />
+      <Suspense fallback={<div>Loading...</div>}>
+        <InthenewsSection />
+      </Suspense>
+    </>
   );
 } 
