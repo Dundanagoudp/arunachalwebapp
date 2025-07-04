@@ -10,6 +10,13 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/hooks/use-toast";
 import { getEventDays, updateTime, getAllEvents } from "@/service/events-apis";
 import type { EventDay, EventTime } from "@/types/events-types";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 
 export default function EditTimeSlotPage() {
   const params = useParams() as { dayId?: string; timeId?: string };
@@ -41,24 +48,27 @@ export default function EditTimeSlotPage() {
 
       setIsLoading(true);
       setError(null);
-      
+
       try {
         console.log("Fetching events for dayId:", dayId, "timeId:", timeId);
         const result = await getAllEvents();
-        
+
         if (result.success && result.data) {
           const day = result.data.days?.find((d: EventDay) => d._id === dayId);
           console.log("Found day:", day);
-          
+
           if (day) {
             setEventDay(day);
             console.log("Looking for timeId:", timeId);
             console.log("Available time slots:", day.times);
-            console.log("Time slot IDs:", day.times?.map(t => t._id));
-            
+            console.log(
+              "Time slot IDs:",
+              day.times?.map((t) => t._id)
+            );
+
             const slot = day.times?.find((t) => t._id === timeId) || null;
             console.log("Found time slot:", slot);
-            
+
             if (slot) {
               setTimeSlot(slot);
               setFormData({
@@ -70,32 +80,36 @@ export default function EditTimeSlotPage() {
                 speaker: slot.speaker,
               });
             } else {
-              setError(`Time slot not found. Looking for ID: ${timeId}. Available IDs: ${day.times?.map(t => t._id).join(', ') || 'none'}`);
-              toast({ 
-                title: "Error", 
-                description: "Time slot not found"
+              setError(
+                `Time slot not found. Looking for ID: ${timeId}. Available IDs: ${
+                  day.times?.map((t) => t._id).join(", ") || "none"
+                }`
+              );
+              toast({
+                title: "Error",
+                description: "Time slot not found",
               });
             }
           } else {
             setError("Event day not found");
-            toast({ 
-              title: "Error", 
-              description: "Event day not found"
+            toast({
+              title: "Error",
+              description: "Event day not found",
             });
           }
         } else {
           setError(result.error || "Failed to fetch events");
-          toast({ 
-            title: "Error", 
-            description: result.error || "Failed to fetch events"
+          toast({
+            title: "Error",
+            description: result.error || "Failed to fetch events",
           });
         }
       } catch (error) {
         console.error("Error fetching events:", error);
         setError("Failed to fetch events");
-        toast({ 
-          title: "Error", 
-          description: "Failed to fetch events"
+        toast({
+          title: "Error",
+          description: "Failed to fetch events",
         });
       } finally {
         setIsLoading(false);
@@ -105,7 +119,9 @@ export default function EditTimeSlotPage() {
     fetchData();
   }, [dayId, timeId, toast]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     const { name, value } = e.target;
     setFormData((prev) => ({ ...prev, [name]: value }));
   };
@@ -113,35 +129,39 @@ export default function EditTimeSlotPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!eventDay || !timeSlot) {
-      toast({ 
-        title: "Error", 
-        description: "Missing event day or time slot data"
+      toast({
+        title: "Error",
+        description: "Missing event day or time slot data",
       });
       return;
     }
-    
+
     setIsSubmitting(true);
     try {
-      console.log("Updating time slot:", { dayId: eventDay._id, timeId: timeSlot._id, formData });
+      console.log("Updating time slot:", {
+        dayId: eventDay._id,
+        timeId: timeSlot._id,
+        formData,
+      });
       const result = await updateTime(eventDay._id, timeSlot._id, formData);
-      
+
       if (result.success) {
-        toast({ 
-          title: "Success", 
-          description: result.message || "Time slot updated successfully" 
+        toast({
+          title: "Success",
+          description: result.message || "Time slot updated successfully",
         });
         router.replace("/admin/dashboard/events");
       } else {
-        toast({ 
-          title: "Error", 
-          description: result.error || "Failed to update time slot"
+        toast({
+          title: "Error",
+          description: result.error || "Failed to update time slot",
         });
       }
     } catch (error) {
       console.error("Error updating time slot:", error);
-      toast({ 
-        title: "Error", 
-        description: "An unexpected error occurred"
+      toast({
+        title: "Error",
+        description: "An unexpected error occurred",
       });
     } finally {
       setIsSubmitting(false);
@@ -190,7 +210,9 @@ export default function EditTimeSlotPage() {
               <CardTitle>Not Found</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="mb-4">The requested time slot could not be found.</p>
+              <p className="mb-4">
+                The requested time slot could not be found.
+              </p>
               <Button onClick={handleCancel} variant="outline">
                 Back to Events
               </Button>
@@ -239,7 +261,7 @@ export default function EditTimeSlotPage() {
                   />
                 </div>
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="title">Session Title *</Label>
                 <Input
@@ -253,7 +275,7 @@ export default function EditTimeSlotPage() {
                   className="w-full"
                 />
               </div>
-              
+
               <div className="space-y-2">
                 <Label htmlFor="description">Description *</Label>
                 <Input
@@ -267,23 +289,31 @@ export default function EditTimeSlotPage() {
                   className="w-full"
                 />
               </div>
-              
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <Label htmlFor="type">Session Type *</Label>
-                  <Input
-                    id="type"
-                    name="type"
+                  <Select
                     value={formData.type}
-                    onChange={handleChange}
-                    required
+                    onValueChange={(value) =>
+                      setFormData((prev) => ({ ...prev, type: value }))
+                    }
                     disabled={isSubmitting}
-                    placeholder="e.g., event, workshop, break"
-                    className="w-full"
-                  />
+                    required
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select type..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="event">Event</SelectItem>
+                    
+                      <SelectItem value="break">Break</SelectItem>
+                    </SelectContent>
+                  </Select>
                 </div>
                 <div className="space-y-2">
                   <Label htmlFor="speaker">Speaker *</Label>
+
                   <Input
                     id="speaker"
                     name="speaker"
@@ -296,12 +326,21 @@ export default function EditTimeSlotPage() {
                   />
                 </div>
               </div>
-              
+
               <div className="flex gap-4 pt-4">
-                <Button type="submit" disabled={isSubmitting} className="flex-1">
+                <Button
+                  type="submit"
+                  disabled={isSubmitting}
+                  className="flex-1"
+                >
                   {isSubmitting ? "Saving..." : "Save Changes"}
                 </Button>
-                <Button type="button" variant="outline" onClick={handleCancel} className="flex-1">
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={handleCancel}
+                  className="flex-1"
+                >
                   Cancel
                 </Button>
               </div>
@@ -319,7 +358,9 @@ export default function EditTimeSlotPage() {
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Edit Time Slot</h1>
           <p className="text-muted-foreground">
-            {eventDay ? `Day ${eventDay.dayNumber}: ${eventDay.name}` : "Loading..."}
+            {eventDay
+              ? `Day ${eventDay.dayNumber}: ${eventDay.name}`
+              : "Loading..."}
           </p>
         </div>
       </div>
@@ -328,4 +369,4 @@ export default function EditTimeSlotPage() {
       {renderContent()}
     </div>
   );
-} 
+}

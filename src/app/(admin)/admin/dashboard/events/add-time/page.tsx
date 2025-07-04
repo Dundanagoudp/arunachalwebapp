@@ -220,8 +220,6 @@ export default function AddTimeSlotPage() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="event">Event</SelectItem>
-                    <SelectItem value="workshop">Workshop</SelectItem>
-                    <SelectItem value="session">Session</SelectItem>
                     <SelectItem value="break">Break</SelectItem>
                   </SelectContent>
                 </Select>

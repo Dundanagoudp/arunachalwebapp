@@ -1,33 +1,42 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { useState } from "react"
-import { useRouter } from "next/navigation"
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
 import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
-import { Separator } from "@/components/ui/separator"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { Calendar, Save, ArrowLeft, Loader2 } from "lucide-react"
-import { useToast } from "@/hooks/use-toast"
-import Link from "next/link"
-import { addEvent } from "@/service/events-apis"
-import type { CreateEventData } from "@/types/events-types"
-import { FormPageSkeleton } from "@/components/admin/events/form-skeleton"
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import {
+  Calendar as CalendarIcon,
+  Save,
+  ArrowLeft,
+  Loader2,
+  ChevronDownIcon,
+} from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
+import Link from "next/link";
+import { addEvent } from "@/service/events-apis";
+import { CreateEventData, months } from "@/types/events-types";
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from "@/components/ui/popover";
+import { Calendar } from "@/components/ui/calendar";
 
 export default function CreateEventPage() {
-  const { toast } = useToast()
-  const router = useRouter()
-  const [isLoading, setIsLoading] = useState(false)
+  const { toast } = useToast();
+  const router = useRouter();
+  const [isLoading, setIsLoading] = useState(false);
+  const [open, setOpen] = React.useState(false);
+  const [openEndDate, setOpenEndDate] = React.useState(false);
   const [formData, setFormData] = useState<CreateEventData>({
     name: "",
     description: "",
@@ -35,11 +44,15 @@ export default function CreateEventPage() {
     endDate: "",
     year: new Date().getFullYear(),
     month: new Date().getMonth() + 1,
-  })
+  });
+  const getMonthName = (monthNumber: number) => {
+    return months[monthNumber - 1] || "";
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
+    e.preventDefault();
+    setIsLoading(true);
+    console.log("Form data before submission:", formData);
 
     try {
       // Convert dates to ISO format
@@ -47,52 +60,78 @@ export default function CreateEventPage() {
         ...formData,
         startDate: new Date(formData.startDate).toISOString(),
         endDate: new Date(formData.endDate).toISOString(),
-      }
+      };
 
-      console.log("Creating event with data:", eventData)
+      console.log("Creating event with data:", eventData);
 
-      const result = await addEvent(eventData)
+      const result = await addEvent(eventData);
 
       if (result.success) {
         toast({
           title: "Success",
           description: result.message || "Event created successfully",
-        })
+        });
 
         // Redirect to events page after successful creation
-        router.push("/admin/dashboard/events")
+        router.push("/admin/dashboard/events");
       } else {
         toast({
           title: "Error",
-          description: result.error || "Failed to create event"
-        })
+          description: result.error || "Failed to create event",
+        });
       }
     } catch (error) {
-      console.error("Error creating event:", error)
+      console.error("Error creating event:", error);
       toast({
         title: "Error",
-        description: "An unexpected error occurred"
-      })
+        description: "An unexpected error occurred",
+      });
     } finally {
-      setIsLoading(false)
+      setIsLoading(false);
     }
-  }
+  };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const { name, value } = e.target
-    setFormData((prev) => ({
-      ...prev,
-      [name]: name === "year" || name === "month" ? Number.parseInt(value) || 0 : value,
-    }))
-  }
+  const handleChange = (
+    e: React.ChangeEvent<
+      HTMLSelectElement | HTMLInputElement | HTMLTextAreaElement
+    >
+  ) => {
+    const { name, value } = e.target;
+    if (name === "year") {
+      const currentYear = new Date().getFullYear();
+      const inputYear = Number.parseInt(value) || 0;
+
+      // Only update if the year is current or future
+      if (inputYear >= currentYear) {
+        setFormData((prev) => ({
+          ...prev,
+          [name]: inputYear,
+        }));
+      }
+    } else if (name === "month") {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: Number.parseInt(value) || 1,
+      }));
+    } else {
+      setFormData((prev) => ({
+        ...prev,
+        [name]: value,
+      }));
+    }
+  };
 
   return (
     <div className="flex flex-1 flex-col gap-6 p-6 pt-0">
       {/* Header */}
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold tracking-tight">Create New Event</h1>
-          <p className="text-muted-foreground">Add a new event to your literature platform.</p>
+          <h1 className="text-3xl font-bold tracking-tight">
+            Create New Event
+          </h1>
+          <p className="text-muted-foreground">
+            Add a new event to your literature platform.
+          </p>
         </div>
         <Button variant="outline" asChild>
           <Link href="/admin/dashboard/events">
@@ -106,10 +145,12 @@ export default function CreateEventPage() {
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
-            <Calendar className="h-5 w-5" />
+            <CalendarIcon className="h-5 w-5" />
             Event Details
           </CardTitle>
-          <CardDescription>Fill in the information for your new event.</CardDescription>
+          <CardDescription>
+            Fill in the information for your new event.
+          </CardDescription>
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
@@ -134,8 +175,7 @@ export default function CreateEventPage() {
                   type="number"
                   value={formData.year}
                   onChange={handleChange}
-                  min="2020"
-                  max="2030"
+                  min={new Date().getFullYear()}
                   required
                   disabled={isLoading}
                 />
@@ -159,41 +199,110 @@ export default function CreateEventPage() {
             <div className="grid gap-4 md:grid-cols-3">
               <div className="space-y-2">
                 <Label htmlFor="month">Month *</Label>
-                <Input
+                <select
                   id="month"
                   name="month"
-                  type="number"
                   value={formData.month}
                   onChange={handleChange}
-                  min="1"
-                  max="12"
                   required
                   disabled={isLoading}
-                />
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  {Array.from({ length: 12 }, (_, i) => (
+                    <option key={i + 1} value={i + 1}>
+                      {new Date(0, i).toLocaleString("default", {
+                        month: "long",
+                      })}
+                    </option>
+                  ))}
+                </select>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="startDate">Start Date *</Label>
-                <Input
-                  id="startDate"
-                  name="startDate"
-                  type="date"
-                  value={formData.startDate}
-                  onChange={handleChange}
-                  required
-                  disabled={isLoading}
-                />
+                <Popover open={open} onOpenChange={setOpen}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      id="startDate" // Match the original ID
+                      className="w-full rounded-md border border-gray-300 p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 justify-between font-normal"
+                      disabled={isLoading}
+                    >
+                      {formData.startDate
+                        ? new Date(formData.startDate).toLocaleDateString()
+                        : "Select date"}
+                      <ChevronDownIcon />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={
+                        formData.startDate
+                          ? new Date(formData.startDate)
+                          : undefined
+                      }
+                      onSelect={(date: Date | undefined) => {
+                        if (date) {
+                          // Update formData just like handleChange would
+                          const localDateString =
+                            date.toLocaleDateString("en-CA");
+                          setFormData({
+                            ...formData,
+                            startDate: localDateString,
+                          });
+                        }
+                        setOpen(false);
+                      }}
+                      required={true} // If needed
+                      disabled={isLoading} // If needed
+                      captionLayout="dropdown"
+                    />
+                  </PopoverContent>
+                </Popover>
               </div>
               <div className="space-y-2">
                 <Label htmlFor="endDate">End Date *</Label>
-                <Input
-                  id="endDate"
-                  name="endDate"
-                  type="date"
-                  value={formData.endDate}
-                  onChange={handleChange}
-                  required
-                  disabled={isLoading}
-                />
+
+                <Popover open={openEndDate} onOpenChange={setOpenEndDate}>
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      id="endDate" // Keep original ID
+                      className="w-full rounded-md border border-gray-300 p-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 justify-between font-normal"
+                      disabled={isLoading}
+                    >
+                      {formData.endDate
+                        ? new Date(formData.endDate).toLocaleDateString()
+                        : "Select date"}
+                      <ChevronDownIcon />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-auto p-0" align="start">
+                    <Calendar
+                      mode="single"
+                      selected={
+                        formData.endDate
+                          ? new Date(formData.endDate)
+                          : undefined
+                      }
+                      onSelect={(date) => {
+                        if (date) {
+                          // Update formData to match YYYY-MM-DD format (same as input[type="date"])
+                        const localDateString =
+                            date.toLocaleDateString("en-CA");
+                          setFormData({
+                            ...formData,
+                            endDate: localDateString,
+                          });
+                        }
+                        setOpenEndDate(false);
+                      }}
+                      required // If needed
+                      disabled={isLoading} // If needed
+                      captionLayout="dropdown"
+                    />
+                  </PopoverContent>
+                </Popover>
               </div>
             </div>
 
@@ -219,5 +328,5 @@ export default function CreateEventPage() {
         </CardContent>
       </Card>
     </div>
-  )
+  );
 }
