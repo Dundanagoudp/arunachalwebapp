@@ -122,7 +122,7 @@ export default function Testimonials() {
           {/* Quote container with decorative blob shape (matches loaded layout) */}
           <div className="relative flex w-full items-center justify-center">
             <Image
-              src="/testimonials/Vector3.png"
+              src="/testimonials/vector3.png"
               alt="Decorative blob shape"
               width={400}
               height={200}
@@ -286,7 +286,7 @@ export default function Testimonials() {
         {/* Quote container */}
         <div className="relative flex w-full items-center justify-center">
           <Image
-            src="/testimonials/Vector3.png"
+            src="/testimonials/vector3.png"
             alt="Decorative blob shape"
             width={400}
             height={200}
