@@ -35,7 +35,7 @@ export default function ContactUsPage() {
       if (response.success) {
         toast({
           title: "Message sent!",
-          description: response.message || "Thank you for contacting us. We'll get back to you soon.",
+          description: "Thank you for contacting us. We'll get back to you soon.",
         })
         setFullName("")
         setEmail("")

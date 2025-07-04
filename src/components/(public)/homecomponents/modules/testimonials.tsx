@@ -5,6 +5,7 @@ import { useState, useEffect } from "react"
 import { ChevronLeft, ChevronRight, Loader2 } from "lucide-react"
 import { getPoetry } from "@/service/poetryService"
 import { Skeleton } from "@/components/ui/skeleton"
+import { motion, AnimatePresence } from 'framer-motion'
 import AOS from 'aos'
 import 'aos/dist/aos.css'
 
@@ -301,29 +302,39 @@ export default function Testimonials() {
           </button>
 
           <div
-            data-aos="fade-up" data-aos-delay="0" data-aos-duration="1200"
-            className={`relative z-10 flex flex-col items-center justify-center p-25 text-center w-full transition-opacity duration-500 ${isTransitioning ? "opacity-0" : "opacity-100"}`}
+            className="relative z-10 flex flex-col items-center justify-center p-25 text-center w-full"
           >
-            <span className="absolute -top-8 -left-8 text-8xl font-serif text-[#000000] opacity-70 md:-top-12 md:-left-12 md:text-9xl select-none">
-              &ldquo;
-            </span>
-            <div className="max-w-2xl mx-auto">
-              <p className="text-2xl italic text-gray-800 md:text-4xl font-medium leading-snug line-clamp-2">
-                {displayText}
-              </p>
-              {shouldShowReadMore && (
-                <button
-                  onClick={() => toggleTextExpansion(currentPoetry._id)}
-                  className="mt-2 text-sm text-amber-600 hover:text-amber-700 font-medium transition-colors duration-200 underline"
-                >
-                  {isExpanded ? "Read Less" : "Read More"}
-                </button>
-              )}
-            </div>
-            <p className="mt-4 text-lg font-medium text-gray-700">— {currentPoetry.author}</p>
-            <span className="absolute -bottom-8 -right-8 text-8xl font-serif text-[#000000] opacity-70 md:-bottom-18 md:-right-25 md:text-9xl select-none">
-              &rdquo;
-            </span>
+            <AnimatePresence mode="wait">
+              <motion.div
+                key={currentPoetry._id}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                exit={{ opacity: 0 }}
+                transition={{ duration: 0.5 }}
+                className="w-full"
+              >
+                <span className="absolute -top-8 -left-8 text-8xl font-serif text-[#000000] opacity-70 md:-top-12 md:-left-12 md:text-9xl select-none">
+                  &ldquo;
+                </span>
+                <div className="max-w-2xl mx-auto">
+                  <p className="text-2xl italic text-gray-800 md:text-4xl font-medium leading-snug line-clamp-2">
+                    {displayText}
+                  </p>
+                  {shouldShowReadMore && (
+                    <button
+                      onClick={() => toggleTextExpansion(currentPoetry._id)}
+                      className="mt-2 text-sm text-amber-600 hover:text-amber-700 font-medium transition-colors duration-200 underline"
+                    >
+                      {isExpanded ? "Read Less" : "Read More"}
+                    </button>
+                  )}
+                </div>
+                <p className="mt-4 text-lg font-medium text-gray-700">— {currentPoetry.author}</p>
+                <span className="absolute -bottom-8 -right-8 text-8xl font-serif text-[#000000] opacity-70 md:-bottom-18 md:-right-25 md:text-9xl select-none">
+                  &rdquo;
+                </span>
+              </motion.div>
+            </AnimatePresence>
           </div>
 
           <button
