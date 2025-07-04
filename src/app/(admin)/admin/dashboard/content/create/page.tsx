@@ -228,28 +228,46 @@ export default function NewsBlogForm() {
                         <FormLabel className="mb-2 block text-sm font-medium text-muted-foreground">
                           Select Content Type
                         </FormLabel>
-                        <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 p-2 rounded-lg w-full sm:w-fit shadow-sm bg-muted">
-                          <Toggle
-                            variant={
-                              field.value === "blog" ? "default" : "outline"
-                            }
-                            pressed={field.value === "blog"}
-                            onPressedChange={() => field.onChange("blog")}
-                            className="flex-1 sm:flex-none px-4 py-2 text-sm font-medium transition-all flex items-center gap-2 rounded-lg hover:scale-[1.02] min-w-[120px]"
+                        <RadioGroup
+                          className="flex flex-col sm:flex-row gap-3 sm:gap-4 p-2 rounded-lg w-full sm:w-fit shadow-sm bg-muted"
+                          value={field.value}
+                          onValueChange={field.onChange}
+                        >
+                          <RadioGroupItem
+                            value="blog"
+                            id="content-type-blog"
+                            className="peer sr-only"
+                          />
+                          <label
+                            htmlFor="content-type-blog"
+                            className={`w-full sm:w-auto flex-1 sm:flex-none px-4 py-3 text-base sm:text-sm font-medium flex items-center gap-2 rounded-lg min-w-[120px] border-2 cursor-pointer transition-all
+                              ${field.value === "blog" ? "bg-blue-100 border-blue-500 text-blue-900 shadow-md scale-105" : "bg-white border-gray-300 text-gray-700 hover:scale-[1.02]"}`}
                           >
-                            📝 Blog Post
-                          </Toggle>
-                          <Toggle
-                            variant={
-                              field.value === "link" ? "default" : "outline"
-                            }
-                            pressed={field.value === "link"}
-                            onPressedChange={() => field.onChange("link")}
-                            className="flex-1 sm:flex-none px-4 py-2 text-sm font-medium transition-all flex items-center gap-2 rounded-lg hover:scale-[1.02] min-w-[120px]"
+                            <span className="mr-2">📝</span> Blog Post
+                            {field.value === "blog" && (
+                              <span className="ml-2 text-blue-600">
+                                <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" /></svg>
+                              </span>
+                            )}
+                          </label>
+                          <RadioGroupItem
+                            value="link"
+                            id="content-type-link"
+                            className="peer sr-only"
+                          />
+                          <label
+                            htmlFor="content-type-link"
+                            className={`w-full sm:w-auto flex-1 sm:flex-none px-4 py-3 text-base sm:text-sm font-medium flex items-center gap-2 rounded-lg min-w-[120px] border-2 cursor-pointer transition-all
+                              ${field.value === "link" ? "bg-blue-100 border-blue-500 text-blue-900 shadow-md scale-105" : "bg-white border-gray-300 text-gray-700 hover:scale-[1.02]"}`}
                           >
-                            🔗 External Link
-                          </Toggle>
-                        </div>
+                            <span className="mr-2">🔗</span> External Link
+                            {field.value === "link" && (
+                              <span className="ml-2 text-blue-600">
+                                <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" /></svg>
+                              </span>
+                            )}
+                          </label>
+                        </RadioGroup>
                       </div>
                     </FormControl>
                     <FormMessage />
@@ -381,7 +399,7 @@ export default function NewsBlogForm() {
                 </p>
               </div>
 
-              <Button type="submit" disabled={isSubmitting}>
+              <Button type="submit" disabled={isSubmitting} className="w-full sm:w-auto text-base sm:text-sm py-3 sm:py-2 mt-4">
                 {isSubmitting ? "Submitting..." : "Submit"}
               </Button>
             </form>

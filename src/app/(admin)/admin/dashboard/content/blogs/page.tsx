@@ -142,7 +142,7 @@ export default function NewsAndBlogsManagement() {
   return (
     <div className="flex flex-1 flex-col gap-6 p-6 pt-0">
       {/* Header */}
-      <div className="flex items-center justify-between">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">
             News & Blogs Management
@@ -151,7 +151,7 @@ export default function NewsAndBlogsManagement() {
             Manage news articles, blog posts, and external links.
           </p>
         </div>
-        <Button asChild>
+        <Button asChild className="w-full sm:w-auto">
           <Link href="/admin/dashboard/content/create">
             <Plus className="mr-2 h-4 w-4" />
             Create Content
@@ -160,7 +160,7 @@ export default function NewsAndBlogsManagement() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid gap-4 md:grid-cols-4">
+      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">Total Content</CardTitle>
@@ -215,8 +215,8 @@ export default function NewsAndBlogsManagement() {
           <CardTitle>Filters & Search</CardTitle>
         </CardHeader>
         <CardContent>
-          <div className="flex gap-4">
-            <div className="flex-1">
+          <div className="flex flex-col gap-4 sm:flex-row">
+            <div className="flex-1 min-w-0">
               <Label htmlFor="search">Search content</Label>
               <div className="relative">
                 <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
@@ -229,7 +229,7 @@ export default function NewsAndBlogsManagement() {
                 />
               </div>
             </div>
-            <div>
+            <div className="min-w-0">
               <Label htmlFor="contentType">Content Type</Label>
               <select
                 id="contentType"
@@ -260,17 +260,17 @@ export default function NewsAndBlogsManagement() {
             {paginatedContent.map((content) => (
               <div
                 key={content._id}
-                className="flex items-start gap-4 p-4 border rounded-lg"
+                className="flex flex-col sm:flex-row items-start gap-4 p-4 border rounded-lg"
               >
-                <div className="w-24 h-16 bg-muted rounded-md overflow-hidden flex-shrink-0">
+                <div className="w-full sm:w-24 h-32 sm:h-16 bg-muted rounded-md overflow-hidden flex-shrink-0 mb-2 sm:mb-0">
                   <img
                     src={content.image_url || "/placeholder.svg"}
                     alt={content.title}
                     className="w-full h-full object-cover"
                   />
                 </div>
-                <div className="flex-1 space-y-2">
-                  <div className="flex items-center gap-2">
+                <div className="flex-1 space-y-2 min-w-0">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2">
                     <h3 className="text-lg font-semibold line-clamp-1">
                       {content.title}
                     </h3>
@@ -311,7 +311,7 @@ export default function NewsAndBlogsManagement() {
                       </a>
                     </div>
                   )}
-                  <div className="flex items-center gap-4 text-sm text-muted-foreground">
+                  <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-sm text-muted-foreground">
                     <div className="flex items-center gap-1">
                       <Calendar className="h-4 w-4" />
                       <span>
@@ -324,7 +324,7 @@ export default function NewsAndBlogsManagement() {
                     </div>
                   </div>
                 </div>
-                <div className="flex items-center gap-2">
+                <div className="flex flex-row sm:flex-col items-center gap-2 mt-2 sm:mt-0">
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button variant="ghost" size="sm">
@@ -349,6 +349,8 @@ export default function NewsAndBlogsManagement() {
                             href={content.link}
                             target="_blank"
                             rel="noopener noreferrer"
+                            className="truncate max-w-[180px] hover:underline"
+                            title={content.link}
                           >
                             <ExternalLink className="mr-2 h-4 w-4" />
                             Open Link

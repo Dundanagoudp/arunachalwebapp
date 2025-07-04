@@ -175,6 +175,42 @@ export function ContactMessageCard({ contact, onDelete, isDeleting, onReply }: C
           </div>
         </DialogContent>
       </Dialog>
+
+      {/* Reply Dialog */}
+      {onReply && (
+        <Dialog open={isReplyOpen} onOpenChange={setIsReplyOpen}>
+          <DialogContent className="max-w-lg">
+            <DialogHeader>
+              <DialogTitle>Reply to {contact.name}</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <label className="block text-sm font-medium text-gray-700">Reply Message</label>
+              <textarea
+                className="w-full border rounded p-2 min-h-[80px] text-sm"
+                value={replyMessage}
+                onChange={e => setReplyMessage(e.target.value)}
+                placeholder="Type your reply here..."
+                disabled={replyLoading}
+              />
+            </div>
+            <div className="flex justify-end gap-2 mt-4">
+              <Button
+                variant="outline"
+                onClick={() => setIsReplyOpen(false)}
+                disabled={replyLoading}
+              >
+                Cancel
+              </Button>
+              <Button
+                onClick={handleReply}
+                disabled={replyLoading || !replyMessage.trim()}
+              >
+                {replyLoading ? "Sending..." : "Send Reply"}
+              </Button>
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
     </>
   )
 }
