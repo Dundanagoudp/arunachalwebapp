@@ -12,6 +12,9 @@ const dmSerifDisplay = DM_Serif_Display({
 export const metadata: Metadata = {
   title: "Arunachal Literature",
   description: "Promoting and preserving the rich literary heritage of Arunachal Pradesh",
+  icons: {
+    icon: "/logofavicon.jpg",
+  },
 };
 
 export default function RootLayout({
@@ -21,9 +24,6 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en">
-      <head>
-        <link rel="icon" href="/logofavicon.jpg" type="image/jpeg" />
-      </head>
       <body className={`${inter.className} ${dmSerifDisplay.variable}`}>
         {children}
       </body>
