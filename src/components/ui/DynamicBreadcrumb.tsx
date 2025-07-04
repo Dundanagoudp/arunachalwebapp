@@ -22,8 +22,9 @@ export default function DynamicBreadcrumb() {
   const pathname = usePathname();
   const segments = pathname.split("/").filter(Boolean);
 
-  // Only show breadcrumb if not on home
-  if (segments.length === 0) return null;
+  // Hide breadcrumb if last segment is likely an ID (number, uuid, or [id])
+  const idPattern = /^\d+$|^[0-9a-fA-F-]{24,}$|^\[.*\]$/;
+  if (segments.length === 0 || idPattern.test(segments[segments.length - 1])) return null;
 
   let path = "";
 

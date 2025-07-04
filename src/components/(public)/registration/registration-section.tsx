@@ -55,6 +55,18 @@ function RegistrationSkeleton() {
   )
 }
 
+// Error view for registration section
+function RegistrationErrorView({ error }: { error: string }) {
+  return (
+    <div className="min-h-screen flex items-center justify-center bg-[#FFFAEE]">
+      <div className="bg-white border border-red-200 rounded-xl p-8 max-w-lg w-full text-center shadow">
+        <h2 className="text-2xl font-bold text-red-600 mb-4">Registration Error</h2>
+        <p className="text-gray-700">{error}</p>
+      </div>
+    </div>
+  );
+}
+
 export default function RegistrationSection() {
   const [loading, setLoading] = useState(true)
   const [workshops, setWorkshops] = useState<Workshop[]>([])
@@ -91,45 +103,6 @@ export default function RegistrationSection() {
     }
   }
 
-  // Fallback workshops if API fails or returns empty
-  const fallbackWorkshops: Workshop[] = [
-    {
-      _id: "fallback-1",
-      eventRef: "fallback-event",
-      name: "Screenwriting & Film Studies",
-      imageUrl: "/registration/creative.png",
-      about: "Learn the art of screenwriting and film analysis",
-      registrationFormUrl: "/contactus",
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      __v: 0
-    },
-    {
-      _id: "fallback-2", 
-      eventRef: "fallback-event",
-      name: "Comics and Graphic Novels",
-      imageUrl: "/registration/books.png", 
-      about: "Create compelling visual narratives",
-      registrationFormUrl: "/contactus",
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      __v: 0
-    },
-    {
-      _id: "fallback-3",
-      eventRef: "fallback-event", 
-      name: "Creative Writing & Literature",
-      imageUrl: "/registration/typewriter.png",
-      about: "Develop your creative writing skills",
-      registrationFormUrl: "/contactus",
-      createdAt: new Date().toISOString(),
-      updatedAt: new Date().toISOString(),
-      __v: 0
-    }
-  ]
-
-  const displayWorkshops = workshops.length > 0 ? workshops : fallbackWorkshops
-
   return (
     <div className="min-h-screen bg-[#FFFAEE] relative overflow-hidden">
       {/* Decorative Sun Icons */}
@@ -148,6 +121,10 @@ export default function RegistrationSection() {
 
       {loading ? (
         <RegistrationSkeleton />
+      ) : error ? (
+        <RegistrationErrorView error={error} />
+      ) : workshops.length === 0 ? (
+        <RegistrationErrorView error="No workshops available at the moment. Please check back later." />
       ) : (
         <div className="container mx-auto px-4 py-12">
           {/* Header */}
@@ -167,8 +144,8 @@ export default function RegistrationSection() {
           <div className="text-center mb-12">
             <h3 className="text-xl font-semibold text-gray-800 mb-8 font-bilo">Select your Workshop:</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-              {displayWorkshops.map((workshop, index) => (
-                <div key={index} className="relative">
+              {workshops.map((workshop: Workshop, index: number) => (
+                <div key={workshop._id ?? index} className="relative">
                   {/* Workshop Card */}
                   <div
                     className="bg-white border-4 border-[#FFD76B] p-8 h-[420px] flex flex-col items-center justify-start relative overflow-visible rounded-t-full rounded-b-2xl w-full max-w-xs mx-auto"
@@ -185,11 +162,11 @@ export default function RegistrationSection() {
                     </div>
                     {/* Workshop Title */}
                     <h4 className="text-lg font-bold text-gray-800 text-center leading-tight font-dm-serif mt-2">
-                      {workshop.name.split(" ").map((word, i) => (
+                      {workshop.name.split(" ").map((word: string, i: number, arr: string[]) => (
                         <span key={i}>
                           {word}
                           {i === 0 && <br />}
-                          {i > 0 && i < workshop.name.split(" ").length - 1 && " "}
+                          {i > 0 && i < arr.length - 1 && " "}
                         </span>
                       ))}
                     </h4>
