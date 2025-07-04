@@ -388,7 +388,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const userForNav = {
     name: userData.name,
     email: userData.email,
-    avatar: "/avatars/default.jpg", // You can add avatar field to User type if needed
+    avatar: "/avatars/default.jpg",
     initials: userData.name
       .split(' ')
       .map(word => word.charAt(0))

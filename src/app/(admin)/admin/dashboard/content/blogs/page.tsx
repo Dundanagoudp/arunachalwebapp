@@ -53,6 +53,8 @@ import {
   PaginationPrevious,
   PaginationNext,
 } from "@/components/ui/pagination";
+import { useDeletePermission } from "@/hooks/use-delete-permission";
+import { ContactAdminModal } from "@/components/ui/contact-admin-modal";
 
 export default function NewsAndBlogsManagement() {
   const [searchTerm, setSearchTerm] = useState("");
@@ -65,6 +67,7 @@ export default function NewsAndBlogsManagement() {
   const router = useRouter();
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
+  const { isAdmin } = useDeletePermission();
 
   useEffect(() => {
     async function fetchBlogs() {
@@ -357,21 +360,32 @@ export default function NewsAndBlogsManagement() {
                           </a>
                         </DropdownMenuItem>
                       )}
-                      <DropdownMenuItem
-                        className="text-red-600"
-                        onClick={() => handleDelete(content._id)}
-                      >
-                        {deleteLoading === content._id ? (
-                          <span className="flex items-center">
-                            <Trash2 className="mr-2 h-4 w-4 animate-spin" />{" "}
-                            Deleting...
+                      {isAdmin ? (
+                        <DropdownMenuItem className="text-red-600" onClick={() => handleDelete(content._id)}>
+                          {deleteLoading === content._id ? (
+                            <span className="flex items-center"><Trash2 className="mr-2 h-4 w-4 animate-spin" /> Deleting...</span>
+                          ) : (
+                            <><Trash2 className="mr-2 h-4 w-4" /> Delete</>
+                          )}
+                        </DropdownMenuItem>
+                      ) : (
+                        <DropdownMenuItem asChild>
+                          <span>
+                            <ContactAdminModal
+                              title="Delete Blog Access Denied"
+                              description="You don't have permission to delete blogs. Please contact the administrator for assistance."
+                            >
+                              <button
+                                type="button"
+                                className="flex items-center text-red-600 w-full bg-transparent border-0 p-0 m-0"
+                                onClick={e => e.stopPropagation()}
+                              >
+                                <Trash2 className="mr-2 h-4 w-4" /> Delete
+                              </button>
+                            </ContactAdminModal>
                           </span>
-                        ) : (
-                          <>
-                            <Trash2 className="mr-2 h-4 w-4" /> Delete
-                          </>
-                        )}
-                      </DropdownMenuItem>
+                        </DropdownMenuItem>
+                      )}
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </div>

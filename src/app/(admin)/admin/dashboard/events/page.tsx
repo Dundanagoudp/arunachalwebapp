@@ -61,6 +61,8 @@ import {
   DialogClose,
 } from "@/components/ui/dialog";
 import { EventsPageSkeleton } from "@/components/admin/events/events-skeleton";
+import { useDeletePermission } from "@/hooks/use-delete-permission";
+import { ContactAdminModal } from "@/components/ui/contact-admin-modal";
 
 export default function EventsPage() {
   const { toast } = useToast();
@@ -72,6 +74,7 @@ export default function EventsPage() {
   const [editDay, setEditDay] = useState<EventDay | null>(null);
   const [editForm, setEditForm] = useState({ name: "", description: "" });
   const [editLoading, setEditLoading] = useState(false);
+  const { isAdmin } = useDeletePermission();
 
   useEffect(() => {
     fetchEvents();
@@ -355,42 +358,35 @@ export default function EventsPage() {
                         </Link>
                       </DropdownMenuItem>
 
-                      <DropdownMenuItem
-                        className="text-red-600"
-                        onSelect={(e) => e.preventDefault()}
-                        // onClick={() => handleDeleteEvent(events.event._id)}
-                      >
-                        <AlertDialog>
-                          <AlertDialogTrigger asChild>
-                            <div className="flex items-center cursor-pointer">
-                              <Trash2 className="mr-2 h-4 w-4" />
-                              Delete Event
-                            </div>
-                          </AlertDialogTrigger>
-                          <AlertDialogContent>
-                            <AlertDialogHeader>
-                              <AlertDialogTitle>
-                                Are you absolutely sure?
-                              </AlertDialogTitle>
-                              <AlertDialogDescription>
-                                This action cannot be undone. This will
-                                permanently delete the event.
-                              </AlertDialogDescription>
-                            </AlertDialogHeader>
-                            <AlertDialogFooter>
-                              <AlertDialogCancel>Cancel</AlertDialogCancel>
-                              <AlertDialogAction
-                                className="bg-red-600 hover:bg-red-700"
-                                onClick={() =>
-                                  handleDeleteEvent(events.event._id)
-                                }
+                      {isAdmin ? (
+                        <DropdownMenuItem
+                          className="text-red-600"
+                          onSelect={e => e.preventDefault()}
+                          onClick={() => handleDeleteEvent(events.event._id)}
+                        >
+                          <div className="flex items-center cursor-pointer">
+                            <Trash2 className="mr-2 h-4 w-4" />
+                            Delete Event
+                          </div>
+                        </DropdownMenuItem>
+                      ) : (
+                        <DropdownMenuItem asChild>
+                          <span>
+                            <ContactAdminModal
+                              title="Delete Event Access Denied"
+                              description="You don't have permission to delete events. Please contact the administrator for assistance."
+                            >
+                              <button
+                                type="button"
+                                className="flex items-center text-red-600 w-full bg-transparent border-0 p-0 m-0 cursor-pointer"
+                                onClick={e => e.stopPropagation()}
                               >
-                                Delete
-                              </AlertDialogAction>
-                            </AlertDialogFooter>
-                          </AlertDialogContent>
-                        </AlertDialog>
-                      </DropdownMenuItem>
+                                <Trash2 className="mr-2 h-4 w-4" /> Delete Event
+                              </button>
+                            </ContactAdminModal>
+                          </span>
+                        </DropdownMenuItem>
+                      )}
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </div>

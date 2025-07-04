@@ -53,6 +53,8 @@ import {
   PaginationPrevious,
   PaginationNext,
 } from "@/components/ui/pagination";
+import { useDeletePermission } from "@/hooks/use-delete-permission";
+import { ContactAdminModal } from "@/components/ui/contact-admin-modal";
 
 export default function NewsAndBlogsManagement() {
   const [searchTerm, setSearchTerm] = useState("")
@@ -65,6 +67,7 @@ export default function NewsAndBlogsManagement() {
   const router = useRouter()
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
+  const { isAdmin } = useDeletePermission();
 
   useEffect(() => {
     async function fetchBlogs() {
@@ -356,13 +359,24 @@ export default function NewsAndBlogsManagement() {
                           </a>
                         </DropdownMenuItem>
                       )}
-                      <DropdownMenuItem className="text-red-600" onClick={() => handleDelete(content._id)}>
-                        {deleteLoading === content._id ? (
-                          <span className="flex items-center"><Trash2 className="mr-2 h-4 w-4 animate-spin" /> Deleting...</span>
-                        ) : (
-                          <><Trash2 className="mr-2 h-4 w-4" /> Delete</>
-                        )}
-                      </DropdownMenuItem>
+                      {isAdmin ? (
+                        <DropdownMenuItem className="text-red-600" onClick={() => handleDelete(content._id)}>
+                          {deleteLoading === content._id ? (
+                            <span className="flex items-center"><Trash2 className="mr-2 h-4 w-4 animate-spin" /> Deleting...</span>
+                          ) : (
+                            <><Trash2 className="mr-2 h-4 w-4" /> Delete</>
+                          )}
+                        </DropdownMenuItem>
+                      ) : (
+                        <ContactAdminModal
+                          title="Delete Content Access Denied"
+                          description="You don't have permission to delete content. Please contact the administrator for assistance."
+                        >
+                          <DropdownMenuItem className="text-red-600">
+                            <Trash2 className="mr-2 h-4 w-4" /> Delete
+                          </DropdownMenuItem>
+                        </ContactAdminModal>
+                      )}
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </div>
