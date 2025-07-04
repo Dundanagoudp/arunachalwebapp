@@ -75,7 +75,7 @@ export default function Speakers() {
   }
 
   return (
-    <div data-aos="fade-up" data-aos-delay="0" data-aos-duration="1200" className="min-h-0 md:min-h-screen bg-gradient-to-b from-[#FFF8E7] to-[#FFFAEE] relative overflow-x-hidden">
+    <div className="min-h-0 md:min-h-screen bg-gradient-to-b from-[#FFF8E7] to-[#FFFAEE] relative overflow-x-hidden">
       {/* Background patterns */}
       <div className="absolute top-0 left-0 w-24 h-24 md:w-32 md:h-32 opacity-30">
         <Image src="/schedule/diamond-pattern.png" alt="Pattern" fill className="object-contain" />
@@ -100,7 +100,7 @@ export default function Speakers() {
           ) : (
             <div className="space-y-6 md:space-y-12">
               {/* Carousel Section */}
-              <div className="relative px-4 md:px-20">
+              <div data-aos="fade-up" data-aos-delay="0" data-aos-duration="1200" className="relative px-4 md:px-20">
                 {/* Previous Arrow */}
                 <button
                   ref={navigationPrevRef}
