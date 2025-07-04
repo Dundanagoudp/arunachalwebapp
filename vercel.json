@@ -11,4 +11,4 @@
     { "source": "/schedule/:path*", "destination": "/schedule/:path*" }
   ],
   "framework": "nextjs"
-} 
+}

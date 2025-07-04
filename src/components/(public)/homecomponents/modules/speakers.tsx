@@ -1,6 +1,6 @@
 "use client"
 import Image from "next/image"
-import { ArrowUpRight, ArrowLeft, ArrowRight } from "lucide-react"
+import { ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react"
 import { Swiper, SwiperSlide } from "swiper/react"
 import { EffectCoverflow, Pagination, Navigation, Autoplay } from "swiper/modules"
 import "swiper/css"
@@ -10,8 +10,17 @@ import "swiper/css/navigation"
 import { useEffect, useRef, useState } from "react"
 import { getSpeaker } from "@/service/speaker"
 
+interface Speaker {
+  _id?: string
+  id?: string
+  name: string
+  about: string
+  image_url: string
+  category?: string
+}
+
 export default function Speakers() {
-  const [speakers, setSpeakers] = useState<any[]>([])
+  const [speakers, setSpeakers] = useState<Speaker[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
   const navigationPrevRef = useRef<HTMLButtonElement>(null)
@@ -38,8 +47,8 @@ export default function Speakers() {
     fetchSpeakers()
   }, [])
 
-  // Loading dots animation
-const LoadingDots = () => (
+  // Loading component
+  const LoadingDots = () => (
     <div className="flex flex-col items-center justify-center min-h-[300px]">
       <div className="flex space-x-2 mt-10">
         <span className="w-3 h-3 bg-yellow-400 rounded-full animate-bounce [animation-delay:-0.3s]"></span>
@@ -68,49 +77,50 @@ const LoadingDots = () => (
   return (
     <div className="min-h-0 md:min-h-screen bg-gradient-to-b from-[#FFF8E7] to-[#FFFAEE] relative overflow-x-hidden">
       {/* Background patterns */}
-      <div className="absolute top-0 left-0 w-24 h-24 md:w-32 md:h-32">
-        <Image src="/schedule/diamond-pattern.png" alt="Pattern" fill />
+      <div className="absolute top-0 left-0 w-24 h-24 md:w-32 md:h-32 opacity-30">
+        <Image src="/schedule/diamond-pattern.png" alt="Pattern" fill className="object-contain" />
       </div>
-      <div className="absolute top-0 right-0 w-24 h-24 md:w-32 md:h-32">
-        <Image src="/schedule/diamond-pattern.png" alt="Pattern" fill />
+      <div className="absolute top-0 right-0 w-24 h-24 md:w-32 md:h-32 opacity-30">
+        <Image src="/schedule/diamond-pattern.png" alt="Pattern" fill className="object-contain" />
       </div>
 
       <div className="container mx-auto py-8 md:py-16 px-2 md:px-4 pb-4 md:pb-16 relative z-10">
-        {/* Header */}
-        <div className="text-center mb-8 md:mb-16">
-          <h1 className="text-3xl md:text-7xl font-bold text-[#E67E22] font-serif">
-            SPEAKERS
-          </h1>
-          <p className="mt-2 md:mt-4 text-base md:text-lg text-gray-600 max-w-2xl mx-auto">
+        {/* Header Section */}
+        <header className="text-center mb-8 md:mb-16">
+          <h1 className="text-3xl md:text-7xl font-bold text-[#E67E22] font-serif mb-2 md:mb-4">SPEAKERS</h1>
+          <p className="text-base md:text-lg text-gray-600 max-w-2xl mx-auto">
             Meet our distinguished speakers who will share their knowledge and insights
           </p>
-        </div>
+        </header>
 
-        {/* Carousel or Loading */}
+        {/* Main Content */}
         <div className="relative">
           {loading ? (
             <LoadingDots />
           ) : (
-            <>
-              <div className="relative px-2 md:px-16"> {/* Reduced side padding on mobile */}
-                {/* Navigation arrows */}
+            <div className="space-y-6 md:space-y-12">
+              {/* Carousel Section */}
+              <div className="relative px-4 md:px-20">
+                {/* Previous Arrow */}
                 <button
                   ref={navigationPrevRef}
-                  className="absolute left-0 top-1/2 z-10 -translate-y-1/2 p-3 rounded-full bg-white shadow-lg hover:bg-[#E67E22] hover:text-white transition-colors"
+                  className="absolute left-0 md:left-4 top-1/2 z-20 -translate-y-1/2 w-12 h-12 md:w-14 md:h-14 rounded-full bg-white/90 backdrop-blur-sm shadow-xl hover:bg-[#E67E22] hover:text-white transition-all duration-300 flex items-center justify-center group border-2 border-[#E67E22]/20 hover:border-[#E67E22] hover:scale-110"
                   aria-label="Previous speaker"
                 >
-                  <ArrowLeft className="w-6 h-6" />
+                  <ChevronLeft className="w-6 h-6 md:w-7 md:h-7 transition-transform group-hover:-translate-x-0.5" />
                 </button>
 
-                               <Swiper
-                  effect={"coverflow"}
+                {/* Swiper Carousel */}
+                <Swiper
+                  effect="coverflow"
                   grabCursor={true}
                   centeredSlides={true}
-                  slidesPerView={"auto"}
+                  slidesPerView="auto"
                   loop={true}
                   autoplay={{
-                    delay: 3000,
+                    delay: 4000,
                     disableOnInteraction: false,
+                    pauseOnMouseEnter: true,
                   }}
                   coverflowEffect={{
                     rotate: 0,
@@ -149,65 +159,81 @@ const LoadingDots = () => (
                     swiperRef.current = swiper
                   }}
                 >
-                  {speakers.map((speaker, index) => {
-                    return (
+                  {speakers.map((speaker, index) => (
                     <SwiperSlide
-                      key={speaker._id || speaker.id}
-                      className="!w-[280px] !h-[380px] md:!w-[320px] md:!h-[420px] lg:!w-[360px] lg:!h-[460px] mx-4"  // Added horizontal margin
+                      key={speaker._id || speaker.id || index}
+                      className="!w-[280px] !h-[380px] md:!w-[320px] md:!h-[420px] lg:!w-[360px] lg:!h-[460px] mx-4"
                     >
                       <div className="relative group h-full w-full">
+                        {/* Gradient Border Effect */}
                         <div className="absolute -inset-2 bg-gradient-to-r from-yellow-400 via-orange-400 to-yellow-400 rounded-lg opacity-75 group-hover:opacity-100 transition duration-300 blur-sm group-hover:blur-md"></div>
+
+                        {/* Card Container */}
                         <div className="relative bg-white p-1 rounded-lg h-full w-full transition-transform duration-300 group-hover:scale-[1.02]">
                           <div className="w-full h-full overflow-hidden rounded-lg shadow-2xl relative">
+                            {/* Speaker Image */}
                             <Image
-                              src={speaker.image_url}
+                              src={speaker.image_url || "/placeholder.svg?height=400&width=300"}
                               alt={speaker.name || "Speaker"}
                               fill
-                              className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
-                              priority={true}
+                              className="object-cover transition-transform duration-500 hover:scale-105"
+                              priority={index < 3}
+                              sizes="(max-width: 768px) 280px, (max-width: 1024px) 320px, 360px"
                             />
+
+                            {/* Speaker Info Overlay */}
                             <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/70 to-transparent text-white p-4">
-                              <p className="font-semibold text-lg">{speaker.name}</p>
-                              <p className="text-sm opacity-90 line-clamp-2">{speaker.about}</p>
-                              <div className="mt-2 flex items-center">
+                              <h3 className="font-semibold text-lg mb-1">{speaker.name}</h3>
+                              <p className="text-sm opacity-90 line-clamp-2 mb-2">{speaker.about}</p>
+                              <div className="flex items-center justify-between">
                                 <span className="text-xs bg-[#E67E22] px-2 py-1 rounded-full">
                                   {speaker.category || "Speaker"}
                                 </span>
-                                <ArrowUpRight className="w-4 h-4 ml-auto opacity-0 group-hover:opacity-100 transition-opacity" />
+                                <ArrowUpRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
                               </div>
                             </div>
                           </div>
                         </div>
                       </div>
                     </SwiperSlide>
-                    )
-                  })}
+                  ))}
                 </Swiper>
 
+                {/* Next Arrow */}
                 <button
                   ref={navigationNextRef}
-                  className="absolute right-0 top-1/2 z-10 -translate-y-1/2 p-3 rounded-full bg-white shadow-lg hover:bg-[#E67E22] hover:text-white transition-colors"
+                  className="absolute right-0 md:right-4 top-1/2 z-20 -translate-y-1/2 w-12 h-12 md:w-14 md:h-14 rounded-full bg-white/90 backdrop-blur-sm shadow-xl hover:bg-[#E67E22] hover:text-white transition-all duration-300 flex items-center justify-center group border-2 border-[#E67E22]/20 hover:border-[#E67E22] hover:scale-110"
                   aria-label="Next speaker"
                 >
-                  <ArrowRight className="w-6 h-6" />
+                  <ChevronRight className="w-6 h-6 md:w-7 md:h-7 transition-transform group-hover:translate-x-0.5" />
                 </button>
               </div>
-
-              {/* View All button */}
-              <div className="mt-6 md:mt-12 flex justify-center">
-                <button className="group relative flex items-center hover:scale-105 transition-transform duration-300 focus:outline-none">
-                  <span className="bg-[#E67E22] text-white px-6 py-3 pr-12 rounded-full text-lg font-medium">
-                    View All
-                  </span>
-                  <span className="absolute right-0 left-30 translate-x-1/2 bg-[#E67E22] w-10 h-10 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 group-hover:translate-x-6 group-hover:rotate-12">
-                    <ArrowUpRight className="w-4 h-4 text-white transition-transform duration-300 group-hover:rotate-45" />
-                  </span>
-                </button>
-              </div>
-            </>
+            </div>
           )}
         </div>
       </div>
+
+      {/* Custom Styles */}
+      <style jsx global>{`
+        .speaker-carousel .swiper-pagination {
+          bottom: -10px !important;
+        }
+        
+        .speaker-carousel .swiper-pagination-bullet {
+          background: #E67E22 !important;
+          opacity: 0.5 !important;
+          transition: all 0.3s ease !important;
+        }
+        
+        .speaker-carousel .swiper-pagination-bullet-active {
+          opacity: 1 !important;
+          transform: scale(1.2);
+        }
+        
+        .speaker-carousel .swiper-pagination-bullet:hover {
+          opacity: 0.8 !important;
+        }
+      `}</style>
     </div>
   )
 }
