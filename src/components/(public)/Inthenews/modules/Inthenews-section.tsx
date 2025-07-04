@@ -2,11 +2,6 @@
 import Image from "next/image";
 import Link from "next/link"; // Import Link
 import { useState, useEffect } from "react";
-import { ArrowUpRight } from "lucide-react"; 
-import { BlogCardSkeleton } from "@/components/blog-card-skeleton"; 
-import { Input } from "@/components/ui/input";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
 import {
   Pagination,
   PaginationContent,
