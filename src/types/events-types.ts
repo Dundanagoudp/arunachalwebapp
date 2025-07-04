@@ -9,6 +9,11 @@ export interface Event {
   totalDays?: number;
   __v?: number;
 }
+export const months = [
+  "January", "February", "March", "April", 
+  "May", "June", "July", "August",
+  "September", "October", "November", "December"
+];
 
 export interface EventDay {
   _id: string;

@@ -189,7 +189,7 @@ export default function AdminDashboard() {
     <ProtectedRoute allowedRoles={["admin", "user"]}>
       <div className="flex flex-1 flex-col gap-6 p-6 pt-0">
         {/* Welcome Section */}
-        <div className="flex items-center justify-between">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h1 className="text-3xl font-bold tracking-tight">
               Welcome back, {isAdmin ? "Admin" : "User"}!
@@ -199,7 +199,7 @@ export default function AdminDashboard() {
             </p>
           </div>
           {isAdmin && (
-            <div className="flex gap-2">
+            <div className="flex flex-col gap-2 sm:flex-row">
               <Button asChild>
                 <Link href="/admin/dashboard/content/create">
                   <Plus className="mr-2 h-4 w-4" />
