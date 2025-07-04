@@ -75,7 +75,7 @@ export default function Speakers() {
   }
 
   return (
-    <div className="min-h-0 md:min-h-screen bg-gradient-to-b from-[#FFF8E7] to-[#FFFAEE] relative overflow-x-hidden">
+    <div data-aos="fade-up" data-aos-delay="0" data-aos-duration="1200" className="min-h-0 md:min-h-screen bg-gradient-to-b from-[#FFF8E7] to-[#FFFAEE] relative overflow-x-hidden">
       {/* Background patterns */}
       <div className="absolute top-0 left-0 w-24 h-24 md:w-32 md:h-32 opacity-30">
         <Image src="/schedule/diamond-pattern.png" alt="Pattern" fill className="object-contain" />
