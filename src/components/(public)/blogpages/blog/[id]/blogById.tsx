@@ -102,7 +102,7 @@ export default function BlogById() {
 
   // Filter blogs based on search query and exclude current blog
   const filteredBlogs = useMemo(() => {
-    let filtered = blogs.filter(blog => blog._id !== id) // Exclude current blog
+    const filtered = blogs.filter(blog => blog._id !== id) // Exclude current blog
     
     if (!searchQuery.trim()) return filtered
 
