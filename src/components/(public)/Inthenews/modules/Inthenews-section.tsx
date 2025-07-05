@@ -173,7 +173,7 @@ export default function Inthenews() {
       {/* Decorative Sun Icons */}
       <div className="absolute top-4 left-4 sm:top-6 sm:left-6 lg:top-8 lg:left-8 z-0">
         <Image
-          src="/blogs/sun.gif"
+          src="/sungif.gif"
           alt="Sun"
           width={30}
           height={30}
@@ -182,7 +182,7 @@ export default function Inthenews() {
       </div>
       <div className="absolute top-4 right-4 sm:top-6 sm:right-6 lg:top-8 lg:right-8 z-0">
         <Image
-          src="/blogs/sun.gif"
+          src="/sungif.gif"
           alt="Sun"
           width={30}
           height={30}
@@ -191,7 +191,7 @@ export default function Inthenews() {
       </div>
       <div className="hidden md:block absolute top-1/2 left-4 lg:left-8 transform -translate-y-1/2 z-0">
         <Image
-          src="/blogs/sun.gif"
+          src="/sungif.gif"
           alt="Sun"
           width={40}
           height={40}
@@ -200,7 +200,7 @@ export default function Inthenews() {
       </div>
       <div className="hidden md:block absolute top-1/2 right-4 lg:right-8 transform -translate-y-1/2 z-0">
         <Image
-          src="/blogs/sun.gif"
+          src="/sungif.gif"
           alt="Sun"
           width={40}
           height={40}
@@ -362,7 +362,7 @@ export default function Inthenews() {
       <div className="relative mt-8 sm:mt-12 lg:mt-16">
         <div className="absolute bottom-4 left-4 sm:bottom-6 sm:left-6 lg:bottom-8 lg:left-8 z-0">
           <Image
-            src="/blogs/sun.gif"
+            src="/sungif.gif"
             alt="Sun"
             width={30}
             height={30}
@@ -371,7 +371,7 @@ export default function Inthenews() {
         </div>
         <div className="absolute bottom-4 right-4 sm:bottom-6 sm:right-6 lg:bottom-8 lg:right-8 z-0">
           <Image
-            src="/blogs/sun.gif"
+            src="/sungif.gif"
             alt="Sun"
             width={30}
             height={30}
@@ -380,7 +380,7 @@ export default function Inthenews() {
         </div>
         <div className="flex justify-center pt-6 sm:pt-8 lg:pt-10 relative z-10">
           <Image
-            src="/blogs/sun.gif"
+            src="/sungif.gif"
             alt="Sun"
             width={30}
             height={30}

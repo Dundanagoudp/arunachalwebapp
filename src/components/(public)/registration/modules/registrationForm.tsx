@@ -71,16 +71,16 @@ export default function RegistrationForm() {
     <div className="min-h-screen bg-[#FFFAEE] relative overflow-hidden">
       {/* Decorative Sun Icons */}
       <div className="absolute top-20 left-10">
-        <Image src="/images/sun.gif" alt="Sun decoration" width={40} height={40} className="opacity-80" />
+        <Image src="/sungif.gif" alt="Sun decoration" width={40} height={40} className="opacity-80" />
       </div>
       <div className="absolute top-32 right-16">
-        <Image src="/images/sun.gif" alt="Sun decoration" width={35} height={35} className="opacity-70" />
+        <Image src="/sungif.gif" alt="Sun decoration" width={35} height={35} className="opacity-70" />
       </div>
       <div className="absolute bottom-40 left-8">
-        <Image src="/images/sun.gif" alt="Sun decoration" width={30} height={30} className="opacity-60" />
+        <Image src="/sungif.gif" alt="Sun decoration" width={30} height={30} className="opacity-60" />
       </div>
       <div className="absolute top-96 right-20">
-        <Image src="/images/sun.gif" alt="Sun decoration" width={25} height={25} className="opacity-50" />
+        <Image src="/sungif.gif" alt="Sun decoration" width={25} height={25} className="opacity-50" />
       </div>
 
       <div className="container mx-auto px-4 py-8 max-w-2xl">
@@ -95,11 +95,11 @@ export default function RegistrationForm() {
           <h1 className="text-2xl font-bold text-blue-600 mb-4 tracking-wider">REGISTRATION</h1>
 
           <div className="flex items-center justify-center gap-4 mb-6">
-            <Image src="/images/sun.gif" alt="Sun decoration" width={40} height={40} />
+            <Image src="/sungif.gif" alt="Sun decoration" width={40} height={40} />
             <h2 className="text-2xl md:text-3xl font-bold text-orange-500 text-center">
               BEGIN WHERE INDIA WAKES REGISTER NOW
             </h2>
-            <Image src="/images/sun.gif" alt="Sun decoration" width={40} height={40} />
+            <Image src="/sungif.gif" alt="Sun decoration" width={40} height={40} />
           </div>
         </div>
 

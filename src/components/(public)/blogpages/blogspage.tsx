@@ -160,21 +160,21 @@ export default function BlogsLayout() {
         <SunIcon
           size={30}
           className="sm:w-10 sm:h-10 lg:w-12 lg:h-12"
-          src="/blogs/sun.gif"
+          src="/sungif.gif"
         />
       </div>
       <div className="absolute top-4 right-4 sm:top-6 sm:right-6 lg:top-10 lg:right-10 z-0">
         <SunIcon
           size={30}
           className="sm:w-10 sm:h-10 lg:w-12 lg:h-12"
-          src="/blogs/sun.gif"
+          src="/sungif.gif"
         />
       </div>
       <div className="hidden md:block absolute top-1/2 -translate-y-1/2 left-4 lg:left-10 z-0">
-        <SunIcon size={40} className="lg:w-12 lg:h-12" src="/blogs/sun.gif" />
+        <SunIcon size={40} className="lg:w-12 lg:h-12" src="/sungif.gif" />
       </div>
       <div className="hidden md:block absolute top-1/2 -translate-y-1/2 right-4 lg:right-10 z-0">
-        <SunIcon size={40} className="lg:w-12 lg:h-12" src="/blogs/sun.gif" />
+        <SunIcon size={40} className="lg:w-12 lg:h-12" src="/sungif.gif" />
       </div>
       {/* Header */}
       {isLoading ? (
@@ -347,21 +347,21 @@ export default function BlogsLayout() {
           <SunIcon
             size={30}
             className="sm:w-10 sm:h-10 lg:w-12 lg:h-12"
-            src="/blogs/sun.gif"
+            src="/sungif.gif"
           />
         </div>
         <div className="absolute bottom-4 right-4 sm:bottom-6 sm:right-6 lg:bottom-10 lg:right-10 z-0">
           <SunIcon
             size={30}
             className="sm:w-10 sm:h-10 lg:w-12 lg:h-12"
-            src="/blogs/sun.gif"
+            src="/sungif.gif"
           />
         </div>
         <div className="flex justify-center pt-6 sm:pt-8 lg:pt-10 relative z-10">
           <SunIcon
             size={30}
             className="sm:w-10 sm:h-10 lg:w-12 lg:h-12"
-            src="/blogs/sun.gif"
+            src="/sungif.gif"
           />
         </div>
       </div>
