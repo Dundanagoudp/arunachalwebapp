@@ -6,7 +6,7 @@ import Image from "next/image"
 export default function SunIcon({ 
   size = 24, 
   className = "", 
-  src = "/images/sun.gif",
+  src = "/sungif.gif",
   style
 }: { 
   size?: number; 

@@ -44,16 +44,16 @@ export default function Blogs() {
     <div className="min-h-screen bg-[#FDF6E9] p-8 relative overflow-hidden">
       {/* Decorative Sun Icons */}
       <div data-aos="fade-right" data-aos-delay="0" data-aos-duration="1000" className="absolute top-10 left-10 z-0">
-        <SunIcon size={50} src="/blogs/sun.gif" />
+        <SunIcon size={50} src="/sungif.gif" />
       </div>
       <div data-aos="fade-left" data-aos-delay="0" data-aos-duration="1000" className="absolute top-10 right-10 z-0">
-        <SunIcon size={50} src="/blogs/sun.gif" />
+        <SunIcon size={50} src="/sungif.gif" />
       </div>
       <div data-aos="fade-right" data-aos-delay="200" data-aos-duration="1000" className="absolute top-1/2 -translate-y-1/2 left-65 -ml-0 -0 z-0 lg:-ml-4">
-        <SunIcon size={50} src="/blogs/sun.gif" />
+        <SunIcon size={50} src="/sungif.gif" />
       </div>
       <div data-aos="fade-left" data-aos-delay="200" data-aos-duration="1000" className="absolute top-1/2 -translate-y-1/2 right-45 right-0 -mr-4 z-0">
-        <SunIcon size={50} src="/blogs/sun.gif" />
+        <SunIcon size={50} src="/sungif.gif" />
       </div>
 
       {/* Header */}
@@ -154,13 +154,13 @@ export default function Blogs() {
       {/* More Decorative Sun Icons */}
       <div className="relative mt-16">
         <div className="absolute bottom-10 left-10 z-0">
-          <SunIcon size={50} src="/blogs/sun.gif" />
+          <SunIcon size={50} src="/sungif.gif" />
         </div>
         <div className="absolute bottom-10 right-10 z-0">
-          <SunIcon size={50} src="/blogs/sun.gif" />
+          <SunIcon size={50} src="/sungif.gif" />
         </div>
         <div className="flex justify-center pt-10 relative z-10">
-          <SunIcon size={40} src="/blogs/sun.gif" />
+          <SunIcon size={40} src="/sungif.gif" />
         </div>
       </div>
     </div>

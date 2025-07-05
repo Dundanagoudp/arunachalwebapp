@@ -170,19 +170,19 @@ export default function Carousel() {
 
       {/* Decorative Sun Elements - Using placeholder.svg */}
       <div data-aos="fade-right" data-aos-delay="400" data-aos-duration="1200" className="absolute top-24 left-12">
-        <SunIcon size={60} src="/images/sun.gif" />
+        <SunIcon size={60} src="/sungif.gif" />
       </div>
       <div data-aos="fade-left" data-aos-delay="500" data-aos-duration="1200" className="absolute top-24 right-12">
-        <SunIcon size={60} src="/images/sun.gif" />
+        <SunIcon size={60} src="/sungif.gif" />
       </div>
       <div data-aos="fade-up" data-aos-delay="600" data-aos-duration="1200" className="absolute bottom-24 left-12">
-        <SunIcon size={60} src="/images/sun.gif" />
+        <SunIcon size={60} src="/sungif.gif" />
       </div>
       <div data-aos="fade-up" data-aos-delay="700" data-aos-duration="1200" className="absolute bottom-24 right-12">
-        <SunIcon size={60} src="/images/sun.gif" />
+        <SunIcon size={60} src="/sungif.gif" />
       </div>
       <div data-aos="zoom-in" data-aos-delay="800" data-aos-duration="1200" className="absolute bottom-1/2 left-1/2 transform -translate-x-1/2 translate-y-124">
-        <SunIcon size={40} src="/images/sun.gif" />
+        <SunIcon size={40} src="/sungif.gif" />
       </div>
 
       <div className="container mx-auto px-4 py-12">
