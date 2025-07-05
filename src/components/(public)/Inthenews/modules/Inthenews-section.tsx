@@ -73,23 +73,47 @@ export default function Inthenews() {
   const [isLoading, setIsLoading] = useState(true); 
   const [currentPage, setCurrentPage] = useState(1);
   const [posts, setPosts] = useState<Blog[]>([]);
+  const [error, setError] = useState<string | null>(null);
   const blogsPerPage = 12;
 
   useEffect(() => {
     setMounted(true);
-    const fetchBlogs = async () => {
+    const fetchNews = async () => {
       try {
+        setIsLoading(true);
+        setError(null);
+        
         const response = await getBlogs();
-        if (!response.data) {
-          throw new Error("Failed to fetch blogs");
+        
+        if (!response.success || !response.data) {
+          throw new Error("Failed to fetch news data");
         }
-        const data =  response.data.filter(item => item.contentType === 'link');
-        setPosts(data);
+
+        // Filter for link type content only and remove duplicates
+        const linkContent = response.data.filter(
+          (item, index, self) => 
+            item.contentType === 'link' && 
+            item.link && // Ensure link exists
+            self.findIndex(news => news._id === item._id) === index // Remove duplicates
+        );
+
+        // Sort by published date (newest first)
+        const sortedContent = linkContent.sort((a, b) => {
+          const dateA = a.publishedDate ? new Date(a.publishedDate).getTime() : 0;
+          const dateB = b.publishedDate ? new Date(b.publishedDate).getTime() : 0;
+          return dateB - dateA;
+        });
+
+        setPosts(sortedContent);
       } catch (error) {
-        console.error(error);
+        console.error("Error fetching news:", error);
+        setError(error instanceof Error ? error.message : "Failed to load news");
+      } finally {
+        setIsLoading(false);
       }
     };
-    fetchBlogs();
+    
+    fetchNews();
 
     const timer = setTimeout(() => {
       setIsLoading(false);
@@ -107,8 +131,41 @@ export default function Inthenews() {
     setCurrentPage(page);
   };
 
+  // Handle link click with validation
+  const handleLinkClick = (link: string, title: string) => {
+    if (!link) {
+      alert("No link available for this news item");
+      return;
+    }
+    
+    // Validate URL format
+    try {
+      new URL(link);
+      window.open(link, '_blank', 'noopener,noreferrer');
+    } catch (e) {
+      alert("Invalid link format");
+    }
+  };
+
   if (!mounted) {
     return null;
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-[#FFFAEE] flex items-center justify-center p-4">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-red-600 mb-4">Error Loading News</h2>
+          <p className="text-gray-600 mb-6">{error}</p>
+          <button 
+            onClick={() => window.location.reload()} 
+            className="bg-[#D96D34] text-white px-6 py-3 rounded-lg hover:bg-[#c05d2b] transition-colors"
+          >
+            Try Again
+          </button>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -168,38 +225,50 @@ export default function Inthenews() {
       ) : (
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 mb-6 sm:mb-8 relative z-10 text-center">
           <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-800">
-            Recent News
+            Recent News 
           </h2>
         </div>
       )}
 
-      {/* Blog Cards Grid */}
+      {/* News Cards Grid */}
       <div className="grid grid-cols-1 gap-4 sm:gap-6 lg:gap-8 max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 relative z-10 sm:grid-cols-2 lg:grid-cols-3">
         {isLoading ? (
           <>
-            {[...Array(4)].map((_, idx) => (
+            {[...Array(6)].map((_, idx) => (
               <BlogCardShimmer key={idx} />
             ))}
           </>
+        ) : posts.length === 0 ? (
+          <div className="col-span-full text-center py-12">
+            <div className="text-gray-500 text-lg">
+              <p>No news articles available at the moment.</p>
+              <p className="text-sm mt-2">Check back later for updates!</p>
+            </div>
+          </div>
         ) : (
           <>
-            {currentBlogs.map((blog: Blog, idx: number) => (
+            {currentBlogs.map((news: Blog, idx: number) => (
               <div
-                key={idx}
+                key={news._id || idx}
                 className="bg-white rounded-xl overflow-hidden shadow-md transition-shadow duration-300 hover:shadow-xl"
               >
                 <div className="p-3 sm:p-4">
                   <div className="relative w-full h-48 sm:h-56 lg:h-64 mb-3 sm:mb-4 overflow-hidden rounded-lg">
-                    {blog.image_url ? (
+                    {news.image_url ? (
                       <Image
-                        src={blog.image_url}
-                        alt={blog.title}
+                        src={news.image_url}
+                        alt={news.title}
                         fill
                         className="object-cover transition-transform duration-300 hover:scale-105"
+                        onError={(e) => {
+                          // Fallback to placeholder if image fails to load
+                          const target = e.target as HTMLImageElement;
+                          target.src = "/file.svg";
+                        }}
                       />
                     ) : (
                       <Image
-                        src="/file.svg" // fallback placeholder image in public/
+                        src="/file.svg"
                         alt="No image available"
                         fill
                         className="object-cover transition-transform duration-300 hover:scale-105 opacity-50"
@@ -207,12 +276,12 @@ export default function Inthenews() {
                     )}
                   </div>
                   <h3 className="text-lg sm:text-xl font-bold mt-3 sm:mt-4 mb-2 min-h-[3rem] sm:min-h-[4rem] lg:min-h-[5rem] line-clamp-2">
-                    {blog.title}
+                    {news.title}
                   </h3>
                   <div className="flex justify-between items-center mt-4 sm:mt-6">
                     <p className="text-gray-500 text-xs sm:text-sm">
-                      {blog.publishedDate
-                        ? new Date(blog.publishedDate).toLocaleDateString(
+                      {news.publishedDate
+                        ? new Date(news.publishedDate).toLocaleDateString(
                             "en-US",
                             {
                               year: "numeric",
@@ -220,16 +289,20 @@ export default function Inthenews() {
                               day: "2-digit",
                             }
                           )
-                        : ""}
+                        : "No date"}
                     </p>
-                    <Link
-                      href={blog.link || ""}
-                      className="text-[#D96D34] font-semibold hover:underline text-sm sm:text-base"
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Read More
-                    </Link>
+                    {news.link ? (
+                      <button
+                        onClick={() => handleLinkClick(news.link!, news.title)}
+                        className="text-[#D96D34] font-semibold hover:underline text-sm sm:text-base transition-colors"
+                      >
+                        Read More
+                      </button>
+                    ) : (
+                      <span className="text-gray-400 text-sm sm:text-base cursor-not-allowed">
+                        No Link
+                      </span>
+                    )}
                   </div>
                 </div>
               </div>
@@ -239,7 +312,7 @@ export default function Inthenews() {
       </div>
 
       {/* Pagination */}
-      {!isLoading && (
+      {!isLoading && posts.length > 0 && totalPages > 1 && (
         <div className="mt-8 sm:mt-12 lg:mt-16 px-4">
           <Pagination>
             <PaginationContent className="flex flex-wrap justify-center gap-1 sm:gap-2">
