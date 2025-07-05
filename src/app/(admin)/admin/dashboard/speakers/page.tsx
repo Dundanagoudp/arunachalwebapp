@@ -290,7 +290,11 @@ export default function SpeakersPage() {
                       <TableCell className="hidden sm:table-cell">
                         <div className="flex items-center gap-1 text-sm">
                           <Calendar className="h-3 w-3 hidden xs:inline" />
-                          {getEventName(speaker.event_ref)}
+                          {events.length === 0 ? (
+                            <span className="text-muted-foreground">Loading...</span>
+                          ) : (
+                            getEventName(speaker.event_ref)
+                          )}
                         </div>
                       </TableCell>
                       <TableCell className="text-right">
