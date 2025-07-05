@@ -124,7 +124,7 @@ export default function BlogById() {
   }
 
   const handleBlogClick = (blogId: string) => {
-    router.push(`/blog/${blogId}`)
+    router.push(`/blogsContent/blog/${blogId}`)
   }
 
   useEffect(() => {
@@ -262,44 +262,18 @@ export default function BlogById() {
                     </span>
                   </div>
                 </div>
-
-                {/* Action Buttons */}
-                <div className="flex flex-wrap items-center gap-3 pt-4 border-t border-gray-200">
-                  <Button variant="outline" size="sm" className="gap-2 bg-transparent">
-                    <Heart className="w-4 h-4" />
-                    Like
-                  </Button>
-                  <Button variant="outline" size="sm" className="gap-2 bg-transparent">
-                    <Share2 className="w-4 h-4" />
-                    Share
-                  </Button>
-                  <Button variant="outline" size="sm" className="gap-2 bg-transparent">
-                    <MessageCircle className="w-4 h-4" />
-                    Comment
-                  </Button>
-                </div>
               </div>
 
               {/* Article Content */}
               <Card className="p-6 lg:p-8 shadow-sm border-0 bg-white/70 backdrop-blur-sm">
                 <div className="prose prose-lg max-w-none text-gray-800 leading-relaxed">
-                  <p className="text-lg first-letter:text-5xl first-letter:font-bold first-letter:text-[#D96D34] first-letter:float-left first-letter:mr-3 first-letter:mt-1">
+                  <p className="text-lg">
                     {content.contents}
                   </p>
                 </div>
               </Card>
 
-              {/* Tags */}
-              <div className="flex flex-wrap gap-2">
-                <span className="inline-flex items-center gap-1 bg-white border border-[#D96D34] text-[#D96D34] px-3 py-1 rounded-full text-sm font-medium hover:bg-[#D96D34] hover:text-white transition-colors cursor-pointer">
-                  <Tag className="w-3 h-3" />
-                  Technology
-                </span>
-                <span className="inline-flex items-center gap-1 bg-white border border-[#D96D34] text-[#D96D34] px-3 py-1 rounded-full text-sm font-medium hover:bg-[#D96D34] hover:text-white transition-colors cursor-pointer">
-                  <Tag className="w-3 h-3" />
-                  Design
-                </span>
-              </div>
+
             </article>
           </div>
 
