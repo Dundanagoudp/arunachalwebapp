@@ -100,17 +100,19 @@ export default function BlogById() {
   const params = useParams()
   const id = Array.isArray(params.id) ? params.id[0] : params.id
 
-  // Filter blogs based on search query
+  // Filter blogs based on search query and exclude current blog
   const filteredBlogs = useMemo(() => {
-    if (!searchQuery.trim()) return blogs
+    let filtered = blogs.filter(blog => blog._id !== id) // Exclude current blog
+    
+    if (!searchQuery.trim()) return filtered
 
-    return blogs.filter(
+    return filtered.filter(
       (blog) =>
         blog.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
         blog.contents?.toLowerCase().includes(searchQuery.toLowerCase()) ||
         blog.author?.toLowerCase().includes(searchQuery.toLowerCase()),
     )
-  }, [blogs, searchQuery])
+  }, [blogs, searchQuery, id])
 
   const handleAllBlogs = () => {
     router.push("/blogsContent")
@@ -124,7 +126,9 @@ export default function BlogById() {
   }
 
   const handleBlogClick = (blogId: string) => {
-    router.push(`/blogsContent/blog/${blogId}`)
+    if (blogId && blogId !== id) {
+      router.push(`/blogsContent/blog/${blogId}`)
+    }
   }
 
   useEffect(() => {
@@ -137,14 +141,24 @@ export default function BlogById() {
           throw new Error("Blog ID is missing")
         }
 
-        const [blogResponse, blogsResponse] = await Promise.all([getBlogOnly(id), getBlogs()])
+        // Fetch blog content and related blogs in parallel
+        const [blogResponse, blogsResponse] = await Promise.all([
+          getBlogOnly(id), 
+          getBlogs()
+        ])
 
         if (!blogResponse.data) {
           throw new Error("Failed to fetch blog content")
         }
 
         setContent(blogResponse.data)
-        setBlogs(blogsResponse.data ?? [])
+        
+        // Filter blogs to only show blog type content and exclude current blog
+        const allBlogs = blogsResponse.data ?? []
+        const filteredBlogs = allBlogs.filter(
+          (blog) => blog.contentType === "blog" && blog._id !== id
+        )
+        setBlogs(filteredBlogs)
       } catch (err) {
         console.error(err)
         setError(err instanceof Error ? err.message : "An unknown error occurred")
@@ -324,7 +338,7 @@ export default function BlogById() {
               <div className="space-y-4 max-h-96 overflow-y-auto">
                 {filteredBlogs.length === 0 ? (
                   <div className="text-center py-8 text-gray-500">
-                    {searchQuery ? "No blogs found matching your search." : "No blogs available."}
+                    {searchQuery ? "No blogs found matching your search." : "No other blogs available."}
                   </div>
                 ) : (
                   filteredBlogs

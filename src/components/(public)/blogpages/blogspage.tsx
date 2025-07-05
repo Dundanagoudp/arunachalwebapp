@@ -93,11 +93,17 @@ export default function BlogsLayout() {
         if (!response.data) {
           throw new Error("Failed to fetch blogs");
         }
-        const filteredData = response.data.filter(
-          (item) => item.contentType === "blog"
+        
+        // Filter to only show blog type content and remove duplicates
+        const allBlogs = response.data;
+        const uniqueBlogs = allBlogs.filter(
+          (item, index, self) => 
+            item.contentType === "blog" && 
+            self.findIndex(blog => blog._id === item._id) === index
         );
-        setContent(filteredData);
-        setFilteredBlogs(filteredData);
+        
+        setContent(uniqueBlogs);
+        setFilteredBlogs(uniqueBlogs);
       } catch (error) {
         console.error(error);
       }
@@ -110,6 +116,7 @@ export default function BlogsLayout() {
 
     return () => clearTimeout(timer);
   }, []);
+
   useEffect(() => {
     const results = content.filter((blog) =>
       blog.title.toLowerCase().includes(searchTerm.toLowerCase())
@@ -217,7 +224,7 @@ export default function BlogsLayout() {
       ) : (
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 mb-6 sm:mb-8 relative z-10 text-center">
           <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-800">
-            Lastest Blogs
+            Latest Blogs
           </h2>
         </div>
       )}
