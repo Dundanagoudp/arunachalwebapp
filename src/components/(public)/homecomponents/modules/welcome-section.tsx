@@ -53,7 +53,7 @@ export default function FestivalInfo() {
         />
       </div>
 
-      {/* Bull Image - Right Middle (Hidden on mobile/tablet, visible on large screens) */}
+      {/* Bull Image - Middle Right (Hidden on mobile/tablet, visible on large screens) */}
       <div data-aos="fade-left" data-aos-delay="1200" data-aos-duration="1200" data-aos-easing="ease-in-out" className="absolute top-1/2 right-0 -translate-y-1/2 p-4 sm:p-8 lg:p-12 hidden lg:block">
         <Image
           src="/welcome/image3.png"
