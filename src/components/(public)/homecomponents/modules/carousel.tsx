@@ -1,5 +1,5 @@
 "use client"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import Image from "next/image"
 import { ChevronRight, ChevronLeft, ArrowUpRight } from "lucide-react"
 import { motion, AnimatePresence } from "framer-motion"
@@ -32,6 +32,8 @@ export default function Carousel() {
   }
 
   const [cardsPerView, setCardsPerView] = useState(3)
+  const lastCardsPerView = useRef(cardsPerView)
+  const [isResizing, setIsResizing] = useState(false)
 
   const nextSlide = () => {
     setCurrentIndex((prevIndex) => {
@@ -56,7 +58,13 @@ export default function Carousel() {
 
     // Handle responsive cards per view
     const handleResize = () => {
-      setCardsPerView(getCardsPerView())
+      const newCardsPerView = getCardsPerView()
+      if (newCardsPerView !== lastCardsPerView.current) {
+        setIsResizing(true)
+        setTimeout(() => setIsResizing(false), 400) // duration matches animation
+        lastCardsPerView.current = newCardsPerView
+      }
+      setCardsPerView(newCardsPerView)
     }
 
     handleResize()
@@ -106,6 +114,17 @@ export default function Carousel() {
   useEffect(() => {
     AOS.refresh();
   }, [currentIndex, cardsPerView]);
+
+  // Refresh AOS when cardsPerView changes (for screen resize)
+  useEffect(() => {
+    AOS.refresh();
+  }, [cardsPerView]);
+
+  // Clamp currentIndex when cardsPerView or workshops.length changes
+  useEffect(() => {
+    const maxIndex = Math.max(0, workshops.length - cardsPerView)
+    setCurrentIndex((prevIndex) => Math.min(prevIndex, maxIndex))
+  }, [cardsPerView, workshops.length])
 
   // Add handler for card click (same logic as registration-section.tsx)
   const handleWorkshopClick = (workshop: Workshop) => {
@@ -278,11 +297,11 @@ export default function Carousel() {
             <div className="overflow-hidden w-full px-12 md:px-16 lg:px-20">
               <AnimatePresence mode="wait">
                 <motion.div
-                  key={currentIndex}
-                  initial={{ opacity: 0, x: 100 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  exit={{ opacity: 0, x: -100 }}
-                  transition={{ duration: 0.2, ease: "easeInOut" }}
+                  key={`${currentIndex}-${cardsPerView}`}
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.4, ease: "easeInOut" }}
                   className={`grid gap-6 ${
                     cardsPerView === 1
                       ? "grid-cols-1"
