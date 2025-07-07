@@ -17,7 +17,7 @@ export default function Homesection() {
       <Carousel/>
       <Schedule/>
       <Speakers/>
-      <Testimonials/>
+      {/* <Testimonials/> */}
       <GallerySection/>
       <Attendeessay/>
       <Blogs/>

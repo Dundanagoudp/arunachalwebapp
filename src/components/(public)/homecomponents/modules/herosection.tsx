@@ -23,8 +23,8 @@ export default function HeroSection() {
       <div className="absolute inset-0 bg-black opacity-10 z-0"></div>
 
       {/* Content */}
-      <div className="relative z-10 p-4 sm:p-6 md:p-8 lg:p-12 space-y-4 sm:space-y-6 text-[#6A1B1A] animate-fade-in">
-        <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-tight font-serif mb-4 sm:mb-6 animate-slide-up">
+      <div className="relative z-10 p-4 sm:p-6 md:p-8 lg:p-12 space-y-4 sm:space-y-6 text-[#6A1B1A] animate-fade-in pb-8 lg:pb-12 xl:pb-10">
+        <h1 className="text-2xl sm:text-3xl md:text-5xl lg:text-6xl font-bold tracking-tight leading-tight font-serif mb-4 sm:mb-6 animate-slide-up pb-8 lg:pb-12 xl:pb-30">
           ARUNACHAL <br /> LITERATURE FESTIVAL
         </h1>
 
