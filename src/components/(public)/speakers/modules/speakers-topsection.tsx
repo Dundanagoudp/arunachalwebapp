@@ -8,28 +8,28 @@ const DiamondPatternBackground = dynamic(() => import("../../../DiamondPatternBa
 
 export default function Speakerstopsection() {
   return (
-    <section className="relative w-full overflow-hidden bg-[#fdf8f0] min-h-0 md:min-h-[60vh] lg:min-h-screen">
+    <section className="relative w-full overflow-hidden bg-[#fdf8f0] min-h-0 md:min-h-[40vh] lg:min-h-[60vh]">
       {/* Diamond Pattern Background: hidden on mobile, visible on md+ */}
       <div className="hidden md:block">
         <DiamondPatternBackground />
       </div>
       {/* Main content */}
-      <div className="relative z-10 flex flex-col items-center justify-center min-h-0 px-4 py-4 md:py-16">
+      <div className="relative z-10 flex flex-col items-center justify-center min-h-0 px-4 py-4 md:py-8 lg:py-10">
         {/* Title */}
         <h1
-          className="font-dm-serif text-xl md:text-5xl lg:text-6xl font-bold text-center mb-2 md:mb-16 lg:mb-20 text-[#8B4513]"
+          className="font-dm-serif text-xl md:text-4xl lg:text-5xl font-bold text-center mb-2 md:mb-8 lg:mb-10 text-[#8B4513]"
         >
           OUR SPEAKERS
         </h1>
 
         {/* Animated Sun Icon */}
-        <div className="mb-2 md:mb-12 lg:mb-16">
-          <SunIcon size={90} className="w-16 h-16 md:w-28 md:h-28 lg:w-32 lg:h-32" />
+        <div className="mb-2 md:mb-6 lg:mb-8">
+          <SunIcon size={90} className="w-16 h-16 md:w-24 md:h-24 lg:w-28 lg:h-28" />
         </div>
 
         {/* Text content */}
         <div className="text-center max-w-2xl">
-          <p className="font-bilo text-xs md:text-2xl lg:text-3xl font-semibold leading-relaxed text-[#000000]">
+          <p className="font-bilo text-lg md:text-xl lg:text-2xl font-semibold leading-relaxed text-[#000000]">
             From India&apos;s first light,
             <br />
             something bright is coming
