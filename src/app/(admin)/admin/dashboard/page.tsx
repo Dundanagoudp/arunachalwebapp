@@ -1,4 +1,4 @@
-"use client"
+"use client";
 
 import {
   Breadcrumb,
@@ -7,48 +7,70 @@ import {
   BreadcrumbList,
   BreadcrumbPage,
   BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
-import { Separator } from "@/components/ui/separator"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { Calendar, Users, FileText, Mic, BookOpen, TrendingUp, Plus, Eye, BarChart3, Activity } from "lucide-react"
-import Link from "next/link"
-import { useEffect, useState } from "react"
-import { getCookie } from "@/lib/cookies"
-import ProtectedRoute from "@/components/auth/protected-route"
-import UserProfileCard from "@/components/admin/UserProfileCard"
-import { getAllEvents } from "@/service/events-apis"
-import { getAllUsers } from "@/service/userServices"
-import { getBlogs } from "@/service/newsAndBlogs"
-import { getSpeaker } from "@/service/speaker"
-import { getAllImages } from "@/service/archive"
-import DashboardLoading from "@/components/admin/dashboard/DashboardLoading"
-import DashboardError from "@/components/admin/dashboard/DashboardError"
+} from "@/components/ui/breadcrumb";
+import { Separator } from "@/components/ui/separator";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import {
+  Calendar,
+  Users,
+  FileText,
+  Mic,
+  BookOpen,
+  TrendingUp,
+  Plus,
+  Eye,
+  BarChart3,
+  Activity,
+} from "lucide-react";
+import Link from "next/link";
+import { useEffect, useState } from "react";
+import { getCookie } from "@/lib/cookies";
+import ProtectedRoute from "@/components/auth/protected-route";
+import UserProfileCard from "@/components/admin/UserProfileCard";
+import { getAllEvents } from "@/service/events-apis";
+import { getAllUsers } from "@/service/userServices";
+import { getBlogs } from "@/service/newsAndBlogs";
+import { getSpeaker } from "@/service/speaker";
+import { getAllImages } from "@/service/archive";
+import DashboardLoading from "@/components/admin/dashboard/DashboardLoading";
+import DashboardError from "@/components/admin/dashboard/DashboardError";
+import { getCookieViewCount } from "@/service/getCookiesServices";
+import { ViewCounter } from "@/types/viewCounter-types";
 
 export default function AdminDashboard() {
   // State for API data
-  const [stats, setStats] = useState<any[]>([])
-  const [recentActivity, setRecentActivity] = useState<any[]>([])
-  const [upcomingEvents, setUpcomingEvents] = useState<any[]>([])
-  const [topSpeakers, setTopSpeakers] = useState<any[]>([])
-  const [loading, setLoading] = useState(true)
-  const [error, setError] = useState<string | null>(null)
-  const [userRole, setUserRole] = useState<string | null>(null)
-  const [showAllSpeakers, setShowAllSpeakers] = useState(false)
-  const [archiveLoading, setArchiveLoading] = useState(true)
-  const [archiveError, setArchiveError] = useState<string | null>(null)
-  const [archiveStats, setArchiveStats] = useState<{ total: number; recent: any[] }>({ total: 0, recent: [] })
-
+  const [stats, setStats] = useState<any[]>([]);
+  const [recentActivity, setRecentActivity] = useState<any[]>([]);
+  const [upcomingEvents, setUpcomingEvents] = useState<any[]>([]);
+  const [topSpeakers, setTopSpeakers] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+  const [userRole, setUserRole] = useState<string | null>(null);
+  const [showAllSpeakers, setShowAllSpeakers] = useState(false);
+  const [archiveLoading, setArchiveLoading] = useState(true);
+  const [archiveError, setArchiveError] = useState<string | null>(null);
+  const [archiveStats, setArchiveStats] = useState<{
+    total: number;
+    recent: any[];
+  }>({ total: 0, recent: [] });
+  const [getView, setGetView] = useState<ViewCounter[]>([]);
   useEffect(() => {
-    setUserRole(getCookie("userRole"))
-  }, [])
+    setUserRole(getCookie("userRole"));
+  }, []);
 
   useEffect(() => {
     async function fetchDashboardData() {
-      setLoading(true)
-      setError(null)
+      setLoading(true);
+      setError(null);
       try {
         // Fetch all data in parallel
         const [eventsRes, usersRes, blogsRes, speakersRes] = await Promise.all([
@@ -56,8 +78,9 @@ export default function AdminDashboard() {
           getAllUsers(),
           getBlogs(),
           getSpeaker(),
-        ])
+        ]);
         // Stats
+
         let totalEvents = 0;
         if (eventsRes.success && eventsRes.data) {
           if (Array.isArray(eventsRes.data)) {
@@ -95,87 +118,139 @@ export default function AdminDashboard() {
           },
           {
             title: "Total Speakers",
-            value: speakersRes.success && speakersRes.data ? speakersRes.data.length : 0,
+            value:
+              speakersRes.success && speakersRes.data
+                ? speakersRes.data.length
+                : 0,
             change: "-",
             icon: Mic,
             color: "text-orange-600",
             trend: "up",
           },
-        ])
+        ]);
         // Recent Activity (example: show latest blogs, events, users, speakers)
         setRecentActivity([
-          ...(blogsRes.success && blogsRes.data ? blogsRes.data.slice(0, 2).map((b: any) => ({
-            id: b._id,
-            type: "content",
-            title: `Blog published: ${b.title}`,
-            time: b.createdAt ? new Date(b.createdAt).toLocaleString() : "-",
-            user: b.author || "-",
-          })) : []),
-          ...(eventsRes.success && eventsRes.data && Array.isArray(eventsRes.data.event) ? eventsRes.data.event.slice(0, 2).map((e: any) => ({
-            id: e._id,
-            type: "event",
-            title: `Event: ${e.eventName || e.name}`,
-            time: e.createdAt ? new Date(e.createdAt).toLocaleString() : "-",
-            user: e.createdBy || "-",
-          })) : []),
-          ...(usersRes.success && usersRes.data ? usersRes.data.slice(0, 1).map((u: any) => ({
-            id: u._id,
-            type: "user",
-            title: `New user registered: ${u.name || u.email}`,
-            time: u.createdAt ? new Date(u.createdAt).toLocaleString() : "-",
-            user: "System",
-          })) : []),
-        ])
+          ...(blogsRes.success && blogsRes.data
+            ? blogsRes.data.slice(0, 2).map((b: any) => ({
+                id: b._id,
+                type: "content",
+                title: `Blog published: ${b.title}`,
+                time: b.createdAt
+                  ? new Date(b.createdAt).toLocaleString()
+                  : "-",
+                user: b.author || "-",
+              }))
+            : []),
+          ...(eventsRes.success &&
+          eventsRes.data &&
+          Array.isArray(eventsRes.data.event)
+            ? eventsRes.data.event.slice(0, 2).map((e: any) => ({
+                id: e._id,
+                type: "event",
+                title: `Event: ${e.eventName || e.name}`,
+                time: e.createdAt
+                  ? new Date(e.createdAt).toLocaleString()
+                  : "-",
+                user: e.createdBy || "-",
+              }))
+            : []),
+          ...(usersRes.success && usersRes.data
+            ? usersRes.data.slice(0, 1).map((u: any) => ({
+                id: u._id,
+                type: "user",
+                title: `New user registered: ${u.name || u.email}`,
+                time: u.createdAt
+                  ? new Date(u.createdAt).toLocaleString()
+                  : "-",
+                user: "System",
+              }))
+            : []),
+        ]);
         // Upcoming Events (show next 2 events)
-        setUpcomingEvents(eventsRes.success && eventsRes.data && Array.isArray(eventsRes.data.event) ? eventsRes.data.event.slice(0, 2).map((e: any) => ({
-          id: e._id,
-          name: e.eventName || e.name,
-          date: e.eventDate || e.startDate || "-",
-          location: e.venue || "-",
-          status: e.status || "upcoming",
-          registrations: e.registrationsCount || 0,
-        })) : [])
+        setUpcomingEvents(
+          eventsRes.success &&
+            eventsRes.data &&
+            Array.isArray(eventsRes.data.event)
+            ? eventsRes.data.event.slice(0, 2).map((e: any) => ({
+                id: e._id,
+                name: e.eventName || e.name,
+                date: e.eventDate || e.startDate || "-",
+                location: e.venue || "-",
+                status: e.status || "upcoming",
+                registrations: e.registrationsCount || 0,
+              }))
+            : []
+        );
         // Top Speakers (show top 3 by sessions or rating)
-        setTopSpeakers(speakersRes.success && speakersRes.data ? speakersRes.data.slice(0, 3).map((s: any, idx: number) => ({
-          id: s._id,
-          name: s.name,
-          sessions: s.sessionsCount || 0,
-          rating: s.rating || 0,
-          avatar: s.avatar || "/placeholder.svg?height=40&width=40",
-        })) : [])
+        setTopSpeakers(
+          speakersRes.success && speakersRes.data
+            ? speakersRes.data.slice(0, 3).map((s: any, idx: number) => ({
+                id: s._id,
+                name: s.name,
+                sessions: s.sessionsCount || 0,
+                rating: s.rating || 0,
+                avatar: s.avatar || "/placeholder.svg?height=40&width=40",
+              }))
+            : []
+        );
       } catch (err: any) {
-        setError("Failed to load dashboard data.")
+        setError("Failed to load dashboard data.");
       } finally {
-        setLoading(false)
+        setLoading(false);
       }
     }
-    fetchDashboardData()
-  }, [])
+    fetchDashboardData();
+  }, []);
 
+ useEffect(() => {
+  console.log("Fetching view count...");
+  const fetchViewCount = async () => {
+    try {
+      console.log("Starting view count fetch...");
+      const viewResponse = await getCookieViewCount();
+      console.log("View count API response:", viewResponse);
+      
+      if (viewResponse && viewResponse.data) {
+        console.log("View count data:", viewResponse.data);
+        setGetView(viewResponse.data);
+      } else {
+        console.warn("No data in view count response");
+      }
+    } catch (error) {
+      console.error("Error fetching view count:", error);
+    }
+  };
+
+  fetchViewCount();
+}, []);
+
+useEffect(() => {
+  console.log("Current view count state:", getView);
+}, [getView]);
   useEffect(() => {
     async function fetchArchive() {
-      setArchiveLoading(true)
-      setArchiveError(null)
+      setArchiveLoading(true);
+      setArchiveError(null);
       try {
-        const res = await getAllImages()
+        const res = await getAllImages();
         if (res.success && res.data && Array.isArray(res.data.archive)) {
           setArchiveStats({
             total: res.data.archive.length,
             recent: res.data.archive.slice(0, 3),
-          })
+          });
         } else {
-          setArchiveStats({ total: 0, recent: [] })
+          setArchiveStats({ total: 0, recent: [] });
         }
       } catch (err) {
-        setArchiveError("Failed to load archive data.")
+        setArchiveError("Failed to load archive data.");
       } finally {
-        setArchiveLoading(false)
+        setArchiveLoading(false);
       }
     }
-    fetchArchive()
-  }, [])
+    fetchArchive();
+  }, []);
 
-  const isAdmin = userRole === "admin"
+  const isAdmin = userRole === "admin";
 
   // Loading and error states
   if (loading) {
@@ -195,7 +270,8 @@ export default function AdminDashboard() {
               Welcome back, {isAdmin ? "Admin" : "User"}!
             </h1>
             <p className="text-muted-foreground">
-              Here's what's happening with your Arunachal Literature platform today.
+              Here's what's happening with your Arunachal Literature platform
+              today.
             </p>
           </div>
           {isAdmin && (
@@ -222,7 +298,9 @@ export default function AdminDashboard() {
             {stats.map((stat, index) => (
               <Card key={index}>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">{stat.title}</CardTitle>
+                  <CardTitle className="text-sm font-medium">
+                    {stat.title}
+                  </CardTitle>
                   <stat.icon className={`h-4 w-4 ${stat.color}`} />
                 </CardHeader>
                 <CardContent>
@@ -256,7 +334,9 @@ export default function AdminDashboard() {
                       <Activity className="h-5 w-5" />
                       Recent Activity
                     </CardTitle>
-                    <CardDescription>Latest actions and updates on your platform</CardDescription>
+                    <CardDescription>
+                      Latest actions and updates on your platform
+                    </CardDescription>
                   </div>
                   <Button variant="outline" size="sm" asChild>
                     <Link href="/admin/dashboard/content/blogs">View All</Link>
@@ -294,25 +374,30 @@ export default function AdminDashboard() {
             </CardHeader>
             <CardContent>
               <div className="space-y-4">
-                {(showAllSpeakers ? topSpeakers : topSpeakers.slice(0, 3)).map((speaker, index) => (
-                  <div key={speaker.id} className="flex items-center gap-3">
-                    <div className="flex items-center justify-center w-6 h-6 rounded-full bg-muted text-xs font-medium">
-                      {index + 1}
+                {(showAllSpeakers ? topSpeakers : topSpeakers.slice(0, 3)).map(
+                  (speaker, index) => (
+                    <div key={speaker.id} className="flex items-center gap-3">
+                      <div className="flex items-center justify-center w-6 h-6 rounded-full bg-muted text-xs font-medium">
+                        {index + 1}
+                      </div>
+                      <Avatar className="h-8 w-8">
+                        <AvatarImage
+                          src={speaker.avatar || "/placeholder.svg"}
+                          alt={speaker.name}
+                        />
+                        <AvatarFallback>
+                          {speaker.name
+                            .split(" ")
+                            .map((n: string) => n[0])
+                            .join("")}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1">
+                        <p className="text-sm font-medium">{speaker.name}</p>
+                      </div>
                     </div>
-                    <Avatar className="h-8 w-8">
-                      <AvatarImage src={speaker.avatar || "/placeholder.svg"} alt={speaker.name} />
-                      <AvatarFallback>
-                        {speaker.name
-                          .split(" ")
-                          .map((n: string) => n[0])
-                          .join("")}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div className="flex-1">
-                      <p className="text-sm font-medium">{speaker.name}</p>
-                    </div>
-                  </div>
-                ))}
+                  )
+                )}
                 {topSpeakers.length > 3 && (
                   <div className="flex justify-end pt-2">
                     <Button
@@ -338,7 +423,9 @@ export default function AdminDashboard() {
                     <FileText className="h-5 w-5" />
                     Archive Overview
                   </CardTitle>
-                  <CardDescription>Recent uploads and archive stats</CardDescription>
+                  <CardDescription>
+                    Recent uploads and archive stats
+                  </CardDescription>
                 </div>
               </div>
             </CardHeader>
@@ -352,17 +439,31 @@ export default function AdminDashboard() {
               ) : archiveError ? (
                 <div className="text-red-500 text-sm">{archiveError}</div>
               ) : archiveStats.total === 0 ? (
-                <div className="text-muted-foreground text-sm">No archive images found.</div>
+                <div className="text-muted-foreground text-sm">
+                  No archive images found.
+                </div>
               ) : (
                 <>
-                  <div className="text-lg font-bold mb-2">Total Images: {archiveStats.total}</div>
+                  <div className="text-lg font-bold mb-2">
+                    Total Images: {archiveStats.total}
+                  </div>
                   <div className="space-y-2">
                     {archiveStats.recent.map((img: any) => (
                       <div key={img._id} className="flex items-center gap-3">
-                        <img src={img.image_url || '/file.svg'} alt={img.originalName || 'Archive Image'} className="w-10 h-10 object-cover rounded" />
+                        <img
+                          src={img.image_url || "/file.svg"}
+                          alt={img.originalName || "Archive Image"}
+                          className="w-10 h-10 object-cover rounded"
+                        />
                         <div className="flex-1 min-w-0">
-                          <div className="truncate text-sm font-medium">{img.originalName || 'Untitled'}</div>
-                          <div className="text-xs text-muted-foreground truncate">{img.createdAt ? new Date(img.createdAt).toLocaleDateString() : ''}</div>
+                          <div className="truncate text-sm font-medium">
+                            {img.originalName || "Untitled"}
+                          </div>
+                          <div className="text-xs text-muted-foreground truncate">
+                            {img.createdAt
+                              ? new Date(img.createdAt).toLocaleDateString()
+                              : ""}
+                          </div>
                         </div>
                       </div>
                     ))}
@@ -376,7 +477,9 @@ export default function AdminDashboard() {
           <Card>
             <CardHeader>
               <CardTitle>Quick Actions</CardTitle>
-              <CardDescription>{isAdmin ? "Common administrative tasks" : "Available actions"}</CardDescription>
+              <CardDescription>
+                {isAdmin ? "Common administrative tasks" : "Available actions"}
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="grid gap-2">
@@ -432,29 +535,45 @@ export default function AdminDashboard() {
                 <BarChart3 className="h-5 w-5" />
                 Platform Analytics
               </CardTitle>
-              <CardDescription>Overview of platform performance and engagement</CardDescription>
+              <CardDescription>
+                Overview of platform performance and engagement
+              </CardDescription>
             </CardHeader>
             <CardContent>
               <div className="grid gap-4 md:grid-cols-4">
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-blue-600">2.4K</div>
-                  <div className="text-sm text-muted-foreground">Page Views</div>
+                  <div className="text-2xl font-bold text-blue-600">
+                    {getView.length > 0 ? getView[0]?.views : "Loading..."}
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    Page Views
+                  </div>
                   <div className="text-xs text-green-600">+12% this week</div>
                 </div>
                 <div className="text-center">
                   <div className="text-2xl font-bold text-green-600">89%</div>
-                  <div className="text-sm text-muted-foreground">Event Attendance</div>
-                  <div className="text-xs text-green-600">+5% from last event</div>
+                  <div className="text-sm text-muted-foreground">
+                    Event Attendance
+                  </div>
+                  <div className="text-xs text-green-600">
+                    +5% from last event
+                  </div>
                 </div>
                 <div className="text-center">
                   <div className="text-2xl font-bold text-purple-600">156</div>
-                  <div className="text-sm text-muted-foreground">New Registrations</div>
+                  <div className="text-sm text-muted-foreground">
+                    New Registrations
+                  </div>
                   <div className="text-xs text-green-600">+23% this month</div>
                 </div>
                 <div className="text-center">
                   <div className="text-2xl font-bold text-orange-600">4.8</div>
-                  <div className="text-sm text-muted-foreground">Avg. Rating</div>
-                  <div className="text-xs text-green-600">+0.2 from last month</div>
+                  <div className="text-sm text-muted-foreground">
+                    Avg. Rating
+                  </div>
+                  <div className="text-xs text-green-600">
+                    +0.2 from last month
+                  </div>
                 </div>
               </div>
             </CardContent>
@@ -462,5 +581,5 @@ export default function AdminDashboard() {
         )}
       </div>
     </ProtectedRoute>
-  )
+  );
 }
