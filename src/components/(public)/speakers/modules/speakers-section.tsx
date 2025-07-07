@@ -57,10 +57,10 @@ export default function SpeakersGrid() {
 
   return (
     <div className="min-h-screen w-full" style={{ backgroundColor: "#FFFAEE" }}>
-      <div className="container mx-auto px-4 py-12">
+      <div className="container mx-auto px-4 py-6 md:py-8 lg:py-10">
         {/* Header */}
-        <div className="text-center mb-16">
-          <h1 className="text-4xl font-bold tracking-wider" style={{ color: "#1A3FA9" }}>
+        <div className="text-center mb-8 md:mb-10 lg:mb-12">
+          <h1 className="text-3xl md:text-4xl font-bold tracking-wider" style={{ color: "#1A3FA9" }}>
             SPEAKERS
           </h1>
         </div>
@@ -69,7 +69,7 @@ export default function SpeakersGrid() {
         {error && <div className="text-center text-red-500 mb-8">{error}</div>}
 
         {/* Speakers Grid - 2 columns on mobile (image only), 3 columns on desktop (full card) */}
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-6 md:gap-8 max-w-5xl mx-auto mb-10 px-2">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 max-w-5xl mx-auto mb-6 md:mb-8 lg:mb-10 px-2">
           {loading
             ? Array.from({ length: speakersPerPage }).map((_, idx) => (
                 <div key={idx} className="flex flex-col items-center animate-pulse">
