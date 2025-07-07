@@ -1,6 +1,6 @@
 import Image from "next/image"
 import Link from "next/link"
-import { Linkedin, Instagram, Facebook } from "lucide-react"
+import { Youtube, Instagram, Facebook } from "lucide-react"
 import DiamondBackground from "./DiamondBackground"
 
 export default function Footer() {
@@ -39,8 +39,8 @@ export default function Footer() {
             <h3 className="text-xl font-semibold mb-4 text-[#FF9900] font-serif tracking-wide">Navigate</h3>
             <ul className="space-y-2">
               <li>
-                <Link href="/registration" className="hover:underline">
-                  Register
+                <Link href="/speakers" className="hover:underline">
+                  Speakers
                 </Link>
               </li>
               <li>
@@ -49,28 +49,33 @@ export default function Footer() {
                 </Link>
               </li>
               <li>
-                <Link href="/gallery" className="hover:underline">
-                  Gallery
+                <Link href="/workshops" className="hover:underline">
+                  Workshops
                 </Link>
               </li>
               <li>
-                <Link href="/workshop" className="hover:underline">
-                  Workshop
+                <Link href="/archive" className="hover:underline">
+                  Archive
                 </Link>
               </li>
               <li>
-                <Link href="/about" className="hover:underline">
-                  About
-                </Link>
-              </li>
-              <li>
-                <Link href="/inthenews" className="hover:underline">
+                <Link href="/Inthenews" className="hover:underline">
                   In the news
                 </Link>
               </li>
               <li>
-                <Link href="/blog" className="hover:underline">
-                  Blog
+                <Link href="/blogsContent" className="hover:underline">
+                  Blogs
+                </Link>
+              </li>
+              <li>
+                <Link href="/videos" className="hover:underline">
+                  Videos
+                </Link>
+              </li>
+              <li>
+                <Link href="/contactus" className="hover:underline">
+                  Contact Us
                 </Link>
               </li>
             </ul>
@@ -99,13 +104,13 @@ export default function Footer() {
             <div>
               <h3 className="text-xl font-semibold mb-4 text-[#FF9900] font-serif tracking-wide">Socials</h3>
               <div className="flex justify-start space-x-4">
-                <Link href="#" aria-label="LinkedIn" className="hover:text-gray-300">
-                  <Linkedin className="size-6" />
+                <Link href="https://www.youtube.com/@diprarunx" aria-label="YouTube" className="hover:text-gray-300" target="_blank" rel="noopener noreferrer">
+                  <Youtube className="size-6" />
                 </Link>
-                <Link href="#" aria-label="Instagram" className="hover:text-gray-300">
+                <Link href="https://www.instagram.com/arunachallitfest?igsh=MTlveWdnb3RxNDRjdA%3D%3D" aria-label="Instagram" className="hover:text-gray-300" target="_blank" rel="noopener noreferrer">
                   <Instagram className="size-6" />
                 </Link>
-                <Link href="#" aria-label="Facebook" className="hover:text-gray-300">
+                <Link href="https://www.facebook.com/arunachallitfest?rdid=fbPw6C6Nzj5FYgmW&share_url=https%3A%2F%2Fwww.facebook.com%2Fshare%2F19PuTFJVi2%2F#" aria-label="Facebook" className="hover:text-gray-300" target="_blank" rel="noopener noreferrer">
                   <Facebook className="size-6" />
                 </Link>
               </div>
