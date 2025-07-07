@@ -2,23 +2,43 @@
 import Image from "next/image"
 import Link from "next/link"
 import { CalendarDays, MapPin } from "lucide-react"
+import { useEffect, useState } from "react"
+import { getBanner } from "@/service/homeService"
 
 export default function HeroSection() {
+  const [bannerUrl, setBannerUrl] = useState<string | null>(null)
+
+  useEffect(() => {
+    async function fetchBanner() {
+      const response = await getBanner()
+      if (response.success && response.data) {
+        // If response.data is an array, use the first banner; otherwise, use the object
+        if (Array.isArray(response.data) && response.data.length > 0) {
+          setBannerUrl(response.data[0].image_url)
+        } else if (response.data.image_url) {
+          setBannerUrl(response.data.image_url)
+        }
+      }
+    }
+    fetchBanner()
+  }, [])
+
   return (
     <section className="relative h-[60vh] sm:h-[70vh] md:h-[80vh] lg:h-screen w-full flex items-center justify-center text-center overflow-hidden">
       {/* Background Image */}
-      <Image
-        // src="/herosection.png"
-                src="/herosection.jpg"
-        alt="Arunachal Literature Festival Background"
-        fill
-        sizes="100vw"
-        style={{
-          objectFit: "cover",
-          zIndex: -1,
-        }}
-        priority // Prioritize loading for the hero image
-      />
+      {bannerUrl && (
+        <Image
+          src={bannerUrl}
+          alt="Arunachal Literature Festival Background"
+          fill
+          sizes="100vw"
+          style={{
+            objectFit: "cover",
+            zIndex: -1,
+          }}
+          priority // Prioritize loading for the hero image
+        />
+      )}
 
       {/* Overlay for better text readability */}
       <div className="absolute inset-0 bg-black opacity-10 z-0"></div>
