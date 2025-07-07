@@ -29,10 +29,10 @@ export default function Contactsection() {
       {/* Decorative background elements - Diamonds */}
       <DiamondBackground />
 
-      {/* Decorative background elements - Dots */}
+      {/* Decorative background elements - Dots
       <div className="absolute top-8 left-1/2 -translate-x-1/2 w-2 h-2 bg-[#6A1B1A] rounded-full" />
       <div className="absolute top-[100px] left-[calc(50%-150px)] w-2 h-2 bg-[#6A1B1A] rounded-full hidden sm:block" />
-      <div className="absolute top-[100px] right-[calc(50%-150px)] w-2 h-2 bg-[#6A1B1A] rounded-full hidden sm:block" />
+      <div className="absolute top-[100px] right-[calc(50%-150px)] w-2 h-2 bg-[#6A1B1A] rounded-full hidden sm:block" /> */}
 
       <div className="container mx-auto px-4 md:px-6 text-center relative z-10">
         <div className="space-y-4">

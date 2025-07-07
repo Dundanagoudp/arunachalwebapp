@@ -270,10 +270,10 @@ export default function Carousel() {
       
                 <div data-aos="fade-up" data-aos-delay="400" data-aos-duration="1200" className="mt-8 flex justify-center">
                   <Link href="/workshops" className="group relative flex items-center hover:scale-105 transition-transform duration-300 focus:outline-none">
-                    <span className="bg-[#4F8049] text-white px-6 py-3 pr-12 rounded-full text-lg font-medium">
+                    <span className="bg-[#4F8049] text-white px-8 py-3 rounded-full text-lg font-medium">
                       View All
                     </span>
-                    <span className="absolute right-0 left-30 translate-x-1/2 bg-[#4F8049] w-10 h-10 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 group-hover:translate-x-6 group-hover:rotate-12">
+                    <span className="absolute right-0 left-27 translate-x-1/2 bg-[#4F8049] w-10 h-10 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 group-hover:translate-x-6 group-hover:rotate-12">
                       <ArrowUpRight className="w-4 h-4 text-white transition-transform duration-300 group-hover:rotate-45" />
                     </span>
                   </Link>
