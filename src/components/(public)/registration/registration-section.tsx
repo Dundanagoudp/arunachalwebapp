@@ -73,6 +73,7 @@ export default function RegistrationSection() {
   const [error, setError] = useState<string | null>(null)
 
   useEffect(() => {
+
     const fetchWorkshops = async () => {
       try {
         setLoading(true)

@@ -103,6 +103,19 @@ export default function Carousel() {
     </div>
   )
 
+  useEffect(() => {
+    AOS.refresh();
+  }, [currentIndex, cardsPerView]);
+
+  // Add handler for card click (same logic as registration-section.tsx)
+  const handleWorkshopClick = (workshop: Workshop) => {
+    if (workshop.registrationFormUrl) {
+      window.open(workshop.registrationFormUrl, '_blank', 'noopener,noreferrer')
+    } else {
+      window.open('/contactus', '_blank', 'noopener,noreferrer')
+    }
+  }
+
   return (
     <main className="min-h-screen bg-[#fdf8f0] relative overflow-hidden">
       {/* Decorative Diamond Elements */}
@@ -293,15 +306,24 @@ export default function Carousel() {
                               ease: "easeOut",
                             }}
                             className="flex justify-center"
+                            data-aos="fade-up"
+                            data-aos-delay={100 * index}
                           >
-                            <div className="bg-white border-4 border-[#FFD76B] hover:border-[#e67e22] p-8 h-[420px] flex flex-col items-center justify-start relative overflow-visible rounded-t-full rounded-b-2xl w-full max-w-xs mx-auto transition-all duration-300 hover:shadow-xl hover:scale-105 group cursor-pointer">
+                            <div
+                              className="bg-white border-4 border-[#FFD76B] hover:border-[#e67e22] p-8 h-[420px] flex flex-col items-center justify-center relative overflow-hidden rounded-t-full rounded-b-2xl w-full max-w-xs mx-auto transition-all duration-300 hover:shadow-xl hover:scale-105 group cursor-pointer"
+                              onClick={() => handleWorkshopClick(workshop)}
+                              tabIndex={0}
+                              role="button"
+                              aria-label={`Register for ${workshop.name}`}
+                              onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') handleWorkshopClick(workshop) }}
+                            >
                               <div className="mb-6 flex-1 flex items-center justify-center w-full">
                                 <Image
                                   src={workshop.imageUrl || "/registration/creative.png"}
                                   alt={workshop.name}
                                   width={180}
                                   height={180}
-                                  className="object-contain drop-shadow-lg transition-transform duration-300 group-hover:scale-110"
+                                  className="object-contain drop-shadow-lg transition-transform duration-300"
                                 />
                               </div>
                               <h4 className="text-lg font-bold text-gray-800 text-center leading-tight font-serif mt-2 group-hover:text-[#e67e22] transition-colors duration-300">
