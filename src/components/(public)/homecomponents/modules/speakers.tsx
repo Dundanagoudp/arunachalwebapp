@@ -26,6 +26,7 @@ export default function Speakers() {
   const navigationPrevRef = useRef<HTMLButtonElement>(null)
   const navigationNextRef = useRef<HTMLButtonElement>(null)
   const swiperRef = useRef<any>(null)
+  const [activeIndex, setActiveIndex] = useState(0)
 
   useEffect(() => {
     async function fetchSpeakers() {
@@ -157,46 +158,59 @@ export default function Speakers() {
                   }}
                   onSwiper={(swiper) => {
                     swiperRef.current = swiper
+                    setActiveIndex(swiper.realIndex)
                   }}
+                  onSlideChange={(swiper) => setActiveIndex(swiper.realIndex)}
                 >
-                  {speakers.map((speaker, index) => (
-                    <SwiperSlide
-                      key={speaker._id || speaker.id || index}
-                      className="!w-[280px] !h-[380px] md:!w-[320px] md:!h-[420px] lg:!w-[360px] lg:!h-[460px] mx-4"
-                    >
-                      <div className="relative group h-full w-full">
-                        {/* Gradient Border Effect */}
-                        <div className="absolute -inset-2 bg-gradient-to-r from-yellow-400 via-orange-400 to-yellow-400 rounded-lg opacity-75 group-hover:opacity-100 transition duration-300 blur-sm group-hover:blur-md"></div>
+                  {speakers.map((speaker, index) => {
+                    // Calculate slide index for looped Swiper
+                    let slideIndex = index
+                    if (swiperRef.current && swiperRef.current.params.loop) {
+                      const slidesLength = speakers.length
+                      const realIndex = swiperRef.current.realIndex
+                      // Swiper clones slides for looping, so we need to match realIndex
+                      slideIndex = index
+                    }
+                    const isActive = activeIndex === index
+                    return (
+                      <SwiperSlide
+                        key={speaker._id || speaker.id || index}
+                        className={`!w-[280px] !h-[380px] md:!w-[320px] md:!h-[420px] lg:!w-[360px] lg:!h-[460px] mx-4 transition-opacity duration-300 ${isActive ? 'opacity-100 z-10' : 'opacity-40 z-0'}`}
+                      >
+                        <div className="relative group h-full w-full">
+                          {/* Gradient Border Effect */}
+                          <div className="absolute -inset-2 bg-gradient-to-r from-yellow-400 via-orange-400 to-yellow-400 rounded-lg opacity-75 group-hover:opacity-100 transition duration-300 blur-sm group-hover:blur-md"></div>
 
-                        {/* Card Container */}
-                        <div className="relative bg-white p-1 rounded-lg h-full w-full transition-transform duration-300 group-hover:scale-[1.02]">
-                          <div className="w-full h-full overflow-hidden rounded-lg shadow-2xl relative">
-                            {/* Speaker Image */}
-                            <Image
-                              src={speaker.image_url || "/placeholder.svg?height=400&width=300"}
-                              alt={speaker.name || "Speaker"}
-                              fill
-                              className="object-cover transition-transform duration-500 hover:scale-105"
-                              priority={index < 3}
-                              sizes="(max-width: 768px) 280px, (max-width: 1024px) 320px, 360px"
-                            />
+                          {/* Card Container */}
+                          <div className="relative bg-white p-1 rounded-lg h-full w-full transition-transform duration-300 group-hover:scale-[1.02]">
+                            <div className="w-full h-full overflow-hidden rounded-lg shadow-2xl relative">
+                              {/* Speaker Image */}
+                              <Image
+                                src={speaker.image_url || "/placeholder.svg?height=400&width=300"}
+                                alt={speaker.name || "Speaker"}
+                                fill
+                                className="object-cover transition-transform duration-500 hover:scale-105"
+                                priority={index < 3}
+                                sizes="(max-width: 768px) 280px, (max-width: 1024px) 320px, 360px"
+                              />
 
-                            {/* Speaker Info Overlay */}
-                            <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/70 to-transparent text-white p-4">
-                              <h3 className="font-semibold text-lg mb-1">{speaker.name}</h3>
-                              <p className="text-sm opacity-90 line-clamp-2 mb-2">{speaker.about}</p>
-                              <div className="flex items-center justify-between">
-                                <span className="text-xs bg-[#E67E22] px-2 py-1 rounded-full">
-                                  {speaker.category || "Speaker"}
-                                </span>
-                                <ArrowUpRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+                              {/* Speaker Info Overlay */}
+                              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/70 to-transparent text-white p-4">
+                                <h3 className="font-semibold text-lg mb-1">{speaker.name}</h3>
+                                <p className="text-sm opacity-90 line-clamp-2 mb-2">{speaker.about}</p>
+                                <div className="flex items-center justify-between">
+                                  <span className="text-xs bg-[#E67E22] px-2 py-1 rounded-full">
+                                    {speaker.category || "Speaker"}
+                                  </span>
+                                  <ArrowUpRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
+                                </div>
                               </div>
                             </div>
                           </div>
                         </div>
-                      </div>
-                    </SwiperSlide>
-                  ))}
+                      </SwiperSlide>
+                    )
+                  })}
                 </Swiper>
 
                 {/* Next Arrow */}
