@@ -28,12 +28,6 @@ export default function Contactsection() {
     <section className="relative w-full py-12 md:py-24 lg:py-32 bg-[#FDF6E9] overflow-hidden">
       {/* Decorative background elements - Diamonds */}
       <DiamondBackground />
-
-      {/* Decorative background elements - Dots
-      <div className="absolute top-8 left-1/2 -translate-x-1/2 w-2 h-2 bg-[#6A1B1A] rounded-full" />
-      <div className="absolute top-[100px] left-[calc(50%-150px)] w-2 h-2 bg-[#6A1B1A] rounded-full hidden sm:block" />
-      <div className="absolute top-[100px] right-[calc(50%-150px)] w-2 h-2 bg-[#6A1B1A] rounded-full hidden sm:block" /> */}
-
       <div className="container mx-auto px-4 md:px-6 text-center relative z-10">
         <div className="space-y-4">
           <p data-aos="fade-up" data-aos-delay="0" data-aos-duration="1000" className="text-lg md:text-xl font-medium uppercase text-[#6A1B1A] tracking-widest font-dm-serif">

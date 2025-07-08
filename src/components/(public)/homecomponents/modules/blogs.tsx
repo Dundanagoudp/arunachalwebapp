@@ -58,12 +58,12 @@ export default function Blogs() {
 
       {/* Header */}
       <div className="text-center mt-16 mb-12 relative z-10">
-        <h1 data-aos="fade-up" data-aos-delay="0" data-aos-duration="1000" className="text-[#4F8049] text-xl md:text4xl lg:text-4xl font-serif font-medium uppercase tracking-wide mb-1">
+        <h1 data-aos="fade-up" data-aos-delay="0" data-aos-duration="1000" className="text-[#4F8049] text-xl md:text4xl lg:text-4xl font-dm-serif font-medium uppercase tracking-wide mb-1">
           ARUNACHAL LITERATURE FESTIVAL
         </h1>
         <div className="flex justify-center items-center gap-6">
           <div className="w-4 h-4 rounded-full bg-[#4F8049]"></div>
-          <h2 data-aos="fade-up" data-aos-delay="100" data-aos-duration="1000" className="text-[#4F8049] text-3xl md:text-4xl lg:text-5xl font-serif font-bold uppercase font-serif tracking-wide">
+          <h2 data-aos="fade-up" data-aos-delay="100" data-aos-duration="1000" className="text-[#4F8049] text-3xl md:text-4xl lg:text-5xl font-dm-serif font-bold uppercase tracking-wide">
             BLOGS AND MEDIA
           </h2>
           <div className="w-4 h-4 rounded-full bg-[#4F8049]"></div>
@@ -116,9 +116,9 @@ export default function Blogs() {
                       className="object-cover"
                     />
                   </div>
-                  <h3 className="text-xl font-bold mt-4 mb-2">{blog.title}</h3>
+                  <h3 className="text-xl font-bold mt-4 mb-2 font-dm-serif">{blog.title}</h3>
                   {blog.contents && (
-                    <p className="text-gray-700 text-base mb-2 line-clamp-3">
+                    <p className="text-gray-700 text-base mb-2 line-clamp-3 font-bilo">
                       {blog.contents.length > 40 ? blog.contents.slice(0, 40) + '...' : blog.contents}
                     </p>
                   )}

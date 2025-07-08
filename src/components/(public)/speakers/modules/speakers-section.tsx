@@ -60,7 +60,7 @@ export default function SpeakersGrid() {
       <div className="container mx-auto px-4 py-6 md:py-8 lg:py-10">
         {/* Header */}
         <div className="text-center mb-8 md:mb-10 lg:mb-12">
-          <h1 className="text-3xl md:text-4xl font-bold tracking-wider" style={{ color: "#1A3FA9" }}>
+          <h1 className="text-3xl md:text-4xl font-bold tracking-wider font-dm-serif" style={{ color: "#1A3FA9" }}>
             SPEAKERS
           </h1>
         </div>
@@ -147,8 +147,8 @@ export default function SpeakersGrid() {
                   </div>
                   {/* Speaker Info - always visible */}
                   <div className="text-center mt-3 md:mt-4 lg:mt-6">
-                    <h3 className="text-base md:text-lg font-semibold text-gray-800 mb-1 md:mb-2">{speaker.name}</h3>
-                    <p className="text-xs md:text-sm text-gray-600">{speaker.about}</p>
+                    <h3 className="text-base md:text-lg font-semibold text-gray-800 mb-1 md:mb-2 font-dm-serif">{speaker.name}</h3>
+                    <p className="text-xs md:text-sm text-gray-600 font-bilo">{speaker.about}</p>
                   </div>
                 </div>
               ))}
@@ -249,11 +249,11 @@ export default function SpeakersGrid() {
                 {/* Speaker Details */}
                 <div className="text-center">
                   <DialogHeader className="mb-3">
-                    <DialogTitle className="text-2xl  font-bold mb-0" style={{ color: "#1A3FA9" }} >
+                    <DialogTitle className="text-2xl  font-bold mb-0 font-dm-serif" style={{ color: "#1A3FA9" }} >
                       {selectedSpeaker.name}
                     </DialogTitle>
                   </DialogHeader>
-                  <p className="text-lg text-gray-700 leading-relaxed">{selectedSpeaker.about}</p>
+                  <p className="text-lg text-gray-700 leading-relaxed font-bilo">{selectedSpeaker.about}</p>
                 </div>
               </div>
             )}

@@ -181,7 +181,7 @@ export default function BlogsLayout() {
         <HeaderShimmer />
       ) : (
         <div className="text-center my-8 sm:my-12 lg:my-16 relative z-10">
-          <h1 className="text-blue-900 text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold font-serif">
+          <h1 className="text-blue-900 text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold font-dm-serif">
             BLOGS
           </h1>
         </div>
@@ -223,7 +223,7 @@ export default function BlogsLayout() {
         <SectionTitleShimmer />
       ) : (
         <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 mb-6 sm:mb-8 relative z-10 text-center">
-          <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-800">
+          <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-800 font-dm-serif">
             Latest Blogs
           </h2>
         </div>
@@ -259,15 +259,15 @@ export default function BlogsLayout() {
                       className="object-cover transition-transform duration-300 group-hover:scale-105"
                     />
                   </div>
-                  <h3 className="text-lg sm:text-xl font-bold mt-3 sm:mt-4 mb-1 line-clamp-2">
+                  <h3 className="text-lg sm:text-xl font-bold mt-3 sm:mt-4 mb-1 line-clamp-2 font-dm-serif">
                     {blog.title}
                   </h3>
-                  <p className="text-gray-500 text-xs sm:text-sm flex-1 line-clamp-2 mb-0">
+                  <p className="text-gray-500 text-xs sm:text-sm flex-1 line-clamp-2 mb-0 font-bilo">
                     {blog.contents || ""}
                   </p>
 
                   <div className="flex justify-between items-center mt-2 sm:mt-2">
-                    <p className="text-gray-500 text-xs sm:text-sm">
+                    <p className="text-gray-500 text-xs sm:text-sm font-bilo">
                       {blog.publishedDate
                         ? new Date(blog.publishedDate).toLocaleDateString(
                             "en-US",
@@ -281,7 +281,7 @@ export default function BlogsLayout() {
                     </p>
                     <Link
                       href={`/blogsContent/blog/${blog._id}`}
-                      className="text-[#D96D34] font-semibold hover:underline text-sm sm:text-base"
+                      className="text-[#D96D34] font-semibold hover:underline text-sm sm:text-base font-bilo"
                     >
                       Read More
                     </Link>
@@ -317,7 +317,7 @@ export default function BlogsLayout() {
                       e.preventDefault();
                       handlePageChange(i + 1);
                     }}
-                    className="text-sm sm:text-base min-w-[2rem] sm:min-w-[2.5rem]"
+                    className="text-sm sm:text-base min-w-[2rem] sm:min-w-[2.5rem] font-bilo"
                   >
                     {i + 1}
                   </PaginationLink>
