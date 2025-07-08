@@ -243,11 +243,11 @@ export default function Carousel() {
         {/* Header Section */}
               <div className="text-center mb-16">
                 <div data-aos="fade-up" data-aos-delay="0" data-aos-duration="1200" className="flex justify-center items-center gap-4 mb-6">
-                  <hr className="w-32 border-t-2 border-[#6A1B1A]" />
+                  <div className="h-0.5 w-52 bg-gradient-to-r from-transparent to-[#e67e22]" />
                   <h1 className="text-[#6A1B1A] text-3xl md:text-5xl font-serif italic font-bold">
                     "BEYOND MYTHS AND <br /> MOUNTAINS"
                   </h1>
-                  <hr className="w-32 border-t-2 border-[#6A1B1A]" />
+                  <div className="h-0.5 w-52 bg-gradient-to-l from-transparent to-[#e67e22]" />
                 </div>
       
                 <div data-aos="fade-up" data-aos-delay="200" data-aos-duration="1200" className="relative mt-30">

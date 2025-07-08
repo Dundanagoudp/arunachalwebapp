@@ -26,19 +26,17 @@ export default function HeroSection() {
   return (
     <section className="relative h-[60vh] sm:h-[70vh] md:h-[80vh] lg:h-screen w-full flex items-center justify-center text-center overflow-hidden">
       {/* Background Image */}
-      {bannerUrl && (
-        <Image
-          src={bannerUrl}
-          alt="Arunachal Literature Festival Background"
-          fill
-          sizes="100vw"
-          style={{
-            objectFit: "cover",
-            zIndex: -1,
-          }}
-          priority // Prioritize loading for the hero image
-        />
-      )}
+      <Image
+        src={bannerUrl || "/herosection.jpg"}
+        alt="Arunachal Literature Festival Background"
+        fill
+        sizes="100vw"
+        style={{
+          objectFit: "cover",
+          zIndex: -1,
+        }}
+        priority // Prioritize loading for the hero image
+      />
 
       {/* Overlay for better text readability */}
       <div className="absolute inset-0 bg-black opacity-10 z-0"></div>
