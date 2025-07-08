@@ -367,7 +367,7 @@ export default function Carousel() {
           </div>
 
           {/* Carousel Indicators */}
-          <div className="flex justify-center mt-8 space-x-2">
+          <div className="flex justify-center mt-8 space-x-2 lg:hidden">
             {workshops.length > 0 &&
               Array.from({
                 length: Math.ceil(Math.max(0, workshops.length - cardsPerView + 1)),

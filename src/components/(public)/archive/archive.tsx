@@ -137,7 +137,7 @@ export default function Archive() {
       ) : (
         <header className="flex justify-center pt-8 pb-4 relative">
           <SunIcon size={32} className="absolute top-4 right-4" />
-          <h1 className="text-4xl font-bold text-blue-700 tracking-wider">ARCHIVE</h1>
+          <h1 className="text-4xl font-serif font-bold text-blue-700 tracking-wider">ARCHIVE</h1>
         </header>
       )}
 
