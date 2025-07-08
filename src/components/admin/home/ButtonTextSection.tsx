@@ -41,8 +41,8 @@ export default function ButtonTextSection() {
   }
 
   const handleAddButtonText = async () => {
-    if (!buttonTextForm.text.trim() || !buttonTextForm.link.trim()) {
-      toast({ title: "Error", description: "Both text and link are required" })
+    if (!buttonTextForm.link.trim()) {
+      toast({ title: "Error", description: "Button link is required" })
       return
     }
     setLoading((prev) => ({ ...prev, action: true }))
@@ -64,8 +64,8 @@ export default function ButtonTextSection() {
   }
 
   const handleUpdateButtonText = async () => {
-    if (!editingButtonText || !buttonTextForm.text.trim() || !buttonTextForm.link.trim()) {
-      toast({ title: "Error", description: "Both text and link are required" })
+    if (!editingButtonText || !buttonTextForm.link.trim()) {
+      toast({ title: "Error", description: "Button link is required" })
       return
     }
     setLoading((prev) => ({ ...prev, action: true }))

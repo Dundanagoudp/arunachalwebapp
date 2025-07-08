@@ -126,10 +126,10 @@ export default function GallerySection() {
               <p data-aos="fade-up" data-aos-delay="0" data-aos-duration="1000" className="text-base md:text-xl font-bold text-[#1A3FA9] font-serif tracking-wide text-3xl sm:text-4xl md:text-5xl lg:text-4xl mt-12">Arunachal Literature Festival</p>
               <h2 data-aos="fade-up" data-aos-delay="100" data-aos-duration="1000" className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold text-[#1A3FA9] font-serif tracking-wide">GALLERY</h2>
               <Link href="/archive" data-aos="fade-up" data-aos-delay="200" data-aos-duration="1000" className="group relative flex items-center justify-center mt-4 focus:outline-none">
-                <span className="bg-[#1A3FA9] text-white px-6 py-3 pr-12 rounded-full text-base sm:text-lg md:text-xl font-medium">
+                <span className="bg-[#1A3FA9] text-white px-8 py-3 rounded-full text-base sm:text-lg md:text-xl font-medium">
                   View All
                 </span>
-                <span className="absolute right-0 left-32 translate-x-1/2 bg-[#1A3FA9] w-10 h-10 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 group-hover:translate-x-6 group-hover:rotate-12">
+                <span className="absolute right-0 left-30 translate-x-1/2 bg-[#1A3FA9] w-10 h-10 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 group-hover:translate-x-6 group-hover:rotate-12">
                   <ArrowUpRight className="w-4 h-4 text-white transition-transform duration-300 group-hover:rotate-45" />
                 </span>
               </Link>
