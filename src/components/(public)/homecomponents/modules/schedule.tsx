@@ -213,10 +213,10 @@ export default function Schedule() {
 
         {/* Header */}
         <div className="text-center mb-4 mt-18">
-          <h1 data-aos="fade-up" data-aos-delay="0" data-aos-duration="1000" className="text-[#6A1B1A] text-2xl md:text-3xl lg:text-3xl font-bold tracking-wider mb-2 font-dm-serif">
+          <h1 data-aos="fade-up" data-aos-delay="0" data-aos-duration="1000" className="text-[#6A1B1A] text-base md:text-3xl font-bold tracking-wider mb-2 font-dm-serif">
             {scheduleData?.festivalName || "ARUNACHAL LITERATURE FESTIVAL"}
           </h1>
-          <h2 data-aos="fade-up" data-aos-delay="100" data-aos-duration="1000" className="text-[#6A1B1A] text-xl md:text-2xl lg:text-4xl font-bold font-dm-serif">
+          <h2 data-aos="fade-up" data-aos-delay="100" data-aos-duration="1000" className="text-[#6A1B1A] text-xl md:text-5xl font-bold font-dm-serif">
             SCHEDULE {scheduleData?.year || "2025"}
           </h2>
         </div>

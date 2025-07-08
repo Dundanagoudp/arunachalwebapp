@@ -88,8 +88,9 @@ export default function Speakers() {
       <div className="container mx-auto py-8 md:py-16 px-2 md:px-4 pb-4 md:pb-16 relative z-10">
         {/* Header Section */}
         <header className="text-center mb-8 md:mb-16">
-          <h1 className="text-3xl md:text-7xl font-bold text-[#E67E22] font-dm-serif mb-2 md:mb-4">SPEAKERS</h1>
-          <p className="text-base md:text-lg text-gray-600 max-w-2xl mx-auto font-bilo">
+          <p data-aos="fade-up" data-aos-delay="0" data-aos-duration="1000" className="text-[#E67E22] text-xl md:text-3xl uppercase tracking-wider mb-2 font-dm-serif">Arunachal Literature Festival</p>
+          <h1 className="text-[#E67E22] text-2xl md:text-4xl uppercase font-semibold tracking-wide font-dm-serif">SPEAKERS</h1>
+          <p className="text-sm md:text-lg text-gray-600 max-w-2xl mx-auto font-bilo">
             Meet our distinguished speakers who will share their knowledge and insights
           </p>
         </header>
