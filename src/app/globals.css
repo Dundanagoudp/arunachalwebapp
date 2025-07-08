@@ -410,24 +410,28 @@ swiper-button-prev,
   font-family: 'Bilo', sans-serif;
 }
 
-/* Custom Sonner Toaster styles for theme match */
+/* Custom Sonner Toaster styles for Arunachal Literature Festival theme */
 .toaster {
-  background: var(--popover, #fff) !important;
-  color: var(--popover-foreground, #171717) !important;
-  border: 1px solid var(--border, #e5e7eb) !important;
-  border-radius: var(--radius, 0.5rem) !important;
+  background: #1A3FA9 !important; /* Festival blue */
+  color: #FFF8ED !important;      /* Light text */
+  border: none !important;
+  border-radius: 1rem !important;
   box-shadow: 0 4px 24px 0 rgba(0,0,0,0.08), 0 1.5px 4px 0 rgba(0,0,0,0.03);
-  padding: 0.75rem 1.25rem;
+  padding: 1rem 1.5rem;
+  font-family: 'Inter', 'Bilo', Arial, Helvetica, sans-serif !important;
+  font-size: 1.05rem !important;
 }
 .dark .toaster {
-  background: var(--popover, #232323) !important;
-  color: var(--popover-foreground, #ededed) !important;
-  border: 1px solid var(--border, #232323) !important;
+  background: #1A3FA9 !important;
+  color: #FFF8ED !important;
+  border: none !important;
 }
-/* Success toast: green background, white text */
-.toaster .toaster-toast[data-type='success'] {
-  background: #22c55e !important; /* Tailwind green-500 */
-  color: #fff !important;
+.toaster .toaster-toast[data-type='success'],
+.toaster .toaster-toast[data-type='error'],
+.toaster .toaster-toast[data-type='info'],
+.toaster .toaster-toast[data-type='warning'] {
+  background: #1A3FA9 !important;
+  color: #FFF8ED !important;
   border: none !important;
 }
 
