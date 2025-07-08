@@ -27,7 +27,7 @@ export default function Footer() {
                 className="object-contain"
               />
             </div>
-            <h2 className="text-lg md:text-3xl lg:text-4xl font-bold font-serif tracking-wide uppercase text-left md:text-center md:flex-1 text-[#FF9900] whitespace-nowrap md:whitespace-normal">
+            <h2 className="text-lg md:text-3xl lg:text-4xl font-bold font-dm-serif tracking-wide uppercase text-left md:text-center md:flex-1 text-[#FF9900] whitespace-nowrap md:whitespace-normal">
               ARUNACHAL LITERATURE FESTIVAL
             </h2>
             <div className="md:w-[180px] md:h-[90px] hidden md:block" /> {/* Placeholder to balance layout */}
@@ -37,7 +37,7 @@ export default function Footer() {
           <div className="grid grid-cols-2 md:grid-cols-2 lg:grid-cols-3 gap-8 text-left">
             {/* Navigate Section */}
             <div className="col-span-1">
-              <h3 className="text-xl font-semibold mb-4 text-[#FF9900] font-serif tracking-wide">Navigate</h3>
+              <h3 className="text-xl font-semibold mb-4 text-[#FF9900] font-dm-serif tracking-wide">Navigate</h3>
               <ul className="space-y-2">
                 <li>
                   <Link href="/speakers" className="hover:underline">
@@ -84,7 +84,7 @@ export default function Footer() {
 
             {/* Assistance Section */}
             <div className="col-span-1">
-              <h3 className="text-xl font-semibold mb-4 text-[#FF9900] font-serif tracking-wide">Assistance</h3>
+              <h3 className="text-xl font-semibold mb-4 text-[#FF9900] font-dm-serif tracking-wide">Assistance</h3>
               <ul className="space-y-2">
                 <li>
                   <Link href="/contactus" className="hover:underline">
@@ -103,7 +103,7 @@ export default function Footer() {
             <div className="col-span-2 md:col-span-2 lg:col-span-1 flex flex-col gap-8">
               {/* Socials Section */}
               <div>
-                <h3 className="text-xl font-semibold mb-4 text-[#FF9900] font-serif tracking-wide">Socials</h3>
+                <h3 className="text-xl font-semibold mb-4 text-[#FF9900] font-dm-serif tracking-wide">Socials</h3>
                 <div className="flex justify-start space-x-4">
                   <Link href="https://www.youtube.com/@diprarunx" aria-label="YouTube" className="hover:text-gray-300" target="_blank" rel="noopener noreferrer">
                     <Youtube className="size-6" />
@@ -119,7 +119,7 @@ export default function Footer() {
 
               {/* Office Address Section */}
               <div>
-                <h3 className="text-xl font-semibold mb-4 text-[#FF9900] font-serif tracking-wide">Office Address</h3>
+                <h3 className="text-xl font-semibold mb-4 text-[#FF9900] font-dm-serif tracking-wide">Office Address</h3>
                 <p className="text-sm leading-relaxed">
                   Directorate of Information and Public Relations (Soochna bhawan), papu nallah, Naharlagun, Arunachal
                   Pradesh Pin - 791110
