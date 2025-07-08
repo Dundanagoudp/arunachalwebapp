@@ -79,7 +79,7 @@ export default function Attendeessay() {
               <span className="w-3 h-3 rounded-full bg-yellow-400" />
               <h2 
                 data-aos="fade-up" data-aos-delay="0" data-aos-duration="1000"
-                className="text-2xl md:text-3xl font-bold font-serif tracking-wide uppercase text-yellow-400 drop-shadow-lg font-bilo"
+                className="text-2xl md:text-3xl font-bold font-dm-serif tracking-wide uppercase text-yellow-400 drop-shadow-lg"
               >
                 Arunachal Literature Festival
               </h2>
@@ -87,7 +87,7 @@ export default function Attendeessay() {
             </div>
             <h3 
               data-aos="fade-up" data-aos-delay="100" data-aos-duration="1000"
-              className="text-2xl md:text-5xl font-bold mb-8 text-yellow-400 drop-shadow-lg font-serif tracking-wide"
+              className="text-2xl md:text-5xl font-bold mb-8 text-yellow-400 drop-shadow-lg font-dm-serif tracking-wide"
             >
               WHAT OUR ATTENDEES SAY
             </h3>
@@ -227,7 +227,7 @@ export default function Attendeessay() {
             <span className="w-3 h-3 rounded-full bg-yellow-400" />
             <h2 
               data-aos="fade-up" data-aos-delay="0" data-aos-duration="1000"
-              className="text-2xl md:text-3xl font-bold font-serif tracking-wide uppercase text-yellow-400 drop-shadow-lg font-bilo"
+              className="text-2xl md:text-3xl font-bold font-dm-serif tracking-wide uppercase text-yellow-400 drop-shadow-lg"
             >
               Arunachal Literature Festival
             </h2>
@@ -235,7 +235,7 @@ export default function Attendeessay() {
           </div>
           <h3 
             data-aos="fade-up" data-aos-delay="100" data-aos-duration="1000"
-            className="text-2xl md:text-5xl font-bold mb-8 text-yellow-400 drop-shadow-lg font-serif tracking-wide"
+            className="text-2xl md:text-5xl font-bold mb-8 text-yellow-400 drop-shadow-lg font-dm-serif tracking-wide"
           >
             WHAT OUR ATTENDEES SAY
           </h3>

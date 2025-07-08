@@ -155,8 +155,8 @@ export default function Inthenews() {
     return (
       <div className="min-h-screen bg-[#FFFAEE] flex items-center justify-center p-4">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-red-600 mb-4">Error Loading News</h2>
-          <p className="text-gray-600 mb-6">{error}</p>
+          <h2 className="text-2xl font-bold text-red-600 mb-4 font-dm-serif">Error Loading News</h2>
+          <p className="text-gray-600 mb-6 font-bilo">{error}</p>
           <button 
             onClick={() => window.location.reload()} 
             className="bg-[#D96D34] text-white px-6 py-3 rounded-lg hover:bg-[#c05d2b] transition-colors"
@@ -213,20 +213,9 @@ export default function Inthenews() {
         <HeaderShimmer />
       ) : (
         <div className="text-center my-8 sm:my-12 lg:my-16 relative z-10">
-          <h1 className="text-blue-900 text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold font-serif">
+          <h1 className="text-blue-800 text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold font-dm-serif">
             IN THE NEWS
           </h1>
-        </div>
-      )}
-
-      {/* Section Title */}
-      {isLoading ? (
-        <SectionTitleShimmer />
-      ) : (
-        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 mb-6 sm:mb-8 relative z-10 text-center">
-          <h2 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-800">
-            Recent News 
-          </h2>
         </div>
       )}
 
@@ -275,11 +264,11 @@ export default function Inthenews() {
                       />
                     )}
                   </div>
-                  <h3 className="text-lg sm:text-xl font-bold mt-3 sm:mt-4 mb-2 min-h-[3rem] sm:min-h-[4rem] lg:min-h-[5rem] line-clamp-2">
+                  <h3 className="text-lg sm:text-xl font-bold mt-3 sm:mt-4 mb-1 line-clamp-2 font-dm-serif">
                     {news.title}
                   </h3>
                   <div className="flex justify-between items-center mt-4 sm:mt-6">
-                    <p className="text-gray-500 text-xs sm:text-sm">
+                    <p className="text-gray-500 text-xs sm:text-sm font-bilo">
                       {news.publishedDate
                         ? new Date(news.publishedDate).toLocaleDateString(
                             "en-US",
@@ -294,12 +283,12 @@ export default function Inthenews() {
                     {news.link ? (
                       <button
                         onClick={() => handleLinkClick(news.link!, news.title)}
-                        className="text-[#D96D34] font-semibold hover:underline text-sm sm:text-base transition-colors"
+                        className="text-[#D96D34] font-semibold hover:underline text-sm sm:text-base transition-colors font-bilo"
                       >
                         Read More
                       </button>
                     ) : (
-                      <span className="text-gray-400 text-sm sm:text-base cursor-not-allowed">
+                      <span className="text-gray-400 text-sm sm:text-base cursor-not-allowed font-bilo">
                         No Link
                       </span>
                     )}
@@ -335,7 +324,7 @@ export default function Inthenews() {
                       e.preventDefault();
                       handlePageChange(i + 1);
                     }}
-                    className="text-sm sm:text-base min-w-[2rem] sm:min-w-[2.5rem]"
+                    className="text-sm sm:text-base min-w-[2rem] sm:min-w-[2.5rem] font-bilo"
                   >
                     {i + 1}
                   </PaginationLink>

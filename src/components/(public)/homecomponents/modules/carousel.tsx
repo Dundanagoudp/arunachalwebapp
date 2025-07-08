@@ -244,7 +244,7 @@ export default function Carousel() {
               <div className="text-center mb-16">
                 <div data-aos="fade-up" data-aos-delay="0" data-aos-duration="1200" className="flex justify-center items-center gap-4 mb-6">
                   <div className="h-0.5 w-52 bg-gradient-to-r from-transparent to-[#e67e22]" />
-                  <h1 className="text-[#6A1B1A] text-3xl md:text-5xl font-serif italic font-bold">
+                  <h1 className="text-[#6A1B1A] text-3xl md:text-5xl font-dm-serif italic font-bold">
                     "BEYOND MYTHS AND <br /> MOUNTAINS"
                   </h1>
                   <div className="h-0.5 w-52 bg-gradient-to-l from-transparent to-[#e67e22]" />
@@ -259,10 +259,10 @@ export default function Carousel() {
                     className="absolute left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 opacity-30"
                   />
                   <div className="relative z-10">
-                    <h2 className="text-[#4F8049] text-xl md:text-2xl uppercase tracking-wider mb-2">
+                    <h2 className="text-[#4F8049] text-xl md:text-2xl uppercase tracking-wider mb-2 font-dm-serif">
                       ARUNACHAL LITERATURE FESTIVAL
                     </h2>
-                    <h3 className="text-[#4F8049] text-2xl md:text-4xl uppercase font-semibold tracking-wide">
+                    <h3 className="text-[#4F8049] text-2xl md:text-4xl uppercase font-semibold tracking-wide font-dm-serif">
                       WORKSHOPS AND EVENTS
                     </h3>
                   </div>
@@ -345,7 +345,7 @@ export default function Carousel() {
                                   className="object-contain drop-shadow-lg transition-transform duration-300"
                                 />
                               </div>
-                              <h4 className="text-lg font-bold text-gray-800 text-center leading-tight font-serif mt-2 group-hover:text-[#e67e22] transition-colors duration-300">
+                              <h4 className="text-lg font-bold text-gray-800 text-center leading-tight font-dm-serif mt-2 group-hover:text-[#e67e22] transition-colors duration-300">
                                 {workshop.name}
                               </h4>
                             </div>

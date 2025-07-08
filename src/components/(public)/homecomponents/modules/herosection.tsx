@@ -3,10 +3,11 @@ import Image from "next/image"
 import Link from "next/link"
 import { CalendarDays, MapPin } from "lucide-react"
 import { useEffect, useState } from "react"
-import { getBanner } from "@/service/homeService"
+import { getBanner, getButtonText } from "@/service/homeService"
 
 export default function HeroSection() {
   const [bannerUrl, setBannerUrl] = useState<string | null>(null)
+  const [buttonLink, setButtonLink] = useState<string>("https://arunanchalliteraturefestival.com")
 
   useEffect(() => {
     async function fetchBanner() {
@@ -21,6 +22,21 @@ export default function HeroSection() {
       }
     }
     fetchBanner()
+  }, [])
+
+  useEffect(() => {
+    async function fetchButton() {
+      const response = await getButtonText()
+      if (response.success && response.data) {
+        // If response.data is an array, use the first button; otherwise, use the object
+        if (Array.isArray(response.data) && response.data.length > 0) {
+          setButtonLink(response.data[0].link || "https://arunanchalliteraturefestival.com")
+        } else if (response.data.link) {
+          setButtonLink(response.data.link)
+        }
+      }
+    }
+    fetchButton()
   }, [])
 
   return (
@@ -62,7 +78,7 @@ export default function HeroSection() {
         {/* Button */}
         <div className="mt-6 sm:mt-8 animate-slide-up-button">
           <Link
-            href="https://arunanchalliteraturefestival.com"
+            href={buttonLink}
             target="_blank"
             rel="noopener noreferrer"
             className="inline-block transition-transform duration-300 hover:scale-105 active:scale-95"

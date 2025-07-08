@@ -78,9 +78,9 @@ function BlogErrorView({ error }: { error: string }) {
         <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
           <Eye className="w-8 h-8 text-red-600" />
         </div>
-        <h2 className="text-2xl font-bold text-red-600 mb-4">Oops! Something went wrong</h2>
-        <p className="text-gray-600 mb-6">{error}</p>
-        <Button onClick={() => window.location.reload()} className="bg-[#D96D34] hover:bg-[#c05d2b]">
+        <h2 className="text-2xl font-bold text-red-600 mb-4 font-dm-serif">Oops! Something went wrong</h2>
+        <p className="text-gray-600 mb-6 font-bilo">{error}</p>
+        <Button onClick={() => window.location.reload()} className="bg-[#D96D34] hover:bg-[#c05d2b] font-bilo">
           Try Again
         </Button>
       </Card>
@@ -185,9 +185,9 @@ export default function BlogById() {
           <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <BookOpen className="w-8 h-8 text-gray-600" />
           </div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-4">Blog Not Found</h2>
-          <p className="text-gray-600 mb-6">The requested blog post could not be found.</p>
-          <Button onClick={handleAllBlogs} className="bg-[#D96D34] hover:bg-[#c05d2b]">
+          <h2 className="text-2xl font-bold text-gray-800 mb-4 font-dm-serif">Blog Not Found</h2>
+          <p className="text-gray-600 mb-6 font-bilo">The requested blog post could not be found.</p>
+          <Button onClick={handleAllBlogs} className="bg-[#D96D34] hover:bg-[#c05d2b] font-bilo">
             Browse All Blogs
           </Button>
         </Card>
@@ -248,7 +248,7 @@ export default function BlogById() {
                   <span>Blog Post</span>
                 </div>
 
-                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 leading-tight">
+                <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 leading-tight font-dm-serif">
                   {content.title}
                 </h1>
 
@@ -260,12 +260,12 @@ export default function BlogById() {
                         {(content.author || "A").charAt(0).toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
-                    <span className="font-medium">{content.author || "Anonymous"}</span>
+                    <span className="font-medium font-bilo">{content.author || "Anonymous"}</span>
                   </div>
 
                   <div className="flex items-center gap-1">
                     <Calendar className="w-4 h-4" />
-                    <span>
+                    <span className="font-bilo">
                       {content.publishedDate
                         ? new Date(content.publishedDate).toLocaleDateString(undefined, {
                             year: "numeric",
@@ -280,8 +280,8 @@ export default function BlogById() {
 
               {/* Article Content */}
               <Card className="p-6 lg:p-8 shadow-sm border-0 bg-white/70 backdrop-blur-sm">
-                <div className="prose prose-lg max-w-none text-gray-800 leading-relaxed">
-                  <p className="text-lg">
+                <div className="prose prose-lg max-w-none text-gray-800 leading-relaxed font-bilo">
+                  <p className="text-lg font-bilo">
                     {content.contents}
                   </p>
                 </div>
@@ -330,7 +330,7 @@ export default function BlogById() {
             <Card className="p-6 shadow-sm border-0 bg-white/70 backdrop-blur-sm">
               <div className="flex items-center gap-2 mb-6">
                 <Clock className="w-5 h-5 text-[#D96D34]" />
-                <h2 className="text-xl font-bold text-gray-900">
+                <h2 className="text-xl font-bold text-gray-900 font-dm-serif">
                   {searchQuery ? `Search Results (${filteredBlogs.length})` : "Latest Posts"}
                 </h2>
               </div>
@@ -364,7 +364,7 @@ export default function BlogById() {
                           />
                         </div>
                         <div className="flex-1 min-w-0">
-                          <p className="text-xs text-gray-500 flex items-center gap-1 mb-1">
+                          <p className="text-xs text-gray-500 flex items-center gap-1 mb-1 font-bilo">
                             <Calendar className="w-3 h-3" />
                             {blog.publishedDate
                               ? new Date(blog.publishedDate).toLocaleDateString("en-US", {
@@ -373,10 +373,10 @@ export default function BlogById() {
                                 })
                               : "Unknown"}
                           </p>
-                          <h3 className="text-sm font-medium text-gray-900 leading-tight line-clamp-2 group-hover:text-[#D96D34] transition-colors">
+                          <h3 className="text-sm font-medium text-gray-900 leading-tight line-clamp-2 group-hover:text-[#D96D34] transition-colors font-dm-serif">
                             {blog.title}
                           </h3>
-                          <div className="flex items-center gap-1 text-xs text-gray-500 mt-1">
+                          <div className="flex items-center gap-1 text-xs text-gray-500 mt-1 font-bilo">
                             <User className="w-3 h-3" />
                             <span>{blog.author || "Anonymous"}</span>
                           </div>
@@ -390,7 +390,7 @@ export default function BlogById() {
                 <Button
                   onClick={handleAllBlogs}
                   variant="ghost"
-                  className="w-full mt-4 text-[#D96D34] hover:text-[#c05d2b] hover:bg-[#D96D34]/10 transition-colors"
+                  className="w-full mt-4 text-[#D96D34] hover:text-[#c05d2b] hover:bg-[#D96D34]/10 transition-colors font-bilo"
                 >
                   View all articles
                   <ArrowRight className="w-4 h-4 ml-2" />

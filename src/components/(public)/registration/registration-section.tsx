@@ -60,8 +60,8 @@ function RegistrationErrorView({ error }: { error: string }) {
   return (
     <div className="min-h-screen flex items-center justify-center bg-[#FFFAEE]">
       <div className="bg-white border border-red-200 rounded-xl p-8 max-w-lg w-full text-center shadow">
-        <h2 className="text-2xl font-bold text-red-600 mb-4">Registration Error</h2>
-        <p className="text-gray-700">{error}</p>
+        <h2 className="text-2xl font-bold text-red-600 mb-4 font-dm-serif">Registration Error</h2>
+        <p className="text-gray-700 font-bilo">{error}</p>
       </div>
     </div>
   );
@@ -130,7 +130,7 @@ export default function RegistrationSection() {
         <div className="container mx-auto px-4 py-12">
           {/* Header */}
           <div className="text-center mb-8">
-            <h1 className="text-2xl font-serif font-bold text-blue-600 mb-6 tracking-wider">REGISTRATION</h1>
+            <h1 className="text-2xl font-dm-serif font-bold text-blue-600 mb-6 tracking-wider">REGISTRATION</h1>
             <div className="flex items-center justify-center gap-4 mb-8">
               <SunIcon size={50} />
               <h2 className="text-3xl md:text-4xl font-bold text-orange-500 text-center font-dm-serif">
@@ -143,7 +143,7 @@ export default function RegistrationSection() {
           </div>
           {/* Workshop Selection */}
           <div className="text-center mb-12">
-            <h3 className="text-xl font-semibold text-gray-800 mb-8 font-serif">Select your Workshop:</h3>
+            <h3 className="text-xl font-semibold text-gray-800 mb-8 font-dm-serif">Select your Workshop:</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
               {workshops.map((workshop: Workshop, index: number) => (
                 <div key={workshop._id ?? index} className="relative">

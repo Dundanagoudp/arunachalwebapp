@@ -54,7 +54,7 @@ export default function PublicVideoDetail() {
         <Button
           onClick={() => router.back()}
           variant="outline"
-          className="border-gray-300 text-gray-700 hover:bg-gray-100 text-sm sm:text-base"
+          className="border-gray-300 text-gray-700 hover:bg-gray-100 text-sm sm:text-base font-bilo"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
           Back
@@ -96,16 +96,16 @@ export default function PublicVideoDetail() {
           {/* Video Info */}
           <div className="p-4 sm:p-6 lg:p-8 bg-gradient-to-r from-white to-gray-50/50">
             <div className="space-y-3 sm:space-y-4">
-              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 leading-tight transform transition-all duration-300 hover:text-gray-700 animate-in slide-in-from-left-2">
+              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-gray-900 leading-tight transform transition-all duration-300 hover:text-gray-700 animate-in slide-in-from-left-2 font-dm-serif">
                 {video.title}
               </h1>
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-4">
-                <p className="text-sm sm:text-base text-gray-600 transform transition-colors duration-300 hover:text-gray-800 animate-in slide-in-from-left-4">
+                <p className="text-sm sm:text-base text-gray-600 transform transition-colors duration-300 hover:text-gray-800 animate-in slide-in-from-left-4 font-bilo">
                   {format(new Date(video.addedAt), "MMMM d, yyyy")}
                 </p>
                 <div className="flex items-center space-x-2">
                   <div className="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
-                  <span className="text-xs sm:text-sm text-gray-500">Available Now</span>
+                  <span className="text-xs sm:text-sm text-gray-500 font-bilo">Available Now</span>
                 </div>
               </div>
             </div>

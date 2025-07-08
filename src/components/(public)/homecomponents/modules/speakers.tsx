@@ -88,8 +88,8 @@ export default function Speakers() {
       <div className="container mx-auto py-8 md:py-16 px-2 md:px-4 pb-4 md:pb-16 relative z-10">
         {/* Header Section */}
         <header className="text-center mb-8 md:mb-16">
-          <h1 className="text-3xl md:text-7xl font-bold text-[#E67E22] font-serif mb-2 md:mb-4">SPEAKERS</h1>
-          <p className="text-base md:text-lg text-gray-600 max-w-2xl mx-auto">
+          <h1 className="text-3xl md:text-7xl font-bold text-[#E67E22] font-dm-serif mb-2 md:mb-4">SPEAKERS</h1>
+          <p className="text-base md:text-lg text-gray-600 max-w-2xl mx-auto font-bilo">
             Meet our distinguished speakers who will share their knowledge and insights
           </p>
         </header>
@@ -196,8 +196,8 @@ export default function Speakers() {
 
                               {/* Speaker Info Overlay */}
                               <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black via-black/70 to-transparent text-white p-4">
-                                <h3 className="font-semibold text-lg mb-1">{speaker.name}</h3>
-                                <p className="text-sm opacity-90 line-clamp-2 mb-2">{speaker.about}</p>
+                                <h3 className="font-semibold text-lg mb-1 font-dm-serif">{speaker.name}</h3>
+                                <p className="text-sm opacity-90 line-clamp-2 mb-2 font-bilo">{speaker.about}</p>
                                 <div className="flex items-center justify-between">
                                   <span className="text-xs bg-[#E67E22] px-2 py-1 rounded-full">
                                     {speaker.category || "Speaker"}

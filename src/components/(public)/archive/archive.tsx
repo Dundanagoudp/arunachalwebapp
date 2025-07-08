@@ -122,8 +122,8 @@ export default function Archive() {
     return (
       <div className="min-h-screen bg-[#FFFAEE] flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-red-600 mb-4">Error Loading Archive</h2>
-          <p className="text-gray-600">{error}</p>
+          <h2 className="text-2xl font-bold text-red-600 mb-4 font-dm-serif">Error Loading Archive</h2>
+          <p className="text-gray-600 font-bilo">{error}</p>
         </div>
       </div>
     )
@@ -137,7 +137,7 @@ export default function Archive() {
       ) : (
         <header className="flex justify-center pt-8 pb-4 relative">
           <SunIcon size={32} className="absolute top-4 right-4" />
-          <h1 className="text-4xl font-serif font-bold text-blue-700 tracking-wider">ARCHIVE</h1>
+          <h1 className="text-4xl font-dm-serif font-bold text-blue-700 tracking-wider">ARCHIVE</h1>
         </header>
       )}
 
@@ -200,8 +200,8 @@ export default function Archive() {
                     ))}
                   </div>
                   <div className="flex justify-between items-center">
-                    <h2 className="text-2xl font-bold text-amber-800">{data.year}</h2>
-                    <div className={`flex items-center text-sm font-medium transition-colors ${activeYearId === data.yearId ? 'text-red-600' : 'text-gray-700'} group-hover:text-red-600 group-focus:text-red-600`}>
+                    <h2 className="text-2xl font-bold text-amber-800 font-dm-serif">{data.year}</h2>
+                    <div className={`flex items-center text-sm font-medium font-bilo transition-colors ${activeYearId === data.yearId ? 'text-red-600' : 'text-gray-700'} group-hover:text-red-600 group-focus:text-red-600`}>
                       View All ({data.images.length} images) <ArrowRight size={16} className={`ml-1 transition-colors ${activeYearId === data.yearId ? 'text-red-600' : ''} group-hover:text-red-600 group-focus:text-red-600`} />
                     </div>
                   </div>

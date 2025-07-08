@@ -267,8 +267,8 @@ function GalleryPageContent() {
     return (
       <div className="min-h-screen bg-[#FFFAEE] flex items-center justify-center">
         <div className="text-center">
-          <h2 className="text-2xl font-bold text-red-600 mb-4">Error Loading Gallery</h2>
-          <p className="text-gray-600 mb-4">{error}</p>
+          <h2 className="text-2xl font-bold text-red-600 mb-4 font-dm-serif">Error Loading Gallery</h2>
+          <p className="text-gray-600 mb-4 font-bilo">{error}</p>
           <Link href="/archive" className="text-blue-600 hover:underline">
             ← Back to Archive
           </Link>
@@ -293,7 +293,7 @@ function GalleryPageContent() {
             <span>Back</span>
           </Link>
 
-          <h1 className="text-2xl font-bold text-blue-700 absolute left-1/2 transform -translate-x-1/2">{year}</h1>
+          <h1 className="text-2xl font-bold text-blue-700 absolute left-1/2 transform -translate-x-1/2 font-dm-serif">{year}</h1>
 
           <SunIcon size={28} className="" />
         </header>
@@ -336,11 +336,11 @@ function GalleryPageContent() {
           </motion.div>
         ) : (
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-            <h2 className="text-4xl font-bold text-center text-amber-800 mb-2">GALLERY {year}</h2>
+            <h2 className="text-4xl font-bold text-center text-amber-800 mb-2 font-dm-serif">GALLERY {year}</h2>
 
             <div className="flex justify-center mb-8">
               <button
-                className="flex items-center px-4 py-2 text-gray-700 hover:text-blue-700"
+                className="flex items-center px-4 py-2 text-gray-700 hover:text-blue-700 font-bilo"
                 onClick={handleAlbumDownload}
               >
                 <span>
@@ -433,7 +433,7 @@ function GalleryPageContent() {
                   </PaginationContent>
                 </Pagination>
 
-                <div className="text-center mt-4 text-sm text-gray-600">
+                <div className="text-center mt-4 text-sm text-gray-600 font-bilo">
                   Page {currentPage} of {totalPages} • Showing {startIndex + 1}-{Math.min(endIndex, images.length)} of{" "}
                   {images.length} images
                 </div>
