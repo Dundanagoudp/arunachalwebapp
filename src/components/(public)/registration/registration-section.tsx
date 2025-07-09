@@ -106,17 +106,38 @@ export default function RegistrationSection() {
 
   return (
     <div className="min-h-screen bg-[#FFFAEE] relative overflow-hidden">
-      {/* Decorative Sun Icons */}
-      <div className="absolute top-20 left-10">
+      {/* Decorative Sun Icons - mobile and desktop responsive */}
+      {/* Mobile: sun icons in all corners and sides, evenly spaced */}
+      <div className="absolute top-4 left-4 block md:hidden">
+        <SunIcon size={24} className="opacity-80" />
+      </div>
+      <div className="absolute top-4 right-4 block md:hidden">
+        <SunIcon size={24} className="opacity-80" />
+      </div>
+      <div className="absolute bottom-4 left-4 block md:hidden">
+        <SunIcon size={24} className="opacity-80" />
+      </div>
+      <div className="absolute bottom-4 right-4 block md:hidden">
+        <SunIcon size={24} className="opacity-80" />
+      </div>
+      {/* Optionally, mid-left and mid-right */}
+      <div className="absolute top-1/2 left-2 -translate-y-1/2 block md:hidden">
+        <SunIcon size={20} className="opacity-70" />
+      </div>
+      <div className="absolute top-1/2 right-2 -translate-y-1/2 block md:hidden">
+        <SunIcon size={20} className="opacity-70" />
+      </div>
+      {/* Desktop: original sun icons */}
+      <div className="absolute top-20 left-10 hidden md:block">
         <SunIcon size={40} className="opacity-80" />
       </div>
-      <div className="absolute top-32 right-16">
+      <div className="absolute top-32 right-16 hidden md:block">
         <SunIcon size={35} className="opacity-70" />
       </div>
-      <div className="absolute bottom-40 left-8">
+      <div className="absolute bottom-40 left-8 hidden md:block">
         <SunIcon size={30} className="opacity-60" />
       </div>
-      <div className="absolute top-96 right-20">
+      <div className="absolute top-96 right-20 hidden md:block">
         <SunIcon size={25} className="opacity-50" />
       </div>
 
@@ -130,10 +151,18 @@ export default function RegistrationSection() {
         <div className="container mx-auto px-4 py-12">
           {/* Header */}
           <div className="text-center mb-8">
-            <h1 className="text-2xl font-dm-serif font-bold text-blue-600 mb-6 tracking-wider">REGISTRATION</h1>
-            <div className="flex items-center justify-center gap-4 mb-8">
+            {/* Heading for mobile: two lines, smaller */}
+            <h1 className="font-dm-serif font-bold text-blue-600 mb-6 tracking-wider text-xl md:text-2xl">REGISTRATION</h1>
+            {/* Remove sun icon between heading and subheading on mobile */}
+            {/* Mobile: two lines, smaller text, centered, spaced */}
+            <div className="block md:hidden text-center">
+              <div className="text-orange-500 text-lg font-bold font-dm-serif leading-tight mb-1">BEGIN WHERE INDIA WAKES</div>
+              <div className="text-orange-500 text-lg font-bold font-dm-serif leading-tight">REGISTER NOW</div>
+            </div>
+            {/* Desktop: original heading and sun icons */}
+            <div className="hidden md:flex items-center justify-center gap-4 mb-8">
               <SunIcon size={50} />
-              <h2 className="text-3xl md:text-4xl font-bold text-orange-500 text-center font-dm-serif">
+              <h2 className="text-2xl md:text-4xl font-bold text-orange-500 text-center font-dm-serif">
                 BEGIN WHERE INDIA WAKES
                 <br />
                 REGISTER NOW

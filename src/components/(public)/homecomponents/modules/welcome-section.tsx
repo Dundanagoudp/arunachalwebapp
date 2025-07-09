@@ -15,10 +15,10 @@ export default function FestivalInfo() {
   return (
     <div className="relative bg-[#fdf8f0] flex items-center justify-center py-8 sm:py-12 lg:py-8 lg:min-h-150 px-4 sm:px-6 lg:px-8 overflow-hidden">
       <div className="relative z-10 max-w-4xl mx-auto text-center lg:text-left">
-        <h1 data-aos="fade-up" data-aos-delay="0" data-aos-duration="1200" data-aos-easing="ease-in-out" className="text-3xl sm:text-4xl md:text-3xl font-bold text-[#1A3FA9] mb-6 md:mb-5 tracking-tight leading-tight font-dm-serif text-center">
+        <h1 data-aos="fade-up" data-aos-delay="0" data-aos-duration="1200" data-aos-easing="ease-in-out" className="text-3xl sm:text-4xl md:text-3xl font-bold text-[#1A3FA9] mb-6 md:mb-5 tracking-wider leading-tight font-dm-serif text-center">
           WELCOME TO THE HAPPIEST FESTIVAL OF INDIA
         </h1>
-        <p data-aos="fade-up" data-aos-delay="300" data-aos-duration="1200" data-aos-easing="ease-in-out" className="text-base sm:text-lg text-gray-700 leading-relaxed max-w-7xl mx-auto text-center font-bilo">
+        <p data-aos="fade-up" data-aos-delay="300" data-aos-duration="1200" data-aos-easing="ease-in-out" className="text-base sm:text-lg text-gray-700 leading-relaxed max-w-7xl mx-auto text-center font-bilo tracking-wide">
           Termed as 'The Happiest Festival in India', Arunachal Literature Festival, the annual celebration of our rich
           literary traditions, diverse cultures, and vibrant storytelling, has been bringing in meaningful voices to
           spark discussions on relevant topics concerning the country in general and Arunachal in particular. Started

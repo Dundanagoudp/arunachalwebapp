@@ -207,12 +207,12 @@ export default function BlogsLayout() {
                 setCurrentPage(1);
               }}
             >
-              <span className="bg-[#D96D34] text-white px-4 sm:px-6 py-2 sm:py-3 pr-8 sm:pr-12 rounded-full text-sm sm:text-lg font-medium">
+              <span className="bg-[#D96D34] text-white px-8 py-2 rounded-full text-lg font-medium text-center font-bilo">
                 Search
               </span>
-              <span className="absolute right-0 left-20 sm:left-30 translate-x-1/2 bg-[#D96D34] w-8 h-8 sm:w-10 sm:h-10 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 group-hover:translate-x-4 sm:group-hover:translate-x-6 group-hover:rotate-12">
-                <ArrowUpRight className="w-3 h-3 sm:w-4 sm:h-4 text-white transition-transform duration-300 group-hover:rotate-45" />
-              </span>
+                      <span className="absolute right-0 left-25 translate-x-1/2 bg-[#D96D34] w-10 h-10 rounded-full flex items-center justify-center shadow-lg transition-all duration-300 group-hover:translate-x-6 group-hover:rotate-12">
+                        <ArrowUpRight className="w-4 h-4 text-white transition-transform duration-300 group-hover:rotate-45" />
+                      </span>
             </button>
           </div>
         </div>

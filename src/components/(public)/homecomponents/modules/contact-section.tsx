@@ -30,10 +30,10 @@ export default function Contactsection() {
       <DiamondBackground />
       <div className="container mx-auto px-4 md:px-6 text-center relative z-10">
         <div className="space-y-4">
-          <p data-aos="fade-up" data-aos-delay="0" data-aos-duration="1000" className="text-lg md:text-xl font-medium uppercase text-[#6A1B1A] tracking-widest font-dm-serif">
+          <p data-aos="fade-up" data-aos-delay="0" data-aos-duration="1000" className="text-[#6A1B1A] text-xl md:text-2xl font-dm-serif uppercase tracking-wider mb-2 font-normal md:font-medium">
             Arunachal Literature Festival
           </p>
-          <h2 data-aos="fade-up" data-aos-delay="100" data-aos-duration="1000" className="text-3xl md:text-4xl lg:text-5xl font-bold uppercase text-[#6A1B1A] font-dm-serif">Contact Us</h2>
+          <h2 data-aos="fade-up" data-aos-delay="100" data-aos-duration="1000" className="text-[#6A1B1A] text-2xl md:text-5xl font-semibold font-dm-serif uppercase tracking-wide">Contact Us</h2>
           <div data-aos="fade-up" data-aos-delay="200" data-aos-duration="1000" className="mt-0 flex justify-center mb-12 relative z-10">
            <button 
               onClick={handleContactClick}

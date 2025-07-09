@@ -29,7 +29,7 @@ export default function Speakerstopsection() {
 
         {/* Text content */}
         <div className="text-center max-w-2xl">
-          <p className="font-bilo text-lg md:text-xl lg:text-2xl font-semibold leading-relaxed text-[#000000]">
+          <p className="font-dm-serif text-lg md:text-xl lg:text-2xl font-semibold leading-relaxed text-[#000000]">
             From India&apos;s first light,
             <br />
             something bright is coming

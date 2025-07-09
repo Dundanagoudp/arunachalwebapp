@@ -78,24 +78,32 @@ export default function Schedulepage() {
   const events = scheduleData[activeTab] || []
 
   return (
-    <div className="min-h-screen bg-[#FFFAEE] p-8 relative overflow-hidden">
-      {/* Decorative sun icons */}
-      <div className="absolute top-24 right-20">
-        <Image src="/sungif.gif" alt="Sun" width={40} height={24} />
-      </div>
-      <div className="absolute top-40 right-4">
+    <div className="min-h-0 md:min-h-screen bg-[#FFFAEE] p-8 relative overflow-hidden">
+      {/* Decorative sun icons - always visible, but repositioned for mobile */}
+      {/* Top left corner */}
+      <div className="absolute top-2 left-2 md:top-24 md:left-8">
         <Image src="/sungif.gif" alt="Sun" width={32} height={32} />
       </div>
-      <div className="absolute bottom-40 left-8">
-        <Image src="/sungif.gif" alt="Sun" width={40} height={40} />
+      {/* Top right corner */}
+      <div className="absolute top-2 right-2 md:top-24 md:right-20">
+        <Image src="/sungif.gif" alt="Sun" width={32} height={32} />
       </div>
-      <div className="absolute bottom-20 right-24">
-        <Image src="/sungif.gif" alt="Sun" width={45} height={24} />
+      {/* Bottom left corner */}
+      <div className="absolute bottom-2 left-2 md:bottom-40 md:left-8">
+        <Image src="/sungif.gif" alt="Sun" width={32} height={32} />
       </div>
-      <div className="absolute top-60 left-4">
+      {/* Bottom right corner */}
+      <div className="absolute bottom-2 right-2 md:bottom-20 md:right-24">
+        <Image src="/sungif.gif" alt="Sun" width={32} height={32} />
+      </div>
+      {/* Optionally, add a center sun for md+ only */}
+      <div className="hidden md:block absolute top-40 right-4">
+        <Image src="/sungif.gif" alt="Sun" width={32} height={32} />
+      </div>
+      <div className="hidden md:block absolute top-60 left-4">
         <Image src="/sungif.gif" alt="Sun" width={35} height={28} />
       </div>
-      <div className="absolute bottom-60 right-8">
+      <div className="hidden md:block absolute bottom-60 right-8">
         <Image src="/sungif.gif" alt="Sun" width={36} height={36} />
       </div>
  
