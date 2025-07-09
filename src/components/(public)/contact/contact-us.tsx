@@ -118,7 +118,7 @@ export default function ContactUsPage() {
               id="description"
               placeholder="Enter your message or description"
               rows={5}
-              className="w-full border-2 border-gray-300 rounded-xl px-4 py-4 text-gray-900 focus:outline-none focus:border-[#1A3FA9] transition-colors font-medium bg-white resize-y min-h-[120px] font-bilo"
+              className="w-full border-2 border-gray-300 rounded-xl px-4 py-2 text-gray-900 focus:outline-none focus:border-[#1A3FA9] transition-colors font-medium bg-white resize-y min-h-[60px] sm:min-h-[120px] font-bilo"
               value={description}
               onChange={(e) => setDescription(e.target.value)}
             />
