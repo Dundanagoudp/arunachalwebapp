@@ -4,7 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Card, CardContent } from "@/components/ui/card"
 import { Quote } from "lucide-react"
 import Image from "next/image"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { getTestimonials } from "@/service/testimonialService"
 import type { Testimonial as ApiTestimonial } from "@/types/testimonial-types"
 import AOS from 'aos'
@@ -14,6 +14,9 @@ export default function Attendeessay() {
   const [testimonials, setTestimonials] = useState<ApiTestimonial[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
+  const [currentIndex, setCurrentIndex] = useState(0)
+  const carouselRef = useRef<HTMLDivElement>(null)
+  const isMobile = typeof window !== 'undefined' && window.innerWidth < 1024
 
   useEffect(() => {
     AOS.init({
@@ -42,6 +45,25 @@ export default function Attendeessay() {
     }
     fetchTestimonials()
   }, [])
+
+  // Auto-scroll for mobile/tablet
+  useEffect(() => {
+    if (!isMobile || testimonials.length <= 1) return
+    const interval = setInterval(() => {
+      setCurrentIndex((prev) => (prev + 1) % testimonials.length)
+    }, 20000)
+    return () => clearInterval(interval)
+  }, [isMobile, testimonials.length])
+
+  // Scroll to current testimonial
+  useEffect(() => {
+    if (!isMobile || !carouselRef.current) return
+    const container = carouselRef.current
+    const card = container.children[currentIndex] as HTMLElement
+    if (card) {
+      container.scrollTo({ left: card.offsetLeft, behavior: 'smooth' })
+    }
+  }, [currentIndex, isMobile])
 
   // Loading state
   if (loading) {
@@ -79,7 +101,7 @@ export default function Attendeessay() {
               <span className="w-3 h-3 rounded-full bg-yellow-400" />
               <h2 
                 data-aos="fade-up" data-aos-delay="0" data-aos-duration="1000"
-                className="text-2xl md:text-3xl font-bold font-dm-serif tracking-wide uppercase text-yellow-400 drop-shadow-lg"
+                className="text-yellow-400 text-xl md:text-2xl md:text-3xl font-bold font-dm-serif tracking-wide uppercase drop-shadow-lg mb-2"
               >
                 Arunachal Literature Festival
               </h2>
@@ -87,7 +109,7 @@ export default function Attendeessay() {
             </div>
             <h3 
               data-aos="fade-up" data-aos-delay="100" data-aos-duration="1000"
-              className="text-2xl md:text-5xl font-bold mb-8 text-yellow-400 drop-shadow-lg font-dm-serif tracking-wide"
+              className="text-yellow-400 text-2xl md:text-5xl font-bold mb-8 font-dm-serif tracking-wide uppercase drop-shadow-lg"
             >
               WHAT OUR ATTENDEES SAY
             </h3>
@@ -227,7 +249,7 @@ export default function Attendeessay() {
             <span className="w-3 h-3 rounded-full bg-yellow-400" />
             <h2 
               data-aos="fade-up" data-aos-delay="0" data-aos-duration="1000"
-              className="text-2xl md:text-3xl font-bold font-dm-serif tracking-wide uppercase text-yellow-400 drop-shadow-lg"
+              className="text-yellow-400 text-xl md:text-2xl md:text-3xl font-bold font-dm-serif tracking-wide uppercase drop-shadow-lg mb-2"
             >
               Arunachal Literature Festival
             </h2>
@@ -235,7 +257,7 @@ export default function Attendeessay() {
           </div>
           <h3 
             data-aos="fade-up" data-aos-delay="100" data-aos-duration="1000"
-            className="text-2xl md:text-5xl font-bold mb-8 text-yellow-400 drop-shadow-lg font-dm-serif tracking-wide"
+            className="text-yellow-400 text-2xl md:text-5xl font-bold mb-8 font-dm-serif tracking-wide uppercase drop-shadow-lg"
           >
             WHAT OUR ATTENDEES SAY
           </h3>
@@ -246,7 +268,7 @@ export default function Attendeessay() {
         {/* Mobile: single column, edge-to-edge; Desktop: 3 columns as before */}
         <div>
           {/* Mobile/Tablet only: horizontal scrollable carousel */}
-          <div className="flex flex-row gap-4 w-screen pl-4 pr-4 sm:pl-8 sm:pr-8 lg:hidden overflow-x-auto scrollbar-hide pb-2">
+          <div ref={carouselRef} className="flex flex-row gap-4 w-screen pl-4 pr-4 sm:pl-8 sm:pr-8 lg:hidden overflow-x-auto scrollbar-hide pb-2">
             {testimonials.map((t, idx) => (
               <div
                 key={t._id}
@@ -263,6 +285,15 @@ export default function Attendeessay() {
                   mobilePadding
                 />
               </div>
+            ))}
+          </div>
+          {/* Dots for mobile/tablet only */}
+          <div className="flex justify-center items-center gap-2 mt-4 mb-10 lg:hidden">
+            {testimonials.map((_, idx) => (
+              <span
+                key={idx}
+                className={`w-2 h-2 rounded-full transition-all duration-300 ${idx === currentIndex ? 'bg-yellow-400 scale-125' : 'bg-gray-300'}`}
+              />
             ))}
           </div>
 

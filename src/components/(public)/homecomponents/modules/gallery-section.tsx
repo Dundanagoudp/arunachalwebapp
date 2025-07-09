@@ -123,7 +123,7 @@ export default function GallerySection() {
             </>
           ) : (
             <>
-              <p data-aos="fade-up" data-aos-delay="0" data-aos-duration="1000" className="text-[#1A3FA9] text-xl md:text-3xl uppercase tracking-wider mb-2 font-dm-serif mt-10">Arunachal Literature Festival</p>
+              <p data-aos="fade-up" data-aos-delay="0" data-aos-duration="1000" className="text-[#1A3FA9] text-xl md:text-3xl uppercase tracking-wider mb-2 font-dm-serif mt-10 font-normal md:font-semibold">Arunachal Literature Festival</p>
               <h2 data-aos="fade-up" data-aos-delay="100" data-aos-duration="1000" className="text-[#1A3FA9] text-2xl md:text-4xl uppercase font-semibold tracking-wide font-dm-serif">GALLERY</h2>
               <Link href="/archive" data-aos="fade-up" data-aos-delay="200" data-aos-duration="1000" className="group relative flex items-center justify-center mt-4 focus:outline-none">
               <button

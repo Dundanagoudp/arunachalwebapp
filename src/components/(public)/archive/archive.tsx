@@ -136,14 +136,39 @@ export default function Archive() {
         <HeaderShimmer />
       ) : (
         <header className="flex justify-center pt-8 pb-4 relative">
-          <SunIcon size={32} className="absolute top-4 right-4" />
+          
+          {/* Sun icon for desktop only */}
+          <SunIcon size={32} className="absolute top-4 right-4 hidden md:block" />
+          {/* Sun icons for mobile only, corners */}
+          <div className="absolute top-4 left-4 block md:hidden">
+            <SunIcon size={30} />
+          </div>
+          <div className="absolute top-4 right-4 block md:hidden">
+            <SunIcon size={30} />
+          </div>
           <h1 className="text-4xl font-dm-serif font-bold text-blue-700 tracking-wider">ARCHIVE</h1>
+  
         </header>
+        
       )}
 
-      <main className="container mx-auto px-4 py-8 lg:max-w-8xl lg:px-8">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          <SunIcon size={38} className="absolute top-58 left-5" />
+      <main className="container mx-auto px-4 py-8 lg:max-w-8xl lg:px-8 relative">
+
+        {/* Fixed top-left sun icon for desktop */}
+        <div className="fixed top-4 left-4 hidden md:block z-30 pointer-events-none">
+          <SunIcon size={35} />
+        </div>
+
+        {/* Sun icons for mobile only, bottom corners */}
+        <div className="absolute bottom-4 left-4 block md:hidden z-0">
+          <SunIcon size={20} />
+        </div>
+        <div className="absolute bottom-4 right-4 block md:hidden z-0">
+          <SunIcon size={25} />
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 relative z-10">
+          {/* Desktop sun icons inside grid */}
+          <SunIcon size={38} className="absolute top-58 left-5 hidden md:block" />
 
           {isLoading ? (
             <>
@@ -209,7 +234,7 @@ export default function Archive() {
               ))}
             </>
           )}
-          <SunIcon size={35} className="absolute bottom-10 left-0" />
+          <SunIcon size={35} className="absolute bottom-10 left-0 hidden md:block" />
         </div>
         {/* Pagination Controls */}
         {!isLoading && totalPages > 1 && (
