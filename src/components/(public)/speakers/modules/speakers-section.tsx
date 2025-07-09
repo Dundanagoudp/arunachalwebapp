@@ -56,7 +56,7 @@ export default function SpeakersGrid() {
   }
 
   return (
-    <div className="min-h-screen w-full" style={{ backgroundColor: "#FFFAEE" }}>
+    <div className="min-h-0 md:min-h-screen w-full" style={{ backgroundColor: "#FFFAEE" }}>
       <div className="container mx-auto px-4 py-6 md:py-8 lg:py-10">
         {/* Header */}
         <div className="text-center mb-8 md:mb-10 lg:mb-12">

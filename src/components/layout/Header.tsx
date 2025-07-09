@@ -72,7 +72,7 @@ const Header = () => {
           <Image
             src="/logo.png"
             alt="Arunachal Lit-Fest Logo"
-            className="w-auto object-contain h-10 md:h-14 transition-all duration-300 group-hover:scale-105"
+            className="w-auto object-contain h-12 md:h-14 transition-all duration-300 group-hover:scale-105"
             width={0}
             height={0}
             sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
@@ -102,18 +102,18 @@ const Header = () => {
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-10 w-10 hover:bg-amber-100 focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-2 transition-all duration-300 relative overflow-hidden"
+                className="h-12 w-12 md:h-10 md:w-10 hover:bg-amber-100 focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-2 transition-all duration-300 relative overflow-hidden"
               >
-                <div className="relative w-6 h-6 flex items-center justify-center">
+                <div className="relative w-12 h-12 md:w-6 md:h-6 flex items-center justify-center">
                   {/* Menu Icon */}
                   <Menu
-                    className={`w-6 h-6 text-black absolute transition-all duration-300 ease-in-out transform ${
+                    className={`w-12 h-12 md:w-6 md:h-6 text-black absolute transition-all duration-300 ease-in-out transform ${
                       isMenuOpen ? "opacity-0 rotate-90 scale-75" : "opacity-100 rotate-0 scale-100"
                     }`}
                   />
                   {/* X Icon */}
                   <X
-                    className={`w-6 h-6 text-black absolute transition-all duration-300 ease-in-out transform ${
+                    className={`w-12 h-12 md:w-6 md:h-6 text-black absolute transition-all duration-300 ease-in-out transform ${
                       isMenuOpen ? "opacity-100 rotate-0 scale-100" : "opacity-0 -rotate-90 scale-75"
                     }`}
                   />
