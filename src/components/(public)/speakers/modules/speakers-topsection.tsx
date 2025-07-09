@@ -3,15 +3,22 @@
 import Image from "next/image"
 import SunIcon from "@/components/sunicon-gif";
 import dynamic from "next/dynamic";
+import DiamondBackground from "./DiamondBackground";
+
 
 const DiamondPatternBackground = dynamic(() => import("../../../DiamondPatternBackground"), { ssr: false });
 
 export default function Speakerstopsection() {
   return (
-    <section className="relative w-full overflow-hidden bg-[#fdf8f0] min-h-0 md:min-h-[40vh] lg:min-h-[60vh]">
+    <section className="relative w-full overflow-hidden bg-[#FFFAEE] min-h-0 md:min-h-[40vh] lg:min-h-[60vh]">
       {/* Diamond Pattern Background: hidden on mobile, visible on md+ */}
       <div className="hidden md:block">
-        <DiamondPatternBackground />
+        {/* <DiamondPatternBackground /> */}
+        <DiamondBackground />
+      </div>
+      {/* Mobile Diamond Background: only on mobile, 3 small diamonds, not overlapping content */}
+      <div className="block md:hidden absolute inset-0 pointer-events-none z-0">
+        <DiamondBackground mobileCount={3} />
       </div>
       {/* Main content */}
       <div className="relative z-10 flex flex-col items-center justify-center min-h-0 px-4 py-4 md:py-8 lg:py-10">
