@@ -57,13 +57,13 @@ export default function ContactUsPage() {
       </div>
 
       {/* Main Content: Form and Details */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-0 md:gap-x-24 gap-y-8 max-w-lg sm:max-w-2xl md:max-w-6xl w-full relative px-0 sm:px-2">
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-x-0 md:gap-x-16 gap-y-8 w-full max-w-xl sm:max-w-2xl md:max-w-4xl lg:max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
         <SunIcon size={48} className="absolute -left-6 top-1/2 -translate-y-1/2 hidden lg:block z-0" />
 
         {/* Left Column: Contact Form */}
         <form
           onSubmit={handleSubmit}
-          className="bg-white p-6 sm:p-8 md:p-10 rounded-2xl shadow-lg border-2 border-[#1A3FA9] flex flex-col gap-6 relative z-10 w-full font-bilo"
+          className="bg-white p-4 sm:p-6 md:p-8 rounded-2xl shadow-lg border-2 border-[#1A3FA9] flex flex-col gap-6 relative z-10 w-full max-w-md sm:max-w-lg md:max-w-xl mx-auto font-bilo"
         >
           <div>
             <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-2 font-bilo">
