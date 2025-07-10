@@ -3,7 +3,7 @@
 import Link from "next/link"
 import Image from "next/image"
 import { useState, useEffect } from "react"
-import { Menu, X } from "lucide-react"
+import { GiHamburgerMenu } from "react-icons/gi"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet"
 
@@ -95,29 +95,16 @@ const Header = () => {
           ))}
         </nav>
 
-        {/* Mobile Menu Button - ANIMATIONS ONLY HERE */}
+        {/* Mobile Menu Button - Clean Hamburger Design */}
         <div className="lg:hidden">
           <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
             <SheetTrigger asChild>
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-12 w-12 md:h-10 md:w-10 hover:bg-amber-100 focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-2 transition-all duration-300 relative overflow-hidden"
+                className="h-14 w-14 hover:bg-amber-100/50 focus-visible:ring-2 focus-visible:ring-amber-500 focus-visible:ring-offset-2 transition-all duration-300 rounded-lg"
               >
-                <div className="relative w-12 h-12 md:w-6 md:h-6 flex items-center justify-center">
-                  {/* Menu Icon */}
-                  <Menu
-                    className={`w-12 h-12 md:w-6 md:h-6 text-black absolute transition-all duration-300 ease-in-out transform ${
-                      isMenuOpen ? "opacity-0 rotate-90 scale-75" : "opacity-100 rotate-0 scale-100"
-                    }`}
-                  />
-                  {/* X Icon */}
-                  <X
-                    className={`w-12 h-12 md:w-6 md:h-6 text-black absolute transition-all duration-300 ease-in-out transform ${
-                      isMenuOpen ? "opacity-100 rotate-0 scale-100" : "opacity-0 -rotate-90 scale-75"
-                    }`}
-                  />
-                </div>
+                <GiHamburgerMenu className="w-7 h-7 text-black transition-all duration-300" />
                 <span className="sr-only">Toggle navigation menu</span>
               </Button>
             </SheetTrigger>
