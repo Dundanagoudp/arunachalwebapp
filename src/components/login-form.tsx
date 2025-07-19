@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
-import { toast } from "sonner";
+import { useToast } from "@/components/ui/custom-toast";
 import { setCookie } from "@/lib/cookies";
 import { useEffect, useState } from "react";
 import { getCookie } from "@/lib/cookies";
@@ -23,6 +23,7 @@ export function LoginForm({
   ...props
 }: React.ComponentPropsWithoutRef<"form">) {
   const router = useRouter();
+  const { showToast } = useToast();
   const {
     register,
     handleSubmit,
@@ -53,7 +54,7 @@ export function LoginForm({
       Cookies.set("token", result.token, { expires: 1, path: "/" });
       console.log("[LoginForm] Token set in cookie:", Cookies.get("token")); // Debug log
 
-      toast.success(result.message);
+      showToast(result.message, "success");
 
       // Redirect based on role
       // Always redirect to /admin/dashboard for all users
@@ -61,7 +62,7 @@ export function LoginForm({
       // Force reload to ensure token is available for all requests
       window.location.reload();
     } catch (error: any) {
-      toast.error(error?.response?.data?.message || error.message || "Login failed");
+      showToast(error?.response?.data?.message || error.message || "Login failed", "error");
     }
   };
 
