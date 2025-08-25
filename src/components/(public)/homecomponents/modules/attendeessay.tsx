@@ -69,6 +69,7 @@ export default function Attendeessay() {
   if (loading) {
     return (
       <div 
+        id="testimonials"
         className="relative min-h-0 md:min-h-screen overflow-hidden bg-blue-900 text-white pb-12 font-bilo text-base"
       >
         {/* Top Blurred Image */}
@@ -215,6 +216,7 @@ export default function Attendeessay() {
 
   return (
     <div 
+      id="testimonials"
       className="relative min-h-0 md:min-h-screen overflow-hidden bg-blue-900 text-white pb-12 font-bilo text-base"
     >
       
@@ -259,7 +261,7 @@ export default function Attendeessay() {
             data-aos="fade-up" data-aos-delay="100" data-aos-duration="1000"
             className="text-yellow-400 text-2xl md:text-5xl font-bold mb-8 font-dm-serif tracking-wide uppercase drop-shadow-lg"
           >
-            WHAT OUR ATTENDEES SAY
+            Testimonials
           </h3>
 
         </div>
