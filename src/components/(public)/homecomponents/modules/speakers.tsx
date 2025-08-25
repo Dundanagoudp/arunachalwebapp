@@ -100,7 +100,7 @@ export default function Speakers() {
       <div className="container mx-auto py-8 md:py-16 px-2 md:px-4 pb-4 md:pb-16 relative z-10">
         {/* Header Section */}
         <header className="text-center mb-8 md:mb-16">
-          <p data-aos="fade-up" data-aos-delay="0" data-aos-duration="1000" className="text-[#E67E22] text-xl md:text-3xl uppercase tracking-wider mb-2 font-dm-serif whitespace-nowrap font-normal md:font-semibold">Arunachal Literature Festival</p>
+          {/* <p data-aos="fade-up" data-aos-delay="0" data-aos-duration="1000" className="text-[#E67E22] text-xl md:text-3xl uppercase tracking-wider mb-2 font-dm-serif whitespace-nowrap font-normal md:font-semibold">Arunachal Literature Festival</p> */}
           <h1 className="text-[#E67E22] text-2xl md:text-4xl uppercase font-semibold tracking-wide font-dm-serif">SPEAKERS</h1>
 
         </header>
