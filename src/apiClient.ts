@@ -1,8 +1,8 @@
 import axios from "axios"
 import Cookies from "js-cookie"
 
-// const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "https://arunachal-literature-festival.vercel.app/api/v1"
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000/api/v1"
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "https://arunachal-literature-festival.vercel.app/api/v1"
+// const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000/api/v1"
 
 
 const apiClient = axios.create({
@@ -30,14 +30,9 @@ apiClient.interceptors.request.use(
     // Handle GET requests with body data
     if (config.method === "get" && config.data) {
       config.headers["Content-Type"] = "application/json"
-      console.log("GET Request with body:", {
-        url: config.url,
-        data: config.data,
-      })
     }
 
     // Add performance logging
-    console.log(`API Request: ${config.method?.toUpperCase()} ${config.url}`)
 
     return config
   },
@@ -50,7 +45,6 @@ apiClient.interceptors.request.use(
 // Add response interceptor for better error handling
 apiClient.interceptors.response.use(
   (response) => {
-    console.log(`API Response: ${response.config.method?.toUpperCase()} ${response.config.url} - ${response.status}`)
     return response
   },
   (error) => {

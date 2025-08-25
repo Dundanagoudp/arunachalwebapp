@@ -75,7 +75,6 @@ export default function Carousel() {
       setIsLoading(true)
       try {
         const response = await getWorkshops()
-        console.log("Workshop API response:", response)
         if (response.success && response.data) {
           setWorkshops(response.data)
         } else {
