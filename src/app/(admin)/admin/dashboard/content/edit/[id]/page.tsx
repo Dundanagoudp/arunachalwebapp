@@ -51,8 +51,10 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@radix-ui/react-separator";
 import { Toggle } from "@/components/ui/toggle";
-import { useParams } from "next/navigation";
+import { ContentTypeSelector } from "@/components/admin/content-type-selector";
+import { useParams, useRouter } from "next/navigation";
 import { Blog } from "@/types/newAndBlogTypes";
+import { useToast } from "@/hooks/use-toast";
 
 const formSchema = z.object({
   title: z.string().min(2, {
@@ -91,6 +93,8 @@ interface Category {
 export default function EditNewsBlogForm() {
   const params = useParams();
   const id = params.id as string;
+  const router = useRouter();
+  const { toast } = useToast();
   const [previewImage, setPreviewImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -189,13 +193,9 @@ export default function EditNewsBlogForm() {
         formData.append("existingImage", blog.image_url);
       }
 
-      // Handle content based on type
-      if (values.contentType === "blog") {
-        // Always send contents, even if empty
-        formData.append("contents", values.contents || "");
-      } else if (values.contentType === "link") {
-        formData.append("link", values.link || "");
-      }
+      // Always send both fields (some backends expect both keys present)
+      formData.append("contents", values.contents || "");
+      formData.append("link", values.link || "");
 
       // Add new image if uploaded
       if (values.image) {
@@ -207,10 +207,16 @@ export default function EditNewsBlogForm() {
       if (!response.success) {
         throw new Error("Failed to update blog: " + response.message);
       }
-
-      // Success handling...
+      toast({
+        title: "Updated successfully",
+        description: "Your content has been updated."
+      });
+      router.push("/admin/dashboard/content/blogs");
     } catch (error) {
-      // Handle error
+      toast({
+        title: "Update failed",
+        description: (error as Error).message || "Something went wrong.",
+      });
     } finally {
       setIsSubmitting(false);
     }
@@ -302,9 +308,6 @@ export default function EditNewsBlogForm() {
                   <FormItem className="space-y-3">
                     <FormControl>
                       <div className="w-full">
-                        <FormLabel className="mb-2 block text-sm font-medium text-muted-foreground">
-                          Select Content Type
-                        </FormLabel>
                         {blog?.contentType && (
                           <div className="text-sm text-muted-foreground mb-2">
                             Current:{" "}
@@ -313,28 +316,7 @@ export default function EditNewsBlogForm() {
                               : "🔗 External Link"}
                           </div>
                         )}
-                        <div className="flex flex-wrap sm:flex-nowrap items-center gap-2 p-2 rounded-lg w-full sm:w-fit shadow-sm bg-muted">
-                          <Toggle
-                            variant={
-                              field.value === "blog" ? "default" : "outline"
-                            }
-                            pressed={field.value === "blog"}
-                            onPressedChange={() => field.onChange("blog")}
-                            className="flex-1 sm:flex-none px-4 py-2 text-sm font-medium transition-all flex items-center gap-2 rounded-lg hover:scale-[1.02] min-w-[120px]"
-                          >
-                            📝 Blog Post
-                          </Toggle>
-                          <Toggle
-                            variant={
-                              field.value === "link" ? "default" : "outline"
-                            }
-                            pressed={field.value === "link"}
-                            onPressedChange={() => field.onChange("link")}
-                            className="flex-1 sm:flex-none px-4 py-2 text-sm font-medium transition-all flex items-center gap-2 rounded-lg hover:scale-[1.02] min-w-[120px]"
-                          >
-                            🔗 External Link
-                          </Toggle>
-                        </div>
+                        <ContentTypeSelector value={field.value} onChange={field.onChange} />
                       </div>
                     </FormControl>
                     <FormMessage />
@@ -509,7 +491,3 @@ export default function EditNewsBlogForm() {
     </div>
   );
 }
-function refine(arg0: (data: { contentType: string; contents: string; }) => boolean, arg1: { message: string; path: string[]; }) {
-  throw new Error("Function not implemented.");
-}
-

@@ -52,7 +52,6 @@ export default function AddTimeSlot() {
         })
       }
     } catch (error) {
-      console.error("Error fetching event days:", error)
       toast({
         title: "Error",
         description: "An unexpected error occurred"
@@ -108,8 +107,6 @@ export default function AddTimeSlot() {
         speaker: formData.speaker,
       }
 
-      console.log("Adding time slot with data:", timeData)
-
       const result = await addTimeToEventDay(timeData)
 
       if (result.success) {
@@ -135,7 +132,6 @@ export default function AddTimeSlot() {
         })
       }
     } catch (error) {
-      console.error("Error adding time slot:", error)
       toast({
         title: "Error",
         description: "An unexpected error occurred"

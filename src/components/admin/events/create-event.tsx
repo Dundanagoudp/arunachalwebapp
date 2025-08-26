@@ -69,8 +69,6 @@ export default function CreateEvent() {
         endDate: new Date(formData.endDate).toISOString(),
       }
 
-      console.log("Creating event with data:", eventData)
-
       const result = await addEvent(eventData)
 
       if (result.success) {
@@ -95,7 +93,6 @@ export default function CreateEvent() {
         })
       }
     } catch (error) {
-      console.error("Error creating event:", error)
       toast({
         title: "Error",
         description: "An unexpected error occurred",

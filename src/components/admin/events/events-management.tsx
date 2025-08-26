@@ -56,7 +56,6 @@ export default function EventsManagement() {
         })
       }
     } catch (error) {
-      console.error("Error fetching events:", error)
       toast({
         title: "Error",
         description: "An unexpected error occurred"
@@ -85,7 +84,6 @@ export default function EventsManagement() {
         })
       }
     } catch (error) {
-      console.error("Error deleting event:", error)
       toast({
         title: "Error",
         description: "An unexpected error occurred"

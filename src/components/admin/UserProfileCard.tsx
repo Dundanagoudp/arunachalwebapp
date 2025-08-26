@@ -43,7 +43,6 @@ export default function UserProfileCard() {
         toast.error(response.error || "Failed to fetch profile")
       }
     } catch (error) {
-      console.error("Error fetching profile:", error)
       toast.error("Failed to fetch profile details")
     } finally {
       setFetchingProfile(false)
@@ -93,7 +92,6 @@ export default function UserProfileCard() {
         toast.error(response.error || "Failed to update profile")
       }
     } catch (error) {
-      console.error("Failed to update profile:", error)
       toast.error("Failed to update profile")
     } finally {
       setLoading(false)

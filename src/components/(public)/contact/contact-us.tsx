@@ -6,9 +6,10 @@ import { Textarea } from "@/components/ui/textarea"
 import SunIcon from "../archive/sun-icon"
 import { useState } from "react"
 import { contactUsMail } from "@/service/contactusServices"
-import { toast } from "sonner"
+import { useToast } from "@/components/ui/custom-toast"
 
 export default function ContactUsPage() {
+  const { showToast } = useToast()
   const [fullName, setFullName] = useState("")
   const [email, setEmail] = useState("")
   const [mobile, setMobile] = useState("")
@@ -26,16 +27,16 @@ export default function ContactUsPage() {
         phone: mobile,
       })
       if (response.success) {
-        toast.success("Message sent! Thank you for contacting us. We'll get back to you soon.")
+        showToast("Message sent! Thank you for contacting us. We'll get back to you soon.", "success")
         setFullName("")
         setEmail("")
         setMobile("")
         setDescription("")
       } else {
-        toast.error(response.error || "Failed to send message. Please try again.")
+        showToast(response.error || "Failed to send message. Please try again.", "error")
       }
     } catch (error) {
-      toast.error("Failed to send message. Please try again.")
+      showToast("Failed to send message. Please try again.", "error")
     } finally {
       setLoading(false)
     }
