@@ -1,4 +1,3 @@
-'use client';
 import Speakers from '../../../components/(public)/speakers/speakers';
 import React from 'react';
 
