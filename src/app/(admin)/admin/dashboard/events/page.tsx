@@ -93,7 +93,6 @@ export default function EventsPage() {
         });
       }
     } catch (error) {
-      console.error("Error fetching events:", error);
       toast({
         title: "Error",
         description: "An unexpected error occurred",
@@ -122,7 +121,6 @@ export default function EventsPage() {
         });
       }
     } catch (error) {
-      console.error("Error deleting event:", error);
       toast({
         title: "Error",
         description: "An unexpected error occurred",

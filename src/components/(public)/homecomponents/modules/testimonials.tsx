@@ -92,7 +92,7 @@ export default function Testimonials() {
   if (loading) {
     return (
       <div className="relative flex min-h-[60vh] lg:min-h-screen items-center justify-center bg-[#fdf8f0] p-2 overflow-hidden">
-        {/* Decorative background patterns (always visible) */}
+                {/* Decorative background patterns (always visible) */}
         {[...Array(8)].map((_, i) => (
           <div
             key={i}
@@ -101,20 +101,20 @@ export default function Testimonials() {
                 ? "bottom-2 left-2 w-10 h-10 md:w-16 md:h-16"
                 : i === 1
                   ? "bottom-2 right-2 w-10 h-10 md:w-16 md:h-16"
-                  : i === 2
-                    ? "top-1/2 left-0 -translate-y-1/2 w-8 h-8 md:w-12 md:h-12"
-                    : i === 3
-                      ? "top-1/2 right-0 -translate-y-1/2 w-8 h-8 md:w-12 md:h-12"
-                      : i === 4
-                        ? "top-1/4 left-10 w-8 h-8 md:w-12 md:h-12"
-                        : i === 5
-                          ? "top-1/4 right-10 w-8 h-8 md:w-12 md:h-12"
-                          : i === 6
-                            ? "bottom-1/4 left-10 w-8 h-8 md:w-12 md:h-12"
-                            : "bottom-1/4 right-10 w-8 h-8 md:w-12 md:h-12"
+                : i === 2
+                  ? "top-1/2 left-0 -translate-y-1/2 w-8 h-8 md:w-12 md:h-12"
+                : i === 3
+                  ? "top-1/2 right-0 -translate-y-1/2 w-8 h-8 md:w-12 md:h-12"
+                : i === 4
+                  ? "top-1/4 left-10 w-8 h-8 md:w-12 md:h-12"
+                : i === 5
+                  ? "top-1/4 right-10 w-8 h-8 md:w-12 md:h-12"
+                : i === 6
+                  ? "bottom-1/4 left-10 w-8 h-8 md:w-12 md:h-12"
+                  : "bottom-1/4 right-10 w-8 h-8 md:w-12 md:h-12"
             }`}
           >
-            <Image src="/testimonials/background-pattern.png" alt="Pattern" fill className="object-contain" />
+            <Image src="/testimonials/background-pattern.png" alt="Pattern" fill className="object-contain" sizes="(max-width: 768px) 50px, (max-width: 1024px) 64px, 96px" />
           </div>
         ))}
 
@@ -160,6 +160,7 @@ export default function Testimonials() {
                 height={150}
                 className="object-contain w-[100px] h-[75px] md:w-[200px] md:h-[150px]"
                 priority
+                sizes="(max-width: 768px) 100px, 200px"
               />
               <Skeleton className="absolute top-0 left-0 w-full h-full rounded-lg bg-white/80 animate-pulse transition-all duration-500" />
             </div>
@@ -169,7 +170,7 @@ export default function Testimonials() {
     )
   }
 
-  // Show error state
+    // Show error state
   if (error) {
     return (
       <div className="relative flex min-h-[60vh] lg:min-h-screen items-center justify-center bg-[#fdf8f0] p-2 overflow-hidden">
@@ -182,20 +183,20 @@ export default function Testimonials() {
                 ? "bottom-2 left-2 w-10 h-10 md:w-16 md:h-16"
                 : i === 1
                   ? "bottom-2 right-2 w-10 h-10 md:w-16 md:h-16"
-                  : i === 2
-                    ? "top-1/2 left-0 -translate-y-1/2 w-8 h-8 md:w-12 md:h-12"
-                    : i === 3
-                      ? "top-1/2 right-0 -translate-y-1/2 w-8 h-8 md:w-12 md:h-12"
-                      : i === 4
-                        ? "top-1/4 left-10 w-8 h-8 md:w-12 md:h-12"
-                        : i === 5
-                          ? "top-1/4 right-10 w-8 h-8 md:w-12 md:h-12"
-                          : i === 6
-                            ? "bottom-1/4 left-10 w-8 h-8 md:w-12 md:h-12"
-                            : "bottom-1/4 right-10 w-8 h-8 md:w-12 md:h-12"
+                : i === 2
+                  ? "top-1/2 left-0 -translate-y-1/2 w-8 h-8 md:w-12 md:h-12"
+                : i === 3
+                  ? "top-1/2 right-0 -translate-y-1/2 w-8 h-8 md:w-12 md:h-12"
+                : i === 4
+                  ? "top-1/4 left-10 w-8 h-8 md:w-12 md:h-12"
+                : i === 5
+                  ? "top-1/4 right-10 w-8 h-8 md:w-12 md:h-12"
+                : i === 6
+                  ? "bottom-1/4 left-10 w-8 h-8 md:w-12 md:h-12"
+                  : "bottom-1/4 right-10 w-8 h-8 md:w-12 md:h-12"
             }`}
           >
-            <Image src="/testimonials/background-pattern.png" alt="Pattern" fill className="object-contain" />
+            <Image src="/testimonials/background-pattern.png" alt="Pattern" fill className="object-contain" sizes="(max-width: 768px) 50px, (max-width: 1024px) 64px, 96px" />
           </div>
         ))}
 

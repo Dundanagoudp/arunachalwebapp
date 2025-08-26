@@ -166,7 +166,7 @@ export default function EditNewsBlogForm() {
           setOptions(categoryResponse.data);
         }
       } catch (error) {
-        console.error("Error fetching data:", error);
+        // Error fetching data
       } finally {
         setBlogLoading(false);
       }
@@ -176,7 +176,6 @@ export default function EditNewsBlogForm() {
   }, [id, form]);
 
   const onSubmit = async (values: FormValues) => {
-    console.log('Form submission triggered with values:', values);
     setIsSubmitting(true);
     try {
       const formData = new FormData();
@@ -208,11 +207,10 @@ export default function EditNewsBlogForm() {
       if (!response.success) {
         throw new Error("Failed to update blog: " + response.message);
       }
-      console.log("Success:", response.data);
 
       // Success handling...
     } catch (error) {
-      console.error("Error:", error);
+      // Handle error
     } finally {
       setIsSubmitting(false);
     }

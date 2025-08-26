@@ -52,7 +52,6 @@ export default function CreateEventPage() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    console.log("Form data before submission:", formData);
 
     try {
       // Convert dates to ISO format
@@ -62,7 +61,7 @@ export default function CreateEventPage() {
         endDate: new Date(formData.endDate).toISOString(),
       };
 
-      console.log("Creating event with data:", eventData);
+      // Create event with prepared data
 
       const result = await addEvent(eventData);
 
@@ -81,7 +80,6 @@ export default function CreateEventPage() {
         });
       }
     } catch (error) {
-      console.error("Error creating event:", error);
       toast({
         title: "Error",
         description: "An unexpected error occurred",

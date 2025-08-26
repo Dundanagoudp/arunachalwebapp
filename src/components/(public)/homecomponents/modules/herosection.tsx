@@ -84,7 +84,7 @@ export default function HeroSection() {
             className="inline-block transition-transform duration-300 hover:scale-105 active:scale-95"
           >
             <div className="relative w-[160px] h-[48px] sm:w-[180px] sm:h-[54px] md:w-[250px] md:h-[75px] lg:w-[300px] lg:h-[100px]">
-              <Image src="/herosectionbuttton.png" alt="Free Entry Button" fill style={{ objectFit: "contain" }} />
+                              <Image src="/herosectionbuttton.png" alt="Free Entry Button" fill style={{ objectFit: "contain" }} sizes="(max-width: 768px) 200px, 300px" />
             </div>
           </Link>
         </div>

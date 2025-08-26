@@ -110,7 +110,7 @@ export default function NewsBlogForm() {
           setOptions(category);
         }
       } catch (error) {
-        console.error("Error fetching options:", error);
+        // Error fetching options
       } finally {
         setLoading(false);
       }
@@ -121,7 +121,6 @@ export default function NewsBlogForm() {
 
   const onSubmit = async (values: FormValues) => {
     setIsSubmitting(true);
-    console.log('Form submission triggered with values:', values);
     try {
       const formData = new FormData();
       formData.append("category_ref", values.category_ref);
@@ -157,7 +156,6 @@ export default function NewsBlogForm() {
         title: "Error",
         description: (error as Error).message || "Something went wrong."
       });
-      console.error("Error:", error);
     } finally {
       setIsSubmitting(false);
     }

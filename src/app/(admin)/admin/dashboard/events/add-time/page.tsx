@@ -53,7 +53,6 @@ export default function AddTimeSlotPage() {
       const result = await getEventDays()
       if (result.success && result.data) {
         setEventDays(result.data)
-        console.log("Event days loaded:", result.data)
       } else {
         toast({
           title: "Error",
@@ -61,7 +60,6 @@ export default function AddTimeSlotPage() {
         })
       }
     } catch (error) {
-      console.error("Error fetching event days:", error)
       toast({
         title: "Error",
         description: "An unexpected error occurred"
@@ -102,8 +100,7 @@ export default function AddTimeSlotPage() {
         speaker: formData.speaker,
       }
 
-      // Debug: log the data being sent
-      console.log("[AddTimeSlot] Sending timeData:", timeData)
+      // Prepare time data for submission
 
       const result = await addTimeToEventDay(timeData)
 
@@ -122,13 +119,7 @@ export default function AddTimeSlotPage() {
         })
       }
     } catch (error) {
-      // Debug: log backend error message
-      const err = error as any;
-      if (err && err.response && err.response.data) {
-        console.error("[AddTimeSlot] Backend error:", err.response.data)
-      } else {
-        console.error("Error adding time slot:", error)
-      }
+      // Handle error
       toast({
         title: "Error",
         description: "An unexpected error occurred"
