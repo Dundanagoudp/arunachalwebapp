@@ -85,7 +85,6 @@ export default function RegistrationSection() {
         }
       } catch (err) {
         setError("Failed to fetch workshops")
-        console.error("Error fetching workshops:", err)
       } finally {
         setLoading(false)
       }

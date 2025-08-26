@@ -96,7 +96,6 @@ export default function Archive() {
         }
       } catch (err) {
         setError("An error occurred while fetching data")
-        console.error("Archive fetch error:", err)
       } finally {
         setIsLoading(false)
       }

@@ -59,7 +59,6 @@ export function ScheduleContent({ activeDay }: { activeDay: ScheduleDay }) {
         setScheduleData(data)
       } catch (err) {
         setError("Failed to load schedule data")
-        console.error("Error loading schedule:", err)
       } finally {
         setLoading(false)
       }

@@ -46,7 +46,6 @@ export default function Testimonials() {
         }
       } catch (err) {
         setError("Failed to load poetry")
-        console.error("Error fetching poetry:", err)
       } finally {
         setLoading(false)
       }

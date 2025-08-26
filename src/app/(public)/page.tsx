@@ -9,11 +9,7 @@ export default function Home () {
   useEffect(() => {
     const fetchCookies = async () => {
       const response = await getCookies();
-      if (response?.success) {
-        console.log("Cookies:", response.data);
-      } else {
-        console.error("Error fetching cookies:", response.error);
-      }
+      // Cookies fetched silently for functionality
     };
     fetchCookies();
   }, []);

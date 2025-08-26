@@ -78,10 +78,10 @@ export default function Carousel() {
         if (response.success && response.data) {
           setWorkshops(response.data)
         } else {
-          console.error("Workshop API error:", response.error)
+          // Workshop API error handled silently
         }
       } catch (err) {
-        console.error("Failed to fetch workshops:", err)
+        // Failed to fetch workshops handled silently
       } finally {
         setIsLoading(false)
       }

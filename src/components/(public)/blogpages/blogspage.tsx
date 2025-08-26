@@ -105,7 +105,7 @@ export default function BlogsLayout() {
         setContent(uniqueBlogs);
         setFilteredBlogs(uniqueBlogs);
       } catch (error) {
-        console.error(error);
+        // Error handled silently
       }
     };
 

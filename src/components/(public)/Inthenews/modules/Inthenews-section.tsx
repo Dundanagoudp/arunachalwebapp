@@ -106,7 +106,6 @@ export default function Inthenews() {
 
         setPosts(sortedContent);
       } catch (error) {
-        console.error("Error fetching news:", error);
         setError(error instanceof Error ? error.message : "Failed to load news");
       } finally {
         setIsLoading(false);

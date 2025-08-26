@@ -177,7 +177,6 @@ function GalleryPageContent() {
         }
       } catch (err) {
         setError("An error occurred while fetching images")
-        console.error("Gallery fetch error:", err)
       } finally {
         setIsLoading(false)
       }
