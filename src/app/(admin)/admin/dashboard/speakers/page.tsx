@@ -122,8 +122,6 @@ export default function SpeakersPage() {
       setError("");
       const response = await getSpeaker();
 
-      console.log("API Response:", response); // Debug log
-
       if (response.success && response.data) {
         setSpeakers(response.data);
       } else {
@@ -131,7 +129,6 @@ export default function SpeakersPage() {
         setSpeakers([]);
       }
     } catch (err) {
-      console.error("Fetch speakers error:", err);
       setError("Failed to fetch speakers");
       setSpeakers([]);
     } finally {
@@ -146,7 +143,7 @@ export default function SpeakersPage() {
         setEvents(response.data);
       }
     } catch (err) {
-      console.error("Failed to fetch events");
+      // Error handling for events fetch
     }
   };
 
@@ -264,17 +261,23 @@ export default function SpeakersPage() {
                       <TableCell>
                         {speaker.image_url ? (
                           <Image
-                            src={speaker.image_url || "/placeholder.svg"}
+                            src={speaker.image_url}
                             alt={speaker.name}
                             width={40}
                             height={40}
                             className="rounded-full object-cover"
+                            style={{ width: 'auto', height: 'auto' }}
+                            onError={(e) => {
+                              // Fallback to placeholder if image fails to load
+                              const target = e.target as HTMLImageElement;
+                              target.style.display = 'none';
+                              target.nextElementSibling?.classList.remove('hidden');
+                            }}
                           />
-                        ) : (
-                          <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
-                            <User className="h-5 w-5 text-muted-foreground" />
-                          </div>
-                        )}
+                        ) : null}
+                        <div className={`w-10 h-10 rounded-full bg-muted flex items-center justify-center ${speaker.image_url ? 'hidden' : ''}`}>
+                          <User className="h-5 w-5 text-muted-foreground" />
+                        </div>
                       </TableCell>
                       <TableCell className="font-medium">
                         <div className="flex flex-col">

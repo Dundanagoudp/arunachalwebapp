@@ -69,6 +69,7 @@ export default function Attendeessay() {
   if (loading) {
     return (
       <div 
+        id="testimonials"
         className="relative min-h-0 md:min-h-screen overflow-hidden bg-blue-900 text-white pb-12 font-bilo text-base"
       >
         {/* Top Blurred Image */}
@@ -215,6 +216,7 @@ export default function Attendeessay() {
 
   return (
     <div 
+      id="testimonials"
       className="relative min-h-0 md:min-h-screen overflow-hidden bg-blue-900 text-white pb-12 font-bilo text-base"
     >
       
@@ -246,20 +248,20 @@ export default function Attendeessay() {
         {/* Header Text */}
         <div className="text-center mb-12 max-w-4xl mx-auto font-bilo">
           <div className="flex items-center justify-center gap-4 mb-6">
-            <span className="w-3 h-3 rounded-full bg-yellow-400" />
-            <h2 
+            {/* <span className="w-3 h-3 rounded-full bg-yellow-400" /> */}
+            {/* <h2 
               data-aos="fade-up" data-aos-delay="0" data-aos-duration="1000"
               className="text-yellow-400 text-xl md:text-2xl md:text-3xl font-bold font-dm-serif tracking-wide uppercase drop-shadow-lg mb-2"
             >
               Arunachal Literature Festival
-            </h2>
-            <span className="w-3 h-3 rounded-full bg-yellow-400" />
+            </h2> */}
+            {/* <span className="w-3 h-3 rounded-full bg-yellow-400" /> */}
           </div>
           <h3 
             data-aos="fade-up" data-aos-delay="100" data-aos-duration="1000"
             className="text-yellow-400 text-2xl md:text-5xl font-bold mb-8 font-dm-serif tracking-wide uppercase drop-shadow-lg"
           >
-            WHAT OUR ATTENDEES SAY
+            Testimonials
           </h3>
 
         </div>

@@ -106,7 +106,6 @@ export default function Inthenews() {
 
         setPosts(sortedContent);
       } catch (error) {
-        console.error("Error fetching news:", error);
         setError(error instanceof Error ? error.message : "Failed to load news");
       } finally {
         setIsLoading(false);
@@ -248,6 +247,7 @@ export default function Inthenews() {
                         src={news.image_url}
                         alt={news.title}
                         fill
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                         className="object-cover transition-transform duration-300 hover:scale-105"
                         onError={(e) => {
                           // Fallback to placeholder if image fails to load
@@ -260,6 +260,7 @@ export default function Inthenews() {
                         src="/file.svg"
                         alt="No image available"
                         fill
+                        sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                         className="object-cover transition-transform duration-300 hover:scale-105 opacity-50"
                       />
                     )}

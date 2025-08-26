@@ -61,7 +61,7 @@ export default function AddVideoPage() {
       }
       setYoutubeData(videoData)
     } catch (error) {
-      console.error("Error fetching YouTube data:", error)
+      // Error fetching YouTube data
       setYoutubeData(null)
     } finally {
       setFetchingYoutube(false)

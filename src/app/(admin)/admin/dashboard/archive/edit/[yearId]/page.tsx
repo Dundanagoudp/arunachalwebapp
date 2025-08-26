@@ -63,7 +63,6 @@ export default function EditYearPage() {
         setError("Year data not found")
       }
     } catch (error: any) {
-      console.error("Error fetching year data:", error)
       setError("Failed to fetch year data")
     } finally {
       setFetchLoading(false)
@@ -85,7 +84,6 @@ export default function EditYearPage() {
 
       if (result.success) {
         setSuccess(true)
-        console.log("Year updated successfully:", result.data)
         setTimeout(() => {
           router.push("/admin/dashboard/archive")
         }, 2000)
@@ -93,7 +91,6 @@ export default function EditYearPage() {
         throw new Error(result.error || "Failed to update year")
       }
     } catch (error: any) {
-      console.error("Error updating year:", error)
       setError(error.message || "Failed to update year. Please try again.")
     } finally {
       setLoading(false)

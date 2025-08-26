@@ -50,24 +50,15 @@ export default function EditTimeSlotPage() {
       setError(null);
 
       try {
-        console.log("Fetching events for dayId:", dayId, "timeId:", timeId);
         const result = await getAllEvents();
 
         if (result.success && result.data) {
           const day = result.data.days?.find((d: EventDay) => d._id === dayId);
-          console.log("Found day:", day);
-
           if (day) {
             setEventDay(day);
-            console.log("Looking for timeId:", timeId);
-            console.log("Available time slots:", day.times);
-            console.log(
-              "Time slot IDs:",
-              day.times?.map((t) => t._id)
-            );
 
             const slot = day.times?.find((t) => t._id === timeId) || null;
-            console.log("Found time slot:", slot);
+
 
             if (slot) {
               setTimeSlot(slot);
@@ -105,7 +96,6 @@ export default function EditTimeSlotPage() {
           });
         }
       } catch (error) {
-        console.error("Error fetching events:", error);
         setError("Failed to fetch events");
         toast({
           title: "Error",
@@ -138,11 +128,7 @@ export default function EditTimeSlotPage() {
 
     setIsSubmitting(true);
     try {
-      console.log("Updating time slot:", {
-        dayId: eventDay._id,
-        timeId: timeSlot._id,
-        formData,
-      });
+      // Update time slot with form data
       const result = await updateTime(eventDay._id, timeSlot._id, formData);
 
       if (result.success) {
@@ -158,7 +144,6 @@ export default function EditTimeSlotPage() {
         });
       }
     } catch (error) {
-      console.error("Error updating time slot:", error);
       toast({
         title: "Error",
         description: "An unexpected error occurred",

@@ -388,7 +388,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   const userForNav = {
     name: userData.name,
     email: userData.email,
-    avatar: "/avatars/default.jpg",
+            avatar: "/placeholder.svg",
     initials: userData.name
       .split(' ')
       .map(word => word.charAt(0))
@@ -405,7 +405,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
       </SidebarHeader>
       <SidebarContent>
         <NavMain items={sidebarData.navMain} />
-        <NavProjects projects={sidebarData.projects} />
+        {/* <NavProjects projects={sidebarData.projects} /> */}
       </SidebarContent>
       <SidebarFooter>
         <NavUser user={userForNav} onLogout={handleLogout} />

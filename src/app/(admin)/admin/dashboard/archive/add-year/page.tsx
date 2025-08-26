@@ -48,7 +48,6 @@ export default function AddYearPage() {
 
       if (result.success) {
         setSuccess(true)
-        console.log("Year created successfully:", result.data)
         setTimeout(() => {
           router.push("/admin/dashboard/archive")
         }, 2000)
@@ -56,7 +55,6 @@ export default function AddYearPage() {
         throw new Error(result.error || "Failed to create year")
       }
     } catch (error: any) {
-      console.error("Error creating year:", error)
       setError(error.message || "Failed to create year. Please try again.")
     } finally {
       setLoading(false)

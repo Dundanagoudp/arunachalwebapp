@@ -264,7 +264,7 @@ export default function VideosPage() {
         )}
         {video.videoType === "video" && video.imageUrl && (
           <div className="aspect-video relative rounded-lg overflow-hidden mb-3">
-            <Image src={video.imageUrl || "/placeholder.svg"} alt={video.title} fill className="object-cover" />
+                            <Image src={video.imageUrl || "/placeholder.svg"} alt={video.title} fill className="object-cover" sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw" />
             <div className="absolute inset-0 bg-black/20 flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity">
               <Play className="h-8 w-8 text-white" />
             </div>

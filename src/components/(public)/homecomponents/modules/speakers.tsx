@@ -79,28 +79,28 @@ export default function Speakers() {
     <div className="min-h-0 md:min-h-screen bg-gradient-to-b from-[#FFF8E7] to-[#FFFAEE] relative overflow-x-hidden">
       {/* Background patterns */}
       <div className="absolute top-0 left-0 w-24 h-24 md:w-32 md:h-32 opacity-30">
-        <Image src="/schedule/diamond-pattern.png" alt="Pattern" fill className="object-contain" />
+        <Image src="/schedule/diamond-pattern.png" alt="Pattern" fill className="object-contain" sizes="(max-width: 768px) 96px, 128px" />
       </div>
       <div className="absolute top-0 right-0 w-24 h-24 md:w-32 md:h-32 opacity-30">
-        <Image src="/schedule/diamond-pattern.png" alt="Pattern" fill className="object-contain" />
+        <Image src="/schedule/diamond-pattern.png" alt="Pattern" fill className="object-contain" sizes="(max-width: 768px) 96px, 128px" />
       </div>
       {/* Bottom Left Motif */}
       <div className="absolute bottom-0 left-0 w-24 h-24 md:w-32 md:h-32 opacity-30">
-        <Image src="/schedule/diamond-pattern.png" alt="Pattern" fill className="object-contain" />
+        <Image src="/schedule/diamond-pattern.png" alt="Pattern" fill className="object-contain" sizes="(max-width: 768px) 96px, 128px" />
       </div>
       {/* Bottom Right Motif */}
       <div className="absolute bottom-0 right-0 w-24 h-24 md:w-32 md:h-32 opacity-30">
-        <Image src="/schedule/diamond-pattern.png" alt="Pattern" fill className="object-contain" />
+        <Image src="/schedule/diamond-pattern.png" alt="Pattern" fill className="object-contain" sizes="(max-width: 768px) 96px, 128px" />
       </div>
       {/* Center Large Faint Motif */}
       <div className="absolute top-1/2 left-1/2 w-80 h-80 md:w-[32rem] md:h-[32rem] opacity-10 -translate-x-1/2 -translate-y-1/2 pointer-events-none select-none">
-        <Image src="/schedule/diamond-pattern.png" alt="Pattern" fill className="object-contain" />
+        <Image src="/schedule/diamond-pattern.png" alt="Pattern" fill className="object-contain" sizes="(max-width: 768px) 320px, 512px" />
       </div>
 
       <div className="container mx-auto py-8 md:py-16 px-2 md:px-4 pb-4 md:pb-16 relative z-10">
         {/* Header Section */}
         <header className="text-center mb-8 md:mb-16">
-          <p data-aos="fade-up" data-aos-delay="0" data-aos-duration="1000" className="text-[#E67E22] text-xl md:text-3xl uppercase tracking-wider mb-2 font-dm-serif whitespace-nowrap font-normal md:font-semibold">Arunachal Literature Festival</p>
+          {/* <p data-aos="fade-up" data-aos-delay="0" data-aos-duration="1000" className="text-[#E67E22] text-xl md:text-3xl uppercase tracking-wider mb-2 font-dm-serif whitespace-nowrap font-normal md:font-semibold">Arunachal Literature Festival</p> */}
           <h1 className="text-[#E67E22] text-2xl md:text-4xl uppercase font-semibold tracking-wide font-dm-serif">SPEAKERS</h1>
 
         </header>

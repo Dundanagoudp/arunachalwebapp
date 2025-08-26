@@ -101,7 +101,7 @@ export default function EditVideoPage() {
       }
       setYoutubeData(videoData)
     } catch (error) {
-      console.error("Error fetching YouTube data:", error)
+      // Error fetching YouTube data
       setYoutubeData(null)
     } finally {
       setFetchingYoutube(false)
@@ -189,7 +189,6 @@ export default function EditVideoPage() {
         })
       }
     } catch (error) {
-      console.error("Update error:", error)
       toast({
         title: "Error",
         description: "An unexpected error occurred",
@@ -374,6 +373,7 @@ export default function EditVideoPage() {
                             alt="Current thumbnail" 
                             fill 
                             className="object-cover"
+                            sizes="(max-width: 768px) 64px, 96px"
                           />
                         </div>
                         <a 

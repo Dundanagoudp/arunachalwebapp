@@ -27,6 +27,8 @@ export default function LoginPage() {
           width={500}
           height={450}
           className="object-contain dark:brightness-[0.2] dark:grayscale"
+          priority
+          style={{ width: 'auto', height: 'auto' }}
         />
       </div>
     </div>

@@ -35,7 +35,6 @@ export function LoginForm({
     setMounted(true);
     // Check if user is already logged in
     const userRole = getCookie("userRole");
-    console.log("[LoginForm] userRole from cookie:", userRole); // Debug log
     if (userRole) {
       // Always redirect to /admin/dashboard for all users
       router.replace("/admin/dashboard");
@@ -48,11 +47,9 @@ export function LoginForm({
     try {
       const result = await loginUser(data);
 
-      console.log("[LoginForm] Account type from backend:", result.data.user.accountType); // Debug log
       // Use the imported setCookie function with the correct signature
       Cookies.set("userRole", result.data.user.role, { expires: 1, path: "/" });
       Cookies.set("token", result.token, { expires: 1, path: "/" });
-      console.log("[LoginForm] Token set in cookie:", Cookies.get("token")); // Debug log
 
       showToast(result.message, "success");
 
@@ -90,6 +87,7 @@ export function LoginForm({
             id="email"
             type="email"
             placeholder="m@example.com"
+            autoComplete="email"
             {...register("email", {
               required: "Email is required",
               validate: validateEmail,
@@ -106,6 +104,7 @@ export function LoginForm({
           <Input
             id="password"
             type="password"
+            autoComplete="current-password"
             {...register("password", {
               required: "Password is required",
             })}

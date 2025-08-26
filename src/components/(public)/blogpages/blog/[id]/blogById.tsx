@@ -160,7 +160,6 @@ export default function BlogById() {
         )
         setBlogs(filteredBlogs)
       } catch (err) {
-        console.error(err)
         setError(err instanceof Error ? err.message : "An unknown error occurred")
       } finally {
         setIsLoading(false)

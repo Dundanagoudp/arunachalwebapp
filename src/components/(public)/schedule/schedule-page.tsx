@@ -66,7 +66,6 @@ export default function Schedulepage() {
         setScheduleData(data)
       } catch (err) {
         setError("Failed to load schedule data")
-        console.error("Error loading schedule:", err)
       } finally {
         setLoading(false)
       }

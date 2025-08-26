@@ -324,6 +324,7 @@ export default function VideoDetailPage() {
                           alt={`${video.title} thumbnail`}
                           fill
                           className="object-cover"
+                          sizes="(max-width: 768px) 64px, 96px"
                         />
                       </div>
                       <Button variant="outline" size="sm" asChild className="w-full justify-start bg-white/80">

@@ -47,7 +47,6 @@ export default function CreateUser() {
         toast.error(response.error || "Failed to create user")
       }
     } catch (error) {
-      console.error("Failed to create user:", error)
       toast.error("Failed to create user")
     } finally {
       setLoading(false)

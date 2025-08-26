@@ -93,7 +93,6 @@ export default function Schedule() {
         setScheduleData(data)
       } catch (err) {
         setError("Failed to load schedule data. Please try again later.")
-        console.error("Error loading schedule:", err)
       } finally {
         setLoading(false)
       }
@@ -155,34 +154,34 @@ export default function Schedule() {
     <div className="relative min-h-screen bg-[#FFD76B] overflow-hidden flex flex-col items-center pb-20">
       {/* Diamond patterns - 10 positions, like speakers section */}
       <div className="absolute top-2 left-2 w-10 h-10 md:w-16 md:h-16 z-0 opacity-80 pointer-events-none">
-        <Image src="/schedule/diamond-pattern.png" alt="Diamond Pattern" fill className="object-contain" />
+        <Image src="/schedule/diamond-pattern.png" alt="Diamond Pattern" fill className="object-contain" sizes="(max-width: 768px) 40px, 64px" />
       </div>
       <div className="absolute top-2 right-2 w-10 h-10 md:w-16 md:h-16 z-0 opacity-80 pointer-events-none">
-        <Image src="/schedule/diamond-pattern.png" alt="Diamond Pattern" fill className="object-contain" />
+        <Image src="/schedule/diamond-pattern.png" alt="Diamond Pattern" fill className="object-contain" sizes="(max-width: 768px) 40px, 64px" />
       </div>
       <div className="absolute bottom-2 left-2 w-10 h-10 md:w-16 md:h-16 z-0 opacity-80 pointer-events-none">
-        <Image src="/schedule/diamond-pattern.png" alt="Diamond Pattern" fill className="object-contain" />
+        <Image src="/schedule/diamond-pattern.png" alt="Diamond Pattern" fill className="object-contain" sizes="(max-width: 768px) 40px, 64px" />
       </div>
       <div className="absolute bottom-2 right-2 w-10 h-10 md:w-16 md:h-16 z-0 opacity-80 pointer-events-none">
-        <Image src="/schedule/diamond-pattern.png" alt="Diamond Pattern" fill className="object-contain" />
+        <Image src="/schedule/diamond-pattern.png" alt="Diamond Pattern" fill className="object-contain" sizes="(max-width: 768px) 40px, 64px" />
       </div>
       <div className="absolute top-1/2 left-0 -translate-y-1/2 w-8 h-8 md:w-12 md:h-12 z-0 opacity-60 pointer-events-none">
-        <Image src="/schedule/diamond-pattern.png" alt="Diamond Pattern" fill className="object-contain" />
+        <Image src="/schedule/diamond-pattern.png" alt="Diamond Pattern" fill className="object-contain" sizes="(max-width: 768px) 32px, 48px" />
       </div>
       <div className="absolute top-1/2 right-0 -translate-y-1/2 w-8 h-8 md:w-12 md:h-12 z-0 opacity-60 pointer-events-none">
-        <Image src="/schedule/diamond-pattern.png" alt="Diamond Pattern" fill className="object-contain" />
+        <Image src="/schedule/diamond-pattern.png" alt="Diamond Pattern" fill className="object-contain" sizes="(max-width: 768px) 32px, 48px" />
       </div>
       <div className="absolute top-1/4 left-10 w-8 h-8 md:w-12 md:h-12 z-0 opacity-70 pointer-events-none">
-        <Image src="/schedule/diamond-pattern.png" alt="Diamond Pattern" fill className="object-contain" />
+        <Image src="/schedule/diamond-pattern.png" alt="Diamond Pattern" fill className="object-contain" sizes="(max-width: 768px) 32px, 48px" />
       </div>
       <div className="absolute top-1/4 right-10 w-8 h-8 md:w-12 md:h-12 z-0 opacity-70 pointer-events-none">
-        <Image src="/schedule/diamond-pattern.png" alt="Diamond Pattern" fill className="object-contain" />
+        <Image src="/schedule/diamond-pattern.png" alt="Diamond Pattern" fill className="object-contain" sizes="(max-width: 768px) 32px, 48px" />
       </div>
       <div className="absolute bottom-1/4 left-10 w-8 h-8 md:w-12 md:h-12 z-0 opacity-70 pointer-events-none">
-        <Image src="/schedule/diamond-pattern.png" alt="Diamond Pattern" fill className="object-contain" />
+        <Image src="/schedule/diamond-pattern.png" alt="Diamond Pattern" fill className="object-contain" sizes="(max-width: 768px) 32px, 48px" />
       </div>
       <div className="absolute bottom-1/4 right-10 w-8 h-8 md:w-12 md:h-12 z-0 opacity-70 pointer-events-none">
-        <Image src="/schedule/diamond-pattern.png" alt="Diamond Pattern" fill className="object-contain" />
+        <Image src="/schedule/diamond-pattern.png" alt="Diamond Pattern" fill className="object-contain" sizes="(max-width: 768px) 32px, 48px" />
       </div>
 
       {/* Top Illustration with matching #fdf8f0 blur effect */}
