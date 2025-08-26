@@ -1,17 +1,21 @@
 import axios from "axios"
 import Cookies from "js-cookie"
 
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "https://arunachal-literature-festival.vercel.app/api/v1"
-// const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || "http://localhost:8000/api/v1"
-
+const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
+if (!API_BASE_URL) {
+  throw new Error("Missing NEXT_PUBLIC_API_BASE_URL. Please set it in .env.local")
+}
 
 const apiClient = axios.create({
   baseURL: API_BASE_URL,
   headers: {
+    Accept: "application/json",
     "Content-Type": "application/json",
   },
   withCredentials: true,
-  timeout: 45000, 
+  xsrfCookieName: "XSRF-TOKEN",
+  xsrfHeaderName: "X-XSRF-TOKEN",
+  timeout: 45000,
 })
 
 // Add request interceptors for authentication tokens
@@ -22,22 +26,17 @@ apiClient.interceptors.request.use(
       config.headers.Authorization = `Bearer ${token}`
     }
 
-    // Handle FormData requests
+    // Let the browser set the proper multipart boundary for FormData
     if (config.data instanceof FormData) {
-      config.headers["Content-Type"] = "multipart/form-data"
+      delete config.headers["Content-Type"]
     }
-
-    // Handle GET requests with body data
-    if (config.method === "get" && config.data) {
-      config.headers["Content-Type"] = "application/json"
-    }
-
-    // Add performance logging
 
     return config
   },
   (error) => {
-    console.error("Request interceptor error:", error)
+    if (process.env.NODE_ENV !== "production") {
+      console.error("Request interceptor error:", error?.message)
+    }
     return Promise.reject(error)
   },
 )
@@ -48,24 +47,20 @@ apiClient.interceptors.response.use(
     return response
   },
   (error) => {
-    console.error("API Error:", {
-      url: error.config?.url,
-      method: error.config?.method,
-      status: error.response?.status,
-      message: error.message,
-      timeout: error.code === 'ECONNABORTED'
-    })
-    
-    if (error.response) {
-      console.error("Error response data:", error.response.data)
-      console.error("Error response status:", error.response.status)
+    if (process.env.NODE_ENV !== "production") {
+      console.error("API Error:", {
+        url: error.config?.url,
+        method: error.config?.method,
+        status: error.response?.status,
+        message: error.message,
+        code: error.code,
+      })
     }
-    
-    if (error.code === 'ECONNABORTED') {
+
+    if (error.code === "ECONNABORTED" && process.env.NODE_ENV !== "production") {
       console.error("Request timeout - the server took too long to respond")
-      // You could show a toast notification here for timeout errors
     }
-    
+
     return Promise.reject(error)
   },
 )
