@@ -51,6 +51,7 @@ import {
 } from "@/components/ui/select";
 import { Separator } from "@radix-ui/react-separator";
 import { Toggle } from "@/components/ui/toggle";
+import { ContentTypeSelector } from "@/components/admin/content-type-selector";
 import { useRouter } from "next/navigation";
 import { useToast } from "@/hooks/use-toast";
 import { formSchema } from "./formSchema";
@@ -222,51 +223,7 @@ export default function NewsBlogForm() {
                 render={({ field }) => (
                   <FormItem className="space-y-3">
                     <FormControl>
-                      <div className="w-full">
-                        <FormLabel className="mb-2 block text-sm font-medium text-muted-foreground">
-                          Select Content Type
-                        </FormLabel>
-                        <RadioGroup
-                          className="flex flex-col sm:flex-row gap-3 sm:gap-4 p-2 rounded-lg w-full sm:w-fit shadow-sm bg-muted"
-                          value={field.value}
-                          onValueChange={field.onChange}
-                        >
-                          <RadioGroupItem
-                            value="blog"
-                            id="content-type-blog"
-                            className="peer sr-only"
-                          />
-                          <label
-                            htmlFor="content-type-blog"
-                            className={`w-full sm:w-auto flex-1 sm:flex-none px-4 py-3 text-base sm:text-sm font-medium flex items-center gap-2 rounded-lg min-w-[120px] border-2 cursor-pointer transition-all
-                              ${field.value === "blog" ? "bg-blue-100 border-blue-500 text-blue-900 shadow-md scale-105" : "bg-white border-gray-300 text-gray-700 hover:scale-[1.02]"}`}
-                          >
-                            <span className="mr-2">📝</span> Blog Post
-                            {field.value === "blog" && (
-                              <span className="ml-2 text-blue-600">
-                                <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" /></svg>
-                              </span>
-                            )}
-                          </label>
-                          <RadioGroupItem
-                            value="link"
-                            id="content-type-link"
-                            className="peer sr-only"
-                          />
-                          <label
-                            htmlFor="content-type-link"
-                            className={`w-full sm:w-auto flex-1 sm:flex-none px-4 py-3 text-base sm:text-sm font-medium flex items-center gap-2 rounded-lg min-w-[120px] border-2 cursor-pointer transition-all
-                              ${field.value === "link" ? "bg-blue-100 border-blue-500 text-blue-900 shadow-md scale-105" : "bg-white border-gray-300 text-gray-700 hover:scale-[1.02]"}`}
-                          >
-                            <span className="mr-2">🔗</span> External Link
-                            {field.value === "link" && (
-                              <span className="ml-2 text-blue-600">
-                                <svg width="20" height="20" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" /></svg>
-                              </span>
-                            )}
-                          </label>
-                        </RadioGroup>
-                      </div>
+                      <ContentTypeSelector value={field.value} onChange={field.onChange} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
