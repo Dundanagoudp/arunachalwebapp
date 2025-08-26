@@ -11,7 +11,7 @@ const apiClient = axios.create({
     "Content-Type": "application/json",
   },
   withCredentials: true,
-  timeout: 45000, // Increased to 45 seconds for better handling of slow responses
+  timeout: 45000, 
 })
 
 // Add request interceptors for authentication tokens
