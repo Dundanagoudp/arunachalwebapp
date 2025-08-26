@@ -4,11 +4,7 @@ import { ApiResponse, PdfDocument } from "@/types/addPdf-types";
 // Add PDF (Event Brochure)
 export async function addPdf(formData: FormData): Promise<ApiResponse<PdfDocument>> {
   try {
-    const response = await apiClient.post("/event/addPdf", formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
+    const response = await apiClient.post("/event/addPdf", formData);
 
     return {
       success: true,
@@ -44,11 +40,7 @@ export async function getPdfs(): Promise<ApiResponse<PdfDocument[]>> {
 // Update PDF (Event Brochure)
 export async function updatePdf(pdfId: string, formData: FormData): Promise<ApiResponse<PdfDocument>> {
   try {
-    const response = await apiClient.post(`/event/updateEventBroucher/${pdfId}`, formData, {
-      headers: {
-        "Content-Type": "multipart/form-data",
-      },
-    });
+    const response = await apiClient.post(`/event/updateEventBroucher/${pdfId}`, formData);
 
     return {
       success: true,
