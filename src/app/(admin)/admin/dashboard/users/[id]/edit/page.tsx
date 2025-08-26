@@ -60,7 +60,6 @@ export default function EditUser() {
         }
       }
     } catch (error) {
-      console.error("Error fetching user:", error)
       toast.error("Failed to fetch user details")
     } finally {
       setFetchingUser(false)
@@ -104,7 +103,6 @@ export default function EditUser() {
         toast.error(response.error || "Failed to update user")
       }
     } catch (error) {
-      console.error("Failed to update user:", error)
       toast.error("Failed to update user")
     } finally {
       setLoading(false)

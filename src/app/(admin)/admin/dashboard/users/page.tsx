@@ -61,7 +61,6 @@ export default function UsersManagement() {
         toast.error(response.error || "Failed to fetch users")
       }
     } catch (error) {
-      console.error("Error fetching users:", error)
       toast.error("Failed to fetch users")
     } finally {
       setLoading(false)
@@ -93,7 +92,6 @@ export default function UsersManagement() {
         toast.error(response.error || "Failed to delete user")
       }
     } catch (error) {
-      console.error("Error deleting user:", error)
       toast.error("Failed to delete user")
     } finally {
       setDeleteDialogOpen(false)
