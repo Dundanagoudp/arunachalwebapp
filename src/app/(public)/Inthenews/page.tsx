@@ -1,4 +1,3 @@
-"use client";
 import React, { Suspense } from 'react';
 import LoadingProgress from '@/components/LoadingProgress';
 import InthenewsSection from '@/components/(public)/Inthenews/modules/Inthenews-section';

@@ -1,4 +1,4 @@
-'use client';
+"use client";
 
 import ContactUsPage from '@/components/(public)/contact/contact-us';
 import React, { useState, useEffect } from "react";
