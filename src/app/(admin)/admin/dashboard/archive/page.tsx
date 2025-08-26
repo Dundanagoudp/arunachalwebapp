@@ -149,7 +149,6 @@ export default function ArchiveManagement() {
         throw new Error(result.error || "Failed to delete image")
       }
     } catch (error: any) {
-      console.error("Error deleting image:", error)
       setError(error.message || "Failed to delete image")
     } finally {
       setDeleteLoading(false)

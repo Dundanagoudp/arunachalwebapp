@@ -77,7 +77,7 @@ function UploadImagesPageContent() {
         setYears(sortedYears)
       }
     } catch (error) {
-      console.error("Error fetching years:", error)
+      // Error fetching years
     }
   }
 
@@ -96,7 +96,6 @@ function UploadImagesPageContent() {
         setDays([])
       }
     } catch (error) {
-      console.error("Error fetching days:", error)
       setDays([])
     }
   }
@@ -176,7 +175,6 @@ function UploadImagesPageContent() {
 
       if (result.success) {
         setSuccess(true)
-        console.log("Images uploaded successfully:", result.data)
         setTimeout(() => {
           router.push("/admin/dashboard/archive")
         }, 2000)
@@ -184,7 +182,6 @@ function UploadImagesPageContent() {
         throw new Error(result.error || "Failed to upload images")
       }
     } catch (error: any) {
-      console.error("Error uploading images:", error)
       setError(error.message || "Failed to upload images. Please try again.")
       setUploadProgress(0)
     } finally {

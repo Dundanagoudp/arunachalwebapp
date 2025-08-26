@@ -203,15 +203,11 @@ export default function AdminDashboard() {
   }, []);
 
  useEffect(() => {
-  console.log("Fetching view count...");
   const fetchViewCount = async () => {
     try {
-      console.log("Starting view count fetch...");
       const viewResponse = await getCookieViewCount();
-      console.log("View count API response:", viewResponse);
       
       if (viewResponse && viewResponse.data) {
-        console.log("View count data:", viewResponse.data);
         setGetView(viewResponse.data);
       } else {
         console.warn("No data in view count response");
@@ -223,10 +219,6 @@ export default function AdminDashboard() {
 
   fetchViewCount();
 }, []);
-
-useEffect(() => {
-  console.log("Current view count state:", getView);
-}, [getView]);
   useEffect(() => {
     async function fetchArchive() {
       setArchiveLoading(true);
