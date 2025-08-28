@@ -59,7 +59,21 @@ export function LoginForm({
       // Force reload to ensure token is available for all requests
       window.location.reload();
     } catch (error: any) {
-      showToast(error?.response?.data?.message || error.message || "Login failed", "error");
+      const status = error?.response?.status;
+      const data = error?.response?.data || {};
+      if (status === 401) {
+        const remaining = data?.remainingAttempts;
+        if (typeof remaining === "number") {
+          const attemptsText = remaining === 1 ? "1 attempt left." : `${remaining} attempts left.`;
+          showToast(`Invalid credentials. ${attemptsText}`, "error");
+        } else {
+          showToast(data?.message || "Invalid credentials", "error");
+        }
+      } else if (status === 423) {
+        showToast("Your account is locked. Please try again after 24 hours.", "error");
+      } else {
+        showToast(data?.message || error.message || "Login failed", "error");
+      }
     }
   };
 
