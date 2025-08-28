@@ -3,6 +3,7 @@ import { Download } from "lucide-react"
 import { useState, useEffect } from "react"
 import Image from "next/image"
 import { getAllEvents } from "@/service/events-apis"
+import { getPdfs } from "@/service/addPdfServices"
 
 // Month names for formatting
 const months = [
@@ -56,6 +57,7 @@ export default function Schedulepage() {
   const [loading, setLoading] = useState(true)
   const [scheduleData, setScheduleData] = useState<any[][]>([])
   const [error, setError] = useState<string | null>(null)
+  const [downloading, setDownloading] = useState(false)
 
   useEffect(() => {
     const loadData = async () => {
@@ -112,8 +114,31 @@ export default function Schedulepage() {
           <h1 className="text-[#1A3FA9] text-4xl font-bold text-center font-dm-serif">SCHEDULE</h1>
         </header>
         <div className="flex justify-center mb-8">
-          <button className="flex items-center gap-2 text-[#000000] hover:text-[#D95E1E] transition-colors">
-            Download Schedule
+          <button
+            onClick={async () => {
+              try {
+                setDownloading(true)
+                const result = await getPdfs()
+                if (result.success && Array.isArray(result.data) && result.data.length > 0) {
+                  const firstPdf = result.data[0]
+                  if (firstPdf?.pdf_url) {
+                    window.open(firstPdf.pdf_url, "_blank")
+                  } else {
+                    alert("No schedule PDF URL available")
+                  }
+                } else {
+                  alert(result.error || "No schedule PDF found")
+                }
+              } catch (e) {
+                alert("Failed to download schedule")
+              } finally {
+                setDownloading(false)
+              }
+            }}
+            disabled={downloading}
+            className="flex items-center gap-2 text-[#000000] hover:text-[#D95E1E] transition-colors disabled:opacity-60"
+          >
+            {downloading ? "Preparing..." : "Download Schedule"}
             <Download className="w-5 h-5" />
           </button>
         </div>
