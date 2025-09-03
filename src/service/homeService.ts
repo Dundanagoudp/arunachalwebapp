@@ -1,5 +1,5 @@
 import apiClient from "@/apiClient"
-import type { ApiResponse } from "@/types/home-types"
+import type { ApiResponse, IntroItem, IntroList } from "@/types/home-types"
 
 // addbanner
 export async function addBanner(data: any): Promise<ApiResponse<any>> {
@@ -201,6 +201,74 @@ export async function updateButtonText(buttonId: string, data: any): Promise<Api
     return {
       success: false,
       error: error.response?.data?.message || "Failed to update button text",
+    }
+  }
+}
+
+// Intro: add
+export async function addIntro(data: FormData): Promise<ApiResponse<IntroItem>> {
+  try {
+    const response = await apiClient.post("/homePage/addIntro", data)
+    return {
+      success: true,
+      data: response.data as IntroItem,
+      message: (response.data?.message as string) || "Intro added successfully",
+    }
+  } catch (error: any) {
+    return {
+      success: false,
+      error: error.response?.data?.message || "Failed to add intro",
+    }
+  }
+}
+
+// Intro: get all
+export async function getIntro(): Promise<ApiResponse<IntroList>> {
+  try {
+    const response = await apiClient.get("/homePage/getIntro")
+    return {
+      success: true,
+      data: response.data as IntroList,
+      message: "Intro fetched successfully",
+    }
+  } catch (error: any) {
+    return {
+      success: false,
+      error: error.response?.data?.message || "Failed to fetch intro",
+    }
+  }
+}
+
+// Intro: update
+export async function updateIntro(introId: string, data: FormData): Promise<ApiResponse<IntroItem>> {
+  try {
+    const response = await apiClient.post(`/homePage/updateIntro/${introId}`, data)
+    return {
+      success: true,
+      data: response.data as IntroItem,
+      message: (response.data?.message as string) || "Intro updated successfully",
+    }
+  } catch (error: any) {
+    return {
+      success: false,
+      error: error.response?.data?.message || "Failed to update intro",
+    }
+  }
+}
+
+// Intro: delete
+export async function deleteIntro(introId: string): Promise<ApiResponse<{ message: string }>> {
+  try {
+    const response = await apiClient.delete(`/homePage/deleteIntro/${introId}`)
+    return {
+      success: true,
+      data: response.data,
+      message: response.data?.message || "Intro deleted successfully",
+    }
+  } catch (error: any) {
+    return {
+      success: false,
+      error: error.response?.data?.message || "Failed to delete intro",
     }
   }
 }
