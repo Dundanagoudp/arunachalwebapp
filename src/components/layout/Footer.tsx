@@ -91,11 +91,11 @@ export default function Footer() {
                     Contact
                   </Link>
                 </li>
-                <li>
+                {/* <li>
                   <Link href="/privacy-policy" className="hover:underline">
                     Privacy Policy
                   </Link>
-                </li>
+                </li> */}
               </ul>
             </div>
 
