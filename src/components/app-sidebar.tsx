@@ -168,6 +168,10 @@ const adminNavData = {
         {
           title:"Testimonials",
           url:"/admin/dashboard/home/testimonials"
+        },
+        {
+          title:"Intro",
+          url:"/admin/dashboard/home/into"
         }
       ]
     },

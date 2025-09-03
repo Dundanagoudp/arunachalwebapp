@@ -25,3 +25,15 @@ export interface ButtonText {
   link: string
   __v: number
 }
+
+// Intro types
+export interface IntroItem {
+  _id: string
+  title: string
+  description: string
+  date: string
+  image_url: string
+  __v?: number
+}
+
+export type IntroList = IntroItem[]
