@@ -17,6 +17,7 @@ interface BannerText {
   bannerText: string
   bannerSubText: string
   location: string
+  link: string
   __v: number
 }
 
@@ -27,7 +28,7 @@ export default function BannerTextSection() {
   const [loading, setLoading] = useState({ bannerTexts: false, action: false })
   const [dialogs, setDialogs] = useState({ addBannerText: false, editBannerText: false })
   const [editingBannerText, setEditingBannerText] = useState<BannerText | null>(null)
-  const [bannerTextForm, setBannerTextForm] = useState({ bannerText: "", bannerSubText: "", location: "Homepage" })
+  const [bannerTextForm, setBannerTextForm] = useState({ bannerText: "", bannerSubText: "", location: "Homepage", link: "" })
 
   const fetchBannerTexts = async () => {
     setLoading((prev) => ({ ...prev, bannerTexts: true }))
@@ -56,7 +57,7 @@ export default function BannerTextSection() {
       if (response.success) {
         toast({ title: "Success", description: response.message || "Banner text added successfully" })
         setDialogs((prev) => ({ ...prev, addBannerText: false }))
-        setBannerTextForm({ bannerText: "", bannerSubText: "", location: "Homepage" })
+        setBannerTextForm({ bannerText: "", bannerSubText: "", location: "Homepage", link: "" })
         fetchBannerTexts()
       } else {
         toast({ title: "Error", description: response.error || "Failed to add banner text" })
@@ -79,7 +80,7 @@ export default function BannerTextSection() {
       if (response.success) {
         toast({ title: "Success", description: response.message || "Banner text updated successfully" })
         setDialogs((prev) => ({ ...prev, editBannerText: false }))
-        setBannerTextForm({ bannerText: "", bannerSubText: "", location: "Homepage" })
+        setBannerTextForm({ bannerText: "", bannerSubText: "", location: "Homepage", link: "" })
         setEditingBannerText(null)
         fetchBannerTexts()
       } else {
@@ -115,6 +116,7 @@ export default function BannerTextSection() {
       bannerText: bannerText.bannerText,
       bannerSubText: bannerText.bannerSubText,
       location: bannerText.location,
+      link: bannerText.link,
     })
     setDialogs((prev) => ({ ...prev, editBannerText: true }))
   }
@@ -151,6 +153,10 @@ export default function BannerTextSection() {
                 <Label htmlFor="location">Location</Label>
                 <Input id="location" value={bannerTextForm.location} onChange={(e) => setBannerTextForm((prev) => ({ ...prev, location: e.target.value }))} placeholder="Enter location" />
               </div>
+              <div>
+                <Label htmlFor="link">Link</Label>
+                <Input id="link" value={bannerTextForm.link} onChange={(e) => setBannerTextForm((prev) => ({ ...prev, link: e.target.value }))} placeholder="Enter link URL" />
+              </div>
             </div>
             <DialogFooter>
               <Button onClick={handleAddBannerText} disabled={loading.action}>
@@ -174,7 +180,14 @@ export default function BannerTextSection() {
               </CardHeader>
               <CardContent>
                 <div className="flex justify-between items-center">
-                  <p className="text-sm text-muted-foreground">Location: {bannerText.location}</p>
+                  <div className="text-sm text-muted-foreground">
+                    <p>Location: {bannerText.location}</p>
+                    {bannerText.link && (
+                      <p className="mt-1">
+                        Link: <a href={bannerText.link} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline">{bannerText.link}</a>
+                      </p>
+                    )}
+                  </div>
                   <div className="flex gap-2">
                     <Button size="sm" variant="outline" onClick={() => openEditBannerTextDialog(bannerText)}>
                       <Edit className="h-4 w-4" />
@@ -233,6 +246,10 @@ export default function BannerTextSection() {
             <div>
               <Label htmlFor="edit-location">Location</Label>
               <Input id="edit-location" value={bannerTextForm.location} onChange={(e) => setBannerTextForm((prev) => ({ ...prev, location: e.target.value }))} placeholder="Enter location" />
+            </div>
+            <div>
+              <Label htmlFor="edit-link">Link</Label>
+              <Input id="edit-link" value={bannerTextForm.link} onChange={(e) => setBannerTextForm((prev) => ({ ...prev, link: e.target.value }))} placeholder="Enter link URL" />
             </div>
           </div>
           <DialogFooter>

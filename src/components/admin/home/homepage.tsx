@@ -73,6 +73,7 @@ interface BannerText {
   bannerText: string
   bannerSubText: string
   location: string
+  link: string
   __v: number
 }
 
@@ -120,6 +121,7 @@ export default function HomeManagementPage() {
     bannerText: "",
     bannerSubText: "",
     location: "Homepage",
+    link: "",
   })
 
   const [buttonTextForm, setButtonTextForm] = useState({
@@ -318,7 +320,7 @@ export default function HomeManagementPage() {
           description: response.message || "Banner text added successfully",
         })
         setDialogs((prev) => ({ ...prev, addBannerText: false }))
-        setBannerTextForm({ bannerText: "", bannerSubText: "", location: "Homepage" })
+        setBannerTextForm({ bannerText: "", bannerSubText: "", location: "Homepage", link: "" })
         fetchBannerTexts()
       } else {
         toast({
@@ -354,7 +356,7 @@ export default function HomeManagementPage() {
           description: response.message || "Banner text updated successfully",
         })
         setDialogs((prev) => ({ ...prev, editBannerText: false }))
-        setBannerTextForm({ bannerText: "", bannerSubText: "", location: "Homepage" })
+        setBannerTextForm({ bannerText: "", bannerSubText: "", location: "Homepage", link: "" })
         setEditingBannerText(null)
         fetchBannerTexts()
       } else {
@@ -510,6 +512,7 @@ export default function HomeManagementPage() {
       bannerText: bannerText.bannerText,
       bannerSubText: bannerText.bannerSubText,
       location: bannerText.location,
+      link: bannerText.link,
     })
     setDialogs((prev) => ({ ...prev, editBannerText: true }))
   }

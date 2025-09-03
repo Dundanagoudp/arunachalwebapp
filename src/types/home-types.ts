@@ -16,6 +16,7 @@ export interface BannerText {
   bannerText: string
   bannerSubText: string
   location: string
+  link: string
   __v: number
 }
 
