@@ -84,6 +84,18 @@ const ContactModal: React.FC<ContactModalProps> = ({
     }
   }
 
+  // Helpers
+  const normalizeEmailLink = (value: string) => {
+    const trimmed = value.trim()
+    if (!trimmed) return ''
+    const isMailto = /^mailto:/i.test(trimmed)
+    const isHttp = /^https?:\/\//i.test(trimmed)
+    const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)
+    if (isMailto || isHttp) return trimmed
+    if (isEmail) return `mailto:${trimmed}`
+    return trimmed
+  }
+
   // Validate form
   const validateForm = () => {
     const newErrors: Record<string, string> = {}
@@ -102,10 +114,15 @@ const ContactModal: React.FC<ContactModalProps> = ({
       newErrors.email = 'Please enter a valid email address'
     }
 
-    if (!formData.emailLink.trim()) {
-      newErrors.emailLink = 'Email link is required'
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.emailLink)) {
-      newErrors.emailLink = 'Please enter a valid email address'
+    // Email link is optional; if provided must be mailto/email/URL
+    if (formData.emailLink.trim()) {
+      const v = formData.emailLink.trim()
+      const isMailto = /^mailto:/i.test(v)
+      const isHttp = /^https?:\/\//i.test(v)
+      const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)
+      if (!isMailto && !isHttp && !isEmail) {
+        newErrors.emailLink = 'Use mailto:, full URL, or a valid email'
+      }
     }
 
     setErrors(newErrors)
@@ -117,7 +134,10 @@ const ContactModal: React.FC<ContactModalProps> = ({
     e.preventDefault()
     
     if (validateForm()) {
-      onSubmit(formData)
+      onSubmit({
+        ...formData,
+        emailLink: normalizeEmailLink(formData.emailLink),
+      })
     }
   }
 
@@ -218,10 +238,10 @@ const ContactModal: React.FC<ContactModalProps> = ({
             </Label>
             <Input
               id="emailLink"
-              type="email"
+              type="text"
               value={formData.emailLink}
               onChange={(e) => handleInputChange('emailLink', e.target.value)}
-              placeholder="Enter email link..."
+              placeholder="mailto:info@example.com or https://example.com or email"
               className={errors.emailLink ? 'border-red-500' : ''}
               disabled={isSubmitting}
             />
