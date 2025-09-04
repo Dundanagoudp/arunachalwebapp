@@ -4,9 +4,10 @@ import type React from "react"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
 import SunIcon from "../archive/sun-icon"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { contactUsMail } from "@/service/contactusServices"
 import { useToast } from "@/components/ui/custom-toast"
+import { getContactInfo } from "@/service/homeService"
 
 export default function ContactUsPage() {
   const { showToast } = useToast()
@@ -15,6 +16,57 @@ export default function ContactUsPage() {
   const [mobile, setMobile] = useState("")
   const [description, setDescription] = useState("")
   const [loading, setLoading] = useState(false)
+  const [eventVenueLines, setEventVenueLines] = useState<string[]>([])
+  const [contactEmail, setContactEmail] = useState<string>("")
+  const [officeAddressLines, setOfficeAddressLines] = useState<string[]>([])
+
+  useEffect(() => {
+    const toLines = (value: unknown): string[] => {
+      if (Array.isArray(value)) return value.filter(Boolean).map((v) => String(v))
+      if (typeof value === "string")
+        return value.split(/\n|,/).map((s) => s.trim()).filter((s) => s.length > 0)
+      if (value && typeof value === "object")
+        return Object.values(value as Record<string, unknown>).map((v) => String(v)).filter((s) => s.trim().length > 0)
+      return []
+    }
+
+    const toThreeLines = (parts: string[]): string[] => {
+      const items = parts.filter((p) => p && p.trim().length > 0)
+      if (items.length === 0) return []
+      if (items.length === 1) return [items[0]]
+      if (items.length === 2) return [items[0], items[1]]
+      if (items.length === 3) return items
+      const first = items[0]
+      const last = items[items.length - 1]
+      const middle = items.slice(1, -1).join(', ')
+      return [first, middle, last]
+    }
+
+    const toTwoLines = (parts: string[]): string[] => {
+      const items = parts.filter((p) => p && p.trim().length > 0)
+      if (items.length === 0) return []
+      if (items.length === 1) return [items[0]]
+      const first = items[0]
+      const rest = items.slice(1).join(', ')
+      return [first, rest]
+    }
+
+    const fetchContact = async () => {
+      const res = await getContactInfo()
+      if (res.success) {
+        const raw: any = res.data
+        const data: any = Array.isArray(raw) ? raw[0] : raw
+        const office = data?.officeAddress ?? data?.office ?? data?.office_address
+        const venue = data?.eventVenue ?? data?.event_venue ?? data?.venue
+        const mail = data?.email ?? data?.contactEmail ?? data?.mail
+        setOfficeAddressLines(toThreeLines(toLines(office)))
+        setEventVenueLines(toTwoLines(toLines(venue)))
+        setContactEmail(typeof mail === 'string' ? mail : Array.isArray(mail) ? mail[0] ?? '' : '')
+      }
+    }
+
+    fetchContact()
+  }, [])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -149,14 +201,27 @@ export default function ContactUsPage() {
             className="absolute -right-6 top-1/2 -translate-y-1/2 hidden lg:block z-0"
           />
           <div>
+            <h3 className="font-bold text-base sm:text-lg mb-2 text-[#1A3FA9] font-dm-serif">Office Address:</h3>
+            {(officeAddressLines.length > 0 ? officeAddressLines : [
+              'Directorate of Information and Public Relations',
+              '(Soochna Bhawan), Papu Nallah, Naharlagun, Arunachal',
+              'Pradesh Pin - 791110',
+            ]).map((line, idx) => (
+              <p key={`office-contact-${idx}`}>{line}</p>
+            ))}
+          </div>
+          <div>
             <h3 className="font-bold text-base sm:text-lg mb-2 text-[#1A3FA9] font-dm-serif">Event Venue:</h3>
-            <p>Dorjee Khandu State Convention</p>
-            <p>Centre, Itanagar, Arunachal</p>
-            <p>Pradesh Pin - 791111</p>
+            {(eventVenueLines.length > 0 ? eventVenueLines : [
+              'Dorjee Khandu State Convention Centre, Itanagar,',
+              'Arunachal Pradesh Pin - 791111',
+            ]).map((line, idx) => (
+              <p key={`venue-contact-${idx}`}>{line}</p>
+            ))}
           </div>
           <div>
             <h3 className="font-bold text-base sm:text-lg mb-2 text-[#1A3FA9] font-dm-serif">Email:</h3>
-            <p>arunachallitfest@gmail.com</p>
+            <p>{contactEmail || 'arunachallitfest@gmail.com'}</p>
           </div>
         </div>
       </div>

@@ -38,3 +38,29 @@ export interface IntroItem {
 }
 
 export type IntroList = IntroItem[]
+
+// Contact Information types
+export interface ContactInfo {
+  _id: string
+  officeAddress: string
+  eventVenue: string
+  email: string
+  emailLink: string
+  __v?: number
+}
+
+export interface AddContactInfoRequest {
+  officeAddress: string
+  eventVenue: string
+  email: string
+  emailLink: string
+}
+
+export interface UpdateContactInfoRequest {
+  officeAddress?: string
+  eventVenue?: string
+  email?: string
+  emailLink?: string
+}
+
+export type ContactInfoList = ContactInfo[]
