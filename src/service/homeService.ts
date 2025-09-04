@@ -272,3 +272,68 @@ export async function deleteIntro(introId: string): Promise<ApiResponse<{ messag
     }
   }
 }
+
+// Contact Information APIs
+export async function addContactInfo(data: any): Promise<ApiResponse<any>> {
+  try {
+    const response = await apiClient.post("/homePage/addContactInfo", data)
+    return {
+      success: true,
+      data: response.data,
+      message: response.data?.message || "Contact information added successfully",
+    }
+  } catch (error: any) {
+    return {
+      success: false,
+      error: error.response?.data?.message || "Failed to add contact information",
+    }
+  }
+}
+
+export async function getContactInfo(): Promise<ApiResponse<any>> {
+  try {
+    const response = await apiClient.get("/homePage/getContactInfo")
+    return {
+      success: true,
+      data: response.data,
+      message: "Contact information fetched successfully",
+    }
+  } catch (error: any) {
+    return {
+      success: false,
+      error: error.response?.data?.message || "Failed to fetch contact information",
+    }
+  }
+}
+
+export async function updateContactInfo(id: string, data: any): Promise<ApiResponse<any>> {
+  try {
+    const response = await apiClient.post(`/homePage/updateContactInfo/${id}`, data)
+    return {
+      success: true,
+      data: response.data,
+      message: response.data?.message || "Contact information updated successfully",
+    }
+  } catch (error: any) {
+    return {
+      success: false,
+      error: error.response?.data?.message || "Failed to update contact information",
+    }
+  }
+}
+
+export async function deleteContactInfo(id: string): Promise<ApiResponse<any>> {
+  try {
+    const response = await apiClient.delete(`/homePage/deleteContactInfo/${id}`)
+    return {
+      success: true,
+      data: response.data,
+      message: response.data?.message || "Contact information deleted successfully",
+    }
+  } catch (error: any) {
+    return {
+      success: false,
+      error: error.response?.data?.message || "Failed to delete contact information",
+    }
+  }
+}

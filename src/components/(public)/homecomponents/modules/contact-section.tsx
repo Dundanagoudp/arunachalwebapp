@@ -5,12 +5,17 @@ import { ArrowRight, ArrowUpRight } from "lucide-react"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
 import DiamondBackground from "./DiamondBackground"
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import AOS from 'aos'
 import 'aos/dist/aos.css'
+import { getContactInfo } from '@/service/homeService'
 
 export default function Contactsection() {
   const router = useRouter()
+  const [officeAddressLines, setOfficeAddressLines] = useState<string[]>([])
+  const [eventVenueLines, setEventVenueLines] = useState<string[]>([])
+  const [email, setEmail] = useState<string>("")
+  const [emailLink, setEmailLink] = useState<string>("")
 
   useEffect(() => {
     AOS.init({
@@ -18,6 +23,68 @@ export default function Contactsection() {
       easing: 'ease-in-out',
       once: true,
     })
+
+    const toLines = (value: unknown): string[] => {
+      if (Array.isArray(value)) {
+        return value.filter(Boolean).map((v) => String(v))
+      }
+      if (typeof value === 'string') {
+        // Split by newlines or commas, trim, and remove empties
+        return value
+          .split(/\n|,/)
+          .map((s) => s.trim())
+          .filter((s) => s.length > 0)
+      }
+      if (value && typeof value === 'object') {
+        // Join object values if an object is provided
+        return Object.values(value as Record<string, unknown>)
+          .map((v) => String(v))
+          .filter((s) => s.trim().length > 0)
+      }
+      return []
+    }
+
+    const toThreeLines = (parts: string[]): string[] => {
+      const items = parts.filter((p) => p && p.trim().length > 0)
+      if (items.length === 0) return []
+      if (items.length === 1) return [items[0]]
+      if (items.length === 2) return [items[0], items[1]]
+      if (items.length === 3) return items
+      // More than 3: first line = first, last line = last, middle = all rest joined
+      const first = items[0]
+      const last = items[items.length - 1]
+      const middle = items.slice(1, -1).join(', ')
+      return [first, middle, last]
+    }
+
+    const toTwoLines = (parts: string[]): string[] => {
+      const items = parts.filter((p) => p && p.trim().length > 0)
+      if (items.length === 0) return []
+      if (items.length === 1) return [items[0]]
+      const first = items[0]
+      const rest = items.slice(1).join(', ')
+      return [first, rest]
+    }
+
+    const fetchContact = async () => {
+      const res = await getContactInfo()
+      if (res.success) {
+        const raw: any = res.data
+        const data: any = Array.isArray(raw) ? raw[0] : raw
+        // Support a few likely shapes
+        const office = data?.officeAddress ?? data?.office ?? data?.office_address
+        const venue = data?.eventVenue ?? data?.event_venue ?? data?.venue
+        const mail = data?.email ?? data?.contactEmail ?? data?.mail
+        const mailHref = data?.emailLink ?? data?.email_link ?? ''
+
+        setOfficeAddressLines(toThreeLines(toLines(office)))
+        setEventVenueLines(toTwoLines(toLines(venue)))
+        setEmail(typeof mail === 'string' ? mail : Array.isArray(mail) ? mail[0] ?? '' : '')
+        setEmailLink(typeof mailHref === 'string' ? mailHref : '')
+      }
+    }
+
+    fetchContact()
   }, [])
 
   const handleContactClick = () => {
@@ -52,18 +119,26 @@ export default function Contactsection() {
         <div className="mt-12 space-y-8 text-base md:text-lg text-gray-800 font-bilo">
           <div data-aos="fade-up" data-aos-delay="300" data-aos-duration="1000">
             <p className="font-semibold font-dm-serif">Office address :</p>
-            <p>Directorate of Information and Public Relations</p>
-            <p>(Soochna Bhawan), Papu Nallah, Naharlagun, Arunachal</p>
-            <p>Pradesh Pin - 791110</p>
+            {(officeAddressLines.length > 0 ? officeAddressLines : [
+              'Directorate of Information and Public Relations',
+              '(Soochna Bhawan), Papu Nallah, Naharlagun, Arunachal',
+              'Pradesh Pin - 791110',
+            ]).map((line, idx) => (
+              <p key={`office-${idx}`}>{line}</p>
+            ))}
           </div>
           <div data-aos="fade-up" data-aos-delay="400" data-aos-duration="1000">
             <p className="font-semibold font-dm-serif">Event Venue:</p>
-            <p>Dorjee Khandu State Convention Centre, Itanagar,</p>
-            <p>Arunachal Pradesh Pin - 791111</p>
+            {(eventVenueLines.length > 0 ? eventVenueLines : [
+              'Dorjee Khandu State Convention Centre, Itanagar,',
+              'Arunachal Pradesh Pin - 791111',
+            ]).map((line, idx) => (
+              <p key={`venue-${idx}`}>{line}</p>
+            ))}
           </div>
           <div data-aos="fade-up" data-aos-delay="500" data-aos-duration="1000">
             <p className="font-semibold font-dm-serif">Email:</p>
-            <p>arunachallitfest@gmail.com</p>
+            <p>{email || 'arunachallitfest@gmail.com'}</p>
           </div>
         </div>
       </div>
