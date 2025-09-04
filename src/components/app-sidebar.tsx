@@ -172,6 +172,10 @@ const adminNavData = {
         {
           title:"Intro",
           url:"/admin/dashboard/home/into"
+        },
+        {
+          title:"contact",
+          url:"/admin/dashboard/home/contact"
         }
       ]
     },
