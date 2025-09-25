@@ -55,7 +55,7 @@ export function ArchiveFilters({
 
   useEffect(() => {
     if (yearFilter && yearFilter !== "all") {
-      const selectedYear = availableYears.find((year) => year.year.toString() === yearFilter)
+      const selectedYear = availableYears.find((year) => year._id === yearFilter)
       if (selectedYear && selectedYear.days) {
         setAvailableDays(selectedYear.days)
       } else {
@@ -187,7 +187,7 @@ export function ArchiveFilters({
               <SelectContent>
                 <SelectItem value="all">All Years</SelectItem>
                 {availableYears.map((yearData) => (
-                  <SelectItem key={yearData._id} value={yearData.year.toString()} className="text-xs sm:text-sm">
+                  <SelectItem key={yearData._id} value={yearData._id} className="text-xs sm:text-sm">
                     <span className="hidden sm:inline">
                       {yearData.year} - {getMonthName(yearData.month)} ({yearData.days?.length || 0} days)
                     </span>

@@ -200,7 +200,7 @@ export default function ViewYearPage() {
                       <Badge variant="outline">{dayImages.length} images</Badge>
                     </div>
                     <Button variant="outline" size="sm" asChild>
-                      <Link href={`/admin/dashboard/archive/upload?day=${dayImages[0]?.dayNumber_ref._id}`}>
+                      <Link href={`/admin/dashboard/archive/upload?year=${yearId}&day=${dayImages[0]?.dayNumber_ref._id}`}>
                         <Upload className="h-3 w-3 mr-1" />
                         Add More
                       </Link>
