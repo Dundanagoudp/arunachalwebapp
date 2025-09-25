@@ -62,6 +62,16 @@ function UploadImagesPageContent() {
     fetchYears()
   }, [])
 
+  // If only day is provided in query, auto-infer and set the corresponding year once years load
+  useEffect(() => {
+    if (!formData.yearId && formData.dayId && years.length > 0) {
+      const containingYear = years.find((y) => (y.days || []).some((d) => d._id === formData.dayId))
+      if (containingYear) {
+        setFormData((prev) => ({ ...prev, yearId: containingYear._id }))
+      }
+    }
+  }, [years, formData.dayId, formData.yearId])
+
   useEffect(() => {
     if (formData.yearId) {
       fetchDays(formData.yearId)

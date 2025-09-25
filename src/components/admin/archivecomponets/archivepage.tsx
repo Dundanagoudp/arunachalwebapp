@@ -23,7 +23,7 @@ import {
 import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Plus, Upload, RefreshCw, Archive, AlertCircle, CheckCircle } from "lucide-react"
 import Link from "next/link"
-import { getAllImages, deleteUploadedImage, deleteYear } from "@/service/archive"
+import { getAllImages, deleteUploadedImage, deleteYear, deleteDay } from "@/service/archive"
 import { ArchiveStats } from "@/components/admin/archivecomponets/archive-stats"
 import { ArchiveFilters } from "@/components/admin/archivecomponets/archive-filters"
 import { ImageGrid } from "@/components/admin/archivecomponets/image-grid"
@@ -99,7 +99,7 @@ export default function ArchiveManagement() {
       image.dayNumber_ref.dayLabel.toLowerCase().includes(searchTerm.toLowerCase()) ||
       image.year_ref.year.toString().includes(searchTerm)
 
-    const matchesYear = yearFilter === "all" || image.year_ref.year.toString() === yearFilter
+    const matchesYear = yearFilter === "all" || image.year_ref._id === yearFilter
 
     const matchesDay = dayFilter === "all" || image.dayNumber_ref._id === dayFilter
 
@@ -186,17 +186,32 @@ export default function ArchiveManagement() {
     setDeleteYearLoading(true)
     setError("")
     try {
-      // Find the yearId from images (since we only have year number in yearFilter)
-      const yearImage = images.find(img => img.year_ref.year.toString() === yearFilter)
-      const yearId = yearImage?.year_ref._id
+      const yearId = yearFilter
       if (!yearId) throw new Error("Year ID not found")
+
+      // Attempt direct year delete first
       const result = await deleteYear(yearId)
       if (result.success) {
         setSuccessMessage("Year deleted successfully")
         setYearFilter("all")
         await fetchImages()
       } else {
-        throw new Error(result.error || "Failed to delete year")
+        // Fallback: delete all days for this year, then retry
+        const dayIds = Array.from(
+          new Set(images.filter((img) => img.year_ref._id === yearId).map((img) => img.dayNumber_ref._id)),
+        )
+        if (dayIds.length === 0) throw new Error(result.error || "Failed to delete year")
+
+        await Promise.all(dayIds.map((dId) => deleteDay(dId)))
+
+        const retry = await deleteYear(yearId)
+        if (retry.success) {
+          setSuccessMessage("Year and its days deleted successfully")
+          setYearFilter("all")
+          await fetchImages()
+        } else {
+          throw new Error(retry.error || "Failed to delete year after deleting days")
+        }
       }
     } catch (error: any) {
       setError(error.message || "Failed to delete year")
