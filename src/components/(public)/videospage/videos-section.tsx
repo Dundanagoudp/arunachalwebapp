@@ -18,6 +18,7 @@ import { Dialog } from "@/components/ui/dialog"
 import { useToast } from "@/hooks/use-toast"
 import { format } from "date-fns"
 import Link from "next/link"
+import { getThumbnailUrl } from "@/utils/mediaUrl"
 
 // Helper to extract YouTube video ID
 function getYouTubeVideoId(url: string = "") {
@@ -114,7 +115,7 @@ export default function Videosection() {
                       thumbnailUrl={
                         video.videoType === 'youtube' && video.youtubeUrl
                           ? `https://img.youtube.com/vi/${getYouTubeVideoId(video.youtubeUrl)}/hqdefault.jpg`
-                          : video.imageUrl || "/gallery/gallery2.png"
+                          : getThumbnailUrl(video.imageUrl) || "/gallery/gallery2.png"
                       }
                     />
                   </a>
@@ -131,7 +132,7 @@ export default function Videosection() {
                       thumbnailUrl={
                         video.videoType === 'youtube' && video.youtubeUrl
                           ? `https://img.youtube.com/vi/${getYouTubeVideoId(video.youtubeUrl)}/hqdefault.jpg`
-                          : video.imageUrl || "/gallery/gallery2.png"
+                          : getThumbnailUrl(video.imageUrl) || "/gallery/gallery2.png"
                       }
                     />
                   </Link>

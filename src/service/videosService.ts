@@ -21,7 +21,7 @@ export async function addVideoBlog(data: AddVideoBlogData): Promise<ApiResponse<
       }
     }
 
-    const response = await apiClient.post("/videoBlog/addVideoBLog", formData)
+    const response = await apiClient.post("/videoBlog/addVideoBlog", formData)
     return {
       success: true,
       data: response.data.videoBlog || response.data,

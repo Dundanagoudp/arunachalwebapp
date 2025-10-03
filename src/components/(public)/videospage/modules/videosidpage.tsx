@@ -7,6 +7,8 @@ import type { VideoBlog } from "@/types/videos-types"
 import { format } from "date-fns"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft } from "lucide-react"
+import { getVideoUrl, getThumbnailUrl } from "@/utils/mediaUrl"
+import { useToast } from "@/hooks/use-toast"
 
 export default function PublicVideoDetail() {
   const params = useParams()
@@ -14,6 +16,7 @@ export default function PublicVideoDetail() {
   const videoId = params?.id as string
   const [video, setVideo] = useState<VideoBlog | null>(null)
   const [loading, setLoading] = useState(true)
+  const { toast } = useToast()
 
   useEffect(() => {
     async function fetchVideo() {
@@ -82,8 +85,23 @@ export default function PublicVideoDetail() {
               <video
                 controls
                 className="w-full h-full object-cover relative z-10 transition-transform duration-300 hover:scale-[1.01]"
-                src={video.video_url}
-              />
+                src={getVideoUrl(video.video_url)}
+                poster={getThumbnailUrl(video.imageUrl)}
+                preload="metadata"
+                crossOrigin="anonymous"
+                onError={(e) => {
+                  console.error("Video playback error:", e);
+                  toast({
+                    title: "Video Error",
+                    description: "There was an issue playing this video. Please try refreshing the page.",
+                  });
+                }}
+                onLoadStart={() => console.log("Video loading started")}
+                onCanPlay={() => console.log("Video can play")}
+              >
+                <source src={getVideoUrl(video.video_url)} type="video/mp4" />
+                Your browser does not support the video tag.
+              </video>
             ) : (
               <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-gray-100 to-gray-200 relative z-10">
                 <div className="text-center text-gray-500 animate-bounce">

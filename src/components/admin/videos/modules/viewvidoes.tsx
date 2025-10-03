@@ -21,6 +21,7 @@ import { getVideoById, deleteVideoBlog } from "@/service/videosService"
 import type { VideoBlog } from "@/types/videos-types"
 import { useToast } from "@/hooks/use-toast"
 import { VideoDetailSkeleton } from "@/components/video-skeleton"
+import { getVideoUrl, getThumbnailUrl } from "@/utils/mediaUrl"
 
 export default function VideoDetailPage() {
   const params = useParams() as { id?: string }
@@ -233,13 +234,25 @@ export default function VideoDetailPage() {
               {video.videoType === "video" && video.video_url && (
                 <div className="aspect-video relative">
                   <video
-                    src={video.video_url}
-                    poster={video.imageUrl}
+                    src={getVideoUrl(video.video_url)}
+                    poster={getThumbnailUrl(video.imageUrl)}
                     controls
                     className="w-full h-full"
                     onPlay={() => setIsPlaying(true)}
                     onPause={() => setIsPlaying(false)}
+                    onError={(e) => {
+                      console.error("Video playback error:", e);
+                      toast({
+                        title: "Video Error",
+                        description: "There was an issue playing this video. Please try refreshing the page.",
+                      });
+                    }}
+                    onLoadStart={() => console.log("Video loading started")}
+                    onCanPlay={() => console.log("Video can play")}
+                    preload="metadata"
+                    crossOrigin="anonymous"
                   >
+                    <source src={getVideoUrl(video.video_url)} type="video/mp4" />
                     Your browser does not support the video tag.
                   </video>
                 </div>
@@ -248,7 +261,7 @@ export default function VideoDetailPage() {
               {video.videoType === "video" && !video.video_url && video.imageUrl && (
                 <div className="aspect-video relative">
                   <Image
-                    src={video.imageUrl || "/placeholder.svg"}
+                    src={getThumbnailUrl(video.imageUrl)}
                     alt={video.title}
                     fill
                     className="object-cover"
@@ -306,7 +319,7 @@ export default function VideoDetailPage() {
                   <div className="p-3 bg-blue-50 rounded-lg">
                     <h4 className="text-sm font-medium text-blue-800 mb-2">Video File</h4>
                     <Button variant="outline" size="sm" asChild className="w-full justify-start bg-white/80">
-                      <a href={video.video_url} target="_blank" rel="noopener noreferrer">
+                      <a href={getVideoUrl(video.video_url)} target="_blank" rel="noopener noreferrer">
                         <Download className="h-4 w-4 mr-2" />
                         Download Original
                       </a>
@@ -320,7 +333,7 @@ export default function VideoDetailPage() {
                     <div className="space-y-3">
                       <div className="aspect-video relative rounded-lg overflow-hidden bg-gray-100 border">
                         <Image
-                          src={video.imageUrl || "/placeholder.svg"}
+                          src={getThumbnailUrl(video.imageUrl)}
                           alt={`${video.title} thumbnail`}
                           fill
                           className="object-cover"
@@ -328,7 +341,7 @@ export default function VideoDetailPage() {
                         />
                       </div>
                       <Button variant="outline" size="sm" asChild className="w-full justify-start bg-white/80">
-                        <a href={video.imageUrl} target="_blank" rel="noopener noreferrer">
+                        <a href={getThumbnailUrl(video.imageUrl)} target="_blank" rel="noopener noreferrer">
                           <ExternalLink className="h-4 w-4 mr-2" />
                           View Full Size
                         </a>
