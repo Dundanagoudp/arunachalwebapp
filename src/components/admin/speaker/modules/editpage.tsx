@@ -23,6 +23,7 @@ import { useParams, useRouter } from "next/navigation"
 import { getSpeakerById, updateSpeaker, getEvent } from "@/service/speaker"
 import type { Event, Speaker } from "@/types/speaker-types"
 import Image from "next/image"
+import { getMediaUrl } from "@/utils/mediaUrl"
 
 export default function EditSpeaker() {
   const params = useParams()
@@ -206,11 +207,11 @@ export default function EditSpeaker() {
           ) : (
             <div className="space-y-6">
               {/* Current Speaker Info */}
-              {speaker && (
+                  {speaker && (
                 <div className="flex items-center gap-4 p-4 bg-muted rounded-lg">
                   {speaker.image_url ? (
                     <Image
-                      src={speaker.image_url || "/placeholder.svg"}
+                      src={getMediaUrl(speaker.image_url) || "/placeholder.svg"}
                       alt={speaker.name}
                       width={60}
                       height={60}

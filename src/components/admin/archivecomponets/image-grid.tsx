@@ -11,6 +11,7 @@ import Link from "next/link"
 import type { ArchiveImage } from "@/types/archive-types"
 import { useDeletePermission } from "@/hooks/use-delete-permission"
 import { ContactAdminModal } from "@/components/ui/contact-admin-modal"
+import { getMediaUrl } from "@/utils/mediaUrl"
 
 interface ImageGridProps {
   images: ArchiveImage[]
@@ -32,7 +33,7 @@ export function ImageGrid({ images, viewMode, selectedImages, onSelectImage, onD
 
   const downloadImage = (imageUrl: string, fileName: string) => {
     const link = document.createElement("a")
-    link.href = imageUrl
+    link.href = getMediaUrl(imageUrl)
     link.download = fileName
     link.target = "_blank"
     document.body.appendChild(link)
@@ -129,7 +130,7 @@ export function ImageGrid({ images, viewMode, selectedImages, onSelectImage, onD
                           <>
                             <div className="aspect-square rounded-lg overflow-hidden bg-gray-100 border-2 border-transparent hover:border-blue-500 transition-colors">
                               <img
-                                src={image.image_url || "/placeholder.svg"}
+                                src={getMediaUrl(image.image_url) || "/placeholder.svg"}
                                 alt={`${dayLabel} archive`}
                                 className="w-full h-full object-cover cursor-pointer"
                                 onClick={() => viewImage(image)}
@@ -198,7 +199,7 @@ export function ImageGrid({ images, viewMode, selectedImages, onSelectImage, onD
                             />
                             <div className="w-12 h-12 sm:w-16 sm:h-16 rounded-lg overflow-hidden bg-gray-100">
                               <img
-                                src={image.image_url || "/placeholder.svg"}
+                                src={getMediaUrl(image.image_url) || "/placeholder.svg"}
                                 alt={`${dayLabel} archive`}
                                 className="w-full h-full object-cover cursor-pointer"
                                 onClick={() => viewImage(image)}
@@ -276,7 +277,7 @@ export function ImageGrid({ images, viewMode, selectedImages, onSelectImage, onD
           </DialogHeader>
           <div className="flex justify-center">
             <img
-              src={selectedImage?.image_url || "/placeholder.svg"}
+              src={selectedImage ? getMediaUrl(selectedImage.image_url) : "/placeholder.svg"}
               alt="Archive image"
               className="max-w-full max-h-[60vh] sm:max-h-[70vh] object-contain rounded-lg"
             />

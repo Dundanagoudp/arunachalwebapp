@@ -45,6 +45,7 @@ import DashboardLoading from "@/components/admin/dashboard/DashboardLoading";
 import DashboardError from "@/components/admin/dashboard/DashboardError";
 import { getCookieViewCount } from "@/service/getCookiesServices";
 import { ViewCounter } from "@/types/viewCounter-types";
+import { getMediaUrl } from "@/utils/mediaUrl";
 
 export default function AdminDashboard() {
   // State for API data
@@ -374,7 +375,7 @@ export default function AdminDashboard() {
                       </div>
                       <Avatar className="h-8 w-8">
                         <AvatarImage
-                          src={speaker.avatar || "/placeholder.svg"}
+                          src={getMediaUrl(speaker.avatar) || "/placeholder.svg"}
                           alt={speaker.name}
                         />
                         <AvatarFallback>
@@ -443,7 +444,7 @@ export default function AdminDashboard() {
                     {archiveStats.recent.map((img: any) => (
                       <div key={img._id} className="flex items-center gap-3">
                         <img
-                          src={img.image_url || "/file.svg"}
+                          src={getMediaUrl(img.image_url) || "/file.svg"}
                           alt={img.originalName || "Archive Image"}
                           className="w-10 h-10 object-cover rounded"
                         />
