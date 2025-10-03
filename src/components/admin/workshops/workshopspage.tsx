@@ -60,6 +60,7 @@ import {
 } from "@/components/skeleton-card"
 import { useDeletePermission } from "@/hooks/use-delete-permission"
 import { ContactAdminModal } from "@/components/ui/contact-admin-modal"
+import { getMediaUrl } from "@/utils/mediaUrl"
 
 export default function WorkshopsManagement() {
   const { isAdmin } = useDeletePermission()
@@ -306,7 +307,7 @@ export default function WorkshopsManagement() {
                   >
                     <div className="w-full lg:w-32 h-32 lg:h-24 bg-muted rounded-md overflow-hidden flex-shrink-0">
                       <img
-                        src={workshop.imageUrl || "/placeholder.svg"}
+                        src={getMediaUrl(workshop.imageUrl) || "/placeholder.svg"}
                         alt={workshop.name}
                         className="w-full h-full object-cover"
                       />

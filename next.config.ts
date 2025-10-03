@@ -52,6 +52,24 @@ const nextConfig: NextConfig = {
 
     ],
 
+    remotePatterns: [
+      // Local dev media
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '8000',
+        pathname: '/uploads/**',
+      },
+      // Allow https media host from env (e.g., CDN or production server)
+      ...(process.env.NEXT_PUBLIC_MEDIA_BASE_HOST
+        ? [{
+            protocol: 'https',
+            hostname: process.env.NEXT_PUBLIC_MEDIA_BASE_HOST,
+            pathname: '/uploads/**',
+          } as const]
+        : []),
+    ],
+
   },
 
 };

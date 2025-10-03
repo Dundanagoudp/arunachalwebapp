@@ -55,6 +55,7 @@ import { ContentTypeSelector } from "@/components/admin/content-type-selector";
 import { useParams, useRouter } from "next/navigation";
 import { Blog } from "@/types/newAndBlogTypes";
 import { useToast } from "@/hooks/use-toast";
+import { getMediaUrl } from "@/utils/mediaUrl";
 
 const formSchema = z.object({
   title: z.string().min(2, {
@@ -160,7 +161,7 @@ export default function EditNewsBlogForm() {
 
           // Set preview image
           if (blogData.image_url) {
-            setPreviewImage(blogData.image_url);
+            setPreviewImage(getMediaUrl(blogData.image_url));
           }
         }
 
@@ -469,7 +470,7 @@ export default function EditNewsBlogForm() {
                   {(previewImage || blog?.image_url) && (
                     <div className="w-20 h-20 rounded-md overflow-hidden border">
                       <img
-                        src={previewImage || blog?.image_url}
+                        src={previewImage || (blog?.image_url ? getMediaUrl(blog.image_url) : undefined)}
                         alt="Preview"
                         className="w-full h-full object-cover"
                       />
