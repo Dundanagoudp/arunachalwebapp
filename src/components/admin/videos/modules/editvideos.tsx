@@ -26,6 +26,7 @@ import Image from "next/image"
 import { getVideoById, updateVideoBlog } from "@/service/videosService"
 import type { VideoBlog } from "@/types/videos-types"
 import { useToast } from "@/hooks/use-toast"
+import { getVideoUrl, getThumbnailUrl } from "@/utils/mediaUrl"
 
 export default function EditVideoPage() {
   const params = useParams() as { id?: string };
@@ -345,7 +346,7 @@ export default function EditVideoPage() {
                       <div className="flex items-center gap-2">
                         <Video className="h-4 w-4 text-blue-500" />
                         <a 
-                          href={video.video_url} 
+                          href={getVideoUrl(video.video_url)} 
                           target="_blank" 
                           rel="noopener noreferrer"
                           className="text-sm text-blue-600 hover:underline"
@@ -369,7 +370,7 @@ export default function EditVideoPage() {
                       <div className="flex items-center gap-3">
                         <div className="w-16 h-12 relative rounded overflow-hidden">
                           <Image 
-                            src={video.imageUrl} 
+                            src={getThumbnailUrl(video.imageUrl)} 
                             alt="Current thumbnail" 
                             fill 
                             className="object-cover"
@@ -377,7 +378,7 @@ export default function EditVideoPage() {
                           />
                         </div>
                         <a 
-                          href={video.imageUrl} 
+                          href={getThumbnailUrl(video.imageUrl)} 
                           target="_blank" 
                           rel="noopener noreferrer"
                           className="text-sm text-blue-600 hover:underline"
