@@ -55,6 +55,7 @@ import {
 } from "@/components/ui/pagination";
 import { useDeletePermission } from "@/hooks/use-delete-permission";
 import { ContactAdminModal } from "@/components/ui/contact-admin-modal";
+import { getMediaUrl } from "@/utils/mediaUrl";
 
 export default function NewsAndBlogsManagement() {
   const [searchTerm, setSearchTerm] = useState("")
@@ -275,7 +276,7 @@ export default function NewsAndBlogsManagement() {
               >
                 <div className="w-full sm:w-24 h-32 sm:h-16 bg-muted rounded-md overflow-hidden flex-shrink-0 mb-2 sm:mb-0">
                   <img
-                    src={content.image_url || "/placeholder.svg"}
+                    src={getMediaUrl(content.image_url) || "/placeholder.svg"}
                     alt={content.title}
                     className="w-full h-full object-cover"
                   />

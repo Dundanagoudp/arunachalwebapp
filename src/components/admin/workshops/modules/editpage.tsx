@@ -24,6 +24,7 @@ import type { Workshop, UpdateWorkshopData } from "@/types/workshop-types"
 import type { Event } from "@/types/events-types"
 import { useToast } from "@/hooks/use-toast"
 import { FormSkeleton, PageHeaderSkeleton } from "@/components/skeleton-card"
+import { getMediaUrl } from "@/utils/mediaUrl"
 
 export default function EditWorkshop() {
   const router = useRouter()
@@ -355,7 +356,7 @@ export default function EditWorkshop() {
                     <Label className="text-sm font-medium">Current Image</Label>
                     <div className="w-full max-w-md h-48 bg-muted rounded-md overflow-hidden border">
                       <img
-                        src={workshop?.imageUrl || "/placeholder.svg"}
+                        src={getMediaUrl(workshop?.imageUrl || "") || "/placeholder.svg"}
                         alt="Current workshop image"
                         className="w-full h-full object-cover"
                         onError={(e) => {

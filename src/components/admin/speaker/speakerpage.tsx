@@ -42,6 +42,7 @@ import { useState, useEffect } from "react";
 import { getSpeaker, deleteSpeaker, getEvent } from "@/service/speaker";
 import type { Speaker, Event } from "@/types/speaker-types";
 import Image from "next/image";
+import { getMediaUrl } from "@/utils/mediaUrl";
 import {
   Pagination,
   PaginationContent,
@@ -261,7 +262,7 @@ export default function SpeakersPage() {
                       <TableCell>
                         {speaker.image_url ? (
                           <Image
-                            src={speaker.image_url}
+                            src={getMediaUrl(speaker.image_url)}
                             alt={speaker.name}
                             width={40}
                             height={40}

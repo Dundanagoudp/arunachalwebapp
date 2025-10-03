@@ -7,8 +7,11 @@ const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 const MEDIA_BASE_URL = process.env.NEXT_PUBLIC_MEDIA_BASE_URL || 
   (API_BASE_URL ? API_BASE_URL.replace('/api/v1', '') : "http://localhost:8000")
 
-if (!API_BASE_URL) {
-  throw new Error("Missing NEXT_PUBLIC_API_BASE_URL. Please set it in .env.local")
+// Do not throw at import time; warn and fall back to localhost for DX
+if (!API_BASE_URL && typeof window !== 'undefined') {
+  // Only warn in the browser to reduce noise in server logs
+  // eslint-disable-next-line no-console
+  console.warn("mediaUrl: NEXT_PUBLIC_API_BASE_URL is not set. Falling back to http://localhost:8000 for media URLs.")
 }
 
 /**

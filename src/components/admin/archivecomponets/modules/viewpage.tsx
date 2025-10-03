@@ -19,6 +19,7 @@ import { Calendar, ImageIcon, AlertCircle, Loader2, Download, Eye, Edit, Upload 
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
 import Link from "next/link"
 import { getImagesByYear } from "@/service/archive"
+import { getMediaUrl } from "@/utils/mediaUrl"
 
 interface ArchiveImage {
   _id: string
@@ -80,7 +81,7 @@ export default function ViewYearPage() {
 
   const downloadImage = (imageUrl: string, fileName: string) => {
     const link = document.createElement("a")
-    link.href = imageUrl
+    link.href = getMediaUrl(imageUrl)
     link.download = fileName
     link.target = "_blank"
     document.body.appendChild(link)
@@ -213,7 +214,7 @@ export default function ViewYearPage() {
                       <div key={image._id} className="relative group">
                         <div className="aspect-square rounded-lg overflow-hidden bg-gray-100 border-2 border-transparent hover:border-blue-500 transition-colors">
                           <img
-                            src={image.image_url || "/placeholder.svg"}
+                            src={getMediaUrl(image.image_url) || "/placeholder.svg"}
                             alt={`${dayLabel} archive`}
                             className="w-full h-full object-cover cursor-pointer"
                             onClick={() => viewImage(image)}
@@ -271,7 +272,7 @@ export default function ViewYearPage() {
           </DialogHeader>
           <div className="flex justify-center">
             <img
-              src={selectedImage?.image_url || "/placeholder.svg"}
+              src={selectedImage ? getMediaUrl(selectedImage.image_url) : "/placeholder.svg"}
               alt="Archive image"
               className="max-w-full max-h-[70vh] object-contain rounded-lg"
             />
