@@ -10,6 +10,7 @@ import { useToast } from "@/hooks/use-toast"
 import { addBanner, getBanner, updateBanner, deleteBanner } from "@/service/homeService"
 import { useDeletePermission } from "@/hooks/use-delete-permission"
 import { ContactAdminModal } from "@/components/ui/contact-admin-modal"
+import { getMediaUrl } from "@/utils/mediaUrl"
 
 interface Banner {
   _id: string
@@ -158,7 +159,7 @@ export default function BannersSection() {
             <Card key={banner._id}>
               <CardHeader className="pb-2">
                 <div className="aspect-video relative overflow-hidden rounded-md">
-                  <img src={banner.image_url || "/placeholder.svg"} alt="Banner" className="object-cover w-full h-full" />
+                  <img src={getMediaUrl(banner.image_url)} alt="Banner" className="object-cover w-full h-full" />
                 </div>
               </CardHeader>
               <CardContent>
@@ -213,7 +214,7 @@ export default function BannersSection() {
           <div className="space-y-4">
             {editingBanner && (
               <div className="aspect-video relative overflow-hidden rounded-md">
-                <img src={editingBanner.image_url || "/placeholder.svg"} alt="Current Banner" className="object-cover w-full h-full" />
+                <img src={getMediaUrl(editingBanner.image_url)} alt="Current Banner" className="object-cover w-full h-full" />
               </div>
             )}
             <div>

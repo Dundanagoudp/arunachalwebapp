@@ -14,7 +14,7 @@ import "swiper/css"
 import "swiper/css/pagination"
 import AOS from 'aos'
 import 'aos/dist/aos.css'
-
+import { getMediaUrl } from "@/utils/mediaUrl"
 export default function GallerySection() {
   const [gallery, setGallery] = useState<ArchiveImage[]>([])
   const [isLightboxOpen, setIsLightboxOpen] = useState(false)
@@ -177,7 +177,7 @@ export default function GallerySection() {
                       }}
                     >
                       <Image
-                        src={image.image_url || "/placeholder.svg"}
+                        src={getMediaUrl(image.image_url) || "/placeholder.svg"}
                         alt={image.originalName || `Gallery Image ${index + 1}`}
                         width={600}
                         height={400}
@@ -216,7 +216,7 @@ export default function GallerySection() {
                     }}
                   >
                     <Image
-                      src={image.image_url || "/placeholder.svg"}
+                      src={getMediaUrl(image.image_url) || "/placeholder.svg"}
                       alt={image.originalName || `Gallery Image ${index + 1}`}
                       width={600}
                       height={400}
@@ -245,7 +245,7 @@ export default function GallerySection() {
               {currentImage && (
                 <div className="absolute inset-0 flex items-center justify-center">
                   <Image
-                    src={currentImage.image_url || "/placeholder.svg"}
+                    src={getMediaUrl(currentImage.image_url)   || "/placeholder.svg"}
                     alt={currentImage.originalName || "Gallery Image"}
                     fill
                     className="object-contain rounded-lg"

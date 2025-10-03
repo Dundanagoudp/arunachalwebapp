@@ -50,6 +50,8 @@ const nextConfig: NextConfig = {
 
       'img.youtube.com',
 
+      'localhost',
+
     ],
 
   },

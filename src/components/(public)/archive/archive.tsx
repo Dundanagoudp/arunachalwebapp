@@ -16,6 +16,7 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination"
+import { getMediaUrl } from "@/utils/mediaUrl"
 
 // Shimmer effect component
 const ShimmerEffect = ({ className }: { className?: string }) => (
@@ -198,7 +199,7 @@ export default function Archive() {
                     {data.images.slice(0, 4).map((imageUrl, index) => (
                       <div key={index} className="aspect-[4/3] rounded-lg overflow-hidden">
                         <Image
-                          src={imageUrl || "/placeholder.svg?height=150&width=200"}
+                          src={getMediaUrl(imageUrl) || "/placeholder.svg?height=150&width=200"}
                           alt={`Gallery preview image ${index + 1} for year ${data.year}`}
                           width={200}
                           height={150}
@@ -214,7 +215,7 @@ export default function Archive() {
                     {Array.from({ length: Math.max(0, 4 - data.images.length) }, (_, index) => (
                       <div key={`placeholder-${index}`} className="aspect-[4/3] rounded-lg overflow-hidden bg-gray-200">
                         <Image
-                          src="/placeholder.svg?height=150&width=200"
+                          src={getMediaUrl("/placeholder.svg?height=150&width=200")}
                           alt={`Placeholder image ${index + 1}`}
                           width={200}
                           height={150}

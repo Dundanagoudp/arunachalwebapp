@@ -19,7 +19,7 @@ import {
 import SunIcon from "@/components/sunicon-gif";
 import { Blog } from "@/types/newAndBlogTypes";
 import { getBlogs } from "@/service/newsAndBlogs";
-
+import { getMediaUrl } from "@/utils/mediaUrl"
 // Shimmer effect component
 const ShimmerEffect = ({ className }: { className?: string }) => (
   <div className={`relative overflow-hidden ${className}`}>
@@ -253,7 +253,7 @@ export default function BlogsLayout() {
                 <div className="p-3 sm:p-4 flex flex-col flex-1">
                   <div className="relative w-full h-48 sm:h-56 lg:h-64 mb-3 sm:mb-4 overflow-hidden rounded-lg">
                     <Image
-                      src={blog.image_url || ""}
+                      src={getMediaUrl(blog.image_url) || ""}
                       alt={blog.title}
                       fill
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"

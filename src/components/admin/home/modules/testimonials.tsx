@@ -31,7 +31,7 @@ import { getTestimonials, addTestimonial, updateTestimonial, deleteTestimonial }
 import { TestimonialCard } from "@/components/admin/home/testimonial/testimonial-card"
 import { TestimonialForm } from "@/components/admin/home/testimonial/testimonial-form"
 import { DeleteConfirmationDialog } from "@/components/admin/home/testimonial/delete-confirmation-dialog"
-
+import { getMediaUrl } from "@/utils/mediaUrl"
 const ITEMS_PER_PAGE = 6
 
 export default function TestimonialsManagement() {

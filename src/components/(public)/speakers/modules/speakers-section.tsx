@@ -14,6 +14,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/u
 import { X } from "lucide-react"
 import { getSpeaker } from "@/service/speaker"
 import type { Speaker } from "@/types/speaker-types"
+import { getMediaUrl } from "@/utils/mediaUrl"
 
 export default function SpeakersGrid() {
   const [currentPage, setCurrentPage] = useState(1)
@@ -32,6 +33,7 @@ export default function SpeakersGrid() {
       .then((res) => {
         if (res.success && res.data) {
           setSpeakers(res.data)
+          console.log(res.data)
           setError(null)
         } else {
           setError(res.error || "Failed to fetch speakers")
@@ -136,7 +138,7 @@ export default function SpeakersGrid() {
                           }}
                         >
                           <Image
-                            src={speaker.image_url || "/images/speaker.png"}
+                            src={getMediaUrl(speaker.image_url) || "/images/speaker.png"}
                             alt={speaker.name}
                             fill
                             className="object-cover object-center"
@@ -236,7 +238,8 @@ export default function SpeakersGrid() {
                           }}
                         >
                           <Image
-                            src={selectedSpeaker.image_url || "/images/speaker.png"}
+                          
+                            src={getMediaUrl(selectedSpeaker.image_url) || "/images/speaker.png"}
                             alt={selectedSpeaker.name}
                             fill
                             className="object-cover object-center"

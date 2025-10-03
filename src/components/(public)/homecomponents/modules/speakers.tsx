@@ -9,7 +9,7 @@ import "swiper/css/pagination"
 import "swiper/css/navigation"
 import { useEffect, useRef, useState } from "react"
 import { getSpeaker } from "@/service/speaker"
-
+import { getMediaUrl } from "@/utils/mediaUrl"
 interface Speaker {
   _id?: string
   id?: string
@@ -197,7 +197,7 @@ export default function Speakers() {
                             <div className="w-full h-full overflow-hidden rounded-lg shadow-2xl relative">
                               {/* Speaker Image */}
                               <Image
-                                src={speaker.image_url || "/placeholder.svg?height=400&width=300"}
+                                src={getMediaUrl(speaker.image_url) || "/placeholder.svg?height=400&width=300"}
                                 alt={speaker.name || "Speaker"}
                                 fill
                                 className="object-cover transition-transform duration-500 hover:scale-105"

@@ -4,6 +4,7 @@ import { useState, useEffect } from "react"
 import Image from "next/image"
 import { getAllEvents } from "@/service/events-apis"
 import { getPdfs } from "@/service/addPdfServices"
+import { getMediaUrl } from "@/utils/mediaUrl"
 
 // Month names for formatting
 const months = [
@@ -121,8 +122,10 @@ export default function Schedulepage() {
                 const result = await getPdfs()
                 if (result.success && Array.isArray(result.data) && result.data.length > 0) {
                   const firstPdf = result.data[0]
+                  
                   if (firstPdf?.pdf_url) {
-                    window.open(firstPdf.pdf_url, "_blank")
+                    console.log(firstPdf.pdf_url)
+                    window.open(getMediaUrl(firstPdf.pdf_url), "_blank")
                   } else {
                     alert("No schedule PDF URL available")
                   }
