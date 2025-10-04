@@ -79,7 +79,7 @@ export default function ContactUsPage() {
         phone: mobile,
       })
       if (response.success) {
-        showToast("Message sent! Thank you for contacting us. We'll get back to you soon.", "success")
+        showToast("Message sent! Thank you for contacting us.", "success")
         setFullName("")
         setEmail("")
         setMobile("")
