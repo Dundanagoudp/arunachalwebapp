@@ -6,6 +6,7 @@ import { ArrowRight, ArrowUpRight } from "lucide-react"
 import SunIcon from "@/components/sunicon-gif"
 import { getWorkshops } from "@/service/registrationService"
 import type { Workshop } from "@/types/workshop-types"
+import { getMediaUrl } from "@/utils/mediaUrl"
 
 // Skeleton shimmer loader for registration cards
 function RegistrationSkeleton() {
@@ -182,7 +183,7 @@ export default function RegistrationSection() {
                     {/* Workshop Image */}
                     <div className="mb-6 flex-1 flex items-center justify-center w-full">
                       <Image
-                        src={workshop.imageUrl || "/registration/creative.png"}
+                        src={getMediaUrl(workshop.imageUrl) || "/registration/creative.png"}
                         alt={workshop.name}
                         width={180}
                         height={180}

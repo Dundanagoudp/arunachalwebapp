@@ -11,6 +11,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Upload, X } from "lucide-react"
 import type { Testimonial } from "@/types/testimonial-types"
+import { getMediaUrl } from "@/utils/mediaUrl"
 
 interface TestimonialFormProps {
   testimonial?: Testimonial
@@ -40,6 +41,7 @@ export function TestimonialForm({ testimonial, onSubmit, onCancel, isLoading }: 
       const reader = new FileReader()
       reader.onloadend = () => {
         setImagePreview(reader.result as string)
+        console.log('Image preview:', reader.result)
       }
       reader.readAsDataURL(file)
     }
@@ -58,6 +60,7 @@ export function TestimonialForm({ testimonial, onSubmit, onCancel, isLoading }: 
     }
 
     await onSubmit(submitData)
+    console.log('Submit data:', submitData)
   }
 
   const removeImage = () => {
@@ -77,7 +80,7 @@ export function TestimonialForm({ testimonial, onSubmit, onCancel, isLoading }: 
             <Label htmlFor="image">Profile Image</Label>
             <div className="flex items-center gap-4">
               <Avatar className="w-20 h-20">
-                <AvatarImage src={imagePreview || "/placeholder.svg"} alt="Preview" />
+                <AvatarImage src={getMediaUrl(imagePreview)} alt="Preview" />
                 <AvatarFallback>
                   <Upload className="w-8 h-8 text-muted-foreground" />
                 </AvatarFallback>

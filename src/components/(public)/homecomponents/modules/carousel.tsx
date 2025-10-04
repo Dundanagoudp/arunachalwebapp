@@ -8,6 +8,7 @@ import "aos/dist/aos.css"
 import { getWorkshops } from "@/service/registrationService"
 import type { Workshop } from "@/types/workshop-types"
 import Link from "next/link"
+import { getMediaUrl } from "@/utils/mediaUrl"
 
 // Custom Sun Icon component (placeholder)
 const SunIcon = ({ size, src }: { size: number; src: string }) => (
@@ -337,7 +338,7 @@ export default function Carousel() {
                             >
                               <div className="mb-6 flex-1 flex items-center justify-center w-full">
                                 <Image
-                                  src={workshop.imageUrl || "/registration/creative.png"}
+                                  src={getMediaUrl(workshop.imageUrl) || "/registration/creative.png"}
                                   alt={workshop.name}
                                   width={180}
                                   height={180}

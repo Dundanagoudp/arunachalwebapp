@@ -6,6 +6,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Badge } from "@/components/ui/badge"
 import { Edit, Trash2, Quote } from "lucide-react"
 import type { Testimonial } from "@/types/testimonial-types"
+import { getMediaUrl } from "@/utils/mediaUrl"
 
 interface TestimonialCardProps {
   testimonial: Testimonial
@@ -42,7 +43,7 @@ export function TestimonialCard({ testimonial, onEdit, onDelete }: TestimonialCa
           {/* Customer Info */}
           <div className="flex items-center gap-3 mt-auto">
             <Avatar className="w-10 h-10">
-              <AvatarImage src={testimonial.image_url || "/placeholder.svg"} alt={testimonial.about} />
+              <AvatarImage src={getMediaUrl(testimonial.image_url)} alt={testimonial.about} />
               <AvatarFallback>
                 {testimonial.about
                   .split(" ")

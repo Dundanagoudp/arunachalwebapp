@@ -9,7 +9,7 @@ import { getBlogs } from "@/service/newsAndBlogs"
 import type { Blog } from "@/types/newAndBlogTypes"
 import AOS from 'aos'
 import 'aos/dist/aos.css'
-
+import { getMediaUrl } from "@/utils/mediaUrl"
 export default function Blogs() {
   const [blogs, setBlogs] = useState<Blog[]>([])
   const [isLoading, setIsLoading] = useState(true)
@@ -110,7 +110,7 @@ export default function Blogs() {
                 <div className="p-2">
                   <div className="relative w-full h-72 mb-4 flex-shrink-0 overflow-hidden rounded-xl">
                     <Image
-                      src={blog.image_url || "/blogs/blog1.png"}
+                      src={getMediaUrl(blog.image_url) || "/blogs/blog1.png"}
                       alt={blog.title}
                       fill
                       className="object-cover"

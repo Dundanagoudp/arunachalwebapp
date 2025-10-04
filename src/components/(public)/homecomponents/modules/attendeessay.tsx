@@ -9,7 +9,7 @@ import { getTestimonials } from "@/service/testimonialService"
 import type { Testimonial as ApiTestimonial } from "@/types/testimonial-types"
 import AOS from 'aos'
 import 'aos/dist/aos.css'
-
+import { getMediaUrl } from "@/utils/mediaUrl"
 export default function Attendeessay() {
   const [testimonials, setTestimonials] = useState<ApiTestimonial[]>([])
   const [loading, setLoading] = useState(true)
@@ -397,7 +397,7 @@ function TestimonialCard({ name, title, quote, avatar, mobilePadding }: Testimon
       <CardContent className="p-0 flex flex-col h-full font-bilo text-base">
         <div className="flex items-start gap-4 mb-2 font-bilo text-base">
           <Avatar className="w-14 h-14 min-w-[56px] min-h-[56px] border-1 border-white shadow-md">
-            <AvatarImage src={avatar || "/placeholder.svg"} alt={`${name}'s avatar`} />
+            <AvatarImage src={getMediaUrl(avatar) || "/placeholder.svg"} alt={`${name}'s avatar`} />
             <AvatarFallback className="font-bold text-blue-900 text-xl font-bilo">
               {name.charAt(0)}
             </AvatarFallback>
