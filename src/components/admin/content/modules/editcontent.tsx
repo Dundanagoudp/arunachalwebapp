@@ -65,12 +65,12 @@ const formSchema = z.object({
   publishedDate: z.date({
     required_error: "A published date is required.",
   }),
-  contents: z.string().optional(),
-  link: z.string().url("Please enter a valid URL").optional(),
+  contents: z.string().optional().or(z.literal("")),
+  link: z.string().optional(),
   image: z.instanceof(File).optional(),
   category_ref: z.string().min(1, "Please select a category"),
 }).refine((data) => {
-    return data.contentType === "blog" ? !!data.contents?.trim() : true;
+    return data.contentType === "blog" ? (data.contents !== undefined && data.contents !== null) : true;
   }, {
     message: "Contents are required for blog type",
     path: ["contents"],
@@ -182,6 +182,11 @@ export default function EditNewsBlogForm() {
 
   const onSubmit = async (values: FormValues) => {
     setIsSubmitting(true);
+    
+    // Debug logging
+    console.log("Form values:", values);
+    console.log("Current blog data:", blog);
+    
     try {
       const formData = new FormData();
       formData.append("category_ref", values.category_ref);
@@ -194,26 +199,45 @@ export default function EditNewsBlogForm() {
         formData.append("existingImage", blog.image_url);
       }
 
-      // Always send both fields (some backends expect both keys present)
-      formData.append("contents", values.contents || "");
-      formData.append("link", values.link || "");
+      // Send the appropriate field based on content type
+      if (values.contentType === "blog") {
+        // Ensure contents field is properly handled
+        const contentsValue = values.contents?.trim() || "";
+        formData.append("contents", contentsValue);
+        formData.append("link", ""); // Clear link field for blog type
+        console.log("Blog content being sent:", contentsValue);
+      } else {
+        const linkValue = values.link?.trim() || "";
+        formData.append("link", linkValue);
+        formData.append("contents", ""); // Clear contents field for link type
+        console.log("Link content being sent:", linkValue);
+      }
 
       // Add new image if uploaded
       if (values.image) {
         formData.append("image_url", values.image);
       }
 
+      console.log("FormData being sent:");
+      for (let [key, value] of formData.entries()) {
+        console.log(`${key}:`, value);
+      }
+
       const response = await updateBlogs(id, formData);
 
       if (!response.success) {
+        console.error("Update failed:", response.message);
         throw new Error("Failed to update blog: " + response.message);
       }
+      
+      console.log("Update successful:", response.data);
       toast({
         title: "Updated successfully",
         description: "Your content has been updated."
       });
       router.push("/admin/dashboard/content/blogs");
     } catch (error) {
+      console.error("Error during submission:", error);
       toast({
         title: "Update failed",
         description: (error as Error).message || "Something went wrong.",

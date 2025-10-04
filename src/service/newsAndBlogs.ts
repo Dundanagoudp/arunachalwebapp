@@ -52,27 +52,39 @@ export async function getBlogs(): Promise<ApiResponse<Blog[]>> {
 }
 export async function updateBlogs(
   id: string,
-   formData: FormData
-): Promise<ApiResponse<Blog[]>> {
+  formData: FormData
+): Promise<ApiResponse<Blog>> {
   try {
+    console.log("Updating blog with ID:", id);
+    
     const response = await apiClient.post(
-      `newsAndBlog/updateNewsAndBlog/${id}`,
-      formData
- 
+      `/newsAndBlog/updateNewsAndBlog/${id}`,
+      formData,
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      }
     );
+    
+    console.log("API Response:", response.data);
     return {
       success: true,
       data: response.data,
     };
   } catch (error: any) {
-    let errorMessage = "Failed to add blog";
+    console.error("API Error:", error);
+    let errorMessage = "Failed to update blog";
 
     if (error.response?.data?.message) {
       errorMessage = error.response.data.message;
+    } else if (error.response?.data?.error) {
+      errorMessage = error.response.data.error;
     } else if (error.message) {
       errorMessage = error.message;
     }
 
+    console.error("Final error message:", errorMessage);
     return {
       success: false,
       message: errorMessage,
