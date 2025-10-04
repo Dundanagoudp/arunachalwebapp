@@ -2,7 +2,7 @@
 import Image from "next/image"
 import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
-import { ArrowRight, ArrowUpRight } from "lucide-react"
+import { ArrowRight, ArrowUpRight, ChevronLeft, ChevronRight } from "lucide-react"
 import SunIcon from "@/components/sunicon-gif"
 import { getWorkshops } from "@/service/registrationService"
 import type { Workshop } from "@/types/workshop-types"
@@ -50,6 +50,17 @@ function RegistrationSkeleton() {
               </div>
             ))}
           </div>
+          
+          {/* Skeleton Pagination Controls */}
+          <div className="flex items-center justify-center gap-4 mt-8">
+            <div className="h-10 w-20 rounded-full bg-gray-200 animate-pulse" />
+            <div className="flex items-center gap-2">
+              <div className="w-8 h-8 rounded-full bg-gray-200 animate-pulse" />
+              <div className="w-8 h-8 rounded-full bg-gray-200 animate-pulse" />
+              <div className="w-8 h-8 rounded-full bg-gray-200 animate-pulse" />
+            </div>
+            <div className="h-10 w-16 rounded-full bg-gray-200 animate-pulse" />
+          </div>
         </div>
       </div>
     </div>
@@ -72,6 +83,8 @@ export default function RegistrationSection() {
   const [loading, setLoading] = useState(true)
   const [workshops, setWorkshops] = useState<Workshop[]>([])
   const [error, setError] = useState<string | null>(null)
+  const [currentPage, setCurrentPage] = useState(1)
+  const workshopsPerPage = 3
 
   useEffect(() => {
 
@@ -103,6 +116,25 @@ export default function RegistrationSection() {
       window.open('/contactus', '_blank', 'noopener,noreferrer')
     }
   }
+
+  // Pagination logic
+  const totalPages = Math.ceil(workshops.length / workshopsPerPage)
+  const startIndex = (currentPage - 1) * workshopsPerPage
+  const endIndex = startIndex + workshopsPerPage
+  const currentWorkshops = workshops.slice(startIndex, endIndex)
+
+  const handlePreviousPage = () => {
+    setCurrentPage(prev => Math.max(prev - 1, 1))
+  }
+
+  const handleNextPage = () => {
+    setCurrentPage(prev => Math.min(prev + 1, totalPages))
+  }
+
+  // Reset to first page when workshops change
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [workshops])
 
   return (
     <div className="min-h-screen bg-[#FFFAEE] relative overflow-hidden">
@@ -174,7 +206,7 @@ export default function RegistrationSection() {
           <div className="text-center mb-12">
             <h3 className="text-xl font-semibold text-gray-800 mb-8 font-dm-serif">Select your Workshop:</h3>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
-              {workshops.map((workshop: Workshop, index: number) => (
+              {currentWorkshops.map((workshop: Workshop, index: number) => (
                 <div key={workshop._id ?? index} className="relative">
                   {/* Workshop Card */}
                   <div
@@ -218,6 +250,53 @@ export default function RegistrationSection() {
                 </div>
               ))}
             </div>
+            
+            {/* Pagination Controls - Only show if there are more than 3 workshops */}
+            {workshops.length > workshopsPerPage && (
+              <div className="flex items-center justify-center gap-4 mt-8">
+                <button
+                  onClick={handlePreviousPage}
+                  disabled={currentPage === 1}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+                    currentPage === 1
+                      ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                      : 'bg-[#1A3FA9] text-white hover:bg-[#0F2A7A] hover:scale-105'
+                  }`}
+                >
+                  <ChevronLeft className="w-4 h-4" />
+                  Previous
+                </button>
+                
+                <div className="flex items-center gap-2">
+                  {Array.from({ length: totalPages }, (_, i) => i + 1).map((page) => (
+                    <button
+                      key={page}
+                      onClick={() => setCurrentPage(page)}
+                      className={`w-8 h-8 rounded-full text-sm font-medium transition-all duration-300 ${
+                        currentPage === page
+                          ? 'bg-[#1A3FA9] text-white'
+                          : 'bg-gray-200 text-gray-600 hover:bg-gray-300'
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  ))}
+                </div>
+                
+                <button
+                  onClick={handleNextPage}
+                  disabled={currentPage === totalPages}
+                  className={`flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-300 ${
+                    currentPage === totalPages
+                      ? 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                      : 'bg-[#1A3FA9] text-white hover:bg-[#0F2A7A] hover:scale-105'
+                  }`}
+                >
+                  Next
+                  <ChevronRight className="w-4 h-4" />
+                </button>
+              </div>
+            )}
           </div>
         </div>
       )}

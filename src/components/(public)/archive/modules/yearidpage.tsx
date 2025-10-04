@@ -221,11 +221,6 @@ function GalleryPageContent() {
     }
   }
 
-  // Function to handle album download
-  const handleAlbumDownload = () => {
-    alert(`Downloading all ${images.length} images from ${year} album...`)
-    // In a real application, this would trigger a zip download of all images
-  }
 
   // Function to generate pagination items
   const generatePaginationItems = () => {
@@ -338,17 +333,6 @@ function GalleryPageContent() {
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
             <h2 className="text-4xl font-bold text-center text-amber-800 mb-2 font-dm-serif">GALLERY {year}</h2>
 
-            <div className="flex justify-center mb-8">
-              <button
-                className="flex items-center px-4 py-2 text-gray-700 hover:text-blue-700 font-bilo"
-                onClick={handleAlbumDownload}
-              >
-                <span>
-                  Download {year} Album ({images.length} images)
-                </span>
-                <Download size={18} className="ml-2" />
-              </button>
-            </div>
 
             <motion.div
               className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4"
