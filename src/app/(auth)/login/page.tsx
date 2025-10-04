@@ -25,12 +25,6 @@ export default function LoginPage() {
         {/* Login Form Container */}
         <LoginForm />
 
-        {/* Footer text */}
-        <div className="mt-6 text-center">
-          <p className="text-sm text-gray-500">
-            Secure access to your festival dashboard
-          </p>
-        </div>
       </div>
     </div>
   )
