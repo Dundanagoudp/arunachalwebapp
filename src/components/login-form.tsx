@@ -43,7 +43,6 @@ export function LoginForm({
     }
   }, [router]);
 
-  if (!mounted) return null; 
 
   const onSubmit = async (data: LoginFormValues) => {
     try {
@@ -53,7 +52,7 @@ export function LoginForm({
       Cookies.set("userRole", result.data.user.role, { expires: 1, path: "/" });
       Cookies.set("token", result.token, { expires: 1, path: "/" });
 
-      showToast(result.message, "success");
+      showToast("Welcome to Dashboard! Login successful.", "success");
 
       // Redirect based on role
       // Always redirect to /admin/dashboard for all users
@@ -85,71 +84,100 @@ export function LoginForm({
   };
 
   return (
-    <form
-      className={cn("flex flex-col gap-6", className)}
-      onSubmit={handleSubmit(onSubmit)}
-      {...props}
-    >
-      <div className="flex flex-col items-center gap-2 text-center">
-        <h1 className="text-2xl font-bold">Login to your account</h1>
-        <p className="text-balance text-sm text-muted-foreground">
-          Enter your email below to login to your account
-        </p>
-      </div>
-      <div className="grid gap-6">
-        <div className="grid gap-2">
-          <Label htmlFor="email">Email</Label>
-          <Input
-            id="email"
-            type="email"
-            placeholder="m@example.com"
-            autoComplete="email"
-            {...register("email", {
-              required: "Email is required",
-              validate: validateEmail,
-            })}
-          />
-          {errors.email && (
-            <p className="text-sm text-destructive">{errors.email.message}</p>
-          )}
-        </div>
-        <div className="grid gap-2">
-          <div className="flex items-center">
-            <Label htmlFor="password">Password</Label>
+    <div className="w-full">
+      <form
+        className={cn("bg-white rounded-lg shadow-lg border border-gray-200 p-6 space-y-6 block", className)}
+        onSubmit={handleSubmit(onSubmit)}
+        {...props}
+      >
+        {/* Header Section */}
+        <div className="text-center space-y-4">
+          <div className="w-16 h-16 mx-auto bg-gradient-to-br from-[#e67e22] to-[#d35400] rounded-full flex items-center justify-center shadow-lg">
+            <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            </svg>
           </div>
-          <div className="relative">
+          <div>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h1>
+            <p className="text-gray-600 text-sm">
+              Login to your account to continue
+            </p>
+          </div>
+        </div>
+
+        {/* Form Fields */}
+        <div className="space-y-5">
+          <div className="space-y-2">
+            <Label htmlFor="email" className="text-sm font-medium text-gray-700">
+              Email Address
+            </Label>
             <Input
-              id="password"
-              type={showPassword ? "text" : "password"}
-              autoComplete="current-password"
-              className="pr-10"
-              {...register("password", {
-                required: "Password is required",
+              id="email"
+              type="email"
+              placeholder="Enter your email"
+              autoComplete="email"
+              className="h-12 px-4 border-gray-200 focus:border-[#e67e22] focus:ring-[#e67e22]"
+              {...register("email", {
+                required: "Email is required",
+                validate: validateEmail,
               })}
             />
-            <button
-              type="button"
-              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
-              onClick={() => setShowPassword(!showPassword)}
-              tabIndex={-1}
-            >
-              {showPassword ? (
-                <EyeOff className="h-4 w-4" />
-              ) : (
-                <Eye className="h-4 w-4" />
-              )}
-            </button>
+            {errors.email && (
+              <p className="text-sm text-red-500 mt-1">{errors.email.message}</p>
+            )}
           </div>
-          {errors.password && (
-            <p className="text-sm text-destructive">
-              {errors.password.message}
-            </p>
-          )}
+
+          <div className="space-y-2">
+            <Label htmlFor="password" className="text-sm font-medium text-gray-700">
+              Password
+            </Label>
+            <div className="relative">
+              <Input
+                id="password"
+                type={showPassword ? "text" : "password"}
+                autoComplete="current-password"
+                className="h-12 px-4 pr-12 border-gray-200 focus:border-[#e67e22] focus:ring-[#e67e22]"
+                {...register("password", {
+                  required: "Password is required",
+                })}
+              />
+              <button
+                type="button"
+                className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600 transition-colors"
+                onClick={() => setShowPassword(!showPassword)}
+                tabIndex={-1}
+              >
+                {showPassword ? (
+                  <EyeOff className="h-5 w-5" />
+                ) : (
+                  <Eye className="h-5 w-5" />
+                )}
+              </button>
+            </div>
+            {errors.password && (
+              <p className="text-sm text-red-500 mt-1">
+                {errors.password.message}
+              </p>
+            )}
+          </div>
+
+          {/* Login Button */}
+          <Button 
+            type="submit" 
+            className="w-full h-12 bg-[#e67e22] hover:bg-[#d35400] text-white font-semibold rounded-lg" 
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? (
+              <div className="flex items-center space-x-2">
+                <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                <span>Logging in...</span>
+              </div>
+            ) : (
+              "Login"
+            )}
+          </Button>
         </div>
-        <Button type="submit" className="w-full" disabled={isSubmitting}>
-          {isSubmitting ? "Logging in..." : "Login"}
-        </Button>
-      </div>
-    </form>
+      </form>
+    </div>
   );
 }

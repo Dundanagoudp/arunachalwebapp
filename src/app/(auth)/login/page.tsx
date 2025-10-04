@@ -4,36 +4,33 @@ import Image from "next/image"
 
 export default function LoginPage() {
   return (
-    <div className="grid min-h-svh lg:grid-cols-2">
-      <div className="flex flex-col gap-4 p-6 md:p-10">
-        <div className="flex justify-center gap-2 md:justify-start">
-          <a href="#" className="flex items-center gap-2 font-medium" aria-label="Arunachal Festival" title="Arunachal Festival">
+    <div className="min-h-screen bg-white flex items-center justify-center p-4">
+      <div className="w-full max-w-md">
+        {/* Logo and Brand */}
+        <div className="text-center mb-8">
+          <a href="#" className="inline-flex items-center gap-3 font-semibold text-gray-800" aria-label="Arunachal Literature" title="Arunachal Literature">
             <Image
               src="/logo.png"
-              alt="Arunachal Festival Logo"
-              width={24}
-              height={24}
-              className="w-6 h-6 object-contain drop-shadow-lg transition-all duration-300 hover:drop-shadow-xl hover:scale-105"
+              alt="Arunachal Literature Logo"
+              width={32}
+              height={32}
+              className="w-8 h-8 object-contain"
             />
-            Arunachal Festival
+            <span className="text-xl font-bold text-gray-800">
+              Arunachal Literature
+            </span>
           </a>
         </div>
-        <div className="flex flex-1 items-center justify-center">
-          <div className="w-full max-w-xs">
-            <LoginForm />
-          </div>
+
+        {/* Login Form Container */}
+        <LoginForm />
+
+        {/* Footer text */}
+        <div className="mt-6 text-center">
+          <p className="text-sm text-gray-500">
+            Secure access to your festival dashboard
+          </p>
         </div>
-      </div>
-      <div className="bg-[#FDF6E9] hidden lg:flex items-center justify-center">
-        <Image
-          src="/login.gif"
-          alt="Login Illustration"
-          width={500}
-          height={450}
-          className="object-contain dark:brightness-[0.2] dark:grayscale"
-          priority
-          style={{ width: 'auto', height: 'auto' }}
-        />
       </div>
     </div>
   )

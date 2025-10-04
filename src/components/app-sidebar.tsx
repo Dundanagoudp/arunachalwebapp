@@ -42,7 +42,7 @@ const adminNavData = {
   teams: [
     {
       name: "Arunachal Literature",
-      logo: BookOpen,
+      logo: "/logo.png",
       plan: "Admin",
     },
   ],
@@ -235,7 +235,7 @@ const userNavData = {
   teams: [
     {
       name: "Arunachal Literature",
-      logo: BookOpen,
+      logo: "/logo.png",
       plan: "User",
     },
   ],

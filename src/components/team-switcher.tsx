@@ -2,6 +2,7 @@
 
 import * as React from "react"
 import { ChevronsUpDown, Plus } from "lucide-react"
+import Image from "next/image"
 
 import {
   DropdownMenu,
@@ -24,7 +25,7 @@ export function TeamSwitcher({
 }: {
   teams: {
     name: string
-    logo: React.ElementType
+    logo: string
     plan: string
   }[]
 }) {
@@ -44,8 +45,14 @@ export function TeamSwitcher({
               size="lg"
               className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
             >
-              <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-                <activeTeam.logo className="size-4" />
+              <div className="bg-white text-sidebar-primary-foreground flex aspect-square size-10 items-center justify-center rounded-lg border border-gray-200">
+                <Image
+                  src={activeTeam.logo}
+                  alt={`${activeTeam.name} Logo`}
+                  width={24}
+                  height={24}
+                  className="size-6 object-contain"
+                />
               </div>
               <div className="grid flex-1 text-left text-sm leading-tight">
                 <span className="truncate font-medium">{activeTeam.name}</span>
