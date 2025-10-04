@@ -22,6 +22,7 @@ import type { VideoBlog } from "@/types/videos-types"
 import { useToast } from "@/hooks/use-toast"
 import { VideoDetailSkeleton } from "@/components/video-skeleton"
 import { getVideoUrl, getThumbnailUrl } from "@/utils/mediaUrl"
+import { DeleteConfirmationDialog } from "@/components/ui/delete-confirmation-dialog"
 
 export default function VideoDetailPage() {
   const params = useParams() as { id?: string }
@@ -31,6 +32,10 @@ export default function VideoDetailPage() {
   const [video, setVideo] = useState<VideoBlog | null>(null)
   const [loading, setLoading] = useState(true)
   const [isPlaying, setIsPlaying] = useState(false)
+  
+  // Delete dialog state
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
+  const [deleteLoading, setDeleteLoading] = useState(false)
 
   useEffect(() => {
     const fetchVideo = async () => {
@@ -53,22 +58,46 @@ export default function VideoDetailPage() {
     fetchVideo()
   }, [id])
 
-  const handleDelete = async () => {
-    if (!video || !confirm("Are you sure you want to delete this video?")) return
+  // Function to open delete dialog
+  const handleDeleteClick = () => {
+    setDeleteDialogOpen(true)
+  }
 
-    const response = await deleteVideoBlog(video._id)
-    if (response.success) {
-      toast({
-        title: "Success",
-        description: "Video deleted successfully",
-      })
-      router.push("/admin/dashboard/videos")
-    } else {
+  // Function to confirm delete
+  const handleDeleteConfirm = async () => {
+    if (!video) return
+    
+    setDeleteLoading(true)
+    try {
+      const response = await deleteVideoBlog(video._id)
+      if (response.success) {
+        toast({
+          title: "Success",
+          description: "Video deleted successfully",
+        })
+        router.push("/admin/dashboard/videos")
+      } else {
+        toast({
+          title: "Error",
+          description: response.error || "Failed to delete video"
+        })
+      }
+      
+      // Close dialog
+      setDeleteDialogOpen(false)
+    } catch (error) {
       toast({
         title: "Error",
-        description: response.error || "Failed to delete video"
+        description: "Failed to delete video"
       })
+    } finally {
+      setDeleteLoading(false)
     }
+  }
+
+  // Function to cancel delete
+  const handleDeleteCancel = () => {
+    setDeleteDialogOpen(false)
   }
 
   const getYouTubeEmbedUrl = (url: string) => {
@@ -193,7 +222,7 @@ export default function VideoDetailPage() {
               Edit
             </Link>
           </Button>
-          <Button variant="destructive" onClick={handleDelete}>
+          <Button variant="destructive" onClick={handleDeleteClick}>
             <Trash2 className="h-4 w-4 mr-2" />
             Delete
           </Button>
@@ -380,7 +409,7 @@ export default function VideoDetailPage() {
               </Button>
               <Button
                 variant="outline"
-                onClick={handleDelete}
+                onClick={handleDeleteClick}
                 className="w-full justify-start text-red-600 hover:text-red-700 bg-white/80 hover:bg-red-50 border-red-200"
               >
                 <Trash2 className="h-4 w-4 mr-2" />
@@ -390,6 +419,19 @@ export default function VideoDetailPage() {
           </Card>
         </div>
       </div>
+
+      {/* Delete Confirmation Dialog */}
+      <DeleteConfirmationDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        onConfirm={handleDeleteConfirm}
+        title="Delete Video"
+        description={`Are you sure you want to delete this ${
+          video?.videoType === "youtube" ? "YouTube video" : "uploaded video"
+        }? This action cannot be undone.`}
+        itemName={video?.title}
+        isLoading={deleteLoading}
+      />
     </div>
   )
 }

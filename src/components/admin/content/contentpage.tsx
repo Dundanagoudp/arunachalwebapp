@@ -56,6 +56,7 @@ import {
 import { useDeletePermission } from "@/hooks/use-delete-permission";
 import { ContactAdminModal } from "@/components/ui/contact-admin-modal";
 import { getMediaUrl } from "@/utils/mediaUrl";
+import { DeleteConfirmationDialog } from "@/components/ui/delete-confirmation-dialog";
 
 export default function NewsAndBlogsManagement() {
   const [searchTerm, setSearchTerm] = useState("")
@@ -69,6 +70,10 @@ export default function NewsAndBlogsManagement() {
   const [currentPage, setCurrentPage] = useState(1);
   const pageSize = 10;
   const { isAdmin } = useDeletePermission();
+  
+  // Delete dialog state
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [contentToDelete, setContentToDelete] = useState<Blog | null>(null);
 
   useEffect(() => {
     async function fetchBlogs() {
@@ -115,23 +120,42 @@ export default function NewsAndBlogsManagement() {
     currentPage * pageSize
   );
 
-  const handleDelete = async (contentId: string) => {
+  // Function to open delete dialog
+  const handleDeleteClick = (content: Blog) => {
+    setContentToDelete(content);
+    setDeleteDialogOpen(true);
+  };
+
+  // Function to confirm delete
+  const handleDeleteConfirm = async () => {
+    if (!contentToDelete) return;
+    
     try {
-      setDeleteLoading(contentId);
+      setDeleteLoading(contentToDelete._id);
       setSuccess("");
-      const response = await deleteBlog(contentId);
+      const response = await deleteBlog(contentToDelete._id);
       if (response.success) {
         setSuccess("Content deleted successfully!");
-        setNewsAndBlogs(newsAndBlogs.filter((content) => content._id !== contentId));
+        setNewsAndBlogs(newsAndBlogs.filter((content) => content._id !== contentToDelete._id));
         setTimeout(() => setSuccess(""), 3000);
       } else {
         setSuccess(response.error || "Failed to delete content");
       }
+      
+      // Close dialog and reset state
+      setDeleteDialogOpen(false);
+      setContentToDelete(null);
     } catch (error) {
       setSuccess("Failed to delete content");
     } finally {
       setDeleteLoading(null);
     }
+  };
+
+  // Function to cancel delete
+  const handleDeleteCancel = () => {
+    setDeleteDialogOpen(false);
+    setContentToDelete(null);
   };
 
   if (loading) {
@@ -361,12 +385,8 @@ export default function NewsAndBlogsManagement() {
                         </DropdownMenuItem>
                       )}
                       {isAdmin ? (
-                        <DropdownMenuItem className="text-red-600" onClick={() => handleDelete(content._id)}>
-                          {deleteLoading === content._id ? (
-                            <span className="flex items-center"><Trash2 className="mr-2 h-4 w-4 animate-spin" /> Deleting...</span>
-                          ) : (
-                            <><Trash2 className="mr-2 h-4 w-4" /> Delete</>
-                          )}
+                        <DropdownMenuItem className="text-red-600" onClick={() => handleDeleteClick(content)}>
+                          <Trash2 className="mr-2 h-4 w-4" /> Delete
                         </DropdownMenuItem>
                       ) : (
                         <ContactAdminModal
@@ -435,6 +455,19 @@ export default function NewsAndBlogsManagement() {
       {success && (
         <div className="p-2 bg-green-100 text-green-800 rounded mb-2">{success}</div>
       )}
+
+      {/* Delete Confirmation Dialog */}
+      <DeleteConfirmationDialog
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        onConfirm={handleDeleteConfirm}
+        title="Delete Content"
+        description={`Are you sure you want to delete this ${
+          contentToDelete?.contentType === "blog" ? "blog post" : "content"
+        }? This action cannot be undone.`}
+        itemName={contentToDelete?.title}
+        isLoading={deleteLoading === contentToDelete?._id}
+      />
     </div>
   );
 }

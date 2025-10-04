@@ -7,6 +7,7 @@ import { getBanner, getButtonText, getText } from "@/service/homeService"
 import { getMediaUrl } from "@/utils/mediaUrl"
 export default function HeroSection() {
   const [bannerUrl, setBannerUrl] = useState<string | null>(null)
+  const [imageError, setImageError] = useState(false)
   const [buttonLink, setButtonLink] = useState<string | null>(null)
   const [bannerText, setBannerText] = useState<string>("ARUNACHAL LITERATURE FESTIVAL")
   const [bannerSubText, setBannerSubText] = useState<string>("20th-22nd November ")
@@ -21,8 +22,10 @@ export default function HeroSection() {
         if (Array.isArray(response.data) && response.data.length > 0) {
           console.log(response.data[0].image_url)
           setBannerUrl(response.data[0].image_url)
+          setImageError(false) // Reset error state when new banner is fetched
         } else if (response.data.image_url) {
           setBannerUrl(response.data.image_url)
+          setImageError(false) // Reset error state when new banner is fetched
         }
       }
     }
@@ -66,18 +69,36 @@ export default function HeroSection() {
     fetchBannerText()
   }, [])
 
+  // Function to handle image load errors
+  const handleImageError = () => {
+    setImageError(true)
+  }
+
+  // Function to get the appropriate image source
+  const getImageSrc = () => {
+    if (imageError || !bannerUrl) {
+      return "/herosection.png"  // Use PNG as primary fallback
+    }
+    const mediaUrl = getMediaUrl(bannerUrl)
+    return mediaUrl !== "/placeholder.svg" ? mediaUrl : "/herosection.png"
+  }
+
   return (
     <section className="relative h-[60vh] sm:h-[70vh] md:h-[80vh] lg:h-screen w-full flex items-center justify-center text-center overflow-hidden">
       {/* Background Image */}
       <Image
-        src={getMediaUrl(bannerUrl) || "/herosection.jpg"}
+        src={getImageSrc()}
         alt="Arunachal Literature Festival Background"
+
+
+
         fill
         sizes="100vw"
         style={{
           objectFit: "cover",
           zIndex: -1,
         }}
+        onError={handleImageError}
         priority // Prioritize loading for the hero image
       />
 
