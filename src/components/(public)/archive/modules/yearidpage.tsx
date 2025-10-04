@@ -17,6 +17,7 @@ import { useParams, useSearchParams } from "next/navigation"
 import { getImagesByYear } from "@/service/archive"
 import SunIcon from "@/components/sunicon-gif"
 import React, { Suspense } from 'react';
+import { getMediaUrl } from "@/utils/mediaUrl"
 
 // Shimmer effect component
 const ShimmerEffect = ({ className }: { className?: string }) => (
@@ -100,7 +101,7 @@ function ImageModal({
 
             <div className="p-1">
               <Image
-                src={imageSrc || "/placeholder.svg"}
+                src={getMediaUrl(imageSrc) || "/placeholder.svg"}
                 alt={imageAlt}
                 width={800}
                 height={600}
@@ -158,14 +159,14 @@ function GalleryPageContent() {
             Array.isArray((response.data.archive as any).images)
           ) {
             // New API shape: { archive: { year, images: [ { id, url } ] } }
-            imageUrls = (response.data.archive as any).images.map((img: any) => img.url)
+            imageUrls = (response.data.archive as any).images.map((img: any) => getMediaUrl(img.url))
           } else if (
             Array.isArray(response.data.archive) &&
             response.data.archive.length > 0 &&
             (response.data.archive[0] as any).image_url
           ) {
             // Old API shape: { archive: [ { image_url, ... } ] }
-            imageUrls = (response.data.archive as any[]).map((img: any) => img.image_url)
+            imageUrls = (response.data.archive as any[]).map((img: any) => getMediaUrl(img.image_url))
           }
           if (imageUrls.length > 0) {
             setImages(imageUrls)
@@ -376,7 +377,7 @@ function GalleryPageContent() {
                   onClick={() => setSelectedImage({ src, alt: `Gallery image ${startIndex + index + 1}` })}
                 >
                   <Image
-                    src={src || "/placeholder.svg?height=225&width=300"}
+                    src={getMediaUrl(src) || "/placeholder.svg?height=225&width=300"}
                     alt={`Gallery image ${startIndex + index + 1}`}
                     width={300}
                     height={225}
@@ -446,7 +447,7 @@ function GalleryPageContent() {
       <ImageModal
         isOpen={!!selectedImage}
         onClose={() => setSelectedImage(null)}
-        imageSrc={selectedImage?.src || ""}
+        imageSrc={getMediaUrl(selectedImage?.src) || ""}
         imageAlt={selectedImage?.alt || ""}
         onDownload={handleDownload}
       />
