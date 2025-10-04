@@ -135,6 +135,7 @@ export function LoginForm({
               <Input
                 id="password"
                 type={showPassword ? "text" : "password"}
+                placeholder="Enter your password"
                 autoComplete="current-password"
                 className="h-12 px-4 pr-12 border-gray-200 focus:border-[#e67e22] focus:ring-[#e67e22]"
                 {...register("password", {
