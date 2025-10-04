@@ -520,58 +520,6 @@ export default function AdminDashboard() {
           </Card>
         </div>
 
-        {/* Analytics Overview - Only show for admin */}
-        {isAdmin && (
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <BarChart3 className="h-5 w-5" />
-                Platform Analytics
-              </CardTitle>
-              <CardDescription>
-                Overview of platform performance and engagement
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid gap-4 md:grid-cols-4">
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-blue-600">
-                    {getView.length > 0 ? getView[0]?.views : "Loading..."}
-                  </div>
-                  <div className="text-sm text-muted-foreground">
-                    Page Views
-                  </div>
-                  <div className="text-xs text-green-600">+12% this week</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-green-600">89%</div>
-                  <div className="text-sm text-muted-foreground">
-                    Event Attendance
-                  </div>
-                  <div className="text-xs text-green-600">
-                    +5% from last event
-                  </div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-purple-600">156</div>
-                  <div className="text-sm text-muted-foreground">
-                    New Registrations
-                  </div>
-                  <div className="text-xs text-green-600">+23% this month</div>
-                </div>
-                <div className="text-center">
-                  <div className="text-2xl font-bold text-orange-600">4.8</div>
-                  <div className="text-sm text-muted-foreground">
-                    Avg. Rating
-                  </div>
-                  <div className="text-xs text-green-600">
-                    +0.2 from last month
-                  </div>
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-        )}
       </div>
     </ProtectedRoute>
   );
