@@ -19,7 +19,7 @@ import { Label } from "@/components/ui/label"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { useState, useEffect } from "react"
 import { useRouter, useParams } from "next/navigation"
-import { editUser, getAllUsers } from "@/service/userServices"
+import { editUser, getAllUsers, getMyProfile } from "@/service/userServices"
 import type { EditUserData, User } from "@/types/user-types"
 import { toast } from "sonner"
 
@@ -29,6 +29,7 @@ export default function EditUser() {
   const userId = params.id as string
   const [loading, setLoading] = useState(false)
   const [fetchingUser, setFetchingUser] = useState(true)
+  const [currentUser, setCurrentUser] = useState<User | null>(null)
   const [formData, setFormData] = useState<EditUserData>({
     name: "",
     email: "",
@@ -38,8 +39,20 @@ export default function EditUser() {
   })
 
   useEffect(() => {
+    fetchCurrentUser()
     fetchUser()
   }, [userId])
+
+  const fetchCurrentUser = async () => {
+    try {
+      const response = await getMyProfile()
+      if (response.success && response.data) {
+        setCurrentUser(response.data)
+      }
+    } catch (error) {
+      console.error("Failed to fetch current user:", error)
+    }
+  }
 
   const fetchUser = async () => {
     try {

@@ -35,7 +35,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Users, Mail, Plus, Edit, Trash2, Search, MoreHorizontal, Crown, User } from "lucide-react"
 import Link from "next/link"
 import { useState, useEffect } from "react"
-import { getAllUsers, deleteUser } from "@/service/userServices"
+import { getAllUsers, deleteUser, getMyProfile } from "@/service/userServices"
 import type { User as UserType } from "@/types/user-types"
 import { toast } from "sonner"
 
@@ -46,10 +46,23 @@ export default function UsersManagement() {
   const [selectedUser, setSelectedUser] = useState<UserType | null>(null)
   const [users, setUsers] = useState<UserType[]>([])
   const [loading, setLoading] = useState(true)
+  const [currentUser, setCurrentUser] = useState<UserType | null>(null)
 
   useEffect(() => {
+    fetchCurrentUser()
     fetchUsers()
   }, [])
+
+  const fetchCurrentUser = async () => {
+    try {
+      const response = await getMyProfile()
+      if (response.success && response.data) {
+        setCurrentUser(response.data)
+      }
+    } catch (error) {
+      console.error("Failed to fetch current user:", error)
+    }
+  }
 
   const fetchUsers = async () => {
     setLoading(true)
@@ -76,6 +89,11 @@ export default function UsersManagement() {
   })
 
   const handleDelete = (user: UserType) => {
+    // Prevent users from deleting themselves
+    if (currentUser && user._id === currentUser._id) {
+      toast.error("You cannot delete your own account")
+      return
+    }
     setSelectedUser(user)
     setDeleteDialogOpen(true)
   }
@@ -126,6 +144,11 @@ export default function UsersManagement() {
       .map((n) => n[0])
       .join("")
       .toUpperCase()
+  }
+
+  const canDeleteUser = (user: UserType) => {
+    // Users cannot delete themselves
+    return currentUser && user._id !== currentUser._id
   }
 
   if (loading) {
@@ -271,10 +294,17 @@ export default function UsersManagement() {
                           Edit User
                         </Link>
                       </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => handleDelete(user)} className="text-red-600">
-                        <Trash2 className="mr-2 h-4 w-4" />
-                        Delete
-                      </DropdownMenuItem>
+                      {canDeleteUser(user) ? (
+                        <DropdownMenuItem onClick={() => handleDelete(user)} className="text-red-600">
+                          <Trash2 className="mr-2 h-4 w-4" />
+                          Delete
+                        </DropdownMenuItem>
+                      ) : (
+                        <DropdownMenuItem disabled className="text-gray-400">
+                          <Trash2 className="mr-2 h-4 w-4" />
+                          Cannot delete yourself
+                        </DropdownMenuItem>
+                      )}
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </div>
