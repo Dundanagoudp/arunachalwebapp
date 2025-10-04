@@ -12,6 +12,7 @@ import { useEffect, useState } from "react";
 import { getCookie } from "@/lib/cookies";
 import Cookies from "js-cookie";
 import { loginUser } from "@/service/authService";
+import { Eye, EyeOff } from "lucide-react";
 
 type LoginFormValues = {
   email: string;
@@ -30,6 +31,7 @@ export function LoginForm({
     formState: { errors, isSubmitting },
   } = useForm<LoginFormValues>();
   const [mounted, setMounted] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   useEffect(() => {
     setMounted(true);
@@ -115,14 +117,29 @@ export function LoginForm({
           <div className="flex items-center">
             <Label htmlFor="password">Password</Label>
           </div>
-          <Input
-            id="password"
-            type="password"
-            autoComplete="current-password"
-            {...register("password", {
-              required: "Password is required",
-            })}
-          />
+          <div className="relative">
+            <Input
+              id="password"
+              type={showPassword ? "text" : "password"}
+              autoComplete="current-password"
+              className="pr-10"
+              {...register("password", {
+                required: "Password is required",
+              })}
+            />
+            <button
+              type="button"
+              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
+              onClick={() => setShowPassword(!showPassword)}
+              tabIndex={-1}
+            >
+              {showPassword ? (
+                <EyeOff className="h-4 w-4" />
+              ) : (
+                <Eye className="h-4 w-4" />
+              )}
+            </button>
+          </div>
           {errors.password && (
             <p className="text-sm text-destructive">
               {errors.password.message}
