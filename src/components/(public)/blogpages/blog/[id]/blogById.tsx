@@ -12,6 +12,7 @@ import { Skeleton } from "@/components/ui/skeleton"
 import Image from "next/image"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
+import { getMediaUrl } from "@/utils/mediaUrl"
 import {
   ArrowRight,
   BookOpen,
@@ -224,7 +225,7 @@ export default function BlogById() {
               {content.image_url && (
                 <div className="relative group overflow-hidden rounded-2xl shadow-lg">
                   <Image
-                    src={content.image_url || "/placeholder.svg"}
+                    src={getMediaUrl(content.image_url) || "/placeholder.svg"}
                     alt={content.title}
                     width={1080}
                     height={600}
@@ -355,7 +356,7 @@ export default function BlogById() {
                       >
                         <div className="flex-shrink-0 relative overflow-hidden rounded-lg w-16 h-16">
                           <Image
-                            src={blog.image_url || "/placeholder.svg"}
+                            src={getMediaUrl(blog.image_url) || "/placeholder.svg"}
                             alt={blog.title}
                             width={64}
                             height={64}
