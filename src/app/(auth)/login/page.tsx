@@ -8,9 +8,13 @@ export default function LoginPage() {
       <div className="flex flex-col gap-4 p-6 md:p-10">
         <div className="flex justify-center gap-2 md:justify-start">
           <a href="#" className="flex items-center gap-2 font-medium" aria-label="Arunachal Festival" title="Arunachal Festival">
-            <div className="bg-primary text-primary-foreground flex size-6 items-center justify-center rounded-md">
-              <GalleryVerticalEnd className="size-4" />
-            </div>
+            <Image
+              src="/logo.png"
+              alt="Arunachal Festival Logo"
+              width={24}
+              height={24}
+              className="w-6 h-6 object-contain drop-shadow-lg transition-all duration-300 hover:drop-shadow-xl hover:scale-105"
+            />
             Arunachal Festival
           </a>
         </div>

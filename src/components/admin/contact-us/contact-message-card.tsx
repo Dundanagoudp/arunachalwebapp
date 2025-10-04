@@ -23,34 +23,30 @@ interface ContactMessageCardProps {
   contact: ContactMessage
   onDelete: (id: string) => void
   isDeleting?: boolean
-  onReply?: (id: string, data: { message: string }) => Promise<void>
 }
 
 // Add a helper component for action buttons
 interface ActionButtonsProps {
   onView: () => void;
-  onReply?: () => void;
   onDelete: () => void;
   isDeleting?: boolean;
-  showReply?: boolean;
 }
-function ActionButtons({ onView, onReply, onDelete, isDeleting, showReply }: ActionButtonsProps) {
+function ActionButtons({ onView, onDelete, isDeleting }: ActionButtonsProps) {
   return (
-    <div className="flex flex-col sm:flex-row gap-2 pt-2 w-full">
-      <Button variant="outline" size="sm" className="flex-1 bg-transparent" onClick={onView}>
+    <div className="flex flex-col sm:flex-row gap-3 pt-2 w-full">
+      <Button 
+        variant="outline" 
+        size="sm" 
+        className="flex-1 bg-white hover:bg-blue-50 hover:text-blue-600 hover:border-blue-300 transition-all duration-200 shadow-sm" 
+        onClick={onView}
+      >
         <Eye className="h-4 w-4 mr-2" />
         View Details
       </Button>
-      {showReply && onReply && (
-        <Button variant="outline" size="sm" className="flex-1 bg-transparent" onClick={onReply}>
-          <Mail className="h-4 w-4 mr-2" />
-          Reply
-        </Button>
-      )}
       <Button
         variant="outline"
         size="sm"
-        className="text-red-600 hover:text-red-700 hover:bg-red-50 bg-transparent flex-1"
+        className="flex-1 text-red-600 hover:text-red-700 hover:bg-red-50 hover:border-red-300 bg-white transition-all duration-200 shadow-sm"
         onClick={onDelete}
         disabled={isDeleting}
       >
@@ -61,11 +57,9 @@ function ActionButtons({ onView, onReply, onDelete, isDeleting, showReply }: Act
   )
 }
 
-export function ContactMessageCard({ contact, onDelete, isDeleting, onReply }: ContactMessageCardProps) {
+export function ContactMessageCard({ contact, onDelete, isDeleting }: ContactMessageCardProps) {
   const [isViewOpen, setIsViewOpen] = useState(false)
-  const [isReplyOpen, setIsReplyOpen] = useState(false)
-  const [replyMessage, setReplyMessage] = useState("")
-  const [replyLoading, setReplyLoading] = useState(false)
+  const [isDeleteOpen, setIsDeleteOpen] = useState(false)
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString("en-US", {
@@ -77,24 +71,12 @@ export function ContactMessageCard({ contact, onDelete, isDeleting, onReply }: C
     })
   }
 
-  const handleReply = async () => {
-    if (!onReply) return
-    setReplyLoading(true)
-    try {
-      await onReply(contact._id, { message: replyMessage })
-      setIsReplyOpen(false)
-      setReplyMessage("")
-    } finally {
-      setReplyLoading(false)
-    }
-  }
-
   return (
     <>
-      <Card className="group hover:shadow-lg transition-all duration-200 border-l-4 border-l-blue-500 relative">
-        <CardHeader className="pb-3">
+      <Card className="group hover:shadow-xl hover:scale-[1.02] transition-all duration-300 border border-gray-200 shadow-md relative h-full flex flex-col bg-white hover:border-blue-300">
+        <CardHeader className="pb-3 flex-shrink-0 border-b border-gray-100 bg-gradient-to-r from-blue-50 to-indigo-50">
           <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 w-full">
-            <div className="space-y-1 min-w-0">
+            <div className="space-y-1 min-w-0 flex-1">
               <CardTitle className="text-lg font-semibold text-gray-900 group-hover:text-blue-600 transition-colors truncate">
                 {contact.name}
               </CardTitle>
@@ -103,35 +85,35 @@ export function ContactMessageCard({ contact, onDelete, isDeleting, onReply }: C
                 <span className="truncate">{contact.email}</span>
               </div>
               {contact.phone && (
-                <div className="flex items-center gap-2 text-sm text-gray-600 truncate">
+                <div className="flex items-center gap-2 text-sm text-gray-600">
                   <Phone className="h-4 w-4" />
                   <span className="truncate">{contact.phone}</span>
+                  <span className="text-gray-400">•</span>
+                  <span className="text-xs text-gray-500 whitespace-nowrap">
+                    {formatDate(contact.createdAt)}
+                  </span>
                 </div>
               )}
             </div>
             <div className="flex flex-row sm:flex-col items-end gap-1 shrink-0 mt-2 sm:mt-0">
-              <Badge variant="secondary" className="text-xs whitespace-nowrap">
-                <Calendar className="h-3 w-3 mr-1" />
-                {formatDate(contact.createdAt)}
-              </Badge>
               {contact.isReplied && (
-                <span className="mt-1 px-2 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-700 border border-green-200 whitespace-nowrap">Replied</span>
+                <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-green-100 text-green-700 border border-green-200 whitespace-nowrap">Replied</span>
               )}
             </div>
           </div>
         </CardHeader>
-        <CardContent className="pt-0">
+        <CardContent className="pt-0 flex-1 flex flex-col justify-between">
           <div className="space-y-3">
-            <div className="bg-gray-50 p-3 rounded-lg">
-              <p className="text-sm text-gray-700 line-clamp-3">{contact.message}</p>
+            <div className="bg-gradient-to-br from-gray-50 to-gray-100 p-4 rounded-xl border border-gray-200 flex-1 shadow-sm">
+              <p className="text-sm text-gray-700 line-clamp-3 leading-relaxed">{contact.message}</p>
             </div>
-            <ActionButtons
-              onView={() => setIsViewOpen(true)}
-              onReply={onReply ? () => setIsReplyOpen(true) : undefined}
-              onDelete={() => onDelete(contact._id)}
-              isDeleting={isDeleting}
-              showReply={!!onReply}
-            />
+            <div className="mt-auto">
+              <ActionButtons
+                onView={() => setIsViewOpen(true)}
+                onDelete={() => setIsDeleteOpen(true)}
+                isDeleting={isDeleting}
+              />
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -176,41 +158,35 @@ export function ContactMessageCard({ contact, onDelete, isDeleting, onReply }: C
         </DialogContent>
       </Dialog>
 
-      {/* Reply Dialog */}
-      {onReply && (
-        <Dialog open={isReplyOpen} onOpenChange={setIsReplyOpen}>
-          <DialogContent className="max-w-lg">
-            <DialogHeader>
-              <DialogTitle>Reply to {contact.name}</DialogTitle>
-            </DialogHeader>
-            <div className="space-y-4">
-              <label className="block text-sm font-medium text-gray-700">Reply Message</label>
-              <textarea
-                className="w-full border rounded p-2 min-h-[80px] text-sm"
-                value={replyMessage}
-                onChange={e => setReplyMessage(e.target.value)}
-                placeholder="Type your reply here..."
-                disabled={replyLoading}
-              />
-            </div>
-            <div className="flex justify-end gap-2 mt-4">
-              <Button
-                variant="outline"
-                onClick={() => setIsReplyOpen(false)}
-                disabled={replyLoading}
-              >
-                Cancel
-              </Button>
-              <Button
-                onClick={handleReply}
-                disabled={replyLoading || !replyMessage.trim()}
-              >
-                {replyLoading ? "Sending..." : "Send Reply"}
-              </Button>
-            </div>
-          </DialogContent>
-        </Dialog>
-      )}
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={isDeleteOpen} onOpenChange={setIsDeleteOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle className="flex items-center gap-2">
+              <Trash2 className="h-5 w-5 text-red-500" />
+              Delete Contact Message
+            </AlertDialogTitle>
+            <AlertDialogDescription>
+              Are you sure you want to delete this contact message from <strong>{contact.name}</strong>? 
+              This action cannot be undone and will permanently remove the message from the system.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => {
+                onDelete(contact._id)
+                setIsDeleteOpen(false)
+              }}
+              className="bg-red-600 hover:bg-red-700 text-white"
+              disabled={isDeleting}
+            >
+              {isDeleting ? "Deleting..." : "Delete Message"}
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+
     </>
   )
 }
