@@ -448,3 +448,22 @@ swiper-button-prev,
   animation: bgshadow-pulse 2.5s ease-in-out infinite;
 }
 
+/* Custom scrollbar for speaker modal - THIN VERSION */
+.speaker-modal-scrollbar::-webkit-scrollbar {
+  width: 6px; /* Thin scrollbar */
+}
+
+.speaker-modal-scrollbar::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 3px;
+}
+
+.speaker-modal-scrollbar::-webkit-scrollbar-thumb {
+  background: #e67e22; /* Orange color */
+  border-radius: 3px;
+}
+
+.speaker-modal-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: #d35400; /* Darker orange on hover */
+}
+

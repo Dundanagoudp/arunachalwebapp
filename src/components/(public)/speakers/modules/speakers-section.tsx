@@ -10,11 +10,10 @@ import {
   PaginationNext,
   PaginationPrevious,
 } from "@/components/ui/pagination"
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
-import { X } from "lucide-react"
 import { getSpeaker } from "@/service/speaker"
 import type { Speaker } from "@/types/speaker-types"
 import { getMediaUrl } from "@/utils/mediaUrl"
+import SpeakerModal from "./SpeakerModal"
 
 export default function SpeakersGrid() {
   const [currentPage, setCurrentPage] = useState(1)
@@ -150,7 +149,7 @@ export default function SpeakersGrid() {
                   {/* Speaker Info - always visible */}
                   <div className="text-center mt-3 md:mt-4 lg:mt-6">
                     <h3 className="text-base md:text-lg font-semibold text-gray-800 mb-1 md:mb-2 font-dm-serif">{speaker.name}</h3>
-                    <p className="text-xs md:text-sm text-gray-600 font-bilo">{speaker.about}</p>
+                    <p className="text-xs md:text-sm text-gray-600 font-bilo line-clamp-1 overflow-hidden">{speaker.about}</p>
                   </div>
                 </div>
               ))}
@@ -200,69 +199,11 @@ export default function SpeakersGrid() {
       </div>
 
       {/* Speaker Detail Modal */}
-      <Dialog open={isModalOpen} onOpenChange={setIsModalOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto p-0">
-          <div className="relative" style={{ backgroundColor: "#FFFAEE" }}>
-            {/* Close Button */}
-            <button
-              onClick={closeModal}
-              className="absolute top-4 right-4 z-10 p-2 rounded-full bg-white/80 hover:bg-white transition-colors"
-            >
-              <X className="w-5 h-5 text-gray-600" />
-            </button>
-
-            {selectedSpeaker && (
-              <div className="p-8 flex flex-col items-center justify-center min-h-[400px]">
-                {/* Speaker Image */}
-                <div className="flex justify-center mb-8">
-                  <div className="relative">
-                    <div
-                      className="relative w-48 h-48 md:w-56 md:h-56 bg-orange-400 p-1"
-                      style={{
-                        clipPath:
-                          "polygon(50% 0%, 80% 10%, 100% 35%, 90% 70%, 80% 90%, 50% 100%, 20% 90%, 10% 70%, 0% 35%, 20% 10%)",
-                      }}
-                    >
-                      <div
-                        className="w-full h-full bg-white p-2 overflow-hidden"
-                        style={{
-                          clipPath:
-                            "polygon(50% 0%, 80% 10%, 100% 35%, 90% 70%, 80% 90%, 50% 100%, 20% 90%, 10% 70%, 0% 35%, 20% 10%)",
-                        }}
-                      >
-                        <div
-                          className="w-full h-full relative overflow-hidden"
-                          style={{
-                            clipPath:
-                              "polygon(50% 0%, 80% 10%, 100% 35%, 90% 70%, 80% 90%, 50% 100%, 20% 90%, 10% 70%, 0% 35%, 20% 10%)",
-                          }}
-                        >
-                          <Image
-                          
-                            src={getMediaUrl(selectedSpeaker.image_url) || "/images/speaker.png"}
-                            alt={selectedSpeaker.name}
-                            fill
-                            className="object-cover object-center"
-                          />
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                {/* Speaker Details */}
-                <div className="text-center">
-                  <DialogHeader className="mb-3">
-                    <DialogTitle className="text-2xl  font-bold mb-0 font-dm-serif" style={{ color: "#1A3FA9" }} >
-                      {selectedSpeaker.name}
-                    </DialogTitle>
-                  </DialogHeader>
-                  <p className="text-lg text-gray-700 leading-relaxed font-bilo">{selectedSpeaker.about}</p>
-                </div>
-              </div>
-            )}
-          </div>
-        </DialogContent>
-      </Dialog>
+      <SpeakerModal 
+        isOpen={isModalOpen} 
+        onClose={closeModal} 
+        speaker={selectedSpeaker} 
+      />
     </div>
   )
 }
