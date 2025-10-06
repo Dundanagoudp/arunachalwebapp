@@ -42,13 +42,22 @@ const nextConfig: NextConfig = {
 
     domains: [
       'litfest.arunachal.gov.in',
+      'localhost',
     ],
 
     remotePatterns: [
+      // Production server
       {
         protocol: 'https',
         hostname: 'litfest.arunachal.gov.in',
         pathname: '/api/v1/uploads/**',
+      },
+      // Local dev media
+      {
+        protocol: 'http',
+        hostname: 'localhost',
+        port: '8000',
+        pathname: '/uploads/**',
       },
     ],
 
