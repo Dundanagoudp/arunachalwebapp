@@ -230,6 +230,11 @@ export default function BlogById() {
                     width={1080}
                     height={600}
                     className="w-full h-[300px] sm:h-[400px] lg:h-[500px] object-cover group-hover:scale-105 transition-transform duration-700"
+                    onError={(e) => {
+                      console.log("Featured image failed to load:", content.image_url)
+                      const target = e.target as HTMLImageElement
+                      target.src = "/placeholder.svg"
+                    }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
                   <div className="absolute bottom-6 left-6 right-6">
@@ -361,6 +366,10 @@ export default function BlogById() {
                             width={64}
                             height={64}
                             className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
+                            onError={(e) => {
+                              const target = e.target as HTMLImageElement
+                              target.src = "/placeholder.svg"
+                            }}
                           />
                         </div>
                         <div className="flex-1 min-w-0">
