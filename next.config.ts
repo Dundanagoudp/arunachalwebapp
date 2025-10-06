@@ -41,35 +41,15 @@ const nextConfig: NextConfig = {
   images: {
 
     domains: [
-
-      'images.unsplash.com',
-
-      'hebbkx1anhila5yf.public.blob.vercel-storage.com',
-
-      'storage.googleapis.com',
-
-      'img.youtube.com',
-
-      'localhost',
-
+      'litfest.arunachal.gov.in',
     ],
 
     remotePatterns: [
-      // Local dev media
       {
-        protocol: 'http',
-        hostname: 'localhost',
-        port: '8000',
-        pathname: '/uploads/**',
+        protocol: 'https',
+        hostname: 'litfest.arunachal.gov.in',
+        pathname: '/api/v1/uploads/**',
       },
-      // Allow https media host from env (e.g., CDN or production server)
-      ...(process.env.NEXT_PUBLIC_MEDIA_BASE_HOST
-        ? [{
-            protocol: 'https',
-            hostname: process.env.NEXT_PUBLIC_MEDIA_BASE_HOST,
-            pathname: '/uploads/**',
-          } as const]
-        : []),
     ],
 
   },
