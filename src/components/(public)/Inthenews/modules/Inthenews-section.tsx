@@ -13,6 +13,7 @@ import {
 } from "@/components/ui/pagination";
 import { Blog } from "@/types/newAndBlogTypes";
 import { getBlogs } from "@/service/newsAndBlogs";
+import { getMediaUrl } from "@/utils/mediaUrl";
 
 // Shimmer effect component
 const ShimmerEffect = ({ className }: { className?: string }) => (
@@ -244,12 +245,13 @@ export default function Inthenews() {
                   <div className="relative w-full h-48 sm:h-56 lg:h-64 mb-3 sm:mb-4 overflow-hidden rounded-lg">
                     {news.image_url ? (
                       <Image
-                        src={news.image_url}
+                        src={getMediaUrl(news.image_url) || "/file.svg"}
                         alt={news.title}
                         fill
                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                         className="object-cover transition-transform duration-300 hover:scale-105"
                         onError={(e) => {
+                          console.log("Image failed to load:", news.image_url);
                           // Fallback to placeholder if image fails to load
                           const target = e.target as HTMLImageElement;
                           target.src = "/file.svg";
