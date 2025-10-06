@@ -211,7 +211,6 @@ export default function AddTimeSlotPage() {
                   </SelectTrigger>
                   <SelectContent>
                     <SelectItem value="event">Event</SelectItem>
-                    <SelectItem value="break">Break</SelectItem>
                   </SelectContent>
                 </Select>
               </div>
