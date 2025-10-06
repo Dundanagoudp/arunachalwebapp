@@ -205,6 +205,7 @@ export default function Archive() {
                           height={150}
                           className="w-full h-full object-cover"
                           onError={(e) => {
+                            console.log("Image failed to load:", imageUrl)
                             const target = e.target as HTMLImageElement
                             target.src = "/placeholder.svg?height=150&width=200"
                           }}
@@ -215,7 +216,7 @@ export default function Archive() {
                     {Array.from({ length: Math.max(0, 4 - data.images.length) }, (_, index) => (
                       <div key={`placeholder-${index}`} className="aspect-[4/3] rounded-lg overflow-hidden bg-gray-200">
                         <Image
-                          src={getMediaUrl("/placeholder.svg?height=150&width=200")}
+                          src="/placeholder.svg?height=150&width=200"
                           alt={`Placeholder image ${index + 1}`}
                           width={200}
                           height={150}

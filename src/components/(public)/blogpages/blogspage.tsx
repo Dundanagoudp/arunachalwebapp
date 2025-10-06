@@ -253,11 +253,16 @@ export default function BlogsLayout() {
                 <div className="p-3 sm:p-4 flex flex-col flex-1">
                   <div className="relative w-full h-48 sm:h-56 lg:h-64 mb-3 sm:mb-4 overflow-hidden rounded-lg">
                     <Image
-                      src={getMediaUrl(blog.image_url) || ""}
+                      src={getMediaUrl(blog.image_url) || "/placeholder.svg"}
                       alt={blog.title}
                       fill
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
                       className="object-cover transition-transform duration-300 group-hover:scale-105"
+                      onError={(e) => {
+                        console.log("Image failed to load:", blog.image_url)
+                        const target = e.target as HTMLImageElement
+                        target.src = "/placeholder.svg"
+                      }}
                     />
                   </div>
                   <h3 className="text-lg sm:text-xl font-bold mt-3 sm:mt-4 mb-1 line-clamp-2 font-dm-serif">
