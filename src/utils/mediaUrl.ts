@@ -5,7 +5,7 @@
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 // Extract the base URL without /api/v1 for media files
 const MEDIA_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL || 
-  (API_BASE_URL ? API_BASE_URL.replace('/api/v1', '') : "http://localhost:8000/api/v1".replace('/api/v1', ''))
+  (API_BASE_URL ? API_BASE_URL.replace('/api/v1', '') : "https://litfest.arunachal.gov.in/api/v1".replace('/api/v1', ''))
 
 // Do not throw at import time; warn and fall back to localhost for DX
 if (!API_BASE_URL && typeof window !== 'undefined') {
