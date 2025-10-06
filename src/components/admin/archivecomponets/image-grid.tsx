@@ -163,11 +163,6 @@ export function ImageGrid({ images, viewMode, selectedImages, onSelectImage, onD
                                     <span className="hidden sm:inline">Download</span>
                                     <span className="sm:hidden">Download</span>
                                   </DropdownMenuItem>
-                                  <DropdownMenuItem>
-                                    <Edit className="mr-2 h-3 w-3 sm:h-4 sm:w-4" />
-                                    <span className="hidden sm:inline">Replace Image</span>
-                                    <span className="sm:hidden">Replace</span>
-                                  </DropdownMenuItem>
                                   {isAdmin ? (
                                     <DropdownMenuItem onClick={() => onDeleteImage(image._id)} className="text-red-600">
                                       <Trash2 className="mr-2 h-3 w-3 sm:h-4 sm:w-4" />
@@ -229,11 +224,6 @@ export function ImageGrid({ images, viewMode, selectedImages, onSelectImage, onD
                                   <Download className="mr-2 h-3 w-3 sm:h-4 sm:w-4" />
                                   <span className="hidden sm:inline">Download</span>
                                   <span className="sm:hidden">Download</span>
-                                </DropdownMenuItem>
-                                <DropdownMenuItem>
-                                  <Edit className="mr-2 h-3 w-3 sm:h-4 sm:w-4" />
-                                  <span className="hidden sm:inline">Replace Image</span>
-                                  <span className="sm:hidden">Replace</span>
                                 </DropdownMenuItem>
                                 {isAdmin ? (
                                   <DropdownMenuItem onClick={() => onDeleteImage(image._id)} className="text-red-600">

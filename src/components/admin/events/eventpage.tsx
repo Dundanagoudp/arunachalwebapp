@@ -102,12 +102,22 @@ export default function EventsPage() {
     }
   };
 
-  const handleDeleteEvent = async (eventId: string) => {
-    if (!confirm("Are you sure you want to delete this event?")) return;
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [eventToDelete, setEventToDelete] = useState<string | null>(null);
 
-    setIsDeleting(eventId);
+  const openDeleteDialog = (eventId: string) => {
+    setEventToDelete(eventId);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDeleteEvent = async () => {
+    if (!eventToDelete) return;
+    
+    setIsDeleting(eventToDelete);
+    setDeleteDialogOpen(false);
+    
     try {
-      const result = await deleteEvent(eventId);
+      const result = await deleteEvent(eventToDelete);
       if (result.success) {
         toast({
           title: "Success",
@@ -127,6 +137,7 @@ export default function EventsPage() {
       });
     } finally {
       setIsDeleting(null);
+      setEventToDelete(null);
     }
   };
 
@@ -191,6 +202,28 @@ export default function EventsPage() {
 
   return (
     <div className="flex flex-1 flex-col gap-6 p-6 pt-0">
+      {/* Delete Confirmation Dialog */}
+      <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Are you sure?</AlertDialogTitle>
+            <AlertDialogDescription>
+              This action cannot be undone. This will permanently delete the event
+              and all associated data.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={handleDeleteEvent}
+              className="bg-red-600 hover:bg-red-700"
+            >
+              Delete
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
+      
       {/* Header */}
       <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
         <div>
@@ -360,7 +393,7 @@ export default function EventsPage() {
                         <DropdownMenuItem
                           className="text-red-600"
                           onSelect={e => e.preventDefault()}
-                          onClick={() => handleDeleteEvent(events.event._id)}
+                          onClick={() => openDeleteDialog(events.event._id)}
                         >
                           <div className="flex items-center cursor-pointer">
                             <Trash2 className="mr-2 h-4 w-4" />
