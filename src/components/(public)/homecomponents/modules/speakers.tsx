@@ -8,6 +8,7 @@ import "swiper/css/effect-coverflow"
 import "swiper/css/pagination"
 import "swiper/css/navigation"
 import { useEffect, useRef, useState } from "react"
+import { useRouter } from "next/navigation"
 import { getSpeaker } from "@/service/speaker"
 import { getMediaUrl } from "@/utils/mediaUrl"
 interface Speaker {
@@ -20,6 +21,7 @@ interface Speaker {
 }
 
 export default function Speakers() {
+  const router = useRouter()
   const [speakers, setSpeakers] = useState<Speaker[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -27,6 +29,10 @@ export default function Speakers() {
   const navigationNextRef = useRef<HTMLButtonElement>(null)
   const swiperRef = useRef<any>(null)
   const [activeIndex, setActiveIndex] = useState(0)
+
+  const handleSpeakerClick = () => {
+    router.push('/speakers')
+  }
 
   useEffect(() => {
     async function fetchSpeakers() {
@@ -188,7 +194,7 @@ export default function Speakers() {
                         key={speaker._id || speaker.id || index}
                         className={`!w-[280px] !h-[380px] md:!w-[320px] md:!h-[420px] lg:!w-[360px] lg:!h-[460px] mx-4 transition-opacity duration-300 ${isActive ? 'opacity-100 z-10' : 'opacity-40 z-0'}`}
                       >
-                        <div className="relative group h-full w-full">
+                        <div className="relative group h-full w-full cursor-pointer" onClick={handleSpeakerClick}>
                           {/* Gradient Border Effect */}
                           <div className="absolute -inset-2 bg-gradient-to-r from-yellow-400 via-orange-400 to-yellow-400 rounded-lg opacity-75 group-hover:opacity-100 transition duration-300 blur-sm group-hover:blur-md"></div>
 

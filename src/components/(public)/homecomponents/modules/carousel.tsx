@@ -280,108 +280,152 @@ export default function Carousel() {
                 </div>
               </div>
 
-        {/* Workshops Carousel */}
+        {/* Workshops Display */}
         <div className="relative mt-16 max-w-7xl mx-auto">
-          <div className="flex items-center justify-center">
-            {/* Previous Button */}
-            <button
-              onClick={prevSlide}
-              disabled={isLoading}
-              className={`absolute left-2 md:left-4 lg:-left-16 top-1/2 -translate-y-1/2 z-20 bg-[#e67e22] hover:bg-[#d35400] rounded-full p-3 flex items-center justify-center shadow-lg border-4 border-white transition-all duration-300 hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-[#e67e22] focus:ring-offset-2`}
-              aria-label="Previous workshops"
-            >
-              <ChevronLeft className="h-5 w-5 text-white" />
-            </button>
-
-            {/* Carousel Container */}
-            <div className="overflow-hidden w-full px-12 md:px-16 lg:px-20">
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={`${currentIndex}-${cardsPerView}`}
-                  initial={{ opacity: 0 }}
-                  animate={{ opacity: 1 }}
-                  exit={{ opacity: 0 }}
-                  transition={{ duration: 0.4, ease: "easeInOut" }}
-                  className={`grid gap-6 ${
-                    cardsPerView === 1
-                      ? "grid-cols-1"
-                      : cardsPerView === 2
-                        ? "grid-cols-2"
-                        : "grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
-                  }`}
-                >
-                  {isLoading
-                    ? Array.from({ length: cardsPerView }).map((_, idx) => <LoadingSkeleton key={idx} />)
-                    : workshops.length === 0
-                      ? <div className="col-span-full text-center text-gray-500 text-lg py-12">No workshops available.</div>
-                      : workshops.slice(currentIndex, currentIndex + cardsPerView).map((workshop, index) => (
-                          <motion.div
-                            key={workshop._id ?? `${currentIndex}-${index}`}
-                            initial={{ opacity: 0, y: 50 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            transition={{
-                              duration: 0.2,
-                              delay: index * 0.1,
-                              ease: "easeOut",
-                            }}
-                            className="flex justify-center"
-                            data-aos="fade-up"
-                            data-aos-delay={100 * index}
-                          >
-                            <div
-                              className="bg-white border-4 border-[#FFD76B] hover:border-[#e67e22] p-8 h-[420px] flex flex-col items-center justify-center relative overflow-hidden rounded-t-full rounded-b-2xl w-full max-w-xs mx-auto transition-all duration-300 hover:shadow-xl hover:scale-105 group cursor-pointer"
-                              onClick={() => handleWorkshopClick(workshop)}
-                              tabIndex={0}
-                              role="button"
-                              aria-label={`Register for ${workshop.name}`}
-                              onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') handleWorkshopClick(workshop) }}
-                            >
-                              <div className="mb-6 flex-1 flex items-center justify-center w-full">
-                                <Image
-                                  src={getMediaUrl(workshop.imageUrl) || "/registration/creative.png"}
-                                  alt={workshop.name}
-                                  width={180}
-                                  height={180}
-                                  className="object-contain drop-shadow-lg transition-transform duration-300"
-                                />
-                              </div>
-                              <h4 className="text-lg font-bold text-gray-800 text-center leading-tight font-dm-serif mt-2 group-hover:text-[#e67e22] transition-colors duration-300">
-                                {workshop.name}
-                              </h4>
-                            </div>
-                          </motion.div>
-                        ))}
-                </motion.div>
-              </AnimatePresence>
+          {workshops.length === 1 ? (
+            /* Single Workshop - Centered Display */
+            <div className="flex justify-center">
+              <div className="w-full max-w-xs">
+                {isLoading ? (
+                  <LoadingSkeleton />
+                ) : (
+                  <motion.div
+                    initial={{ opacity: 0, y: 50 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    transition={{ duration: 0.4, ease: "easeOut" }}
+                    data-aos="fade-up"
+                    data-aos-delay="200"
+                  >
+                    <div
+                      className="bg-white border-4 border-[#FFD76B] hover:border-[#e67e22] p-8 h-[420px] flex flex-col items-center justify-center relative overflow-hidden rounded-t-full rounded-b-2xl w-full mx-auto transition-all duration-300 hover:shadow-xl hover:scale-105 group cursor-pointer"
+                      onClick={() => handleWorkshopClick(workshops[0])}
+                      tabIndex={0}
+                      role="button"
+                      aria-label={`Register for ${workshops[0].name}`}
+                      onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') handleWorkshopClick(workshops[0]) }}
+                    >
+                      <div className="mb-6 flex-1 flex items-center justify-center w-full">
+                        <Image
+                          src={getMediaUrl(workshops[0].imageUrl) || "/registration/creative.png"}
+                          alt={workshops[0].name}
+                          width={180}
+                          height={180}
+                          className="object-contain drop-shadow-lg transition-transform duration-300"
+                        />
+                      </div>
+                      <h4 className="text-lg font-bold text-gray-800 text-center leading-tight font-dm-serif mt-2 group-hover:text-[#e67e22] transition-colors duration-300">
+                        {workshops[0].name}
+                      </h4>
+                    </div>
+                  </motion.div>
+                )}
+              </div>
             </div>
+          ) : (
+            /* Multiple Workshops - Carousel Display */
+            <div className="flex items-center justify-center">
+              {/* Previous Button */}
+              <button
+                onClick={prevSlide}
+                disabled={isLoading}
+                className={`absolute left-2 md:left-4 lg:-left-16 top-1/2 -translate-y-1/2 z-20 bg-[#e67e22] hover:bg-[#d35400] rounded-full p-3 flex items-center justify-center shadow-lg border-4 border-white transition-all duration-300 hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-[#e67e22] focus:ring-offset-2`}
+                aria-label="Previous workshops"
+              >
+                <ChevronLeft className="h-5 w-5 text-white" />
+              </button>
 
-            {/* Next Button */}
-            <button
-              onClick={nextSlide}
-              disabled={isLoading}
-              className={`absolute right-2 md:right-4 lg:-right-16 top-1/2 -translate-y-1/2 z-20 bg-[#e67e22] hover:bg-[#d35400] rounded-full p-3 flex items-center justify-center shadow-lg border-4 border-white transition-all duration-300 hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-[#e67e22] focus:ring-offset-2`}
-              aria-label="Next workshops"
-            >
-              <ChevronRight className="h-5 w-5 text-white" />
-            </button>
-          </div>
+              {/* Carousel Container */}
+              <div className="overflow-hidden w-full px-12 md:px-16 lg:px-20">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={`${currentIndex}-${cardsPerView}`}
+                    initial={{ opacity: 0 }}
+                    animate={{ opacity: 1 }}
+                    exit={{ opacity: 0 }}
+                    transition={{ duration: 0.4, ease: "easeInOut" }}
+                    className={`grid gap-6 ${
+                      cardsPerView === 1
+                        ? "grid-cols-1"
+                        : cardsPerView === 2
+                          ? "grid-cols-2"
+                          : "grid-cols-1 md:grid-cols-2 lg:grid-cols-3"
+                    }`}
+                  >
+                    {isLoading
+                      ? Array.from({ length: cardsPerView }).map((_, idx) => <LoadingSkeleton key={idx} />)
+                      : workshops.length === 0
+                        ? <div className="col-span-full text-center text-gray-500 text-lg py-12">No workshops available.</div>
+                        : workshops.slice(currentIndex, currentIndex + cardsPerView).map((workshop, index) => (
+                            <motion.div
+                              key={workshop._id ?? `${currentIndex}-${index}`}
+                              initial={{ opacity: 0, y: 50 }}
+                              animate={{ opacity: 1, y: 0 }}
+                              transition={{
+                                duration: 0.2,
+                                delay: index * 0.1,
+                                ease: "easeOut",
+                              }}
+                              className="flex justify-center"
+                              data-aos="fade-up"
+                              data-aos-delay={100 * index}
+                            >
+                              <div
+                                className="bg-white border-4 border-[#FFD76B] hover:border-[#e67e22] p-8 h-[420px] flex flex-col items-center justify-center relative overflow-hidden rounded-t-full rounded-b-2xl w-full max-w-xs mx-auto transition-all duration-300 hover:shadow-xl hover:scale-105 group cursor-pointer"
+                                onClick={() => handleWorkshopClick(workshop)}
+                                tabIndex={0}
+                                role="button"
+                                aria-label={`Register for ${workshop.name}`}
+                                onKeyDown={e => { if (e.key === 'Enter' || e.key === ' ') handleWorkshopClick(workshop) }}
+                              >
+                                <div className="mb-6 flex-1 flex items-center justify-center w-full">
+                                  <Image
+                                    src={getMediaUrl(workshop.imageUrl) || "/registration/creative.png"}
+                                    alt={workshop.name}
+                                    width={180}
+                                    height={180}
+                                    className="object-contain drop-shadow-lg transition-transform duration-300"
+                                  />
+                                </div>
+                                <h4 className="text-lg font-bold text-gray-800 text-center leading-tight font-dm-serif mt-2 group-hover:text-[#e67e22] transition-colors duration-300">
+                                  {workshop.name}
+                                </h4>
+                              </div>
+                            </motion.div>
+                          ))}
+                  </motion.div>
+                </AnimatePresence>
+              </div>
 
-          {/* Carousel Indicators */}
-          <div className="flex justify-center mt-8 space-x-2 lg:hidden">
-            {workshops.length > 0 &&
-              Array.from({
-                length: Math.ceil(Math.max(0, workshops.length - cardsPerView + 1)),
-              }).map((_, index) => (
-                <button
-                  key={index}
-                  onClick={() => setCurrentIndex(index)}
-                  className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                    index === currentIndex ? "bg-[#e67e22] scale-125" : "bg-gray-300 hover:bg-gray-400"
-                  }`}
-                  aria-label={`Go to slide ${index + 1}`}
-                />
-              ))}
-          </div>
+              {/* Next Button */}
+              <button
+                onClick={nextSlide}
+                disabled={isLoading}
+                className={`absolute right-2 md:right-4 lg:-right-16 top-1/2 -translate-y-1/2 z-20 bg-[#e67e22] hover:bg-[#d35400] rounded-full p-3 flex items-center justify-center shadow-lg border-4 border-white transition-all duration-300 hover:scale-110 disabled:opacity-50 disabled:cursor-not-allowed focus:outline-none focus:ring-2 focus:ring-[#e67e22] focus:ring-offset-2`}
+                aria-label="Next workshops"
+              >
+                <ChevronRight className="h-5 w-5 text-white" />
+              </button>
+            </div>
+          )}
+
+          {/* Carousel Indicators - Only show for multiple workshops */}
+          {workshops.length > 1 && (
+            <div className="flex justify-center mt-8 space-x-2 lg:hidden">
+              {workshops.length > 0 &&
+                Array.from({
+                  length: Math.ceil(Math.max(0, workshops.length - cardsPerView + 1)),
+                }).map((_, index) => (
+                  <button
+                    key={index}
+                    onClick={() => setCurrentIndex(index)}
+                    className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                      index === currentIndex ? "bg-[#e67e22] scale-125" : "bg-gray-300 hover:bg-gray-400"
+                    }`}
+                    aria-label={`Go to slide ${index + 1}`}
+                  />
+                ))}
+            </div>
+          )}
         </div>
       </div>
     </main>

@@ -60,11 +60,6 @@ export default function Footer() {
                   </Link>
                 </li>
                 <li>
-                  <Link href="/Inthenews" className="hover:underline">
-                    In the news
-                  </Link>
-                </li>
-                <li>
                   <Link href="/blogsContent" className="hover:underline">
                     Blogs
                   </Link>
@@ -105,7 +100,7 @@ export default function Footer() {
               <div>
                 <h3 className="text-xl font-semibold mb-4 text-[#FF9900] font-dm-serif tracking-wide">Socials</h3>
                 <div className="flex justify-start space-x-4">
-                  <Link href="https://www.youtube.com/@diprarunx" aria-label="YouTube" className="hover:text-gray-300" target="_blank" rel="noopener noreferrer">
+                  <Link href="https://www.youtube.com/@arunachallitfest" aria-label="YouTube" className="hover:text-gray-300" target="_blank" rel="noopener noreferrer">
                     <Youtube className="size-6" />
                   </Link>
                   <Link href="https://www.instagram.com/arunachallitfest?igsh=MTlveWdnb3RxNDRjdA%3D%3D" aria-label="Instagram" className="hover:text-gray-300" target="_blank" rel="noopener noreferrer">

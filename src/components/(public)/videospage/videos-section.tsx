@@ -36,18 +36,25 @@ export default function Videosection() {
   const videos = activeTab === 'youtube' ? youtubeVideos : uploadedVideos
   const totalPages = Math.ceil(videos.length / videosPerPage)
 
+  // Fetch all videos on component mount
   useEffect(() => {
-    setLoading(true)
-    const fetchVideos = async () => {
+    const fetchAllVideos = async () => {
+      setLoading(true)
       try {
-        if (activeTab === 'youtube') {
-          const res = await getYoutubeVideos()
-          if (res.success && res.data) setYoutubeVideos(res.data)
-          else toast({ title: "Error", description: res.error || "Failed to fetch YouTube videos" })
+        // Fetch YouTube videos
+        const youtubeRes = await getYoutubeVideos()
+        if (youtubeRes.success && youtubeRes.data) {
+          setYoutubeVideos(youtubeRes.data)
         } else {
-          const res = await getRawVideos()
-          if (res.success && res.data) setUploadedVideos(res.data)
-          else toast({ title: "Error", description: res.error || "Failed to fetch uploaded videos" })
+          toast({ title: "Error", description: youtubeRes.error || "Failed to fetch YouTube videos" })
+        }
+
+        // Fetch uploaded videos
+        const uploadedRes = await getRawVideos()
+        if (uploadedRes.success && uploadedRes.data) {
+          setUploadedVideos(uploadedRes.data)
+        } else {
+          toast({ title: "Error", description: uploadedRes.error || "Failed to fetch uploaded videos" })
         }
       } catch (e) {
         toast({ title: "Error", description: "Failed to fetch videos" })
@@ -55,8 +62,15 @@ export default function Videosection() {
         setLoading(false)
       }
     }
-    fetchVideos()
-  }, [activeTab, toast])
+    fetchAllVideos()
+  }, [toast])
+
+  // Handle tab switching
+  useEffect(() => {
+    if (activeTab === 'uploaded' && uploadedVideos.length === 0) {
+      setActiveTab('youtube')
+    }
+  }, [activeTab, uploadedVideos.length])
 
   const getCurrentVideos = () => {
     const startIndex = (currentPage - 1) * videosPerPage
@@ -87,12 +101,14 @@ export default function Videosection() {
           >
             YouTube Videos
           </button>
-          <button
-            className={`px-4 py-2 rounded-t-lg font-semibold border-b-2 transition-colors font-bilo ${activeTab === 'uploaded' ? 'border-orange-500 text-orange-600 bg-orange-50' : 'border-transparent text-gray-600 bg-transparent'}`}
-            onClick={() => { setActiveTab('uploaded'); setCurrentPage(1); }}
-          >
-            Uploaded Videos
-          </button>
+          {uploadedVideos.length > 0 && (
+            <button
+              className={`px-4 py-2 rounded-t-lg font-semibold border-b-2 transition-colors font-bilo ${activeTab === 'uploaded' ? 'border-orange-500 text-orange-600 bg-orange-50' : 'border-transparent text-gray-600 bg-transparent'}`}
+              onClick={() => { setActiveTab('uploaded'); setCurrentPage(1); }}
+            >
+              Uploaded Videos
+            </button>
+          )}
         </div>
 
         {/* Video Grid - Fully Responsive */}

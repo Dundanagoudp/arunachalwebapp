@@ -21,7 +21,6 @@ const Header = () => {
     { href: "/workshops", label: "Workshops" },
     { href: "/#testimonials", label: "Testimonials" },
     { href: "/archive", label: "Archive" },
-    { href: "/Inthenews", label: "In the news" },
     { href: "/blogsContent", label: "Blogs" },
     { href: "/videos", label: "Videos" },
     { href: "/contactus", label: "Contact Us" },
