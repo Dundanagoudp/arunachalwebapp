@@ -23,7 +23,8 @@ const fetchScheduleData = async () => {
       id: t._id,
       time: t.startTime,
       name: t.title,
-      speaker: t.speaker
+      speaker: t.speaker,
+      description: t.description
     }))
   );
   
@@ -45,9 +46,6 @@ function ScheduleSkeleton() {
             </div>
           </div>
         ))}
-        {/* Gradient overlays for blur effect */}
-        <div className="absolute bottom-0 left-0 w-full h-20 bg-gradient-to-t from-white to-transparent pointer-events-none z-20" />
-        <div className="absolute top-0 left-0 w-full h-8 bg-gradient-to-b from-white to-transparent pointer-events-none z-20" />
       </div>
     </div>
   )
@@ -59,6 +57,7 @@ export default function Schedulepage() {
   const [scheduleData, setScheduleData] = useState<any[][]>([])
   const [error, setError] = useState<string | null>(null)
   const [downloading, setDownloading] = useState(false)
+  const [expandedDescriptions, setExpandedDescriptions] = useState<Set<string>>(new Set())
 
   useEffect(() => {
     const loadData = async () => {
@@ -78,6 +77,25 @@ export default function Schedulepage() {
   }, [])
 
   const events = scheduleData[activeTab] || []
+
+  // Function to truncate text to approximately one line (around 50 characters)
+  const truncateText = (text: string, maxLength: number = 50) => {
+    if (text.length <= maxLength) return text
+    return text.substring(0, maxLength) + "..."
+  }
+
+  // Function to toggle description expansion
+  const toggleDescription = (eventId: string) => {
+    setExpandedDescriptions(prev => {
+      const newSet = new Set(prev)
+      if (newSet.has(eventId)) {
+        newSet.delete(eventId)
+      } else {
+        newSet.add(eventId)
+      }
+      return newSet
+    })
+  }
 
   return (
     <div className="min-h-0 md:min-h-screen bg-[#FFFAEE] p-8 relative overflow-hidden">
@@ -175,16 +193,31 @@ export default function Schedulepage() {
                   <div className="text-[#000000] font-bilo font-semibold text-base md:text-lg">
                     {event.name}
                     {event.speaker && (
-                      <span className="block text-sm text-gray-600 font-normal mt-1 font-bilo">
+                      <span className="block text-sm text-black font-normal mt-1 font-bilo">
                         Speaker: {event.speaker}
                       </span>
+                    )}
+                    {event.description && (
+                      <div className="mt-2">
+                        <span className="block text-sm text-gray-700 font-normal font-bilo text-justify">
+                          {expandedDescriptions.has(event.id) 
+                            ? event.description 
+                            : truncateText(event.description)
+                          }
+                        </span>
+                        {event.description.length > 50 && (
+                          <button
+                            onClick={() => toggleDescription(event.id)}
+                            className="text-xs text-blue-600 hover:text-blue-800 font-bilo mt-1 underline"
+                          >
+                            {expandedDescriptions.has(event.id) ? "Read Less" : "Read More"}
+                          </button>
+                        )}
+                      </div>
                     )}
                   </div>
                 </div>
               ))}
-              {/* Gradient overlays for blur effect */}
-              <div className="absolute bottom-0 left-0 w-full h-20 bg-gradient-to-t from-white to-transparent pointer-events-none z-20" />
-              <div className="absolute top-0 left-0 w-full h-8 bg-gradient-to-b from-white to-transparent pointer-events-none z-20" />
             </div>
           </div>
         )}
