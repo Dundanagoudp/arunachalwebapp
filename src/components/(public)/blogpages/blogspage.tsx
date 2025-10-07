@@ -246,9 +246,10 @@ export default function BlogsLayout() {
         ) : (
           <>
             {currentBlogs.map((blog, idx) => (
-              <div
+              <Link
                 key={blog._id || idx}
-                className="bg-white rounded-xl overflow-hidden shadow-md transition-shadow duration-300 hover:shadow-xl h-full flex flex-col"
+                href={`/blogsContent/blog/${blog._id}`}
+                className="bg-white rounded-xl overflow-hidden shadow-md transition-all duration-300 hover:shadow-xl hover:scale-105 h-full flex flex-col cursor-pointer"
               >
                 <div className="p-3 sm:p-4 flex flex-col flex-1">
                   <div className="relative w-full h-48 sm:h-56 lg:h-64 mb-3 sm:mb-4 overflow-hidden rounded-lg">
@@ -257,7 +258,7 @@ export default function BlogsLayout() {
                       alt={blog.title}
                       fill
                       sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                      className="object-cover transition-transform duration-300 group-hover:scale-105"
+                      className="object-cover transition-transform duration-300 hover:scale-105"
                       onError={(e) => {
                         console.log("Image failed to load:", blog.image_url)
                         const target = e.target as HTMLImageElement
@@ -265,11 +266,11 @@ export default function BlogsLayout() {
                       }}
                     />
                   </div>
-                  <h3 className="text-lg sm:text-xl font-bold mt-3 sm:mt-4 mb-1 line-clamp-2 font-dm-serif">
-                    {blog.title}
+                  <h3 className="text-lg sm:text-xl font-bold mt-3 sm:mt-4 mb-1 line-clamp-1 font-dm-serif">
+                    {blog.title.length > 40 ? blog.title.substring(0, 40) + "..." : blog.title}
                   </h3>
                   <p className="text-gray-500 text-xs sm:text-sm flex-1 line-clamp-2 mb-0 font-bilo">
-                    {blog.contents || ""}
+                    {blog.contents && blog.contents.length > 120 ? blog.contents.substring(0, 120) + "..." : blog.contents || ""}
                   </p>
 
                   <div className="flex justify-between items-center mt-2 sm:mt-2">
@@ -285,15 +286,12 @@ export default function BlogsLayout() {
                           )
                         : ""}
                     </p>
-                    <Link
-                      href={`/blogsContent/blog/${blog._id}`}
-                      className="text-[#D96D34] font-semibold hover:underline text-sm sm:text-base font-bilo"
-                    >
+                    <span className="text-[#D96D34] font-semibold text-sm sm:text-base font-bilo">
                       Read More
-                    </Link>
+                    </span>
                   </div>
                 </div>
-              </div>
+              </Link>
             ))}
           </>
         )}

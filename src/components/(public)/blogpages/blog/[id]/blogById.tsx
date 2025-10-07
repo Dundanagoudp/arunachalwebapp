@@ -97,6 +97,7 @@ export default function BlogById() {
   const [blogs, setBlogs] = useState<Blog[]>([])
   const [searchQuery, setSearchQuery] = useState("")
   const [isSearching, setIsSearching] = useState(false)
+  const [showFullContent, setShowFullContent] = useState(false)
 
   const params = useParams()
   const id = Array.isArray(params.id) ? params.id[0] : params.id
@@ -131,6 +132,20 @@ export default function BlogById() {
       router.push(`/blogsContent/blog/${blogId}`)
     }
   }
+
+  // Function to format content into paragraphs
+  const formatContent = (text: string) => {
+    if (!text) return []
+    return text.split('\n').filter(paragraph => paragraph.trim().length > 0)
+  }
+
+  // Function to get truncated content
+  const getTruncatedContent = (text: string, maxLength: number = 500) => {
+    if (!text) return ""
+    if (text.length <= maxLength) return text
+    return text.substring(0, maxLength) + "..."
+  }
+
 
   useEffect(() => {
     const fetchBlog = async () => {
@@ -247,7 +262,7 @@ export default function BlogById() {
               )}
 
               {/* Article Header */}
-              <div className="space-y-6">
+              <div className="space-y-8">
                 <div className="flex items-center gap-2 text-sm text-[#D96D34] font-medium">
                   <BookOpen className="w-4 h-4" />
                   <span>Blog Post</span>
@@ -257,38 +272,91 @@ export default function BlogById() {
                   {content.title}
                 </h1>
 
-                <div className="flex flex-wrap items-center gap-4 text-gray-600 text-sm">
-                  <div className="flex items-center gap-2">
-                    <Avatar className="w-8 h-8">
+                <div className="flex flex-wrap items-center gap-6 text-gray-600 text-sm">
+                  <div className="flex items-center gap-3">
+                    <Avatar className="w-10 h-10">
                       <AvatarImage src="/placeholder.svg" alt={content.author || "Author"} />
-                      <AvatarFallback className="bg-[#D96D34] text-white text-xs">
+                      <AvatarFallback className="bg-[#D96D34] text-white text-sm font-bold">
                         {(content.author || "A").charAt(0).toUpperCase()}
                       </AvatarFallback>
                     </Avatar>
-                    <span className="font-medium font-bilo">{content.author || "Anonymous"}</span>
+                    <div>
+                      <span className="font-semibold text-gray-800 font-bilo">{content.author || "Anonymous"}</span>
+                      <p className="text-xs text-gray-500 font-bilo">Author</p>
+                    </div>
                   </div>
 
-                  <div className="flex items-center gap-1">
-                    <Calendar className="w-4 h-4" />
-                    <span className="font-bilo">
-                      {content.publishedDate
-                        ? new Date(content.publishedDate).toLocaleDateString(undefined, {
-                            year: "numeric",
-                            month: "long",
-                            day: "numeric",
-                          })
-                        : "Unknown date"}
-                    </span>
+                  <div className="flex items-center gap-2">
+                    <Calendar className="w-4 h-4 text-[#D96D34]" />
+                    <div>
+                      <span className="font-semibold text-gray-800 font-bilo">
+                        {content.publishedDate
+                          ? new Date(content.publishedDate).toLocaleDateString(undefined, {
+                              year: "numeric",
+                              month: "long",
+                              day: "numeric",
+                            })
+                          : "Unknown date"}
+                      </span>
+                      <p className="text-xs text-gray-500 font-bilo">Published</p>
+                    </div>
                   </div>
+
                 </div>
+
               </div>
 
               {/* Article Content */}
               <Card className="p-6 lg:p-8 shadow-sm border-0 bg-white/70 backdrop-blur-sm">
                 <div className="prose prose-lg max-w-none text-gray-800 leading-relaxed font-bilo">
-                  <p className="text-lg font-bilo">
-                    {content.contents}
-                  </p>
+                  <div className="space-y-6">
+                    {showFullContent ? (
+                      // Show full content
+                      formatContent(content.contents || "").map((paragraph, index) => (
+                        <p 
+                          key={index} 
+                          className="text-lg font-bilo text-justify leading-8 indent-8 mb-6"
+                        >
+                          {paragraph.trim()}
+                        </p>
+                      ))
+                    ) : (
+                      // Show truncated content
+                      formatContent(getTruncatedContent(content.contents || "", 500)).map((paragraph, index) => (
+                        <p 
+                          key={index} 
+                          className="text-lg font-bilo text-justify leading-8 indent-8 mb-6"
+                        >
+                          {paragraph.trim()}
+                        </p>
+                      ))
+                    )}
+                  </div>
+                  
+                  {/* Show More/Less functionality for long content */}
+                  {content.contents && content.contents.length > 500 && (
+                    <div className="mt-6">
+                      <div className="flex justify-end">
+                        <Button
+                          onClick={() => setShowFullContent(!showFullContent)}
+                          variant="outline"
+                          className="bg-[#D96D34] hover:bg-[#c05d2b] text-white border-[#D96D34] hover:border-[#c05d2b] px-6 py-2 rounded-full font-medium transition-all duration-300 hover:scale-105 font-bilo"
+                        >
+                          {showFullContent ? (
+                            <>
+                              <span>Show Less</span>
+                              <ArrowRight className="w-4 h-4 ml-2 rotate-180" />
+                            </>
+                          ) : (
+                            <>
+                              <span>Read More</span>
+                              <ArrowRight className="w-4 h-4 ml-2" />
+                            </>
+                          )}
+                        </Button>
+                      </div>
+                    </div>
+                  )}
                 </div>
               </Card>
 
