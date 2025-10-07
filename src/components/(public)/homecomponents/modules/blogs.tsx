@@ -116,9 +116,9 @@ export default function Blogs() {
                       className="object-cover"
                     />
                   </div>
-                  <h3 className="text-xl font-bold mt-4 mb-2 font-dm-serif">{blog.title}</h3>
+                  <h3 className="text-xl font-bold mt-4 mb-2 font-dm-serif truncate" title={blog.title}>{blog.title}</h3>
                   {blog.contents && (
-                    <p className="text-gray-700 text-base mb-2 line-clamp-3 font-bilo">
+                    <p className="text-gray-700 text-base mb-2 truncate font-bilo" title={blog.contents}>
                       {blog.contents.length > 40 ? blog.contents.slice(0, 40) + '...' : blog.contents}
                     </p>
                   )}

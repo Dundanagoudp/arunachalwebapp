@@ -60,11 +60,6 @@ export default function Footer() {
                   </Link>
                 </li>
                 <li>
-                  <Link href="/Inthenews" className="hover:underline">
-                    In the news
-                  </Link>
-                </li>
-                <li>
                   <Link href="/blogsContent" className="hover:underline">
                     Blogs
                   </Link>

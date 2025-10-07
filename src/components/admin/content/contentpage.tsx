@@ -328,15 +328,9 @@ export default function NewsAndBlogsManagement() {
                     </Badge>
                   </div>
                   {content.contentType === "blog" && content.contents && (
-                    <p className="text-sm text-muted-foreground line-clamp-2">
+                    <p className="text-sm text-muted-foreground truncate" title={content.contents}>
                       {content.contents}
                     </p>
-                  )}
-                  {content.contentType === "link" && content.link && (
-                    <div className="flex items-center gap-2 text-sm text-blue-600">
-                      <ExternalLink className="h-4 w-4" />
-                      <span className="truncate">{content.link}</span>
-                    </div>
                   )}
                   <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-sm text-muted-foreground">
                     <div className="flex items-center gap-1">
