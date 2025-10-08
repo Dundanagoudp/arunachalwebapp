@@ -26,13 +26,22 @@ export default function Blogs() {
     async function fetchBlogs() {
       setIsLoading(true)
       const res = await getBlogs()
+      console.log("API Response:", res) // Debug: Check API response
       if (res.success && Array.isArray(res.data)) {
+        console.log("Blogs data:", res.data) // Debug: Check blogs data
         // Sort by publishedDate descending, fallback to original order if not present
         const sorted = [...res.data].sort((a, b) => {
           const dateA = a.publishedDate ? new Date(a.publishedDate).getTime() : 0
           const dateB = b.publishedDate ? new Date(b.publishedDate).getTime() : 0
           return dateB - dateA
         })
+        console.log("Sorted blogs with dates:", sorted.map(blog => ({
+          title: blog.title,
+          publishedDate: blog.publishedDate,
+          year: blog.publishedDate ? new Date(blog.publishedDate).getFullYear() : 'No date',
+          rawDate: blog.publishedDate,
+          isRealAPI: blog.publishedDate ? 'REAL API DATA' : 'NO DATE - USING CURRENT YEAR'
+        }))) // Debug: Check dates and years
         setBlogs(sorted.slice(0, 3))
       }
       setIsLoading(false)
@@ -123,7 +132,9 @@ export default function Blogs() {
                     </p>
                   )}
                   <div className="flex justify-between items-center mt-9">
-                    <p className="text-gray-500">{blog.publishedDate ? new Date(blog.publishedDate).toLocaleDateString() : ""}</p>
+                    <span className="px-3 py-1 bg-[#4F8049] text-white text-sm font-medium rounded-full">
+                      {blog.publishedDate ? new Date(blog.publishedDate).getFullYear() : new Date().getFullYear()}
+                    </span>
                     {blog.contentType === 'link' && blog.link ? (
                       <a
                         href={blog.link}

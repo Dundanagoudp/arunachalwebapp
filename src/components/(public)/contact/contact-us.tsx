@@ -95,7 +95,7 @@ export default function ContactUsPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FFF8ED] py-8 px-2 sm:py-12 sm:px-4 lg:px-8 flex flex-col items-center overflow-x-hidden font-['Inter',sans-serif]">
+    <div className="bg-[#FFF8ED] py-8 px-2 sm:py-12 sm:px-4 lg:px-8 flex flex-col items-center overflow-x-hidden font-['Inter',sans-serif]">
       {/* Header Section */}
       <div className="relative text-center mb-8 sm:mb-12 max-w-4xl mx-auto px-2 sm:px-4">
         <h1 className="text-[#1A3FA9] font-dm-serif text-3xl sm:text-5xl lg:text-6xl font-bold tracking-wide mb-4">

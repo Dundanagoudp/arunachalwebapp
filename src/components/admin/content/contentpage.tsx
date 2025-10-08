@@ -74,6 +74,9 @@ export default function NewsAndBlogsManagement() {
   // Delete dialog state
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [contentToDelete, setContentToDelete] = useState<Blog | null>(null);
+  
+  // Description expansion state
+  const [expandedDescriptions, setExpandedDescriptions] = useState<Set<string>>(new Set());
 
   useEffect(() => {
     async function fetchBlogs() {
@@ -158,6 +161,26 @@ export default function NewsAndBlogsManagement() {
     setContentToDelete(null);
   };
 
+  // Helper function to truncate text to 10 words
+  const truncateText = (text: string, maxWords: number = 10) => {
+    const words = text.split(' ');
+    if (words.length <= maxWords) return text;
+    return words.slice(0, maxWords).join(' ') + '...';
+  };
+
+  // Toggle description expansion
+  const toggleDescription = (contentId: string) => {
+    setExpandedDescriptions(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(contentId)) {
+        newSet.delete(contentId);
+      } else {
+        newSet.add(contentId);
+      }
+      return newSet;
+    });
+  };
+
   if (loading) {
     return <div className="p-6">Loading...</div>;
   }
@@ -166,7 +189,7 @@ export default function NewsAndBlogsManagement() {
   }
 
   return (
-    <div className="flex flex-1 flex-col gap-6 p-6 pt-0">
+    <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
@@ -186,7 +209,7 @@ export default function NewsAndBlogsManagement() {
       </div>
 
       {/* Stats Cards */}
-      <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 md:grid-cols-4">
+      <div className="grid gap-3 grid-cols-1 sm:grid-cols-2 md:grid-cols-4">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
             <CardTitle className="text-sm font-medium">
@@ -292,20 +315,20 @@ export default function NewsAndBlogsManagement() {
           </CardDescription>
         </CardHeader>
         <CardContent>
-          <div className="space-y-4">
+          <div className="space-y-3">
             {paginatedContent.map((content) => (
               <div
                 key={content._id}
-                className="flex flex-col sm:flex-row items-start gap-4 p-4 border rounded-lg"
+                className="flex flex-col sm:flex-row items-start gap-3 p-3 border rounded-lg hover:bg-gray-50 transition-colors"
               >
-                <div className="w-full sm:w-24 h-32 sm:h-16 bg-muted rounded-md overflow-hidden flex-shrink-0 mb-2 sm:mb-0">
+                <div className="w-full sm:w-20 h-24 sm:h-16 bg-muted rounded-md overflow-hidden flex-shrink-0 mb-2 sm:mb-0">
                   <img
                     src={getMediaUrl(content.image_url) || "/placeholder.svg"}
                     alt={content.title}
                     className="w-full h-full object-cover"
                   />
                 </div>
-                <div className="flex-1 space-y-2 min-w-0">
+                <div className="flex-1 space-y-1 min-w-0">
                   <div className="flex flex-col sm:flex-row sm:items-center gap-2">
                     <h3 className="text-lg font-semibold line-clamp-1">
                       {content.title}
@@ -328,9 +351,22 @@ export default function NewsAndBlogsManagement() {
                     </Badge>
                   </div>
                   {content.contentType === "blog" && content.contents && (
-                    <p className="text-sm text-muted-foreground truncate" title={content.contents}>
-                      {content.contents}
-                    </p>
+                    <div className="text-sm text-muted-foreground">
+                      <p>
+                        {expandedDescriptions.has(content._id) 
+                          ? content.contents 
+                          : truncateText(content.contents, 10)
+                        }
+                      </p>
+                      {content.contents.split(' ').length > 10 && (
+                        <button
+                          onClick={() => toggleDescription(content._id)}
+                          className="text-blue-600 hover:text-blue-800 text-xs mt-1"
+                        >
+                          {expandedDescriptions.has(content._id) ? 'Show less' : 'Show more'}
+                        </button>
+                      )}
+                    </div>
                   )}
                   <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-4 text-sm text-muted-foreground">
                     <div className="flex items-center gap-1">

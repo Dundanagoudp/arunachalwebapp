@@ -13,6 +13,11 @@ import {
 import React from "react";
 
 function toTitleCase(str: string) {
+  // Handle specific cases first
+  if (str.toLowerCase() === "contactus") {
+    return "Contact Us";
+  }
+  
   return str
     .replace(/[-_]/g, " ")
     .replace(/\b\w/g, (char) => char.toUpperCase());

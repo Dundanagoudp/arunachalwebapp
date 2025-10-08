@@ -8,6 +8,13 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import {
   Pagination,
   PaginationContent,
   PaginationEllipsis,
@@ -59,8 +66,10 @@ const HeaderShimmer = () => (
 
 // Search Bar Shimmer Component
 const SearchBarShimmer = () => (
-  <div className="max-w-lg mx-auto mb-8 sm:mb-12 lg:mb-16 relative z-10 flex flex-col items-center px-4">
-    <ShimmerEffect className="w-full h-12 sm:h-14 lg:h-16 rounded-xl mb-4 sm:mb-6" />
+  <div className="max-w-2xl mx-auto mb-8 sm:mb-12 lg:mb-16 relative z-10 flex flex-col items-center px-4">
+    <div className="w-full flex flex-col sm:flex-row gap-4 items-center">
+      <ShimmerEffect className="flex-1 w-full h-12 sm:h-14 lg:h-16 rounded-xl" />
+    </div>
     <div className="mt-4 sm:mt-6 flex items-center">
       <ShimmerEffect className="h-10 sm:h-12 lg:h-14 w-24 sm:w-32 lg:w-36 rounded-full" />
     </div>
@@ -82,6 +91,8 @@ export default function BlogsLayout() {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [pendingSearchTerm, setPendingSearchTerm] = useState<string>("");
   const [filteredBlogs, setFilteredBlogs] = useState<Blog[]>([]);
+  const [selectedYear, setSelectedYear] = useState<string>("all");
+  const [availableYears, setAvailableYears] = useState<number[]>([]);
   const blogsPerPage = 9;
 
   useEffect(() => {
@@ -104,6 +115,18 @@ export default function BlogsLayout() {
         
         setContent(uniqueBlogs);
         setFilteredBlogs(uniqueBlogs);
+        
+        // Extract unique years from blogs
+        const years = uniqueBlogs
+          .map(blog => {
+            const date = new Date(blog.publishedDate || 0);
+            return date.getFullYear();
+          })
+          .filter(year => year > 1900) // Filter out invalid dates
+          .filter((year, index, self) => self.indexOf(year) === index) // Remove duplicates
+          .sort((a, b) => b - a); // Sort in descending order (newest first)
+        
+        setAvailableYears(years);
       } catch (error) {
         // Error handled silently
       }
@@ -118,11 +141,28 @@ export default function BlogsLayout() {
   }, []);
 
   useEffect(() => {
-    const results = content.filter((blog) =>
+    let results = content.filter((blog) =>
       blog.title.toLowerCase().includes(searchTerm.toLowerCase())
     );
+
+    // Apply year filter
+    if (selectedYear !== "all") {
+      const year = parseInt(selectedYear);
+      results = results.filter(blog => {
+        const blogYear = new Date(blog.publishedDate || 0).getFullYear();
+        return blogYear === year;
+      });
+    }
+
+    // Sort by published date (newest first) by default
+    results = results.sort((a, b) => {
+      const dateA = new Date(a.publishedDate || 0);
+      const dateB = new Date(b.publishedDate || 0);
+      return dateB.getTime() - dateA.getTime();
+    });
+
     setFilteredBlogs(results);
-  }, [searchTerm, content]);
+  }, [searchTerm, content, selectedYear]);
 
   // Auto-show all blogs when input is cleared
   useEffect(() => {
@@ -147,6 +187,11 @@ export default function BlogsLayout() {
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
+  };
+
+  const handleYearChange = (value: string) => {
+    setSelectedYear(value);
+    setCurrentPage(1); // Reset to first page when year filter changes
   };
 
   if (!mounted) {
@@ -187,18 +232,54 @@ export default function BlogsLayout() {
         </div>
       )}
 
+      {/* Filter Section - Top Right */}
+      {isLoading ? (
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 mb-6 sm:mb-8 relative z-10">
+          <div className="flex justify-end">
+            <ShimmerEffect className="h-12 w-48 rounded-xl" />
+          </div>
+        </div>
+      ) : (
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 mb-6 sm:mb-8 relative z-10">
+          <div className="flex justify-end">
+            {/* Year Filter Dropdown */}
+            <div className="w-48">
+              <Select value={selectedYear} onValueChange={handleYearChange}>
+                <SelectTrigger className="w-full py-3 sm:py-4 border-2 border-gray-300 rounded-xl focus:ring-orange-500 focus:border-orange-500 text-base sm:text-lg bg-transparent">
+                  <SelectValue placeholder="Filter by Year" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Years</SelectItem>
+                  {availableYears.map(year => (
+                    <SelectItem key={year} value={year.toString()}>
+                      {year}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Search Bar */}
       {isLoading ? (
         <SearchBarShimmer />
       ) : (
-        <div className="max-w-lg mx-auto mb-8 sm:mb-12 lg:mb-16 relative z-10 flex flex-col items-center px-4">
-          <Input
-            type="text"
-            placeholder="Search by Blog Name"
-            value={pendingSearchTerm}
-            onChange={(e) => setPendingSearchTerm(e.target.value)}
-            className="w-full pl-4 pr-4 py-4 sm:py-6 lg:py-7 border-2 border-gray-300 rounded-xl focus:ring-orange-500 focus:border-orange-500 text-base sm:text-lg bg-transparent"
-          />
+        <div className="max-w-2xl mx-auto mb-8 sm:mb-12 lg:mb-16 relative z-10 flex flex-col items-center px-4">
+          <div className="w-full flex flex-col sm:flex-row gap-4 items-center">
+            {/* Search Input */}
+            <div className="flex-1 w-full">
+              <Input
+                type="text"
+                placeholder="Search by Blog Name"
+                value={pendingSearchTerm}
+                onChange={(e) => setPendingSearchTerm(e.target.value)}
+                className="w-full pl-4 pr-4 py-4 sm:py-6 lg:py-7 border-2 border-gray-300 rounded-xl focus:ring-orange-500 focus:border-orange-500 text-base sm:text-lg bg-transparent"
+              />
+            </div>
+          </div>
+          
           <div className="mt-4 sm:mt-6 flex items-center">
             <button
               className="group relative flex items-center hover:scale-105 transition-transform duration-300 focus:outline-none"
@@ -274,18 +355,9 @@ export default function BlogsLayout() {
                   </p>
 
                   <div className="flex justify-between items-center mt-2 sm:mt-2">
-                    <p className="text-gray-500 text-xs sm:text-sm font-bilo">
-                      {blog.publishedDate
-                        ? new Date(blog.publishedDate).toLocaleDateString(
-                            "en-US",
-                            {
-                              year: "numeric",
-                              month: "2-digit",
-                              day: "2-digit",
-                            }
-                          )
-                        : ""}
-                    </p>
+                    <span className="px-3 py-1 bg-[#4F8049] text-white text-xs sm:text-sm font-medium rounded-full">
+                      {blog.publishedDate ? new Date(blog.publishedDate).getFullYear() : new Date().getFullYear()}
+                    </span>
                     <span className="text-[#D96D34] font-semibold text-sm sm:text-base font-bilo">
                       Read More
                     </span>
