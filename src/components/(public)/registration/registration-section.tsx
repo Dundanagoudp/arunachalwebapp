@@ -216,12 +216,10 @@ export default function RegistrationSection() {
                 <div key={workshop._id ?? index} className="relative">
                   {/* Workshop Card */}
                   <div
-                    className={`bg-white border-4 border-[#FFD76B] p-8 flex flex-col items-center justify-start relative overflow-visible rounded-t-full rounded-b-2xl w-full mx-auto ${
+                    className={`bg-white border-4 border-[#FFD76B] p-8 flex flex-col items-center justify-start relative overflow-visible rounded-t-full rounded-b-2xl w-full max-w-xs mx-auto ${
                       currentWorkshops.length === 1 
-                        ? 'h-[450px] max-w-sm' 
-                        : currentWorkshops.length === 2 
-                          ? 'h-[420px] max-w-xs md:max-w-sm' 
-                          : 'h-[420px] max-w-xs'
+                        ? 'h-[450px]' 
+                        : 'h-[420px]'
                     }`}
                   >
                     {/* Workshop Image */}
@@ -235,14 +233,8 @@ export default function RegistrationSection() {
                       />
                     </div>
                     {/* Workshop Title */}
-                    <h4 className="text-lg font-bold text-gray-800 text-center leading-tight font-dm-serif mt-2">
-                      {workshop.name.split(" ").map((word: string, i: number, arr: string[]) => (
-                        <span key={i}>
-                          {word}
-                          {i === 0 && <br />}
-                          {i > 0 && i < arr.length - 1 && " "}
-                        </span>
-                      ))}
+                    <h4 className="text-lg font-bold text-gray-800 text-center leading-tight font-dm-serif mt-2 line-clamp-2">
+                      {workshop.name}
                     </h4>
                   </div>
                   {/* Select Button */}

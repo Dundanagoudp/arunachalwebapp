@@ -8,13 +8,6 @@ import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
   Pagination,
   PaginationContent,
   PaginationEllipsis,
@@ -232,36 +225,6 @@ export default function BlogsLayout() {
         </div>
       )}
 
-      {/* Filter Section - Top Right */}
-      {isLoading ? (
-        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 mb-6 sm:mb-8 relative z-10">
-          <div className="flex justify-end">
-            <ShimmerEffect className="h-12 w-48 rounded-xl" />
-          </div>
-        </div>
-      ) : (
-        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 mb-6 sm:mb-8 relative z-10">
-          <div className="flex justify-end">
-            {/* Year Filter Dropdown */}
-            <div className="w-48">
-              <Select value={selectedYear} onValueChange={handleYearChange}>
-                <SelectTrigger className="w-full py-3 sm:py-4 border-2 border-gray-300 rounded-xl focus:ring-orange-500 focus:border-orange-500 text-base sm:text-lg bg-transparent">
-                  <SelectValue placeholder="Filter by Year" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Years</SelectItem>
-                  {availableYears.map(year => (
-                    <SelectItem key={year} value={year.toString()}>
-                      {year}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Search Bar */}
       {isLoading ? (
         <SearchBarShimmer />
@@ -295,6 +258,65 @@ export default function BlogsLayout() {
                         <ArrowUpRight className="w-4 h-4 text-white transition-transform duration-300 group-hover:rotate-45" />
                       </span>
             </button>
+          </div>
+        </div>
+      )}
+
+      {/* Year Filter Tabs */}
+      {isLoading ? (
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 mb-6 sm:mb-8 relative z-10">
+          <div className="flex justify-center">
+            <ShimmerEffect className="h-12 w-96 rounded-xl" />
+          </div>
+        </div>
+      ) : (
+        <div className="max-w-[1200px] mx-auto px-4 sm:px-6 lg:px-8 mb-6 sm:mb-8 relative z-10">
+          <div className="flex justify-center">
+            {/* Year Filter Tabs */}
+            <div className="rounded-lg px-4 sm:px-6 py-4 flex items-center space-x-4 sm:space-x-6 overflow-x-auto scrollbar-hide" style={{ backgroundColor: '#FFF8ED', minWidth: '280px', maxWidth: '100%' }}>
+              {/* All Years Tab */}
+              <button
+                onClick={() => handleYearChange("all")}
+                className="relative group transition-all duration-200 whitespace-nowrap flex-shrink-0 px-2 md:px-3"
+              >
+                <span className={`text-lg font-medium transition-colors duration-200 ${
+                  selectedYear === "all"
+                    ? "text-white"
+                    : "text-gray-600 group-hover:text-gray-800"
+                }`} style={selectedYear === "all" ? { color: 'var(--tab-color)' } : {}}>
+                  All Years
+                </span>
+                {selectedYear === "all" && (
+                  <div className="absolute -bottom-4 left-0 right-0 h-1 rounded-full" style={{ backgroundColor: 'var(--tab-color)' }}></div>
+                )}
+                {selectedYear !== "all" && (
+                  <div className="absolute -bottom-4 left-0 right-0 h-px bg-gray-400"></div>
+                )}
+              </button>
+              
+              {/* Year Tabs */}
+              {availableYears.map((year) => (
+                <button
+                  key={year}
+                  onClick={() => handleYearChange(year.toString())}
+                  className="relative group transition-all duration-200 whitespace-nowrap flex-shrink-0 px-2 md:px-3"
+                >
+                  <span className={`text-lg font-medium transition-colors duration-200 ${
+                    selectedYear === year.toString()
+                      ? "text-white"
+                      : "text-gray-600 group-hover:text-gray-800"
+                  }`} style={selectedYear === year.toString() ? { color: 'var(--tab-color)' } : {}}>
+                    {year}
+                  </span>
+                  {selectedYear === year.toString() && (
+                    <div className="absolute -bottom-4 left-0 right-0 h-1 rounded-full" style={{ backgroundColor: 'var(--tab-color)' }}></div>
+                  )}
+                  {selectedYear !== year.toString() && (
+                    <div className="absolute -bottom-4 left-0 right-0 h-px bg-gray-400"></div>
+                  )}
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       )}

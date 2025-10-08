@@ -252,22 +252,11 @@ export default function BlogById() {
                     }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                  <div className="absolute bottom-6 left-6 right-6">
-                    <span className="inline-flex items-center gap-2 bg-[#D96D34]/90 text-white px-4 py-2 rounded-full text-sm font-medium backdrop-blur-sm">
-                      <Eye className="w-4 h-4" />
-                      Featured Article
-                    </span>
-                  </div>
                 </div>
               )}
 
               {/* Article Header */}
               <div className="space-y-8">
-                <div className="flex items-center gap-2 text-sm text-[#D96D34] font-medium">
-                  <BookOpen className="w-4 h-4" />
-                  <span>Blog Post</span>
-                </div>
-
                 <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 leading-tight font-dm-serif">
                   {content.title}
                 </h1>
@@ -298,7 +287,6 @@ export default function BlogById() {
                             })
                           : "Unknown date"}
                       </span>
-                      <p className="text-xs text-gray-500 font-bilo">Published</p>
                     </div>
                   </div>
 
