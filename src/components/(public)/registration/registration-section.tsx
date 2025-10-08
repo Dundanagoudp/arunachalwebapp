@@ -36,7 +36,7 @@ function RegistrationSkeleton() {
         </div>
         <div className="text-center mb-12">
           <div className="h-6 w-48 mx-auto mb-8 rounded bg-gray-200 animate-pulse" />
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto justify-center">
             {[1, 2, 3].map((_, idx) => (
               <div key={idx} className="bg-gray-200 border-4 border-gray-200 animate-pulse p-8 h-[420px] flex flex-col items-center justify-start relative overflow-visible rounded-t-full rounded-b-2xl w-full max-w-xs mx-auto">
                 <div className="mb-6 flex-1 flex items-center justify-center w-full">
@@ -205,20 +205,32 @@ export default function RegistrationSection() {
           {/* Workshop Selection */}
           <div className="text-center mb-12">
             <h3 className="text-xl font-semibold text-gray-800 mb-8 font-dm-serif">Select your Workshop:</h3>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-6xl mx-auto">
+            <div className={`grid gap-8 max-w-6xl mx-auto ${
+              currentWorkshops.length === 1 
+                ? 'grid-cols-1 justify-center' 
+                : currentWorkshops.length === 2 
+                  ? 'grid-cols-1 md:grid-cols-2 justify-center' 
+                  : 'grid-cols-1 md:grid-cols-3'
+            }`}>
               {currentWorkshops.map((workshop: Workshop, index: number) => (
                 <div key={workshop._id ?? index} className="relative">
                   {/* Workshop Card */}
                   <div
-                    className="bg-white border-4 border-[#FFD76B] p-8 h-[420px] flex flex-col items-center justify-start relative overflow-visible rounded-t-full rounded-b-2xl w-full max-w-xs mx-auto"
+                    className={`bg-white border-4 border-[#FFD76B] p-8 flex flex-col items-center justify-start relative overflow-visible rounded-t-full rounded-b-2xl w-full mx-auto ${
+                      currentWorkshops.length === 1 
+                        ? 'h-[450px] max-w-sm' 
+                        : currentWorkshops.length === 2 
+                          ? 'h-[420px] max-w-xs md:max-w-sm' 
+                          : 'h-[420px] max-w-xs'
+                    }`}
                   >
                     {/* Workshop Image */}
                     <div className="mb-6 flex-1 flex items-center justify-center w-full">
                       <Image
                         src={getMediaUrl(workshop.imageUrl) || "/registration/creative.png"}
                         alt={workshop.name}
-                        width={180}
-                        height={180}
+                        width={currentWorkshops.length === 1 ? 200 : 180}
+                        height={currentWorkshops.length === 1 ? 200 : 180}
                         className="object-contain drop-shadow-lg mt-2"
                       />
                     </div>
@@ -252,7 +264,7 @@ export default function RegistrationSection() {
             </div>
             
             {/* Pagination Controls - Only show if there are more than 3 workshops */}
-            {workshops.length > workshopsPerPage && (
+            {workshops.length > workshopsPerPage && totalPages > 1 && (
               <div className="flex items-center justify-center gap-4 mt-8">
                 <button
                   onClick={handlePreviousPage}

@@ -405,7 +405,6 @@ function TestimonialCard({ name, title, quote, avatar, mobilePadding }: Testimon
           <div className="flex flex-col flex-1 font-bilo text-base">
             <h3 className="text-xl text-white leading-tight font-bilo">{quote}</h3>
             <p className="text-sm text-white/80 mt-1 font-bilo">( {title} )</p>
-            <div className="w-32 border-t border-white/60 my-2" />
           </div>
         </div>
         <div className="relative flex-grow mt-2 font-bilo text-base">
@@ -417,7 +416,7 @@ function TestimonialCard({ name, title, quote, avatar, mobilePadding }: Testimon
             height={20}
             className="absolute left-2 top-1 w-5 h-5 object-contain"
           />
-          <p className={`text-base leading-relaxed pl-8 pr-2 pt-1 pb-4 text-left font-bilo`}>
+          <p className={`text-base leading-relaxed pl-8 pr-2 pt-1 pb-4 text-left font-bilo text-justify`}>
             {name}
           </p>
           {/* Closing quote (inverted) */}
