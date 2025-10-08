@@ -17,6 +17,9 @@ function toTitleCase(str: string) {
   if (str.toLowerCase() === "contactus") {
     return "Contact Us";
   }
+  if (str.toLowerCase() === "blogscontent") {
+    return "Blogs Content";
+  }
   
   return str
     .replace(/[-_]/g, " ")

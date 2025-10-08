@@ -352,17 +352,94 @@ export default function ArchiveManagement() {
                   Prev
                 </Button>
                 <div className="flex gap-1 sm:gap-2 flex-wrap justify-center">
-                  {Array.from({ length: totalPages }).map((_, idx) => (
-                    <Button
-                      key={idx + 1}
-                      variant={currentPage === idx + 1 ? "default" : "outline"}
-                      size="sm"
-                      onClick={() => setCurrentPage(idx + 1)}
-                      className="text-xs sm:text-sm min-w-[2rem] sm:min-w-[2.5rem]"
-                    >
-                      {idx + 1}
-                    </Button>
-                  ))}
+                  {(() => {
+                    const maxVisiblePages = 4
+                    const pages = []
+                    
+                    if (totalPages <= maxVisiblePages) {
+                      // Show all pages if total is less than max visible
+                      for (let i = 1; i <= totalPages; i++) {
+                        pages.push(
+                          <Button
+                            key={i}
+                            variant={currentPage === i ? "default" : "outline"}
+                            size="sm"
+                            onClick={() => setCurrentPage(i)}
+                            className="text-xs sm:text-sm min-w-[2rem] sm:min-w-[2.5rem]"
+                          >
+                            {i}
+                          </Button>
+                        )
+                      }
+                    } else {
+                      // Smart pagination with ellipsis
+                      const startPage = Math.max(1, currentPage - 1)
+                      const endPage = Math.min(totalPages, currentPage + 2)
+                      
+                      // Always show first page
+                      pages.push(
+                        <Button
+                          key={1}
+                          variant={currentPage === 1 ? "default" : "outline"}
+                          size="sm"
+                          onClick={() => setCurrentPage(1)}
+                          className="text-xs sm:text-sm min-w-[2rem] sm:min-w-[2.5rem]"
+                        >
+                          1
+                        </Button>
+                      )
+                      
+                      // Add ellipsis if needed
+                      if (startPage > 2) {
+                        pages.push(
+                          <span key="ellipsis1" className="text-xs sm:text-sm text-muted-foreground px-1">
+                            ...
+                          </span>
+                        )
+                      }
+                      
+                      // Show middle pages
+                      for (let i = Math.max(2, startPage); i <= Math.min(totalPages - 1, endPage); i++) {
+                        pages.push(
+                          <Button
+                            key={i}
+                            variant={currentPage === i ? "default" : "outline"}
+                            size="sm"
+                            onClick={() => setCurrentPage(i)}
+                            className="text-xs sm:text-sm min-w-[2rem] sm:min-w-[2.5rem]"
+                          >
+                            {i}
+                          </Button>
+                        )
+                      }
+                      
+                      // Add ellipsis if needed
+                      if (endPage < totalPages - 1) {
+                        pages.push(
+                          <span key="ellipsis2" className="text-xs sm:text-sm text-muted-foreground px-1">
+                            ...
+                          </span>
+                        )
+                      }
+                      
+                      // Always show last page if more than 1 page
+                      if (totalPages > 1) {
+                        pages.push(
+                          <Button
+                            key={totalPages}
+                            variant={currentPage === totalPages ? "default" : "outline"}
+                            size="sm"
+                            onClick={() => setCurrentPage(totalPages)}
+                            className="text-xs sm:text-sm min-w-[2rem] sm:min-w-[2.5rem]"
+                          >
+                            {totalPages}
+                          </Button>
+                        )
+                      }
+                    }
+                    
+                    return pages
+                  })()}
                 </div>
                 <Button
                   variant="outline"

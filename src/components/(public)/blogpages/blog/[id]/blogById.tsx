@@ -5,7 +5,6 @@ import type React from "react"
 import { useState, useEffect, useMemo } from "react"
 import { useParams } from "next/navigation"
 import { Card } from "@/components/ui/card"
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar"
 import type { Blog } from "@/types/newAndBlogTypes"
 import { getBlogOnly, getBlogs } from "@/service/newsAndBlogs"
 import { Skeleton } from "@/components/ui/skeleton"
@@ -252,40 +251,16 @@ export default function BlogById() {
                     }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
-                  <div className="absolute bottom-6 left-6 right-6">
-                    <span className="inline-flex items-center gap-2 bg-[#D96D34]/90 text-white px-4 py-2 rounded-full text-sm font-medium backdrop-blur-sm">
-                      <Eye className="w-4 h-4" />
-                      Featured Article
-                    </span>
-                  </div>
                 </div>
               )}
 
               {/* Article Header */}
               <div className="space-y-8">
-                <div className="flex items-center gap-2 text-sm text-[#D96D34] font-medium">
-                  <BookOpen className="w-4 h-4" />
-                  <span>Blog Post</span>
-                </div>
-
                 <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-gray-900 leading-tight font-dm-serif">
                   {content.title}
                 </h1>
 
                 <div className="flex flex-wrap items-center gap-6 text-gray-600 text-sm">
-                  <div className="flex items-center gap-3">
-                    <Avatar className="w-10 h-10">
-                      <AvatarImage src="/placeholder.svg" alt={content.author || "Author"} />
-                      <AvatarFallback className="bg-[#D96D34] text-white text-sm font-bold">
-                        {(content.author || "A").charAt(0).toUpperCase()}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <span className="font-semibold text-gray-800 font-bilo">{content.author || "Anonymous"}</span>
-                      <p className="text-xs text-gray-500 font-bilo">Author</p>
-                    </div>
-                  </div>
-
                   <div className="flex items-center gap-2">
                     <Calendar className="w-4 h-4 text-[#D96D34]" />
                     <div>
@@ -298,10 +273,8 @@ export default function BlogById() {
                             })
                           : "Unknown date"}
                       </span>
-                      <p className="text-xs text-gray-500 font-bilo">Published</p>
                     </div>
                   </div>
-
                 </div>
 
               </div>

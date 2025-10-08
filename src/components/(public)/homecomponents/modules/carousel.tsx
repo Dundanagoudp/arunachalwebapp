@@ -313,7 +313,7 @@ export default function Carousel() {
                           className="object-contain drop-shadow-lg transition-transform duration-300"
                         />
                       </div>
-                      <h4 className="text-lg font-bold text-gray-800 text-center leading-tight font-dm-serif mt-2 group-hover:text-[#e67e22] transition-colors duration-300">
+                      <h4 className="text-lg font-bold text-gray-800 text-center leading-tight font-dm-serif mt-2 group-hover:text-[#e67e22] transition-colors duration-300 line-clamp-2">
                         {workshops[0].name}
                       </h4>
                     </div>
@@ -386,7 +386,7 @@ export default function Carousel() {
                                     className="object-contain drop-shadow-lg transition-transform duration-300"
                                   />
                                 </div>
-                                <h4 className="text-lg font-bold text-gray-800 text-center leading-tight font-dm-serif mt-2 group-hover:text-[#e67e22] transition-colors duration-300">
+                                <h4 className="text-lg font-bold text-gray-800 text-center leading-tight font-dm-serif mt-2 group-hover:text-[#e67e22] transition-colors duration-300 line-clamp-2">
                                   {workshop.name}
                                 </h4>
                               </div>
