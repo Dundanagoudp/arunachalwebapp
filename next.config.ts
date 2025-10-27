@@ -25,19 +25,19 @@ const nextConfig: NextConfig = {
           {
             key: "Content-Security-Policy",
             value: [
-              // "default-src 'self'",
-              // "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://litfest.arunachal.gov.in",
-              // "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-              // "font-src 'self' https://fonts.gstatic.com",
-              // "img-src 'self' data: https: blob: https://img.youtube.com",
-              // "media-src 'self' https:",
-              // "connect-src 'self' https://litfest.arunachal.gov.in",
-              // "frame-src 'self' https://www.youtube.com",
-              // "object-src 'none'",
-              // "base-uri 'self'",
-              // "form-action 'self'",
-              // "frame-ancestors 'none'",
-              // "upgrade-insecure-requests"
+              "default-src 'self'",
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://litfest.arunachal.gov.in",
+              "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
+              "font-src 'self' data: https://fonts.gstatic.com",
+              "img-src 'self' data: https: http: blob:",
+              "media-src 'self' https: http: blob:",
+              "connect-src 'self' data: https: http: ws: wss:",
+              "frame-src 'self' https://www.youtube.com",
+              "object-src 'none'",
+              "base-uri 'self'",
+              "form-action 'self'",
+              "frame-ancestors 'none'",
+              "upgrade-insecure-requests"
             ].join("; ")
           },
           { key: "X-DNS-Prefetch-Control", value: isDev ? "on" : "off" },
