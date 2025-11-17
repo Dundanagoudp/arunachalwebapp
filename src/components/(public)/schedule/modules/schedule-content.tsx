@@ -8,6 +8,15 @@ const months = [
   "January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"
 ];
 
+const formatTime = (time?: string) => {
+  if (!time) return "";
+  const date = new Date(time);
+  if (!isNaN(date.getTime())) {
+    return date.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+  }
+  return time;
+};
+
 // Fetch real schedule data from API
 const fetchScheduleData = async () => {
   const result = await getAllEvents();
@@ -80,7 +89,9 @@ export function ScheduleContent({ activeDay }: { activeDay: ScheduleDay }) {
           key={index}
           className="py-4 flex flex-col sm:flex-row gap-4 items-start mb-4 last:mb-0 bg-white rounded-xl shadow-md border border-gray-200"
         >
-          <div className="w-24 font-medium text-[#000000] font-dm-serif text-base sm:text-lg mb-2 sm:mb-0">{event.time}</div>
+      <div className="w-24 font-medium text-[#000000] font-dm-serif text-base sm:text-lg mb-2 sm:mb-0">
+        {formatTime(event.time)}
+      </div>
           <div className="flex-1">
             <div className="font-bilo text-base text-[#000000]">{event.name}</div>
             {event.speaker && <div className="text-sm text-black mt-1 font-bilo">Speaker: {event.speaker}</div>}
