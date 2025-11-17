@@ -46,9 +46,9 @@ const formatTime = (time?: string) => {
 
 const formatTimeRange = (start?: string, end?: string) => {
   const startTime = formatTime(start);
-  const endTime = formatTime(end);
-  if (startTime && endTime) return `${startTime} - ${endTime}`;
-  return startTime || endTime || "";
+  if (startTime) return startTime;
+  const fallbackEndTime = formatTime(end);
+  return fallbackEndTime || "";
 };
 
 function ScheduleSkeleton() {
