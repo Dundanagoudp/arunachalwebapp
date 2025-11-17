@@ -76,7 +76,6 @@ export default function Schedulepage() {
   const [scheduleData, setScheduleData] = useState<any[][]>([])
   const [error, setError] = useState<string | null>(null)
   const [downloading, setDownloading] = useState(false)
-  const [expandedDescriptions, setExpandedDescriptions] = useState<Set<string>>(new Set())
   const [searchQuery, setSearchQuery] = useState("")
 
   useEffect(() => {
@@ -112,25 +111,6 @@ export default function Schedulepage() {
       description.includes(query)
     )
   })
-
-  // Function to truncate text to approximately one line (around 50 characters)
-  const truncateText = (text: string, maxLength: number = 50) => {
-    if (text.length <= maxLength) return text
-    return text.substring(0, maxLength) + "..."
-  }
-
-  // Function to toggle description expansion
-  const toggleDescription = (eventId: string) => {
-    setExpandedDescriptions(prev => {
-      const newSet = new Set(prev)
-      if (newSet.has(eventId)) {
-        newSet.delete(eventId)
-      } else {
-        newSet.add(eventId)
-      }
-      return newSet
-    })
-  }
 
   return (
     <div className="min-h-0 md:min-h-screen bg-[#FFFAEE] p-8 relative overflow-hidden">
@@ -285,19 +265,8 @@ export default function Schedulepage() {
                       {event.description && (
                         <div className="mt-2">
                           <span className="block text-sm text-gray-700 font-normal font-bilo text-justify">
-                            {expandedDescriptions.has(event.id) 
-                              ? event.description 
-                              : truncateText(event.description)
-                            }
+                            {event.description}
                           </span>
-                          {event.description.length > 50 && (
-                            <button
-                              onClick={() => toggleDescription(event.id)}
-                              className="text-xs text-blue-600 hover:text-blue-800 font-bilo mt-1 underline"
-                            >
-                              {expandedDescriptions.has(event.id) ? "Read Less" : "Read More"}
-                            </button>
-                          )}
                         </div>
                       )}
                     </div>
