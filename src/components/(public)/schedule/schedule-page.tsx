@@ -176,13 +176,16 @@ export default function Schedulepage() {
           {!showPdfSchedule && (
             <div className="w-full flex justify-center md:justify-end mt-1 md:mt-0 px-4 md:px-0">
               <div className="relative w-full max-w-md">
-                <Search className="schedule-search-icon" aria-hidden="true" />
+                <Search
+                  className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"
+                  aria-hidden="true"
+                />
                 <input
                   type="text"
                   placeholder="Search by session, speaker, or topic..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="schedule-search-input w-full pl-9 pr-4 py-2 text-sm md:text-base"
+                  className="schedule-search-input w-full pl-10 pr-4 py-2 text-sm md:text-base"
                 />
               </div>
             </div>
