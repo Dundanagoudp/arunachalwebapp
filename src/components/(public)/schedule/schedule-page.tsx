@@ -5,6 +5,7 @@ import Image from "next/image"
 import { getAllEvents } from "@/service/events-apis"
 import { getPdfs } from "@/service/addPdfServices"
 import { getMediaUrl } from "@/utils/mediaUrl"
+import PdfViews from "./modules/pdfpreview/pdfviews"
 
 // Month names for formatting
 const months = [
@@ -70,6 +71,7 @@ function ScheduleSkeleton() {
 
 export default function Schedulepage() {
   const [activeTab, setActiveTab] = useState(0)
+  const [showPdfSchedule, setShowPdfSchedule] = useState(false)
   const [loading, setLoading] = useState(true)
   const [scheduleData, setScheduleData] = useState<any[][]>([])
   const [error, setError] = useState<string | null>(null)
@@ -162,7 +164,7 @@ export default function Schedulepage() {
  
 
       <div className="max-w-3xl mx-auto">
-        {/* Top header: title centered overall, search on the right (same line on desktop, stacked on mobile) */}
+        {/* Top header: title centered overall. Search visible only when PDF preview is hidden. */}
         <header className="mb-6 flex flex-col gap-3 md:grid md:grid-cols-[1fr_auto_1fr] md:items-center">
           {/* Left spacer to keep title visually centered between blank + search */}
           <div className="hidden md:block" />
@@ -171,21 +173,23 @@ export default function Schedulepage() {
             SCHEDULE
           </h1>
 
-          <div className="w-full flex justify-center md:justify-end mt-1 md:mt-0">
-            <div className="relative">
-              <Search className="schedule-search-icon" aria-hidden="true" />
-              <input
-                type="text"
-                placeholder="Search by session, speaker, or topic..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="schedule-search-input"
-              />
+          {!showPdfSchedule && (
+            <div className="w-full flex justify-center md:justify-end mt-1 md:mt-0 px-4 md:px-0">
+              <div className="relative w-full max-w-md">
+                <Search className="schedule-search-icon" aria-hidden="true" />
+                <input
+                  type="text"
+                  placeholder="Search by session, speaker, or topic..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="schedule-search-input w-full pl-9 pr-4 py-2 text-sm md:text-base"
+                />
+              </div>
             </div>
-          </div>
+          )}
         </header>
 
-        <div className="flex justify-center mb-8">
+        <div className="flex justify-center mb-4">
           <button
             onClick={async () => {
               try {
@@ -216,6 +220,23 @@ export default function Schedulepage() {
             <Download className="w-5 h-5" />
           </button>
         </div>
+
+        {/* Toggle button for PDF schedule preview */}
+        <div className="flex justify-center mb-8">
+          <button
+            onClick={() => setShowPdfSchedule((prev) => !prev)}
+            className="text-[#D95E1E] font-bilo font-semibold underline"
+          >
+            {showPdfSchedule ? "Hide PDF Schedule Preview" : "View PDF Schedule (PDF)"}
+          </button>
+        </div>
+
+        {/* PDF schedule preview (3-day tabs) */}
+        {showPdfSchedule && (
+          <div className="mb-8">
+            <PdfViews />
+          </div>
+        )}
         {/* Tab Bar */}
         <div className="mb-6">
           <div className="bg-[#FDB813] rounded-full p-1 flex border border-[#FDB813] shadow-md">
