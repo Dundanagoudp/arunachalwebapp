@@ -21,7 +21,8 @@ const fetchScheduleData = async () => {
   const mappedDays = days.map((day) => 
     (day.times || []).map((t) => ({
       id: t._id,
-      time: t.startTime,
+      startTime: t.startTime,
+      endTime: t.endTime,
       name: t.title,
       speaker: t.speaker,
       description: t.description
@@ -32,6 +33,22 @@ const fetchScheduleData = async () => {
 };
 
 const tabLabels = ["DAY 1", "DAY 2", "DAY 3"]
+
+const formatTime = (time?: string) => {
+  if (!time) return "";
+  const date = new Date(time);
+  if (!isNaN(date.getTime())) {
+    return date.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+  }
+  return time;
+};
+
+const formatTimeRange = (start?: string, end?: string) => {
+  const startTime = formatTime(start);
+  const endTime = formatTime(end);
+  if (startTime && endTime) return `${startTime} - ${endTime}`;
+  return startTime || endTime || "";
+};
 
 function ScheduleSkeleton() {
   return (
@@ -189,7 +206,9 @@ export default function Schedulepage() {
             <div className="max-h-[500px] overflow-y-auto pr-4 relative">
               {events.map((event, index) => (
                 <div key={event.id} className="grid grid-cols-[110px_1fr] gap-4 py-4 border-b last:border-b-0">
-                  <div className="text-[#000000] font-bold text-base md:text-lg font-dm-serif">{event.time}</div>
+                  <div className="text-[#000000] font-bold text-base md:text-lg font-dm-serif">
+                    {formatTimeRange(event.startTime, event.endTime)}
+                  </div>
                   <div className="text-[#000000] font-bilo font-semibold text-base md:text-lg">
                     {event.name}
                     {event.speaker && (

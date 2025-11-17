@@ -84,7 +84,7 @@ export default function BlogsLayout() {
   const [searchTerm, setSearchTerm] = useState<string>("");
   const [pendingSearchTerm, setPendingSearchTerm] = useState<string>("");
   const [filteredBlogs, setFilteredBlogs] = useState<Blog[]>([]);
-  const [selectedYear, setSelectedYear] = useState<string>("all");
+  const [selectedYear, setSelectedYear] = useState<string | null>(null);
   const [availableYears, setAvailableYears] = useState<number[]>([]);
   const blogsPerPage = 9;
 
@@ -120,6 +120,9 @@ export default function BlogsLayout() {
           .sort((a, b) => b - a); // Sort in descending order (newest first)
         
         setAvailableYears(years);
+        if (years.length) {
+          setSelectedYear(years[0].toString());
+        }
       } catch (error) {
         // Error handled silently
       }
@@ -139,7 +142,7 @@ export default function BlogsLayout() {
     );
 
     // Apply year filter
-    if (selectedYear !== "all") {
+    if (selectedYear) {
       const year = parseInt(selectedYear);
       results = results.filter(blog => {
         const blogYear = new Date(blog.publishedDate || 0).getFullYear();
@@ -274,27 +277,6 @@ export default function BlogsLayout() {
           <div className="flex justify-center">
             {/* Year Filter Tabs */}
             <div className="rounded-lg px-4 sm:px-6 py-4 flex items-center space-x-4 sm:space-x-6 overflow-x-auto scrollbar-hide" style={{ backgroundColor: '#FFF8ED', minWidth: '280px', maxWidth: '100%' }}>
-              {/* All Years Tab */}
-              <button
-                onClick={() => handleYearChange("all")}
-                className="relative group transition-all duration-200 whitespace-nowrap flex-shrink-0 px-2 md:px-3"
-              >
-                <span className={`text-lg font-medium transition-colors duration-200 ${
-                  selectedYear === "all"
-                    ? "text-white"
-                    : "text-gray-600 group-hover:text-gray-800"
-                }`} style={selectedYear === "all" ? { color: 'var(--tab-color)' } : {}}>
-                  All Years
-                </span>
-                {selectedYear === "all" && (
-                  <div className="absolute -bottom-4 left-0 right-0 h-1 rounded-full" style={{ backgroundColor: 'var(--tab-color)' }}></div>
-                )}
-                {selectedYear !== "all" && (
-                  <div className="absolute -bottom-4 left-0 right-0 h-px bg-gray-400"></div>
-                )}
-              </button>
-              
-              {/* Year Tabs */}
               {availableYears.map((year) => (
                 <button
                   key={year}
@@ -308,12 +290,12 @@ export default function BlogsLayout() {
                   }`} style={selectedYear === year.toString() ? { color: 'var(--tab-color)' } : {}}>
                     {year}
                   </span>
-                  {selectedYear === year.toString() && (
-                    <div className="absolute -bottom-4 left-0 right-0 h-1 rounded-full" style={{ backgroundColor: 'var(--tab-color)' }}></div>
-                  )}
-                  {selectedYear !== year.toString() && (
-                    <div className="absolute -bottom-4 left-0 right-0 h-px bg-gray-400"></div>
-                  )}
+                  <div
+                    className={`absolute -bottom-4 left-0 right-0 rounded-full transition-all duration-300 ${
+                      selectedYear === year.toString() ? "h-1" : "h-px bg-gray-400"
+                    }`}
+                    style={selectedYear === year.toString() ? { backgroundColor: 'var(--tab-color)' } : {}}
+                  ></div>
                 </button>
               ))}
             </div>
