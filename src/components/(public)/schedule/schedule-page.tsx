@@ -1,10 +1,11 @@
 'use client';
-import { Download } from "lucide-react"
+import { Download, Search } from "lucide-react"
 import { useState, useEffect } from "react"
 import Image from "next/image"
 import { getAllEvents } from "@/service/events-apis"
 import { getPdfs } from "@/service/addPdfServices"
 import { getMediaUrl } from "@/utils/mediaUrl"
+import PdfViews from "./modules/pdfpreview/pdfviews"
 
 // Month names for formatting
 const months = [
@@ -21,7 +22,8 @@ const fetchScheduleData = async () => {
   const mappedDays = days.map((day) => 
     (day.times || []).map((t) => ({
       id: t._id,
-      time: t.startTime,
+      startTime: t.startTime,
+      endTime: t.endTime,
       name: t.title,
       speaker: t.speaker,
       description: t.description
@@ -32,6 +34,22 @@ const fetchScheduleData = async () => {
 };
 
 const tabLabels = ["DAY 1", "DAY 2", "DAY 3"]
+
+const formatTime = (time?: string) => {
+  if (!time) return "";
+  const date = new Date(time);
+  if (!isNaN(date.getTime())) {
+    return date.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" });
+  }
+  return time;
+};
+
+const formatTimeRange = (start?: string, end?: string) => {
+  const startTime = formatTime(start);
+  const endTime = formatTime(end);
+  if (startTime && endTime) return `${startTime} - ${endTime}`;
+  return startTime || endTime || "";
+};
 
 function ScheduleSkeleton() {
   return (
@@ -53,11 +71,13 @@ function ScheduleSkeleton() {
 
 export default function Schedulepage() {
   const [activeTab, setActiveTab] = useState(0)
+  const [showPdfSchedule, setShowPdfSchedule] = useState(false)
   const [loading, setLoading] = useState(true)
   const [scheduleData, setScheduleData] = useState<any[][]>([])
   const [error, setError] = useState<string | null>(null)
   const [downloading, setDownloading] = useState(false)
   const [expandedDescriptions, setExpandedDescriptions] = useState<Set<string>>(new Set())
+  const [searchQuery, setSearchQuery] = useState("")
 
   useEffect(() => {
     const loadData = async () => {
@@ -77,6 +97,21 @@ export default function Schedulepage() {
   }, [])
 
   const events = scheduleData[activeTab] || []
+
+  const filteredEvents = (events || []).filter((event) => {
+    const query = searchQuery.trim().toLowerCase()
+    if (!query) return true
+
+    const name = (event.name || "").toLowerCase()
+    const speaker = (event.speaker || "").toLowerCase()
+    const description = (event.description || "").toLowerCase()
+
+    return (
+      name.includes(query) ||
+      speaker.includes(query) ||
+      description.includes(query)
+    )
+  })
 
   // Function to truncate text to approximately one line (around 50 characters)
   const truncateText = (text: string, maxLength: number = 50) => {
@@ -129,10 +164,35 @@ export default function Schedulepage() {
  
 
       <div className="max-w-3xl mx-auto">
-        <header className="flex items-center justify-center mb-6">
-          <h1 className="text-[#1A3FA9] text-4xl font-bold text-center font-dm-serif">SCHEDULE</h1>
+        {/* Top header: title centered overall. Search visible only when PDF preview is hidden. */}
+        <header className="mb-6 flex flex-col gap-3 md:grid md:grid-cols-[1fr_auto_1fr] md:items-center">
+          {/* Left spacer to keep title visually centered between blank + search */}
+          <div className="hidden md:block" />
+
+          <h1 className="text-[#1A3FA9] text-4xl font-bold text-center font-dm-serif">
+            SCHEDULE
+          </h1>
+
+          {!showPdfSchedule && (
+            <div className="w-full flex justify-center md:justify-end mt-1 md:mt-0 px-4 md:px-0">
+              <div className="relative w-full max-w-md">
+                <Search
+                  className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none"
+                  aria-hidden="true"
+                />
+                <input
+                  type="text"
+                  placeholder="Search by session, speaker, or topic..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="schedule-search-input w-full pl-10 pr-4 py-2 text-sm md:text-base"
+                />
+              </div>
+            </div>
+          )}
         </header>
-        <div className="flex justify-center mb-8">
+
+        <div className="flex justify-center mb-4">
           <button
             onClick={async () => {
               try {
@@ -163,6 +223,23 @@ export default function Schedulepage() {
             <Download className="w-5 h-5" />
           </button>
         </div>
+
+        {/* Toggle button for PDF schedule preview */}
+        <div className="flex justify-center mb-8">
+          <button
+            onClick={() => setShowPdfSchedule((prev) => !prev)}
+            className="text-[#D95E1E] font-bilo font-semibold underline"
+          >
+            {showPdfSchedule ? "Hide PDF Schedule Preview" : "View PDF Schedule (PDF)"}
+          </button>
+        </div>
+
+        {/* PDF schedule preview (3-day tabs) */}
+        {showPdfSchedule && (
+          <div className="mb-8">
+            <PdfViews />
+          </div>
+        )}
         {/* Tab Bar */}
         <div className="mb-6">
           <div className="bg-[#FDB813] rounded-full p-1 flex border border-[#FDB813] shadow-md">
@@ -179,6 +256,7 @@ export default function Schedulepage() {
             ))}
           </div>
         </div>
+
         {/* Event Card or Skeleton */}
         {loading ? (
           <ScheduleSkeleton />
@@ -187,37 +265,45 @@ export default function Schedulepage() {
         ) : (
           <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-2">
             <div className="max-h-[500px] overflow-y-auto pr-4 relative">
-              {events.map((event, index) => (
-                <div key={event.id} className="grid grid-cols-[110px_1fr] gap-4 py-4 border-b last:border-b-0">
-                  <div className="text-[#000000] font-bold text-base md:text-lg font-dm-serif">{event.time}</div>
-                  <div className="text-[#000000] font-bilo font-semibold text-base md:text-lg">
-                    {event.name}
-                    {event.speaker && (
-                      <span className="block text-sm text-black font-normal mt-1 font-bilo">
-                        Speaker: {event.speaker}
-                      </span>
-                    )}
-                    {event.description && (
-                      <div className="mt-2">
-                        <span className="block text-sm text-gray-700 font-normal font-bilo text-justify">
-                          {expandedDescriptions.has(event.id) 
-                            ? event.description 
-                            : truncateText(event.description)
-                          }
-                        </span>
-                        {event.description.length > 50 && (
-                          <button
-                            onClick={() => toggleDescription(event.id)}
-                            className="text-xs text-blue-600 hover:text-blue-800 font-bilo mt-1 underline"
-                          >
-                            {expandedDescriptions.has(event.id) ? "Read Less" : "Read More"}
-                          </button>
-                        )}
-                      </div>
-                    )}
-                  </div>
+              {filteredEvents.length === 0 ? (
+                <div className="py-8 text-center text-sm text-gray-500 font-bilo">
+                  No sessions found. Try a different search.
                 </div>
-              ))}
+              ) : (
+                filteredEvents.map((event) => (
+                  <div key={event.id} className="grid grid-cols-[110px_1fr] gap-4 py-4 border-b last:border-b-0">
+                    <div className="text-[#000000] font-bold text-base md:text-lg font-dm-serif">
+                      {formatTimeRange(event.startTime, event.endTime)}
+                    </div>
+                    <div className="text-[#000000] font-bilo font-semibold text-base md:text-lg">
+                      {event.name}
+                      {event.speaker && (
+                        <span className="block text-sm text-black font-normal mt-1 font-bilo">
+                          Speaker: {event.speaker}
+                        </span>
+                      )}
+                      {event.description && (
+                        <div className="mt-2">
+                          <span className="block text-sm text-gray-700 font-normal font-bilo text-justify">
+                            {expandedDescriptions.has(event.id) 
+                              ? event.description 
+                              : truncateText(event.description)
+                            }
+                          </span>
+                          {event.description.length > 50 && (
+                            <button
+                              onClick={() => toggleDescription(event.id)}
+                              className="text-xs text-blue-600 hover:text-blue-800 font-bilo mt-1 underline"
+                            >
+                              {expandedDescriptions.has(event.id) ? "Read Less" : "Read More"}
+                            </button>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </div>
         )}

@@ -11,7 +11,8 @@ import 'aos/dist/aos.css'
 // Types for schedule data
 interface ScheduleEvent {
   id: string
-  time: string
+  startTime: string
+  endTime?: string
   event: string
   speaker?: string
 }
@@ -44,6 +45,22 @@ const months = [
   "December",
 ]
 
+const formatTime = (time?: string) => {
+  if (!time) return ""
+  const date = new Date(time)
+  if (!isNaN(date.getTime())) {
+    return date.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })
+  }
+  return time
+}
+
+const formatTimeRange = (start?: string, end?: string) => {
+  const startTime = formatTime(start)
+  const endTime = formatTime(end)
+  if (startTime && endTime) return `${startTime} - ${endTime}`
+  return startTime || endTime || ""
+}
+
 // Fetch real schedule data from API
 const fetchScheduleData = async (): Promise<ScheduleData> => {
   const result = await getAllEvents()
@@ -56,7 +73,8 @@ const fetchScheduleData = async (): Promise<ScheduleData> => {
     date: `${day.dayNumber} ${months[(event.month || 1) - 1]} ${event.year}`,
     events: (day.times || []).map((t) => ({
       id: t._id,
-      time: `${t.startTime}`,
+      startTime: t.startTime,
+      endTime: t.endTime,
       event: t.title,
       speaker: t.speaker,
     })),
@@ -286,7 +304,9 @@ export default function Schedule() {
                   .find((day) => day.day === activeDay)
                   ?.events.map((item, index) => (
                     <div key={item.id} className="grid grid-cols-[110px_1fr] gap-4 py-4 border-b last:border-b-0">
-                      <div className="text-[#1A3FA9] font-bold text-base md:text-lg">{item.time}</div>
+                      <div className="text-[#1A3FA9] font-bold text-base md:text-lg whitespace-nowrap">
+                        {formatTimeRange(item.startTime, item.endTime)}
+                      </div>
                       <div className="text-[#6A1B1A] font-semibold text-base md:text-lg">
                         {item.event}
                         {item.speaker && (
