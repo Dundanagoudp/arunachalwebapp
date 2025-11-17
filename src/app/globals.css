@@ -543,3 +543,48 @@ swiper-button-prev,
   animation-delay: 2s;
 }
 
+/* Standard small search box style for schedule page */
+.schedule-search-input {
+  width: 100%;
+  max-width: 260px;
+  padding: 0.55rem 1rem 0.55rem 2.2rem; /* extra left space for icon */
+  border-radius: 9999px;
+  border: 1px solid rgba(0, 0, 0, 0.35); /* subtle black border */
+  background-color: #fffdf7;
+  font-family: 'Bilo', sans-serif;
+  font-size: 0.9rem;
+  color: #1f2933;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+}
+
+.schedule-search-input::placeholder {
+  color: #9ca3af;
+  font-size: 0.9rem;
+}
+
+.schedule-search-input:focus {
+  outline: none;
+  border-color: #D95E1E;
+  background-color: #ffffff;
+  box-shadow: 0 0 0 1px rgba(217, 94, 30, 0.15), 0 10px 25px rgba(0, 0, 0, 0.12);
+}
+
+.schedule-search-icon {
+  position: absolute;
+  left: 0.85rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 16px;
+  height: 16px;
+  color: #4b5563; /* gray-600 */
+  pointer-events: none;
+}
+
+@media (max-width: 768px) {
+  .schedule-search-input {
+    max-width: 100%;
+    font-size: 0.875rem;
+    padding-inline: 0.85rem;
+  }
+}

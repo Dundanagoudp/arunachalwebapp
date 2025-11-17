@@ -1,5 +1,5 @@
 'use client';
-import { Download } from "lucide-react"
+import { Download, Search } from "lucide-react"
 import { useState, useEffect } from "react"
 import Image from "next/image"
 import { getAllEvents } from "@/service/events-apis"
@@ -75,6 +75,7 @@ export default function Schedulepage() {
   const [error, setError] = useState<string | null>(null)
   const [downloading, setDownloading] = useState(false)
   const [expandedDescriptions, setExpandedDescriptions] = useState<Set<string>>(new Set())
+  const [searchQuery, setSearchQuery] = useState("")
 
   useEffect(() => {
     const loadData = async () => {
@@ -94,6 +95,21 @@ export default function Schedulepage() {
   }, [])
 
   const events = scheduleData[activeTab] || []
+
+  const filteredEvents = (events || []).filter((event) => {
+    const query = searchQuery.trim().toLowerCase()
+    if (!query) return true
+
+    const name = (event.name || "").toLowerCase()
+    const speaker = (event.speaker || "").toLowerCase()
+    const description = (event.description || "").toLowerCase()
+
+    return (
+      name.includes(query) ||
+      speaker.includes(query) ||
+      description.includes(query)
+    )
+  })
 
   // Function to truncate text to approximately one line (around 50 characters)
   const truncateText = (text: string, maxLength: number = 50) => {
@@ -146,9 +162,29 @@ export default function Schedulepage() {
  
 
       <div className="max-w-3xl mx-auto">
-        <header className="flex items-center justify-center mb-6">
-          <h1 className="text-[#1A3FA9] text-4xl font-bold text-center font-dm-serif">SCHEDULE</h1>
+        {/* Top header: title centered overall, search on the right (same line on desktop, stacked on mobile) */}
+        <header className="mb-6 flex flex-col gap-3 md:grid md:grid-cols-[1fr_auto_1fr] md:items-center">
+          {/* Left spacer to keep title visually centered between blank + search */}
+          <div className="hidden md:block" />
+
+          <h1 className="text-[#1A3FA9] text-4xl font-bold text-center font-dm-serif">
+            SCHEDULE
+          </h1>
+
+          <div className="w-full flex justify-center md:justify-end mt-1 md:mt-0">
+            <div className="relative">
+              <Search className="schedule-search-icon" aria-hidden="true" />
+              <input
+                type="text"
+                placeholder="Search by session, speaker, or topic..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="schedule-search-input"
+              />
+            </div>
+          </div>
         </header>
+
         <div className="flex justify-center mb-8">
           <button
             onClick={async () => {
@@ -196,6 +232,7 @@ export default function Schedulepage() {
             ))}
           </div>
         </div>
+
         {/* Event Card or Skeleton */}
         {loading ? (
           <ScheduleSkeleton />
@@ -204,39 +241,45 @@ export default function Schedulepage() {
         ) : (
           <div className="bg-white rounded-2xl shadow-lg border border-gray-200 p-2">
             <div className="max-h-[500px] overflow-y-auto pr-4 relative">
-              {events.map((event, index) => (
-                <div key={event.id} className="grid grid-cols-[110px_1fr] gap-4 py-4 border-b last:border-b-0">
-                  <div className="text-[#000000] font-bold text-base md:text-lg font-dm-serif">
-                    {formatTimeRange(event.startTime, event.endTime)}
-                  </div>
-                  <div className="text-[#000000] font-bilo font-semibold text-base md:text-lg">
-                    {event.name}
-                    {event.speaker && (
-                      <span className="block text-sm text-black font-normal mt-1 font-bilo">
-                        Speaker: {event.speaker}
-                      </span>
-                    )}
-                    {event.description && (
-                      <div className="mt-2">
-                        <span className="block text-sm text-gray-700 font-normal font-bilo text-justify">
-                          {expandedDescriptions.has(event.id) 
-                            ? event.description 
-                            : truncateText(event.description)
-                          }
-                        </span>
-                        {event.description.length > 50 && (
-                          <button
-                            onClick={() => toggleDescription(event.id)}
-                            className="text-xs text-blue-600 hover:text-blue-800 font-bilo mt-1 underline"
-                          >
-                            {expandedDescriptions.has(event.id) ? "Read Less" : "Read More"}
-                          </button>
-                        )}
-                      </div>
-                    )}
-                  </div>
+              {filteredEvents.length === 0 ? (
+                <div className="py-8 text-center text-sm text-gray-500 font-bilo">
+                  No sessions found. Try a different search.
                 </div>
-              ))}
+              ) : (
+                filteredEvents.map((event) => (
+                  <div key={event.id} className="grid grid-cols-[110px_1fr] gap-4 py-4 border-b last:border-b-0">
+                    <div className="text-[#000000] font-bold text-base md:text-lg font-dm-serif">
+                      {formatTimeRange(event.startTime, event.endTime)}
+                    </div>
+                    <div className="text-[#000000] font-bilo font-semibold text-base md:text-lg">
+                      {event.name}
+                      {event.speaker && (
+                        <span className="block text-sm text-black font-normal mt-1 font-bilo">
+                          Speaker: {event.speaker}
+                        </span>
+                      )}
+                      {event.description && (
+                        <div className="mt-2">
+                          <span className="block text-sm text-gray-700 font-normal font-bilo text-justify">
+                            {expandedDescriptions.has(event.id) 
+                              ? event.description 
+                              : truncateText(event.description)
+                            }
+                          </span>
+                          {event.description.length > 50 && (
+                            <button
+                              onClick={() => toggleDescription(event.id)}
+                              className="text-xs text-blue-600 hover:text-blue-800 font-bilo mt-1 underline"
+                            >
+                              {expandedDescriptions.has(event.id) ? "Read Less" : "Read More"}
+                            </button>
+                          )}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
           </div>
         )}
