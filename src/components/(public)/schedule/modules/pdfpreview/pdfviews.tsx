@@ -119,11 +119,17 @@ export default function PdfViews() {
             >
               ×
             </button>
-            <img
-              src={modalImageSrc}
-              alt="Schedule preview enlarged"
-              className="max-w-full max-h-[90vh] object-contain rounded-lg shadow-2xl bg-white"
-            />
+            <div className="max-h-[90vh] w-full overflow-y-auto space-y-4">
+              {currentSource.type === "image" &&
+                currentSource.images.map((src) => (
+                  <img
+                    key={src}
+                    src={src}
+                    alt="Schedule preview enlarged"
+                    className="w-full h-auto object-contain rounded-lg shadow-2xl bg-white"
+                  />
+                ))}
+            </div>
           </div>
         </div>
       )}
