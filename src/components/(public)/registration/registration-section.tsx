@@ -184,27 +184,26 @@ export default function RegistrationSection() {
           {/* Header */}
           <div className="text-center mb-8">
             {/* Heading for mobile: two lines, smaller */}
-            <h1 className="font-dm-serif font-bold text-blue-600 mb-6 tracking-wider text-xl md:text-2xl">REGISTRATION</h1>
+            {/* <h1 className="font-dm-serif font-bold text-blue-600 mb-6 tracking-wider text-xl md:text-2xl">REGISTRATION</h1> */}
             {/* Remove sun icon between heading and subheading on mobile */}
             {/* Mobile: two lines, smaller text, centered, spaced */}
             <div className="block md:hidden text-center">
-              <div className="text-orange-500 text-lg font-bold font-dm-serif leading-tight mb-1">BEGIN WHERE INDIA WAKES</div>
-              <div className="text-orange-500 text-lg font-bold font-dm-serif leading-tight">REGISTER NOW</div>
+              <div className="text-orange-500 text-lg font-bold font-dm-serif leading-tight mb-1">WORKSHOPS</div>
+              {/* <div className="text-orange-500 text-lg font-bold font-dm-serif leading-tight">REGISTER NOW</div> */}
             </div>
             {/* Desktop: original heading and sun icons */}
             <div className="hidden md:flex items-center justify-center gap-4 mb-8">
               <SunIcon size={50} />
               <h2 className="text-2xl md:text-4xl font-bold text-orange-500 text-center font-dm-serif">
-                BEGIN WHERE INDIA WAKES
-                <br />
-                REGISTER NOW
+                WORKSHOPS
+            
               </h2>
               <SunIcon size={50} />
             </div>
           </div>
           {/* Workshop Selection */}
           <div className="text-center mb-12">
-            <h3 className="text-xl font-semibold text-gray-800 mb-8 font-dm-serif">Select your Workshop:</h3>
+            {/* <h3 className="text-xl font-semibold text-gray-800 mb-8 font-dm-serif">Select your Workshop:</h3> */}
             <div className={`grid gap-8 max-w-6xl mx-auto ${
               currentWorkshops.length === 1 
                 ? 'grid-cols-1 justify-center' 
