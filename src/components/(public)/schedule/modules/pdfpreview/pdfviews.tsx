@@ -24,11 +24,10 @@ const daySources: DaySource[] = [
   {
     type: "image",
     images: [
-      "/schedulepdf/day2/day2page1.jpg",
-      "/schedulepdf/day2/day2page2.jpg",
-      "/schedulepdf/day2/day2page3.jpg",
+      "/schedulepdf/day2new/day2newfist.jpg",
+      "/schedulepdf/day2new/day2newsecond.jpg",
     ],
-    download: "/schedulepdf/day2-21st-november-2025.pdf",
+    download: "/schedulepdf/21st-NOVEMBER-2025.pdf",
   },
   {
     type: "image",
