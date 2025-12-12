@@ -4,7 +4,15 @@ const isDev = process.env.NODE_ENV !== "production";
  
 const nextConfig: NextConfig = {
   poweredByHeader: false,
- 
+
+  // CVE-2025-55182 Protection: Disable experimental server actions
+  experimental: {
+    serverActions: {
+      bodySizeLimit: '1mb', // Keep small limit for safety
+      allowedOrigins: [], // Explicitly empty - don't allow server actions from any origin
+    },
+  },
+
   async headers() {
     return [
       {
