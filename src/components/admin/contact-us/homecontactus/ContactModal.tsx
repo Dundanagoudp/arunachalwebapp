@@ -96,6 +96,17 @@ const ContactModal: React.FC<ContactModalProps> = ({
     return trimmed
   }
 
+  // Convert email (standard or obfuscated) to mailto: link
+  const emailToMailtoLink = (value: string) => {
+    const trimmed = value.trim()
+    if (!trimmed) return ''
+    const isObfuscated = /\[at\].*\[dot\]/.test(trimmed)
+    const realEmail = isObfuscated
+      ? trimmed.replace(/\[at\]/gi, '@').replace(/\[dot\]/gi, '.')
+      : trimmed
+    return `mailto:${realEmail}`
+  }
+
   // Validate form
   const validateForm = () => {
     const newErrors: Record<string, string> = {}
@@ -108,21 +119,12 @@ const ContactModal: React.FC<ContactModalProps> = ({
       newErrors.eventVenue = 'Event venue is required'
     }
 
+    const standardEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    const obfuscatedEmail = /^[^\s\[\]]+\[at\][^\s\[\]]+\[dot\][^\s\[\]]+$/
     if (!formData.email.trim()) {
       newErrors.email = 'Email is required'
-    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
-      newErrors.email = 'Please enter a valid email address'
-    }
-
-    // Email link is optional; if provided must be mailto/email/URL
-    if (formData.emailLink.trim()) {
-      const v = formData.emailLink.trim()
-      const isMailto = /^mailto:/i.test(v)
-      const isHttp = /^https?:\/\//i.test(v)
-      const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)
-      if (!isMailto && !isHttp && !isEmail) {
-        newErrors.emailLink = 'Use mailto:, full URL, or a valid email'
-      }
+    } else if (!standardEmail.test(formData.email) && !obfuscatedEmail.test(formData.email)) {
+      newErrors.email = 'Use standard format (user@domain.com) or obfuscated (user[at]domain[dot]com)'
     }
 
     setErrors(newErrors)
@@ -136,7 +138,7 @@ const ContactModal: React.FC<ContactModalProps> = ({
     if (validateForm()) {
       onSubmit({
         ...formData,
-        emailLink: normalizeEmailLink(formData.emailLink),
+        emailLink: emailToMailtoLink(formData.email), // Auto-convert from email field
       })
     }
   }
@@ -214,40 +216,43 @@ const ContactModal: React.FC<ContactModalProps> = ({
           <div className="space-y-2">
             <Label htmlFor="email" className="flex items-center gap-2">
               <Mail className="h-4 w-4 text-purple-600" />
-              Email Address
+              Email Address (Security Format)
             </Label>
             <Input
               id="email"
-              type="email"
+              type="text"
               value={formData.email}
               onChange={(e) => handleInputChange('email', e.target.value)}
-              placeholder="Enter email address..."
+              placeholder="user@domain.com or user[at]domain[dot]com"
               className={errors.email ? 'border-red-500' : ''}
               disabled={isSubmitting}
             />
+            <p className="text-xs text-gray-500">
+              Both formats accepted: standard (user@domain.com) or obfuscated for security (user[at]domain[dot]com)
+            </p>
             {errors.email && (
               <p className="text-sm text-red-600">{errors.email}</p>
             )}
           </div>
 
-          {/* Email Link */}
+          {/* Email Link - Auto-generated */}
           <div className="space-y-2">
             <Label htmlFor="emailLink" className="flex items-center gap-2">
               <Mail className="h-4 w-4 text-purple-600" />
-              Email Link
+              Email Link (Auto-generated)
             </Label>
             <Input
               id="emailLink"
               type="text"
-              value={formData.emailLink}
-              onChange={(e) => handleInputChange('emailLink', e.target.value)}
-              placeholder="mailto:info@example.com or https://example.com or email"
-              className={errors.emailLink ? 'border-red-500' : ''}
-              disabled={isSubmitting}
+              value={formData.email ? emailToMailtoLink(formData.email) : ''}
+              readOnly
+              placeholder="Auto-generated from email address above"
+              className="bg-gray-50 cursor-not-allowed"
+              disabled
             />
-            {errors.emailLink && (
-              <p className="text-sm text-red-600">{errors.emailLink}</p>
-            )}
+            <p className="text-xs text-gray-500">
+              This clickable link is automatically generated from the email address above
+            </p>
           </div>
 
           {/* Action Buttons */}

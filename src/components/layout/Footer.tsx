@@ -125,7 +125,7 @@ export default function Footer() {
         </div>
       </footer>
       <div className="w-full bg-[#1A3FA9] text-center py-3 text-xs md:text-sm text-white border-t border-[#FF9900] font-bilo">
-        @2025 Arunachal Literature Festival. All rights reserved.
+        @2026 Arunachal Literature Festival. All rights reserved.
       </div>
     </>
   )

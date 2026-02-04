@@ -108,19 +108,10 @@ const ContactInfo: React.FC = () => {
                   <p className="text-gray-700">
                     <span className="font-medium">Email:</span>{' '}
                     <a 
-                      href={`mailto:${contactData.email}`}
+                      href={contactData.emailLink?.startsWith('mailto:') ? contactData.emailLink : `mailto:${contactData.emailLink}`}
                       className="text-primary hover:underline"
                     >
                       {contactData.email}
-                    </a>
-                  </p>
-                  <p className="text-gray-700">
-                    <span className="font-medium">Email Link:</span>{' '}
-                    <a 
-                      href={`mailto:${contactData.emailLink}`}
-                      className="text-primary hover:underline"
-                    >
-                      {contactData.emailLink}
                     </a>
                   </p>
                 </div>
