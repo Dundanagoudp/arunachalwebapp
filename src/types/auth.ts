@@ -1,6 +1,7 @@
 export type LoginRequest = {
   email: string;
   password: string;
+  altchaPayload: string;
 };
 
 export type LoginResponse = {

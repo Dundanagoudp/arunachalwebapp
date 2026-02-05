@@ -1,6 +1,11 @@
 import apiClient from "../apiClient";
 import { LoginRequest, LoginResponse, LogoutResponse } from "../types/auth";
 
+export async function generateCaptcha() {
+  const response = await apiClient.get("/captcha/generate");
+  return response.data;
+}
+
 export async function loginUser(data: LoginRequest): Promise<LoginResponse> {
   const response = await apiClient.post("/onboarding/login", data, {
     withCredentials: true,
