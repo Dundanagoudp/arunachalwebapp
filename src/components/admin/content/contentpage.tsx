@@ -57,6 +57,7 @@ import { useDeletePermission } from "@/hooks/use-delete-permission";
 import { ContactAdminModal } from "@/components/ui/contact-admin-modal";
 import { getMediaUrl } from "@/utils/mediaUrl";
 import { DeleteConfirmationDialog } from "@/components/ui/delete-confirmation-dialog";
+import { sanitizeTextContent } from "@/lib/sanitize";
 
 export default function NewsAndBlogsManagement() {
   const [searchTerm, setSearchTerm] = useState("")
@@ -161,10 +162,12 @@ export default function NewsAndBlogsManagement() {
     setContentToDelete(null);
   };
 
-  // Helper function to truncate text to 10 words
+  // Helper function to truncate text to 10 words and sanitize
   const truncateText = (text: string, maxWords: number = 10) => {
-    const words = text.split(' ');
-    if (words.length <= maxWords) return text;
+    // Sanitize first to strip any HTML/script tags
+    const sanitized = sanitizeTextContent(text);
+    const words = sanitized.split(' ');
+    if (words.length <= maxWords) return sanitized;
     return words.slice(0, maxWords).join(' ') + '...';
   };
 
@@ -354,7 +357,7 @@ export default function NewsAndBlogsManagement() {
                     <div className="text-sm text-muted-foreground">
                       <p>
                         {expandedDescriptions.has(content._id) 
-                          ? content.contents 
+                          ? sanitizeTextContent(content.contents)
                           : truncateText(content.contents, 10)
                         }
                       </p>

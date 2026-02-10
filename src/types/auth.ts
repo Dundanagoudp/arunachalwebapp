@@ -4,6 +4,14 @@ export type LoginRequest = {
   altchaPayload: string;
 };
 
+export type EncryptedLoginRequest = {
+  encryptedBody: {
+    content: string;
+    iv: string;
+  };
+  dataEncrypted: 'true';
+};
+
 export type LoginResponse = {
   message: string;
   token: string;

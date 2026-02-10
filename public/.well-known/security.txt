@@ -1,0 +1,82 @@
+# Security Policy for Arunachal Literature Festival Website
+# security.txt - RFC 9116 Compliant
+
+# Contact information for security researchers
+Contact: mailto:arunachallitfest@gmail.com
+Contact: https://litfest.arunachal.gov.in/contactus
+
+# Preferred language for security reports
+Preferred-Languages: en
+
+# Canonical URL for this security.txt file
+Canonical: https://litfest.arunachal.gov.in/.well-known/security.txt
+
+# Expiration date (1 year from now - February 2027)
+Expires: 2027-02-10T00:00:00.000Z
+
+# Security policy and disclosure information
+Policy: https://litfest.arunachal.gov.in/security-policy
+
+# Acknowledgments page for security researchers
+# Acknowledgments: https://litfest.arunachal.gov.in/security-acknowledgments
+
+# Hiring information
+# Hiring: https://litfest.arunachal.gov.in/careers
+
+# Encryption key for secure communication
+# Encryption: https://litfest.arunachal.gov.in/pgp-key.txt
+
+# Security-related information
+# - All security vulnerabilities should be reported via email
+# - Please allow up to 48 hours for initial response
+# - Do not publicly disclose vulnerabilities before they are addressed
+# - We follow responsible disclosure practices
+# - Security researchers who report valid vulnerabilities may be acknowledged
+
+# SSL/TLS Certificate Information
+# Certificate Issuer: Sectigo Public Server Authentication CA DV R36
+# Certificate Valid: September 23, 2025 - September 24, 2026
+# Certificate should be renewed before expiration
+
+# Protected areas:
+# - /admin/* - Administrative interface (authentication required)
+# - /api/* - API endpoints (various authentication methods)
+# - /login - Authentication endpoint
+
+# Security Headers Implemented:
+# - X-Frame-Options: DENY
+# - X-Content-Type-Options: nosniff
+# - Referrer-Policy: no-referrer
+# - Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
+# - Content-Security-Policy: Strict CSP with whitelisted sources
+
+# Rate Limiting:
+# - Login attempts: 5 attempts per 15 minutes
+# - API endpoints: Various limits per endpoint
+
+# Known Security Measures:
+# - ALTCHA CAPTCHA protection on login
+# - Password encryption with bcrypt
+# - XSS protection with DOMPurify
+# - CSRF token validation
+# - Input validation and sanitization
+# - File upload restrictions (5MB, specific file types)
+# - Session management with secure cookies
+
+# Out of Scope:
+# - Distributed Denial of Service (DDoS) attacks
+# - Social engineering attacks
+# - Physical security issues
+# - Issues in third-party services
+# - Publicly known issues without proof of concept
+
+# In Scope:
+# - Cross-Site Scripting (XSS)
+# - SQL Injection
+# - Authentication bypass
+# - Authorization issues
+# - Sensitive data exposure
+# - Security misconfigurations
+# - Broken access control
+
+# Thank you for helping keep the Arunachal Literature Festival website secure!

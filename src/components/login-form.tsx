@@ -163,12 +163,12 @@ export function LoginForm({
       setAltchaKey(Date.now());
       
       if (status === 429) {
-        // Rate limit exceeded - lock form for 15 minutes
-        const lockoutEnd = Date.now() + (15 * 60 * 1000); // 15 minutes
+        // Rate limit exceeded - lock form for 5 minutes
+        const lockoutEnd = Date.now() + (5 * 60 * 1000); // 5 minutes
         sessionStorage.setItem('loginLockoutUntil', lockoutEnd.toString());
         setIsLocked(true);
-        setLockoutRemaining(15 * 60 * 1000);
-        showToast("Too many login attempts. Please try again in 15 minutes.", "error");
+        setLockoutRemaining(5 * 60 * 1000);
+        showToast("Too many login attempts. Please try again in 5 minutes.", "error");
       } else if (status === 401) {
         const remaining = data?.remainingAttempts;
         if (typeof remaining === "number") {
@@ -183,15 +183,19 @@ export function LoginForm({
         } else {
           showToast(data?.message || "Invalid credentials", "error");
         }
-      } else if (status === 423) {
-        showToast("Your account is locked. Please try again after 24 hours.", "error");
       } else {
-        // Check if it's a captcha-specific error
+        // Check if it's a captcha-specific error; show attempts left for any failure when backend sends it
         const errorMessage = data?.message || error.message || "Login failed";
+        const remaining = data?.remainingAttempts;
+        let toastMessage = errorMessage;
+        if (typeof remaining === "number") {
+          const attemptsText = remaining === 1 ? "1 attempt left." : `${remaining} attempts left.`;
+          toastMessage = `${errorMessage} ${attemptsText}`;
+        }
         if (errorMessage.toLowerCase().includes("captcha")) {
           setCaptchaError(errorMessage);
         }
-        showToast(errorMessage, "error");
+        showToast(toastMessage, "error");
       }
     }
   };
@@ -276,7 +280,7 @@ export function LoginForm({
                 id="password"
                 type={showPassword ? "text" : "password"}
                 placeholder="Enter your password"
-                autoComplete="current-password"
+                autoComplete="new-password"
                 className="h-12 px-4 pr-12 border-gray-200 focus:border-[#e67e22] focus:ring-[#e67e22]"
                 disabled={isLocked}
                 {...register("password", {
