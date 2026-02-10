@@ -56,6 +56,7 @@ import { useParams, useRouter } from "next/navigation";
 import { Blog } from "@/types/newAndBlogTypes";
 import { useToast } from "@/hooks/use-toast";
 import { getMediaUrl } from "@/utils/mediaUrl";
+import { validateFile } from "@/lib/sanitize";
 
 const formSchema = z.object({
   title: z.string().min(2, {
@@ -121,6 +122,31 @@ export default function EditNewsBlogForm() {
   const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) {
+      // Validate file before accepting
+      const allowedTypes = [
+        'image/jpeg',
+        'image/jpg',
+        'image/png',
+        'image/gif',
+        'image/webp'
+      ];
+      const maxSizeInMB = 5; // 5MB limit
+      
+      const validation = validateFile(file, allowedTypes, maxSizeInMB);
+      
+      if (!validation.valid) {
+        toast({
+          title: "Invalid file",
+          description: validation.error || "Please select a valid image file"
+        });
+        
+        // Clear the input
+        if (fileInputRef.current) {
+          fileInputRef.current.value = "";
+        }
+        return;
+      }
+      
       form.setValue("image", file);
       const reader = new FileReader();
       reader.onloadend = () => {
@@ -479,7 +505,7 @@ export default function EditNewsBlogForm() {
                     type="file"
                     ref={fileInputRef}
                     onChange={handleImageChange}
-                    accept="image/*"
+                    accept="image/jpeg,image/jpg,image/png,image/gif,image/webp"
                     className="hidden"
                   />
                   <Button
@@ -502,7 +528,7 @@ export default function EditNewsBlogForm() {
                   )}
                 </div>
                 <p className="text-sm text-muted-foreground">
-                  Upload a featured image for your post
+                  Upload a featured image for your post (Max 5MB, JPEG/PNG/GIF/WebP)
                 </p>
               </div>
 

@@ -1,10 +1,21 @@
+"use client"
+
 import { GalleryVerticalEnd } from "lucide-react"
 import { LoginForm } from "@/components/login-form"
 import Image from "next/image"
 
 export default function LoginPage() {
+  // Prevent right-click context menu on login page for security
+  const handleContextMenu = (e: React.MouseEvent) => {
+    e.preventDefault();
+    return false;
+  };
+
   return (
-    <div className="min-h-screen bg-white flex items-center justify-center p-4">
+    <div 
+      className="min-h-screen bg-white flex items-center justify-center p-4"
+      onContextMenu={handleContextMenu}
+    >
       <div className="w-full max-w-md">
         {/* Logo and Brand */}
         <div className="text-center mb-8">

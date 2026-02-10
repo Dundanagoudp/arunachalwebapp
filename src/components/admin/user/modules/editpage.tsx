@@ -22,6 +22,17 @@ import { useRouter, useParams } from "next/navigation"
 import { editUser, getAllUsers, getMyProfile } from "@/service/userServices"
 import type { EditUserData, User } from "@/types/user-types"
 import { toast } from "sonner"
+import Cookies from "js-cookie"
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog"
 
 export default function EditUser() {
   const router = useRouter()
@@ -30,6 +41,8 @@ export default function EditUser() {
   const [loading, setLoading] = useState(false)
   const [fetchingUser, setFetchingUser] = useState(true)
   const [currentUser, setCurrentUser] = useState<User | null>(null)
+  const [showPasswordWarning, setShowPasswordWarning] = useState(false)
+  const [isOwnAccount, setIsOwnAccount] = useState(false)
   const [formData, setFormData] = useState<EditUserData>({
     name: "",
     email: "",
@@ -48,6 +61,8 @@ export default function EditUser() {
       const response = await getMyProfile()
       if (response.success && response.data) {
         setCurrentUser(response.data)
+        // Check if editing own account
+        setIsOwnAccount(response.data._id === userId)
       }
     } catch (error) {
       console.error("Failed to fetch current user:", error)
@@ -81,6 +96,18 @@ export default function EditUser() {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
+    
+    // If password is being changed on own account, show warning dialog
+    if (formData.password && isOwnAccount) {
+      setShowPasswordWarning(true)
+      return
+    }
+    
+    // Otherwise proceed with update
+    await performUpdate()
+  }
+
+  const performUpdate = async () => {
     setLoading(true)
 
     try {
@@ -111,7 +138,25 @@ export default function EditUser() {
 
       if (response.success) {
         toast.success("User updated successfully!")
-        router.push("/admin/dashboard/users")
+        
+        // If user changed their own password, clear session and redirect to login
+        if (formData.password && isOwnAccount) {
+          // Clear all cookies
+          Cookies.remove("userRole", { path: "/" })
+          Cookies.remove("token", { path: "/" })
+          
+          // Clear session storage
+          sessionStorage.clear()
+          
+          toast.info("Password changed. Please login again with your new password.")
+          
+          // Redirect to login page after a short delay
+          setTimeout(() => {
+            router.push("/login")
+          }, 1500)
+        } else {
+          router.push("/admin/dashboard/users")
+        }
       } else {
         toast.error(response.error || "Failed to update user")
       }
@@ -153,6 +198,13 @@ export default function EditUser() {
           <CardHeader>
             <CardTitle>User Information</CardTitle>
             <CardDescription>Update the user's basic information and role.</CardDescription>
+            {isOwnAccount && (
+              <div className="mt-2 p-3 bg-amber-50 border border-amber-200 rounded-md">
+                <p className="text-sm text-amber-800">
+                  ⚠️ You are editing your own account. Changing your password will require you to log in again.
+                </p>
+              </div>
+            )}
           </CardHeader>
           <CardContent className="space-y-4">
             <div className="grid gap-4 md:grid-cols-2">
@@ -188,6 +240,7 @@ export default function EditUser() {
                   value={formData.password}
                   onChange={(e) => handleInputChange("password", e.target.value)}
                   placeholder="Leave blank to keep current password"
+                  autoComplete="new-password"
                 />
               </div>
               <div className="space-y-2">
@@ -198,6 +251,7 @@ export default function EditUser() {
                   value={formData.confirmPassword}
                   onChange={(e) => handleInputChange("confirmPassword", e.target.value)}
                   placeholder="Confirm new password"
+                  autoComplete="new-password"
                 />
               </div>
             </div>
@@ -229,6 +283,31 @@ export default function EditUser() {
           </CardContent>
         </Card>
       </form>
+
+      {/* Password Change Warning Dialog */}
+      <AlertDialog open={showPasswordWarning} onOpenChange={setShowPasswordWarning}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Password Change Confirmation</AlertDialogTitle>
+            <AlertDialogDescription>
+              You are about to change your own password. After this change, you will be logged out and need to log in again with your new password.
+              <br /><br />
+              Are you sure you want to continue?
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel onClick={() => setShowPasswordWarning(false)}>
+              Cancel
+            </AlertDialogCancel>
+            <AlertDialogAction onClick={() => {
+              setShowPasswordWarning(false)
+              performUpdate()
+            }}>
+              Yes, Change Password
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }
