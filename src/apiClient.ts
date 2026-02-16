@@ -1,5 +1,4 @@
 import axios from "axios"
-import Cookies from "js-cookie"
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_BASE_URL
 if (!API_BASE_URL) {
@@ -18,14 +17,9 @@ const apiClient = axios.create({
   timeout: 45000,
 })
 
-// Add request interceptors for authentication tokens
+// Request interceptor: cookies (HttpOnly) sent via withCredentials; no Bearer token
 apiClient.interceptors.request.use(
   (config) => {
-    const token = Cookies.get("token")
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`
-    }
-
     // Let the browser set the proper multipart boundary for FormData
     if (config.data instanceof FormData) {
       delete config.headers["Content-Type"]

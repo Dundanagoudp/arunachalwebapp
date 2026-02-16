@@ -2,7 +2,9 @@
 
 import { createContext, useContext, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { getCookie, setCookie, deleteCookie } from "@/lib/cookies";
+import { setCookie, deleteCookie } from "@/lib/cookies";
+import { getMyProfile } from "@/service/userServices";
+import { logoutUser } from "@/service/authService";
 
 type AuthContextType = {
   userRole: string | null;
@@ -21,31 +23,32 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const checkAuth = async () => {
     try {
-      const res = await fetch("/api/auth/check");
-      const data = await res.json();
-
-      if (data.isAuthenticated && data.role) {
-        setUserRole(data.role);
-        setCookie("userRole", data.role, { days: 1 });
+      const profileResponse = await getMyProfile();
+      if (profileResponse.success && profileResponse.data?.role) {
+        setUserRole(profileResponse.data.role);
+        setCookie("userRole", profileResponse.data.role, { days: 1 });
         return true;
       }
+      deleteCookie("userRole");
+      setUserRole(null);
       return false;
     } catch (error) {
       console.error("Auth check failed:", error);
+      deleteCookie("userRole");
+      setUserRole(null);
       return false;
     }
   };
 
   useEffect(() => {
     const initializeAuth = async () => {
-      // First check client-side cookies
-      const role = getCookie("userRole");
-
-      if (role) {
-        setUserRole(role);
+      const profileResponse = await getMyProfile();
+      if (profileResponse.success && profileResponse.data?.role) {
+        setUserRole(profileResponse.data.role);
+        setCookie("userRole", profileResponse.data.role, { days: 1 });
       } else {
-        // If no client cookie, verify with server
-        await checkAuth();
+        deleteCookie("userRole");
+        setUserRole(null);
       }
       setIsLoading(false);
     };
@@ -58,13 +61,15 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     setUserRole(role);
   };
 
-  const logout = () => {
+  const logout = async () => {
+    try {
+      await logoutUser({ message: "", success: true });
+    } catch (e) {
+      console.error("Logout API error:", e);
+    }
     deleteCookie("userRole");
     setUserRole(null);
-    // Call your API logout endpoint
-    fetch("/api/auth/logout", { credentials: "include" })
-      .then(() => router.push("/login"))
-      .catch(console.error);
+    router.push("/login");
   };
 
   return (

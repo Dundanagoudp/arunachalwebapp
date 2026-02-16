@@ -12,7 +12,7 @@ export async function generateCaptcha() {
  * 
  * @param data - Login credentials (email, password, altchaPayload)
  * @param useEncryption - Whether to encrypt the payload (default: true)
- * @returns Login response with user data and token
+ * @returns Login response with success and message (JWT is in HttpOnly cookie)
  */
 export async function loginUser(
   data: LoginRequest,
