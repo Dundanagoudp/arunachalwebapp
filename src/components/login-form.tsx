@@ -10,8 +10,8 @@ import { useForm } from "react-hook-form";
 import { useToast } from "@/components/ui/custom-toast";
 import { setCookie } from "@/lib/cookies";
 import { getCookie } from "@/lib/cookies";
-import Cookies from "js-cookie";
 import { loginUser } from "@/service/authService";
+import { getMyProfile } from "@/service/userServices";
 import { Eye, EyeOff } from "lucide-react";
 
 type LoginFormValues = {
@@ -144,16 +144,25 @@ export function LoginForm({
         altchaPayload: altchaPayload
       });
 
+      if (!result.success) {
+        showToast(result.message || "Login failed", "error");
+        setAltchaKey(Date.now());
+        return;
+      }
+
       // Clear any lockout data on successful login
       sessionStorage.removeItem('loginLockoutUntil');
 
-      // Use the imported setCookie function with the correct signature
-      Cookies.set("userRole", result.data.user.role, { expires: 1, path: "/" });
-      Cookies.set("token", result.token, { expires: 1, path: "/" });
+      // JWT is in HttpOnly cookie; get current user from backend with credentials
+      const profileResponse = await getMyProfile();
+      if (!profileResponse.success || !profileResponse.data) {
+        showToast("Login succeeded but could not load your profile. Please refresh.", "error");
+        setAltchaKey(Date.now());
+        return;
+      }
 
+      setCookie("userRole", profileResponse.data.role, { days: 1 });
       showToast("Welcome to Dashboard! Login successful.", "success");
-
-      // Redirect to dashboard
       router.replace("/admin/dashboard");
     } catch (error: any) {
       const status = error?.response?.status;

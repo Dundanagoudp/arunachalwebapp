@@ -380,7 +380,6 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     try {
       await logoutUser({ message: "", success: true })
       setCookie("userRole", "", { days: -1 })
-      setCookie("token", "", { days: -1 })
       toast.success("Logged out successfully")
       router.replace("/login")
     } catch (error: any) {
