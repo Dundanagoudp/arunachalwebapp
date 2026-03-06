@@ -1,7 +1,8 @@
 export type LoginRequest = {
   email: string;
   password: string;
-  altchaPayload: string;
+  captchaId: string;
+  captchaCode: string;
 };
 
 export type EncryptedLoginRequest = {

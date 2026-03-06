@@ -20,7 +20,7 @@ export interface EncryptedPayload {
 /**
  * Encrypt payload data using AES-256-CBC encryption
  * 
- * @param data - Object to encrypt (e.g., {email, password, altchaPayload})
+ * @param data - Object to encrypt (e.g., {email, password, captchaId, captchaCode})
  * @returns Encrypted payload with IV
  * @throws Error if encryption fails or key is not configured
  * 
@@ -28,7 +28,8 @@ export interface EncryptedPayload {
  * const encrypted = encryptPayload({
  *   email: "user@example.com",
  *   password: "secret123",
- *   altchaPayload: "captcha_data"
+ *   captchaId: "abc123",
+ *   captchaCode: "XY4Z8W2Q"
  * });
  * // Returns: { content: "U2FsdGVkX1+...", iv: "abc123..." }
  */
