@@ -55,7 +55,7 @@ Policy: https://litfest.arunachal.gov.in/security-policy
 # - API endpoints: Various limits per endpoint
 
 # Known Security Measures:
-# - ALTCHA CAPTCHA protection on login
+# - SVG CAPTCHA protection on login
 # - Password encryption with bcrypt
 # - XSS protection with DOMPurify
 # - CSRF token validation

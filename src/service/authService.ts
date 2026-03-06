@@ -10,7 +10,7 @@ export async function generateCaptcha() {
 /**
  * Login user with optional password encryption
  * 
- * @param data - Login credentials (email, password, altchaPayload)
+ * @param data - Login credentials (email, password, captchaId, captchaCode)
  * @param useEncryption - Whether to encrypt the payload (default: true)
  * @returns Login response with success and message (JWT is in HttpOnly cookie)
  */

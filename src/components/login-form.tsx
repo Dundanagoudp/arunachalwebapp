@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -8,11 +8,10 @@ import { Label } from "@/components/ui/label";
 import { useRouter } from "next/navigation";
 import { useForm } from "react-hook-form";
 import { useToast } from "@/components/ui/custom-toast";
-import { setCookie } from "@/lib/cookies";
-import { getCookie } from "@/lib/cookies";
-import { loginUser } from "@/service/authService";
+import { setCookie, getCookie } from "@/lib/cookies";
+import { loginUser, generateCaptcha } from "@/service/authService";
 import { getMyProfile } from "@/service/userServices";
-import { Eye, EyeOff } from "lucide-react";
+import { Eye, EyeOff, RefreshCw } from "lucide-react";
 
 type LoginFormValues = {
   email: string;
@@ -30,61 +29,68 @@ export function LoginForm({
     handleSubmit,
     formState: { errors, isSubmitting },
   } = useForm<LoginFormValues>({ mode: "onBlur" });
+
   const [mounted, setMounted] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [lockoutRemaining, setLockoutRemaining] = useState<number | null>(null);
   const [isLocked, setIsLocked] = useState(false);
-  const [altchaKey, setAltchaKey] = useState(Date.now());
-  const [captchaError, setCaptchaError] = useState<string>("");
-  
-  // Get API base URL from environment
-  const apiBaseUrl = process.env.NEXT_PUBLIC_API_BASE_URL || "https://litfest.arunachal.gov.in/api/v1";
-  const captchaUrl = `${apiBaseUrl}/captcha/generate`;
 
-  // Load ALTCHA on client-side only
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      Promise.all([
-        import("altcha/external"),
-        // @ts-ignore - CSS import doesn't have types
-        import("altcha/altcha.css")
-      ]).catch(console.error);
+  const [captchaSvg, setCaptchaSvg] = useState<string>("");
+  const [captchaId, setCaptchaId] = useState<string>("");
+  const [captchaCode, setCaptchaCode] = useState<string>("");
+  const [captchaLoading, setCaptchaLoading] = useState(false);
+  const [captchaError, setCaptchaError] = useState<string>("");
+
+  const loadCaptcha = useCallback(async () => {
+    setCaptchaLoading(true);
+    setCaptchaCode("");
+    setCaptchaError("");
+    try {
+      const res = await generateCaptcha();
+      if (res.success) {
+        setCaptchaSvg(res.svg);
+        setCaptchaId(res.captchaId);
+      } else {
+        setCaptchaError("Failed to load CAPTCHA");
+      }
+    } catch {
+      setCaptchaError("Failed to load CAPTCHA. Please refresh the page.");
+    } finally {
+      setCaptchaLoading(false);
     }
   }, []);
 
-  // Check for existing lockout on mount
+  // Check for existing lockout on mount and load captcha
   useEffect(() => {
     setMounted(true);
-    // Check if user is already logged in
+
     const userRole = getCookie("userRole");
     if (userRole) {
-      // Always redirect to /admin/dashboard for all users
       router.replace("/admin/dashboard");
       return;
     }
 
-    // Check for existing lockout in sessionStorage
-    const lockoutUntil = sessionStorage.getItem('loginLockoutUntil');
+    const lockoutUntil = sessionStorage.getItem("loginLockoutUntil");
     if (lockoutUntil) {
       const lockoutTime = parseInt(lockoutUntil);
       const now = Date.now();
       if (now < lockoutTime) {
-        // Still locked
         setIsLocked(true);
         setLockoutRemaining(lockoutTime - now);
       } else {
-        // Lockout expired, clear it
-        sessionStorage.removeItem('loginLockoutUntil');
+        sessionStorage.removeItem("loginLockoutUntil");
       }
     }
-  }, [router]);
+
+    loadCaptcha();
+  }, [router, loadCaptcha]);
 
   // Countdown timer effect
   useEffect(() => {
     if (!isLocked || lockoutRemaining === null) return;
 
     const interval = setInterval(() => {
-      const lockoutUntil = sessionStorage.getItem('loginLockoutUntil');
+      const lockoutUntil = sessionStorage.getItem("loginLockoutUntil");
       if (!lockoutUntil) {
         setIsLocked(false);
         setLockoutRemaining(null);
@@ -96,8 +102,7 @@ export function LoginForm({
       const remaining = lockoutTime - now;
 
       if (remaining <= 0) {
-        // Lockout expired
-        sessionStorage.removeItem('loginLockoutUntil');
+        sessionStorage.removeItem("loginLockoutUntil");
         setIsLocked(false);
         setLockoutRemaining(null);
         clearInterval(interval);
@@ -109,31 +114,18 @@ export function LoginForm({
     return () => clearInterval(interval);
   }, [isLocked, lockoutRemaining]);
 
-
   const onSubmit = async (data: LoginFormValues) => {
-    // Check if form is locked
-    if (isLocked) {
-      return;
-    }
+    if (isLocked) return;
 
-    // Clear previous captcha error
     setCaptchaError("");
 
-    // Get ALTCHA widget and validate payload
-    const widget = document.querySelector('altcha-widget') as any;
-    
-    if (!widget) {
-      setCaptchaError("CAPTCHA widget not loaded");
+    if (!captchaId) {
+      setCaptchaError("CAPTCHA not loaded. Click 'New' to reload.");
       return;
     }
 
-    // ALTCHA widget stores payload in a hidden input with name="altcha"
-    const form = widget.closest('form');
-    const hiddenInput = form?.querySelector('input[name="altcha"]') as HTMLInputElement;
-    const altchaPayload = hiddenInput?.value || widget.value;
-
-    if (!altchaPayload) {
-      setCaptchaError("Please complete the CAPTCHA");
+    if (!captchaCode.trim()) {
+      setCaptchaError("Please enter the CAPTCHA code");
       return;
     }
 
@@ -141,23 +133,24 @@ export function LoginForm({
       const result = await loginUser({
         email: data.email,
         password: data.password,
-        altchaPayload: altchaPayload
+        captchaId,
+        captchaCode: captchaCode.trim(),
       });
 
       if (!result.success) {
         showToast(result.message || "Login failed", "error");
-        setAltchaKey(Date.now());
+        loadCaptcha();
         return;
       }
 
-      // Clear any lockout data on successful login
-      sessionStorage.removeItem('loginLockoutUntil');
+      sessionStorage.removeItem("loginLockoutUntil");
 
-      // JWT is in HttpOnly cookie; get current user from backend with credentials
       const profileResponse = await getMyProfile();
       if (!profileResponse.success || !profileResponse.data) {
-        showToast("Login succeeded but could not load your profile. Please refresh.", "error");
-        setAltchaKey(Date.now());
+        showToast(
+          "Login succeeded but could not load your profile. Please refresh.",
+          "error"
+        );
         return;
       }
 
@@ -166,39 +159,43 @@ export function LoginForm({
       router.replace("/admin/dashboard");
     } catch (error: any) {
       const status = error?.response?.status;
-      const data = error?.response?.data || {};
-      
-      // Refresh captcha widget after any error
-      setAltchaKey(Date.now());
-      
+      const errData = error?.response?.data || {};
+
+      loadCaptcha();
+
       if (status === 429) {
-        // Rate limit exceeded - lock form for 5 minutes
-        const lockoutEnd = Date.now() + (5 * 60 * 1000); // 5 minutes
-        sessionStorage.setItem('loginLockoutUntil', lockoutEnd.toString());
+        const lockoutEnd = Date.now() + 5 * 60 * 1000;
+        sessionStorage.setItem("loginLockoutUntil", lockoutEnd.toString());
         setIsLocked(true);
         setLockoutRemaining(5 * 60 * 1000);
-        showToast("Too many login attempts. Please try again in 5 minutes.", "error");
+        showToast(
+          "Too many login attempts. Please try again in 5 minutes.",
+          "error"
+        );
       } else if (status === 401) {
-        const remaining = data?.remainingAttempts;
+        const remaining = errData?.remainingAttempts;
         if (typeof remaining === "number") {
-          const attemptsText = remaining === 1 ? "1 attempt left." : `${remaining} attempts left.`;
-          
-          // Show stronger warning after 3 failed attempts (when remaining is 2 or less)
+          const attemptsText =
+            remaining === 1 ? "1 attempt left." : `${remaining} attempts left.`;
           if (remaining <= 2) {
-            showToast(`⚠️ Warning: Only ${attemptsText} Account will be locked after failed attempts.`, "error");
+            showToast(
+              `Warning: Only ${attemptsText} Account will be locked after failed attempts.`,
+              "error"
+            );
           } else {
             showToast(`Invalid credentials. ${attemptsText}`, "error");
           }
         } else {
-          showToast(data?.message || "Invalid credentials", "error");
+          showToast(errData?.message || "Invalid credentials", "error");
         }
       } else {
-        // Check if it's a captcha-specific error; show attempts left for any failure when backend sends it
-        const errorMessage = data?.message || error.message || "Login failed";
-        const remaining = data?.remainingAttempts;
+        const errorMessage =
+          errData?.message || error.message || "Login failed";
+        const remaining = errData?.remainingAttempts;
         let toastMessage = errorMessage;
         if (typeof remaining === "number") {
-          const attemptsText = remaining === 1 ? "1 attempt left." : `${remaining} attempts left.`;
+          const attemptsText =
+            remaining === 1 ? "1 attempt left." : `${remaining} attempts left.`;
           toastMessage = `${errorMessage} ${attemptsText}`;
         }
         if (errorMessage.toLowerCase().includes("captcha")) {
@@ -209,7 +206,6 @@ export function LoginForm({
     }
   };
 
-  // Basic email validation
   const validateEmail = (email: string) => {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email) || "Invalid email address";
   };
@@ -217,19 +213,34 @@ export function LoginForm({
   return (
     <div className="w-full">
       <form
-        className={cn("bg-white rounded-lg shadow-lg border border-gray-200 p-6 space-y-6 block", className)}
+        className={cn(
+          "bg-white rounded-lg shadow-lg border border-gray-200 p-6 space-y-6 block",
+          className
+        )}
         onSubmit={handleSubmit(onSubmit)}
         {...props}
       >
         {/* Header Section */}
         <div className="text-center space-y-4">
           <div className="w-16 h-16 mx-auto bg-gradient-to-br from-[#e67e22] to-[#d35400] rounded-full flex items-center justify-center shadow-lg">
-            <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+            <svg
+              className="w-8 h-8 text-white"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
+              />
             </svg>
           </div>
           <div>
-            <h1 className="text-3xl font-bold text-gray-900 mb-2">Welcome Back</h1>
+            <h1 className="text-3xl font-bold text-gray-900 mb-2">
+              Welcome Back
+            </h1>
             <p className="text-gray-600 text-sm">
               Login to your account to continue
             </p>
@@ -238,11 +249,25 @@ export function LoginForm({
 
         {/* Lockout Banner */}
         {isLocked && lockoutRemaining !== null && (
-          <div className="bg-red-50 border border-red-200 rounded-lg p-4" role="alert" aria-live="polite">
+          <div
+            className="bg-red-50 border border-red-200 rounded-lg p-4"
+            role="alert"
+            aria-live="polite"
+          >
             <div className="flex items-start space-x-3">
               <div className="flex-shrink-0">
-                <svg className="w-5 h-5 text-red-600 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                <svg
+                  className="w-5 h-5 text-red-600 mt-0.5"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                  />
                 </svg>
               </div>
               <div className="flex-1">
@@ -250,7 +275,11 @@ export function LoginForm({
                   Too Many Login Attempts
                 </h3>
                 <p className="text-sm text-red-700">
-                  Please try again in {Math.floor(lockoutRemaining / 60000)}:{String(Math.floor((lockoutRemaining % 60000) / 1000)).padStart(2, '0')}
+                  Please try again in{" "}
+                  {Math.floor(lockoutRemaining / 60000)}:
+                  {String(
+                    Math.floor((lockoutRemaining % 60000) / 1000)
+                  ).padStart(2, "0")}
                 </p>
               </div>
             </div>
@@ -260,7 +289,10 @@ export function LoginForm({
         {/* Form Fields */}
         <div className="space-y-5">
           <div className="space-y-2">
-            <Label htmlFor="email" className="text-sm font-medium text-gray-700">
+            <Label
+              htmlFor="email"
+              className="text-sm font-medium text-gray-700"
+            >
               Email Address
             </Label>
             <Input
@@ -276,12 +308,17 @@ export function LoginForm({
               })}
             />
             {errors.email && (
-              <p className="text-sm text-red-500 mt-1">{errors.email.message}</p>
+              <p className="text-sm text-red-500 mt-1">
+                {errors.email.message}
+              </p>
             )}
           </div>
 
           <div className="space-y-2">
-            <Label htmlFor="password" className="text-sm font-medium text-gray-700">
+            <Label
+              htmlFor="password"
+              className="text-sm font-medium text-gray-700"
+            >
               Password
             </Label>
             <div className="relative">
@@ -296,8 +333,8 @@ export function LoginForm({
                   required: "Password is required",
                   minLength: {
                     value: 8,
-                    message: "Password must be at least 8 characters"
-                  }
+                    message: "Password must be at least 8 characters",
+                  },
                 })}
               />
               <button
@@ -320,29 +357,95 @@ export function LoginForm({
             )}
           </div>
 
-          {/* ALTCHA CAPTCHA Widget */}
-          <div className="space-y-2">
-            {React.createElement('altcha-widget' as any, {
-              key: altchaKey,
-              challengeurl: captchaUrl,
-              disabled: isLocked,
-              workerurl: '/altcha-worker.js'
-            })}
+          {/* SVG CAPTCHA Section */}
+          <div className="space-y-3">
+            <div className="bg-gray-50 rounded-lg border border-gray-200 p-4 space-y-3">
+              <div className="text-center">
+                <h3 className="text-gray-800 text-xs font-bold tracking-widest uppercase">
+                  Security Code Verification
+                </h3>
+              </div>
+
+              <p className="text-[#e67e22] text-sm font-semibold text-center tracking-wide">
+                Type this exact code below
+              </p>
+
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+                <div className="bg-white rounded-md border border-gray-200 p-2 flex items-center justify-center min-h-[60px] min-w-[200px] shadow-sm overflow-hidden">
+                  {captchaLoading ? (
+                    <div className="flex items-center gap-2 text-gray-400 text-sm">
+                      <RefreshCw className="h-4 w-4 animate-spin" />
+                      <span>Loading...</span>
+                    </div>
+                  ) : captchaSvg ? (
+                    <div
+                      className="[&>svg]:max-w-full [&>svg]:h-auto"
+                      dangerouslySetInnerHTML={{ __html: captchaSvg }}
+                    />
+                  ) : (
+                    <span className="text-gray-400 text-sm">
+                      CAPTCHA unavailable
+                    </span>
+                  )}
+                </div>
+
+                <button
+                  type="button"
+                  onClick={loadCaptcha}
+                  disabled={captchaLoading || isLocked}
+                  className="flex items-center gap-1.5 px-3 py-2 bg-white hover:bg-gray-50 text-[#e67e22] hover:text-[#d35400] rounded-md text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed border border-gray-200 shadow-sm"
+                  title="Load new CAPTCHA"
+                >
+                  <RefreshCw
+                    className={cn(
+                      "h-3.5 w-3.5",
+                      captchaLoading && "animate-spin"
+                    )}
+                  />
+                  New
+                </button>
+              </div>
+
+              <p className="text-gray-500 text-xs text-center">
+                Enter the 8-character code exactly as shown (case insensitive)
+              </p>
+            </div>
+
+            <Input
+              type="text"
+              placeholder="Enter CAPTCHA code"
+              maxLength={8}
+              value={captchaCode}
+              onChange={(e) => setCaptchaCode(e.target.value)}
+              disabled={isLocked || captchaLoading}
+              className="h-12 px-4 text-center text-lg tracking-[0.3em] font-mono border-gray-200 focus:border-[#e67e22] focus:ring-[#e67e22]"
+              autoComplete="off"
+            />
             {captchaError && (
               <p className="text-sm text-red-500 mt-1">{captchaError}</p>
             )}
           </div>
 
           {/* Login Button */}
-          <Button 
-            type="submit" 
-            className="w-full h-12 bg-[#e67e22] hover:bg-[#d35400] text-white font-semibold rounded-lg disabled:opacity-50 disabled:cursor-not-allowed" 
+          <Button
+            type="submit"
+            className="w-full h-12 bg-[#e67e22] hover:bg-[#d35400] text-white font-semibold rounded-lg disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={isSubmitting || isLocked}
           >
             {isLocked ? (
               <div className="flex items-center space-x-2">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                <svg
+                  className="w-4 h-4"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={2}
+                    d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"
+                  />
                 </svg>
                 <span>Form Locked</span>
               </div>
