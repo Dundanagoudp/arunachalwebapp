@@ -1,15 +1,6 @@
 "use client"
 
 import type React from "react"
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
-import { Separator } from "@/components/ui/separator"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -20,8 +11,8 @@ import { Mic, Save, ArrowLeft, Upload, Loader2, User } from "lucide-react"
 import Link from "next/link"
 import { useState, useEffect } from "react"
 import { useParams, useRouter } from "next/navigation"
-import { getSpeakerById, updateSpeaker, getEvent } from "@/service/speaker"
-import type { Event, Speaker } from "@/types/speaker-types"
+import { getSpeakerById, updateSpeaker, getSpeakerYears } from "@/service/speaker"
+import type { SpeakerYear, Speaker } from "@/types/speaker-types"
 import Image from "next/image"
 import { getMediaUrl } from "@/utils/mediaUrl"
 
@@ -34,21 +25,19 @@ export default function EditSpeaker() {
   const [formData, setFormData] = useState({
     name: "",
     about: "",
-    event_ref: "",
+    year_ref: "",
   })
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
-  const [events, setEvents] = useState<Event[]>([])
+  const [years, setYears] = useState<SpeakerYear[]>([])
   const [loading, setLoading] = useState(true)
-  const [eventsLoading, setEventsLoading] = useState(true)
+  const [yearsLoading, setYearsLoading] = useState(true)
   const [submitLoading, setSubmitLoading] = useState(false)
   const [error, setError] = useState("")
   const [success, setSuccess] = useState("")
 
   useEffect(() => {
-    if (speakerId) {
-      fetchSpeaker()
-    }
-    fetchEvents()
+    if (speakerId) fetchSpeaker()
+    fetchYears()
   }, [speakerId])
 
   const fetchSpeaker = async () => {
@@ -61,31 +50,31 @@ export default function EditSpeaker() {
         setFormData({
           name: response.data.name,
           about: response.data.about,
-          event_ref: response.data.event_ref,
+          year_ref: response.data.year_ref,
         })
       } else {
         setError(response.error || "Failed to fetch speaker")
       }
-    } catch (err) {
+    } catch {
       setError("Failed to fetch speaker")
     } finally {
       setLoading(false)
     }
   }
 
-  const fetchEvents = async () => {
+  const fetchYears = async () => {
     try {
-      setEventsLoading(true)
-      const response = await getEvent()
+      setYearsLoading(true)
+      const response = await getSpeakerYears()
       if (response.success && response.data) {
-        setEvents(response.data)
+        setYears(response.data)
       } else {
-        setError("Failed to fetch events")
+        setError("Failed to fetch speaker years")
       }
-    } catch (err) {
-      setError("Failed to fetch events")
+    } catch {
+      setError("Failed to fetch speaker years")
     } finally {
-      setEventsLoading(false)
+      setYearsLoading(false)
     }
   }
 
@@ -94,8 +83,8 @@ export default function EditSpeaker() {
     setError("")
     setSuccess("")
 
-    if (!formData.event_ref) {
-      setError("Please select an event")
+    if (!formData.year_ref) {
+      setError("Please select a year")
       return
     }
     if (!formData.name.trim() || !formData.about.trim()) {
@@ -109,6 +98,10 @@ export default function EditSpeaker() {
       submitData.append("name", formData.name)
       submitData.append("about", formData.about)
 
+      if (speaker && formData.year_ref !== speaker.year_ref) {
+        submitData.append("yearId", formData.year_ref)
+      }
+
       if (selectedFile) {
         submitData.append("image_url", selectedFile)
       }
@@ -117,13 +110,11 @@ export default function EditSpeaker() {
 
       if (response.success) {
         setSuccess("Speaker updated successfully!")
-        setTimeout(() => {
-          router.push("/admin/dashboard/speakers")
-        }, 1500)
+        setTimeout(() => router.push("/admin/dashboard/speakers"), 1500)
       } else {
         setError(response.error || "Failed to update speaker")
       }
-    } catch (err) {
+    } catch {
       setError("An unexpected error occurred")
     } finally {
       setSubmitLoading(false)
@@ -131,10 +122,7 @@ export default function EditSpeaker() {
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    })
+    setFormData({ ...formData, [e.target.name]: e.target.value })
   }
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -153,14 +141,13 @@ export default function EditSpeaker() {
     }
   }
 
-  const getEventName = (eventId: string) => {
-    const event = events.find((e) => e._id === eventId)
-    return event ? `${event.name} (${event.year})` : "Unknown Event"
+  const getYearLabel = (yearId: string) => {
+    const year = years.find((y) => y._id === yearId)
+    return year ? `${year.label} (${year.year})` : "Unknown Year"
   }
 
   return (
     <div className="flex flex-1 flex-col gap-6 p-6 pt-0">
-      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Edit Speaker</h1>
@@ -176,20 +163,17 @@ export default function EditSpeaker() {
         </Button>
       </div>
 
-      {/* Alerts */}
       {error && (
         <Alert variant="destructive">
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
-
       {success && (
         <Alert className="border-green-200 bg-green-50 text-green-800">
           <AlertDescription>{success}</AlertDescription>
         </Alert>
       )}
 
-      {/* Form */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -206,8 +190,7 @@ export default function EditSpeaker() {
             </div>
           ) : (
             <div className="space-y-6">
-              {/* Current Speaker Info */}
-                  {speaker && (
+              {speaker && (
                 <div className="flex items-center gap-4 p-4 bg-muted rounded-lg">
                   {speaker.image_url ? (
                     <Image
@@ -224,12 +207,42 @@ export default function EditSpeaker() {
                   )}
                   <div>
                     <h3 className="font-semibold">{speaker.name}</h3>
-                    <p className="text-sm text-muted-foreground">{getEventName(speaker.event_ref)}</p>
+                    <p className="text-sm text-muted-foreground">{getYearLabel(speaker.year_ref)}</p>
                   </div>
                 </div>
               )}
 
               <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="space-y-2">
+                  <Label htmlFor="year_ref">Festival Year *</Label>
+                  {yearsLoading ? (
+                    <div className="flex items-center gap-2 p-2">
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      <span className="text-sm text-muted-foreground">Loading years...</span>
+                    </div>
+                  ) : (
+                    <select
+                      id="year_ref"
+                      name="year_ref"
+                      value={formData.year_ref}
+                      onChange={handleChange}
+                      required
+                      disabled={submitLoading}
+                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                    >
+                      <option value="">Select a year</option>
+                      {years.map((year) => (
+                        <option key={year._id} value={year._id}>
+                          {year.label} ({year.year})
+                        </option>
+                      ))}
+                    </select>
+                  )}
+                  <p className="text-xs text-muted-foreground">
+                    Change the year to move this speaker to another festival year.
+                  </p>
+                </div>
+
                 <div className="space-y-2">
                   <Label htmlFor="name">Speaker Name *</Label>
                   <Input
@@ -255,33 +268,6 @@ export default function EditSpeaker() {
                     required
                     disabled={submitLoading}
                   />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="event_ref">Associated Event *</Label>
-                  {eventsLoading ? (
-                    <div className="flex items-center gap-2 p-2">
-                      <Loader2 className="h-4 w-4 animate-spin" />
-                      <span className="text-sm text-muted-foreground">Loading events...</span>
-                    </div>
-                  ) : (
-                    <select
-                      id="event_ref"
-                      name="event_ref"
-                      value={formData.event_ref}
-                      onChange={handleChange}
-                      required
-                      disabled={submitLoading}
-                      className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                    >
-                      <option value="">Select an event</option>
-                      {events.map((event) => (
-                        <option key={event._id} value={event._id}>
-                          {event.name} ({event.year})
-                        </option>
-                      ))}
-                    </select>
-                  )}
                 </div>
 
                 <div className="space-y-2">

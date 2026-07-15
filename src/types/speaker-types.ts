@@ -5,22 +5,36 @@ export interface ApiResponse<T> {
   message?: string
 }
 
-export interface Event {
+export interface SpeakerYear {
   _id: string
-  name: string
-  description: string
   year: number
-  month: number
-  startDate: string
-  endDate: string
-  totalDays: number
+  label: string
+  isActive: boolean
 }
 
 export interface Speaker {
   _id: string
-  event_ref: string
+  year_ref: string
   name: string
   about: string
-  image_url: string
-  __v: number
+  image_url?: string
+}
+
+export interface SpeakerYearWithSpeakers extends SpeakerYear {
+  speakers: Speaker[]
+}
+
+export interface GroupedSpeakersResponse {
+  years: SpeakerYearWithSpeakers[]
+}
+
+export interface CreateSpeakerYearPayload {
+  year: number
+  label: string
+  isActive: boolean
+}
+
+export interface UpdateSpeakerYearPayload {
+  label?: string
+  isActive?: boolean
 }
