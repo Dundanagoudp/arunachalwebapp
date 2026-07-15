@@ -102,8 +102,8 @@ export default function ContactUsPage() {
           CONTACT US
         </h1>
         <p className="text-gray-700 font-bilo text-sm sm:text-base sm:text-lg leading-relaxed px-1 sm:px-4">
-          We&apos;d love to hear from you! For any queries or more information about the Arunachal Literature and Art
-          Festival 2025, please feel free to reach out to us.
+          We&apos;d love to hear from you! For any queries or more information about the Arunachal Literature
+          Festival, please feel free to reach out to us.
         </p>
         <SunIcon size={40} className="absolute -top-4 -left-4" />
         <SunIcon size={40} className="absolute -top-4 -right-4" />

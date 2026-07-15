@@ -9,16 +9,9 @@ import "swiper/css/pagination"
 import "swiper/css/navigation"
 import { useEffect, useRef, useState } from "react"
 import { useRouter } from "next/navigation"
-import { getSpeaker } from "@/service/speaker"
+import { getSpeakersGrouped } from "@/service/speaker"
 import { getMediaUrl } from "@/utils/mediaUrl"
-interface Speaker {
-  _id?: string
-  id?: string
-  name: string
-  about: string
-  image_url: string
-  category?: string
-}
+import type { Speaker } from "@/types/speaker-types"
 
 export default function Speakers() {
   const router = useRouter()
@@ -39,9 +32,11 @@ export default function Speakers() {
       setLoading(true)
       setError(null)
       try {
-        const res = await getSpeaker()
+        const res = await getSpeakersGrouped()
         if (res.success && res.data) {
-          setSpeakers(res.data)
+          const activeYear =
+            res.data.years.find((y) => y.isActive) ?? res.data.years[0]
+          setSpeakers(activeYear?.speakers ?? [])
         } else {
           setError(res.error || "Failed to fetch speakers.")
         }
@@ -191,7 +186,7 @@ export default function Speakers() {
                     const isActive = activeIndex === index
                     return (
                       <SwiperSlide
-                        key={speaker._id || speaker.id || index}
+                        key={speaker._id || index}
                         className={`!w-[280px] !h-[380px] md:!w-[320px] md:!h-[420px] lg:!w-[360px] lg:!h-[460px] mx-4 transition-opacity duration-300 ${isActive ? 'opacity-100 z-10' : 'opacity-40 z-0'}`}
                       >
                         <div className="relative group h-full w-full cursor-pointer" onClick={handleSpeakerClick}>
@@ -217,7 +212,7 @@ export default function Speakers() {
                                 <p className="text-sm opacity-90 line-clamp-2 mb-2 font-bilo">{speaker.about}</p>
                                 <div className="flex items-center justify-between">
                                   <span className="text-xs bg-[#E67E22] px-2 py-1 rounded-full">
-                                    {speaker.category || "Speaker"}
+                                    Speaker
                                   </span>
                                   <ArrowUpRight className="w-4 h-4 opacity-0 group-hover:opacity-100 transition-opacity" />
                                 </div>

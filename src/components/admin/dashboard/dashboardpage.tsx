@@ -39,7 +39,7 @@ import UserProfileCard from "@/components/admin/UserProfileCard";
 import { getAllEvents } from "@/service/events-apis";
 import { getAllUsers } from "@/service/userServices";
 import { getBlogs } from "@/service/newsAndBlogs";
-import { getSpeaker } from "@/service/speaker";
+import { getSpeakersGrouped } from "@/service/speaker";
 import { getAllImages } from "@/service/archive";
 import DashboardLoading from "@/components/admin/dashboard/DashboardLoading";
 import DashboardError from "@/components/admin/dashboard/DashboardError";
@@ -78,7 +78,7 @@ export default function AdminDashboard() {
           getAllEvents(),
           getAllUsers(),
           getBlogs(),
-          getSpeaker(),
+          getSpeakersGrouped(),
         ]);
         // Stats
 
@@ -121,7 +121,10 @@ export default function AdminDashboard() {
             title: "Total Speakers",
             value:
               speakersRes.success && speakersRes.data
-                ? speakersRes.data.length
+                ? speakersRes.data.years.reduce(
+                    (sum, y) => sum + y.speakers.length,
+                    0,
+                  )
                 : 0,
             change: "-",
             icon: Mic,
@@ -185,13 +188,16 @@ export default function AdminDashboard() {
         // Top Speakers (show top 3 by sessions or rating)
         setTopSpeakers(
           speakersRes.success && speakersRes.data
-            ? speakersRes.data.slice(0, 3).map((s: any, idx: number) => ({
-                id: s._id,
-                name: s.name,
-                sessions: s.sessionsCount || 0,
-                rating: s.rating || 0,
-                avatar: s.avatar || "/placeholder.svg?height=40&width=40",
-              }))
+            ? speakersRes.data.years
+                .flatMap((y) => y.speakers)
+                .slice(0, 3)
+                .map((s) => ({
+                  id: s._id,
+                  name: s.name,
+                  sessions: 0,
+                  rating: 0,
+                  avatar: s.image_url || "/placeholder.svg?height=40&width=40",
+                }))
             : []
         );
       } catch (err: any) {

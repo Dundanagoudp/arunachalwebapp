@@ -1,15 +1,6 @@
 "use client"
 
 import type React from "react"
-import {
-  Breadcrumb,
-  BreadcrumbItem,
-  BreadcrumbLink,
-  BreadcrumbList,
-  BreadcrumbPage,
-  BreadcrumbSeparator,
-} from "@/components/ui/breadcrumb"
-import { Separator } from "@/components/ui/separator"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -19,51 +10,40 @@ import { Alert, AlertDescription } from "@/components/ui/alert"
 import { Mic, Save, ArrowLeft, Upload, Loader2 } from "lucide-react"
 import Link from "next/link"
 import { useState, useEffect } from "react"
-import { addSpeaker, getEvent } from "@/service/speaker"
-
-interface Event {
-  _id: string
-  name: string
-  description: string
-  year: number
-  month: number
-  startDate: string
-  endDate: string
-  totalDays: number
-}
+import { addSpeaker, getSpeakerYears } from "@/service/speaker"
+import type { SpeakerYear } from "@/types/speaker-types"
 
 export default function CreateSpeaker() {
   const [formData, setFormData] = useState({
     name: "",
     about: "",
-    event_ref: "",
+    year_ref: "",
   })
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null)
-  const [events, setEvents] = useState<Event[]>([])
+  const [years, setYears] = useState<SpeakerYear[]>([])
   const [loading, setLoading] = useState(false)
-  const [eventsLoading, setEventsLoading] = useState(true)
+  const [yearsLoading, setYearsLoading] = useState(true)
   const [error, setError] = useState("")
   const [success, setSuccess] = useState("")
 
-  // Fetch events on component mount
   useEffect(() => {
-    fetchEvents()
+    fetchYears()
   }, [])
 
-  const fetchEvents = async () => {
+  const fetchYears = async () => {
     try {
-      setEventsLoading(true)
-      const response = await getEvent()
-       if (response.success) {
-        setEvents(response.data ?? [])
-      }else {
-        setError("Failed to fetch events")
+      setYearsLoading(true)
+      const response = await getSpeakerYears()
+      if (response.success && response.data) {
+        setYears(response.data)
+      } else {
+        setError("Failed to fetch speaker years")
       }
-    } catch (err) {
-      setError("Failed to fetch events")
+    } catch {
+      setError("Failed to fetch speaker years")
     } finally {
-      setEventsLoading(false)
+      setYearsLoading(false)
     }
   }
 
@@ -72,8 +52,13 @@ export default function CreateSpeaker() {
     setError("")
     setSuccess("")
 
-    if (!formData.event_ref) {
-      setError("Please select an event")
+    if (years.length === 0) {
+      setError("Create a speaker year first before adding speakers.")
+      return
+    }
+
+    if (!formData.year_ref) {
+      setError("Please select a year")
       return
     }
 
@@ -84,8 +69,6 @@ export default function CreateSpeaker() {
 
     try {
       setLoading(true)
-
-      // Create FormData for file upload
       const submitData = new FormData()
       submitData.append("name", formData.name)
       submitData.append("about", formData.about)
@@ -94,24 +77,18 @@ export default function CreateSpeaker() {
         submitData.append("image_url", selectedFile)
       }
 
-      const response = await addSpeaker(formData.event_ref, submitData)
+      const response = await addSpeaker(formData.year_ref, submitData)
 
       if (response.success) {
         setSuccess("Speaker added successfully!")
-        // Reset form
-        setFormData({
-          name: "",
-          about: "",
-          event_ref: "",
-        })
+        setFormData({ name: "", about: "", year_ref: "" })
         setSelectedFile(null)
-        // Reset file input
         const fileInput = document.getElementById("image_file") as HTMLInputElement
         if (fileInput) fileInput.value = ""
       } else {
         setError(response.error || "Failed to add speaker")
       }
-    } catch (err) {
+    } catch {
       setError("An unexpected error occurred")
     } finally {
       setLoading(false)
@@ -119,21 +96,16 @@ export default function CreateSpeaker() {
   }
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    })
+    setFormData({ ...formData, [e.target.name]: e.target.value })
   }
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
-      // Validate file type
       if (!file.type.startsWith("image/")) {
         setError("Please select a valid image file")
         return
       }
-      // Validate file size (5MB limit)
       if (file.size > 5 * 1024 * 1024) {
         setError("File size must be less than 5MB")
         return
@@ -145,11 +117,10 @@ export default function CreateSpeaker() {
 
   return (
     <div className="flex flex-1 flex-col gap-6 p-6 pt-0">
-      {/* Header */}
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Add New Speaker</h1>
-          <p className="text-muted-foreground">Add a new speaker to your events.</p>
+          <p className="text-muted-foreground">Add a new speaker under a festival year.</p>
         </div>
         <Button variant="outline" asChild>
           <Link href="/admin/dashboard/speakers">
@@ -159,20 +130,17 @@ export default function CreateSpeaker() {
         </Button>
       </div>
 
-      {/* Alerts */}
       {error && (
         <Alert variant="destructive">
           <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
-
       {success && (
         <Alert className="border-green-200 bg-green-50 text-green-800">
           <AlertDescription>{success}</AlertDescription>
         </Alert>
       )}
 
-      {/* Form */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
@@ -183,6 +151,41 @@ export default function CreateSpeaker() {
         </CardHeader>
         <CardContent>
           <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="space-y-2">
+              <Label htmlFor="year_ref">Festival Year *</Label>
+              {yearsLoading ? (
+                <div className="flex items-center gap-2 p-2">
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                  <span className="text-sm text-muted-foreground">Loading years...</span>
+                </div>
+              ) : years.length === 0 ? (
+                <p className="text-sm text-destructive">
+                  No speaker years found.{" "}
+                  <Link href="/admin/dashboard/speakers" className="underline">
+                    Create a year first
+                  </Link>
+                  .
+                </p>
+              ) : (
+                <select
+                  id="year_ref"
+                  name="year_ref"
+                  value={formData.year_ref}
+                  onChange={handleChange}
+                  required
+                  disabled={loading}
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  <option value="">Select a year</option>
+                  {years.map((year) => (
+                    <option key={year._id} value={year._id}>
+                      {year.label} ({year.year})
+                    </option>
+                  ))}
+                </select>
+              )}
+            </div>
+
             <div className="space-y-2">
               <Label htmlFor="name">Speaker Name *</Label>
               <Input
@@ -211,33 +214,6 @@ export default function CreateSpeaker() {
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="event_ref">Associated Event *</Label>
-              {eventsLoading ? (
-                <div className="flex items-center gap-2 p-2">
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  <span className="text-sm text-muted-foreground">Loading events...</span>
-                </div>
-              ) : (
-                <select
-                  id="event_ref"
-                  name="event_ref"
-                  value={formData.event_ref}
-                  onChange={handleChange}
-                  required
-                  disabled={loading}
-                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
-                >
-                  <option value="">Select an event</option>
-                  {events.map((event) => (
-                    <option key={event._id} value={event._id}>
-                      {event.name} ({event.year})
-                    </option>
-                  ))}
-                </select>
-              )}
-            </div>
-
-            <div className="space-y-2">
               <Label htmlFor="image_file">Profile Image</Label>
               <div className="flex gap-2">
                 <Input
@@ -258,7 +234,7 @@ export default function CreateSpeaker() {
             </div>
 
             <div className="flex gap-4">
-              <Button type="submit" disabled={loading}>
+              <Button type="submit" disabled={loading || years.length === 0}>
                 {loading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
