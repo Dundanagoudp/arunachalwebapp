@@ -14,8 +14,7 @@ import type { Speaker, SpeakerYearWithSpeakers } from "@/types/speaker-types"
 
 export default function Speakers() {
   const router = useRouter()
-  const [years, setYears] = useState<SpeakerYearWithSpeakers[]>([])
-  const [selectedYearId, setSelectedYearId] = useState<string | null>(null)
+  const [latestYear, setLatestYear] = useState<SpeakerYearWithSpeakers | null>(null)
   const [speakers, setSpeakers] = useState<Speaker[]>([])
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -36,15 +35,11 @@ export default function Speakers() {
         const res = await getSpeakersGrouped()
         if (res.success && res.data) {
           const fetchedYears = res.data.years
-          setYears(fetchedYears)
-          if (fetchedYears.length > 0) {
-            const defaultYear =
-              fetchedYears.find((y) => y.isActive) ?? fetchedYears[0]
-            setSelectedYearId(defaultYear._id)
-            setSpeakers(defaultYear.speakers ?? [])
-          } else {
-            setSpeakers([])
-          }
+          // Home: only latest year tab + those speakers
+          const year =
+            [...fetchedYears].sort((a, b) => b.year - a.year)[0] ?? fetchedYears[0] ?? null
+          setLatestYear(year)
+          setSpeakers(year?.speakers ?? [])
         } else {
           setError(res.error || "Failed to fetch speakers.")
         }
@@ -56,13 +51,6 @@ export default function Speakers() {
     }
     fetchSpeakers()
   }, [])
-
-  const handleYearChange = (yearId: string) => {
-    setSelectedYearId(yearId)
-    setActiveIndex(0)
-    const year = years.find((y) => y._id === yearId)
-    setSpeakers(year?.speakers ?? [])
-  }
 
   if (error) {
     return (
@@ -103,25 +91,13 @@ export default function Speakers() {
           </p>
         </header>
 
-        {!loading && years.length > 0 && (
+        {/* Only latest year tab */}
+        {!loading && latestYear && (
           <div className="flex justify-center mb-8 md:mb-10">
-            <div className="rounded-full bg-white/80 border border-[#E67E22]/20 shadow-sm px-3 sm:px-5 py-2.5 flex items-center gap-1 sm:gap-2 overflow-x-auto scrollbar-hide max-w-full">
-              {years.map((year) => {
-                const isSelected = selectedYearId === year._id
-                return (
-                  <button
-                    key={year._id}
-                    onClick={() => handleYearChange(year._id)}
-                    className={`relative whitespace-nowrap flex-shrink-0 px-4 py-1.5 rounded-full text-sm md:text-base font-dm-serif transition-all duration-200 ${
-                      isSelected
-                        ? "bg-[#E67E22] text-white shadow-md"
-                        : "text-[#5c4a3a] hover:bg-[#E67E22]/10"
-                    }`}
-                  >
-                    {year.label || year.year}
-                  </button>
-                )
-              })}
+            <div className="rounded-full bg-white/80 border border-[#E67E22]/20 shadow-sm px-3 sm:px-5 py-2.5">
+              <span className="inline-block whitespace-nowrap px-4 py-1.5 rounded-full text-sm md:text-base font-dm-serif bg-[#E67E22] text-white shadow-md">
+                {latestYear.label || latestYear.year}
+              </span>
             </div>
           </div>
         )}
@@ -138,7 +114,7 @@ export default function Speakers() {
             </div>
           ) : speakers.length === 0 ? (
             <div className="text-center text-[#5c4a3a]/70 py-16 font-bilo">
-              {years.length === 0 ? "No speakers available yet." : "No speakers for this year."}
+              No speakers available yet.
             </div>
           ) : (
             <div className="relative max-w-5xl mx-auto px-12 md:px-16">
@@ -153,7 +129,7 @@ export default function Speakers() {
               {/* overflow-hidden clips so only 3 cards show — no 4th/5th peeking */}
               <div className="overflow-hidden">
                 <Swiper
-                  key={selectedYearId}
+                  key={speakers.map((s) => s._id).join("-") || "speakers"}
                   modules={[Navigation, Autoplay]}
                   slidesPerView={1}
                   spaceBetween={16}
