@@ -303,14 +303,6 @@ export default function HomeManagementPage() {
   }
 
   const handleAddBannerText = async () => {
-    if (!bannerTextForm.bannerText.trim()) {
-      toast({
-        title: "Error",
-        description: "Banner text is required",
-      })
-      return
-    }
-
     setLoading((prev) => ({ ...prev, action: true }))
     try {
       const response = await addText(bannerTextForm)
@@ -339,11 +331,7 @@ export default function HomeManagementPage() {
   }
 
   const handleUpdateBannerText = async () => {
-    if (!editingBannerText || !bannerTextForm.bannerText.trim()) {
-      toast({
-        title: "Error",
-        description: "Banner text is required",
-      })
+    if (!editingBannerText) {
       return
     }
 
@@ -402,14 +390,6 @@ export default function HomeManagementPage() {
   }
 
   const handleAddButtonText = async () => {
-    if (!buttonTextForm.text.trim() || !buttonTextForm.link.trim()) {
-      toast({
-        title: "Error",
-        description: "Both text and link are required",
-      })
-      return
-    }
-
     setLoading((prev) => ({ ...prev, action: true }))
     try {
       const response = await addButtonText(buttonTextForm)
@@ -438,11 +418,7 @@ export default function HomeManagementPage() {
   }
 
   const handleUpdateButtonText = async () => {
-    if (!editingButtonText || !buttonTextForm.text.trim() || !buttonTextForm.link.trim()) {
-      toast({
-        title: "Error",
-        description: "Both text and link are required",
-      })
+    if (!editingButtonText) {
       return
     }
 
