@@ -63,28 +63,30 @@ export default function HeroSection() {
     setImageError(true)
   }
 
-  const getImageSrc = () => {
-    if (imageError || !bannerUrl) {
-      return "/herosection.png"
-    }
-    const mediaUrl = getMediaUrl(bannerUrl)
-    return mediaUrl !== "/placeholder.svg" ? mediaUrl : "/herosection.png"
-  }
+  const imageSrc =
+    !imageError && bannerUrl
+      ? (() => {
+          const mediaUrl = getMediaUrl(bannerUrl)
+          return mediaUrl !== "/placeholder.svg" ? mediaUrl : null
+        })()
+      : null
 
   return (
     <section className="relative h-[60vh] sm:h-[70vh] md:h-[80vh] lg:h-screen w-full flex items-center justify-center text-center overflow-hidden">
-      <Image
-        src={getImageSrc()}
-        alt="Arunachal Literature Festival Background"
-        fill
-        sizes="100vw"
-        style={{
-          objectFit: "cover",
-          zIndex: -1,
-        }}
-        onError={handleImageError}
-        priority
-      />
+      {imageSrc && (
+        <Image
+          src={imageSrc}
+          alt="Arunachal Literature Festival Background"
+          fill
+          sizes="100vw"
+          style={{
+            objectFit: "cover",
+            zIndex: -1,
+          }}
+          onError={handleImageError}
+          priority
+        />
+      )}
 
       {/* Content — only show fields provided by API (no hardcoded fallbacks) */}
       <div className="relative z-10 p-4 sm:p-6 md:p-8 lg:p-12 space-y-4 sm:space-y-6 text-[#6A1B1A] animate-fade-in pb-8 lg:pb-12 xl:pb-40">
