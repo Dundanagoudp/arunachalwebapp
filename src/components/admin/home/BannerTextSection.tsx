@@ -47,10 +47,6 @@ export default function BannerTextSection() {
   }
 
   const handleAddBannerText = async () => {
-    if (!bannerTextForm.bannerText.trim()) {
-      toast({ title: "Error", description: "Banner text is required" })
-      return
-    }
     setLoading((prev) => ({ ...prev, action: true }))
     try {
       const response = await addText(bannerTextForm)
@@ -70,8 +66,7 @@ export default function BannerTextSection() {
   }
 
   const handleUpdateBannerText = async () => {
-    if (!editingBannerText || !bannerTextForm.bannerText.trim()) {
-      toast({ title: "Error", description: "Banner text is required" })
+    if (!editingBannerText) {
       return
     }
     setLoading((prev) => ({ ...prev, action: true }))

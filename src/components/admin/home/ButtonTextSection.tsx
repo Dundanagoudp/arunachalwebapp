@@ -41,10 +41,6 @@ export default function ButtonTextSection() {
   }
 
   const handleAddButtonText = async () => {
-    if (!buttonTextForm.link.trim()) {
-      toast({ title: "Error", description: "Button link is required" })
-      return
-    }
     setLoading((prev) => ({ ...prev, action: true }))
     try {
       const response = await addButtonText(buttonTextForm)
@@ -64,8 +60,7 @@ export default function ButtonTextSection() {
   }
 
   const handleUpdateButtonText = async () => {
-    if (!editingButtonText || !buttonTextForm.link.trim()) {
-      toast({ title: "Error", description: "Button link is required" })
+    if (!editingButtonText) {
       return
     }
     setLoading((prev) => ({ ...prev, action: true }))
