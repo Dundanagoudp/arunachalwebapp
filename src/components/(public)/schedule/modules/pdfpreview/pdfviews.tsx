@@ -6,6 +6,21 @@ import { getScheduleDayPreviews } from "@/service/scheduleDayPreviewService"
 import type { ScheduleDayPreview } from "@/types/scheduleDayPreview-types"
 import { getMediaUrl } from "@/utils/mediaUrl"
 
+const DEFAULT_TABS = [
+  { id: 0, label: "DAY 1" },
+  { id: 1, label: "DAY 2" },
+  { id: 2, label: "DAY 3" },
+]
+
+function ImageViewerSkeleton() {
+  return (
+    <div className="h-full animate-pulse space-y-4 p-1 sm:p-2">
+      <div className="h-[220px] w-full rounded-lg bg-gray-200 sm:h-[320px] md:h-[480px]" />
+      <div className="h-4 w-2/3 rounded bg-gray-100 mx-auto" />
+    </div>
+  )
+}
+
 export default function PdfViews() {
   const [days, setDays] = useState<ScheduleDayPreview[]>([])
   const [activeDay, setActiveDay] = useState(0)
@@ -13,58 +28,57 @@ export default function PdfViews() {
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
+    let cancelled = false
+
     async function fetchDays() {
-      const result = await getScheduleDayPreviews()
-      if (result.success && result.data) {
-        setDays(result.data)
-        setActiveDay(0)
+      try {
+        const result = await getScheduleDayPreviews()
+        if (!cancelled && result.success && result.data?.length) {
+          setDays(result.data)
+          setActiveDay(0)
+        }
+      } finally {
+        if (!cancelled) setLoading(false)
       }
-      setLoading(false)
     }
+
     fetchDays()
+    return () => {
+      cancelled = true
+    }
   }, [])
 
-  const currentDay = days[activeDay]
+  const tabs =
+    days.length > 0
+      ? days.map((day, index) => ({
+          id: index,
+          label: day.label || `DAY ${day.dayNumber}`,
+        }))
+      : DEFAULT_TABS
+
+  const safeActiveDay = Math.min(activeDay, Math.max(tabs.length - 1, 0))
+  const currentDay = days[safeActiveDay]
   const images = (currentDay?.images || []).map((src) => getMediaUrl(src))
   const downloadHref = currentDay?.downloadUrl
     ? getMediaUrl(currentDay.downloadUrl)
     : images[0]
 
-  const tabs = days.map((day, index) => ({
-    id: index,
-    label: day.label || `DAY ${day.dayNumber}`,
-  }))
-
-  if (loading) {
-    return (
-      <div className="bg-[#FFFAEE] rounded-2xl shadow-lg border border-gray-200 p-4 md:p-6 max-w-4xl mx-auto text-center text-muted-foreground">
-        Loading schedule preview...
-      </div>
-    )
-  }
-
-  if (!days.length) {
-    return (
-      <div className="bg-[#FFFAEE] rounded-2xl shadow-lg border border-gray-200 p-4 md:p-6 max-w-4xl mx-auto text-center text-muted-foreground">
-        Schedule preview is not available yet.
-      </div>
-    )
-  }
-
   return (
-    <div className="bg-[#FFFAEE] rounded-2xl shadow-lg border border-gray-200 p-4 md:p-6 max-w-4xl mx-auto">
-      <PdfViewTabs activeDay={activeDay} onChange={setActiveDay} tabs={tabs} />
+    <>
+      <PdfViewTabs activeDay={safeActiveDay} onChange={setActiveDay} tabs={tabs} />
 
-      <div className="mt-4">
-        <div className="w-full bg-white border border-gray-200 rounded-xl overflow-hidden shadow-md p-2 h-[420px] sm:h-[520px] md:h-[650px] overflow-y-auto">
-          {images.length > 0 ? (
-            <div className="space-y-4 h-full overflow-y-auto snap-y snap-mandatory">
+      <div className="mt-3 sm:mt-4 w-full min-w-0">
+        <div className="w-full bg-white border border-gray-200 rounded-lg sm:rounded-xl overflow-hidden shadow-md p-1.5 sm:p-2 h-[320px] sm:h-[480px] md:h-[650px] overflow-y-auto overflow-x-hidden">
+          {loading ? (
+            <ImageViewerSkeleton />
+          ) : images.length > 0 ? (
+            <div className="space-y-3 sm:space-y-4 h-full overflow-y-auto snap-y snap-mandatory">
               {images.map((src) => (
                 <button
                   key={src}
                   type="button"
                   onClick={() => setModalImageSrc(src)}
-                  className="w-full block snap-start"
+                  className="w-full block snap-start focus:outline-none focus:ring-2 focus:ring-[#1A3FA9]/30 rounded-md sm:rounded-lg"
                 >
                   <img
                     src={src}
@@ -75,19 +89,19 @@ export default function PdfViews() {
               ))}
             </div>
           ) : (
-            <div className="h-full flex items-center justify-center text-muted-foreground">
-              No images uploaded for this day.
+            <div className="h-full flex items-center justify-center text-muted-foreground font-bilo text-sm sm:text-base px-4 text-center">
+              No schedule images uploaded for this day yet.
             </div>
           )}
         </div>
 
-        {downloadHref && (
-          <div className="mt-3 text-right">
+        {!loading && downloadHref && (
+          <div className="mt-2 sm:mt-3 text-right">
             <a
               href={downloadHref}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-[#D95E1E] font-semibold underline"
+              className="text-[#D95E1E] font-semibold underline text-sm sm:text-base"
             >
               Open / Download
             </a>
@@ -97,7 +111,7 @@ export default function PdfViews() {
 
       {modalImageSrc && images.length > 0 && (
         <div
-          className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4"
+          className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-3 sm:p-4"
           onClick={() => setModalImageSrc(null)}
         >
           <div
@@ -107,12 +121,12 @@ export default function PdfViews() {
             <button
               type="button"
               onClick={() => setModalImageSrc(null)}
-              className="absolute -top-4 right-0 md:-top-5 md:-right-5 rounded-full bg-white text-black border border-black/40 w-9 h-9 flex items-center justify-center text-xl leading-none hover:bg-gray-100 shadow-lg"
+              className="absolute top-0 right-0 md:-top-5 md:-right-5 rounded-full bg-white text-black border border-black/40 w-9 h-9 flex items-center justify-center text-xl leading-none hover:bg-gray-100 shadow-lg z-10"
               aria-label="Close image preview"
             >
               ×
             </button>
-            <div className="max-h-[90vh] w-full overflow-y-auto space-y-4">
+            <div className="max-h-[85vh] sm:max-h-[90vh] w-full overflow-y-auto space-y-3 sm:space-y-4 pt-10 md:pt-0">
               {images.map((src) => (
                 <img
                   key={src}
@@ -125,6 +139,6 @@ export default function PdfViews() {
           </div>
         </div>
       )}
-    </div>
+    </>
   )
 }
