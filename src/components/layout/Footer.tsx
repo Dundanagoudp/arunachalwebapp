@@ -70,6 +70,11 @@ export default function Footer() {
                   </Link>
                 </li>
                 <li>
+                  <Link href="/team" className="hover:underline">
+                    ALF Team
+                  </Link>
+                </li>
+                <li>
                   <Link href="/contactus" className="hover:underline">
                     Contact Us
                   </Link>

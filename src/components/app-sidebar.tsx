@@ -79,7 +79,11 @@ const adminNavData = {
              {
           title:"Add Pdf",
           url:"/admin/dashboard/events/addpdf"
-        }
+        },
+        {
+          title: "Schedule Images",
+          url: "/admin/dashboard/events/schedule-images",
+        },
 
       ],
     },
@@ -95,6 +99,21 @@ const adminNavData = {
         {
           title: "Add Speaker",
           url: "/admin/dashboard/speakers/create",
+        },
+      ],
+    },
+    {
+      title: "Team",
+      url: "/admin/dashboard/team",
+      icon: Users,
+      items: [
+        {
+          title: "All Team",
+          url: "/admin/dashboard/team",
+        },
+        {
+          title: "Add Team",
+          url: "/admin/dashboard/team/create",
         },
       ],
     },
@@ -271,6 +290,21 @@ const userNavData = {
         {
           title: "All Speakers",
           url: "/admin/dashboard/speakers",
+        },
+      ],
+    },
+    {
+      title: "Team",
+      url: "/admin/dashboard/team",
+      icon: Users,
+      items: [
+        {
+          title: "All Team",
+          url: "/admin/dashboard/team",
+        },
+        {
+          title: "Add Team",
+          url: "/admin/dashboard/team/create",
         },
       ],
     },

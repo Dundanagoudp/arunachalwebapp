@@ -75,6 +75,12 @@ const nextConfig: NextConfig = {
         port: "8000",
         pathname: "/uploads/**",
       },
+      {
+        protocol: "http",
+        hostname: "localhost",
+        port: "8000",
+        pathname: "/api/v1/uploads/**",
+      },
     ],
     unoptimized: true, // ✅ allow encoded-space URLs & skip optimization issues
   },

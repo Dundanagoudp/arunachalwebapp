@@ -1,19 +1,14 @@
 "use client"
 
-export type PdfDay = 0 | 1 | 2
-
 interface PdfViewTabsProps {
-  activeDay: PdfDay
-  onChange: (day: PdfDay) => void
+  tabs: { id: number; label: string }[]
+  activeDay: number
+  onChange: (day: number) => void
 }
 
-const tabs: { id: PdfDay; label: string }[] = [
-  { id: 0, label: "DAY 1" },
-  { id: 1, label: "DAY 2" },
-  { id: 2, label: "DAY 3" },
-]
+export default function PdfViewTabs({ tabs, activeDay, onChange }: PdfViewTabsProps) {
+  if (!tabs.length) return null
 
-export default function PdfViewTabs({ activeDay, onChange }: PdfViewTabsProps) {
   return (
     <div className="mb-6">
       <div className="bg-[#FDB813] rounded-full p-1 flex border border-[#FDB813] shadow-md">
@@ -32,5 +27,3 @@ export default function PdfViewTabs({ activeDay, onChange }: PdfViewTabsProps) {
     </div>
   )
 }
-
-

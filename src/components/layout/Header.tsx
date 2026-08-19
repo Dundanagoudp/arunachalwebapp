@@ -4,29 +4,38 @@ import Link from "next/link"
 import Image from "next/image"
 import { useState, useEffect } from "react"
 import { GiHamburgerMenu } from "react-icons/gi"
+import { ChevronDown } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger, SheetTitle } from "@/components/ui/sheet"
 
-const literaryFont = "font-dm-serif" 
+const literaryFont = "font-dm-serif"
+
+type NavChild = { href: string; label: string }
+type NavItem = { href?: string; label: string; children?: NavChild[] }
+
+const navLinks: NavItem[] = [
+  { href: "/speakers", label: "Speakers" },
+  { href: "/schedule", label: "Schedule" },
+  { href: "/workshops", label: "Workshops" },
+  { href: "/#testimonials", label: "Testimonials" },
+  { href: "/archive", label: "Archive" },
+  { href: "/blogsContent", label: "Blogs" },
+  { href: "/videos", label: "Videos" },
+  {
+    label: "About",
+    children: [
+      { href: "/team", label: "ALF Team" },
+      { href: "/contactus", label: "Contact Us" },
+    ],
+  },
+]
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
   const [isScrolled, setIsScrolled] = useState(false)
-  const [isMobile, setIsMobile] = useState(false)
-  const [mounted, setMounted] = useState(false)
+  const [aboutOpen, setAboutOpen] = useState(false)
+  const [mobileAboutOpen, setMobileAboutOpen] = useState(false)
 
-  const navLinks = [
-    { href: "/speakers", label: "Speakers" },
-    { href: "/schedule", label: "Schedule" },
-    { href: "/workshops", label: "Workshops" },
-    { href: "/#testimonials", label: "Testimonials" },
-    { href: "/archive", label: "Archive" },
-    { href: "/blogsContent", label: "Blogs" },
-    { href: "/videos", label: "Videos" },
-    { href: "/contactus", label: "Contact Us" },
-  ]
-
-  // Handle scroll effect for sticky header
   useEffect(() => {
     const handleScroll = () => {
       setIsScrolled(window.scrollY > 50)
@@ -35,27 +44,14 @@ const Header = () => {
     return () => window.removeEventListener("scroll", handleScroll)
   }, [])
 
-  useEffect(() => {
-    // Check if screen is mobile (lg: 1024px)
-    const checkMobile = () => {
-      setIsMobile(window.innerWidth < 1024)
-    }
-    checkMobile()
-    window.addEventListener("resize", checkMobile)
-    return () => window.removeEventListener("resize", checkMobile)
-  }, [])
-
-  useEffect(() => {
-    setMounted(true)
-  }, [])
-
   const handleLinkClick = () => {
     setIsMenuOpen(false)
+    setMobileAboutOpen(false)
   }
 
-  // Header style
   const headerBase = `fixed top-0 left-0 right-0 z-50 w-full px-4 md:px-8 flex items-center justify-between ${literaryFont} transition-all duration-500 bg-[#FFFAEE]/95 backdrop-blur-md`
   const headerHeight = isScrolled ? "h-14 md:h-16" : "h-16 md:h-20"
+  const linkStyle = { fontSize: "1.08rem", letterSpacing: "0.01em" } as const
 
   return (
     <>
@@ -67,7 +63,6 @@ const Header = () => {
           letterSpacing: "0.01em",
         }}
       >
-        {/* Logo */}
         <Link href="/" className="flex items-center group">
           <Image
             src="/logo.png"
@@ -80,22 +75,59 @@ const Header = () => {
           />
         </Link>
 
-        {/* Desktop Navigation - NO ANIMATIONS HERE */}
         <nav className="hidden lg:flex items-center space-x-8 text-base">
-          {navLinks.map((link) => (
-            <Link
-              key={link.href}
-              href={link.href}
-              className="relative text-black font-medium py-2 px-1 transition-colors duration-300 group"
-              style={{ fontSize: "1.08rem", letterSpacing: "0.01em" }}
-            >
-              {link.label}
-              <span className="absolute left-0 -bottom-1 w-0 h-0.5 bg-gradient-to-r from-amber-600 to-orange-600 transition-all duration-300 group-hover:w-full rounded-full"></span>
-            </Link>
-          ))}
+          {navLinks.map((link) =>
+            link.children ? (
+              <div
+                key={link.label}
+                className="relative"
+                onMouseEnter={() => setAboutOpen(true)}
+                onMouseLeave={() => setAboutOpen(false)}
+              >
+                <button
+                  type="button"
+                  onClick={() => setAboutOpen((open) => !open)}
+                  className="relative text-black font-medium py-2 px-1 transition-colors duration-300 inline-flex items-center gap-1"
+                  style={linkStyle}
+                  aria-expanded={aboutOpen}
+                  aria-haspopup="true"
+                >
+                  {link.label}
+                  <ChevronDown className={`h-4 w-4 transition-transform ${aboutOpen ? "rotate-180" : ""}`} />
+                  <span className="absolute left-0 -bottom-1 w-0 h-0.5 bg-gradient-to-r from-amber-600 to-orange-600 transition-all duration-300 group-hover:w-full rounded-full" />
+                </button>
+                {aboutOpen && (
+                  <div className="absolute right-0 top-full pt-2 z-50">
+                    <div className="min-w-[180px] rounded-md border border-amber-200 bg-[#FFFAEE] shadow-lg py-2">
+                      {link.children.map((child) => (
+                        <Link
+                          key={child.href}
+                          href={child.href}
+                          className="block px-4 py-2 text-black hover:bg-amber-50"
+                          style={linkStyle}
+                          onClick={() => setAboutOpen(false)}
+                        >
+                          {child.label}
+                        </Link>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            ) : (
+              <Link
+                key={link.href}
+                href={link.href!}
+                className="relative text-black font-medium py-2 px-1 transition-colors duration-300 group"
+                style={linkStyle}
+              >
+                {link.label}
+                <span className="absolute left-0 -bottom-1 w-0 h-0.5 bg-gradient-to-r from-amber-600 to-orange-600 transition-all duration-300 group-hover:w-full rounded-full" />
+              </Link>
+            )
+          )}
         </nav>
 
-        {/* Mobile Menu Button - Clean Hamburger Design */}
         <div className="lg:hidden">
           <Sheet open={isMenuOpen} onOpenChange={setIsMenuOpen}>
             <SheetTrigger asChild>
@@ -116,12 +148,11 @@ const Header = () => {
             >
               <SheetTitle className="sr-only">Navigation Menu</SheetTitle>
 
-              {/* Mobile Menu Content with Animations */}
               <div className="py-6 h-full">
                 <nav className="space-y-1 text-lg h-full">
                   {navLinks.map((link, index) => (
                     <div
-                      key={link.href}
+                      key={link.label}
                       className={`transform transition-all duration-500 ease-out ${
                         isMenuOpen ? "translate-x-0 opacity-100" : "translate-x-8 opacity-0"
                       }`}
@@ -129,25 +160,44 @@ const Header = () => {
                         transitionDelay: isMenuOpen ? `${index * 80}ms` : "0ms",
                       }}
                     >
-                      <Link
-                        href={link.href}
-                        onClick={handleLinkClick}
-                        className="group flex items-center px-6 py-4 font-medium text-black hover:text-black hover:bg-amber-50/50 transition-all duration-300 relative overflow-hidden border-l-4 border-transparent hover:border-amber-500"
-                        style={{
-                          fontSize: "1.08rem",
-                          letterSpacing: "0.01em",
-                        }}
-                      >
-                        <span className="absolute left-0 top-0 bottom-0 w-1 bg-gradient-to-b from-amber-600 to-orange-600 opacity-0 group-hover:opacity-100 transition-all duration-300 transform -translate-x-full group-hover:translate-x-0" />
-
-                        <span className="relative z-10 group-hover:translate-x-2 transition-transform duration-200">
-                          {link.label}
-                          <span className="absolute -bottom-0.5 left-0 w-0 h-0.5 bg-amber-600 transition-all duration-300 group-hover:w-full"></span>
-                        </span>
-
-                        {/* Hover ripple effect */}
-                        <span className="absolute inset-0 bg-amber-100 opacity-0 group-hover:opacity-20 transition-opacity duration-300 rounded-md transform scale-95 group-hover:scale-100"></span>
-                      </Link>
+                      {link.children ? (
+                        <div>
+                          <button
+                            type="button"
+                            onClick={() => setMobileAboutOpen((open) => !open)}
+                            className="w-full group flex items-center justify-between px-6 py-4 font-medium text-black hover:bg-amber-50/50 border-l-4 border-transparent hover:border-amber-500"
+                            style={linkStyle}
+                          >
+                            {link.label}
+                            <ChevronDown
+                              className={`h-4 w-4 transition-transform ${mobileAboutOpen ? "rotate-180" : ""}`}
+                            />
+                          </button>
+                          {mobileAboutOpen &&
+                            link.children.map((child) => (
+                              <Link
+                                key={child.href}
+                                href={child.href}
+                                onClick={handleLinkClick}
+                                className="block px-10 py-3 text-black hover:bg-amber-50/50"
+                                style={linkStyle}
+                              >
+                                {child.label}
+                              </Link>
+                            ))}
+                        </div>
+                      ) : (
+                        <Link
+                          href={link.href!}
+                          onClick={handleLinkClick}
+                          className="group flex items-center px-6 py-4 font-medium text-black hover:bg-amber-50/50 transition-all duration-300 relative overflow-hidden border-l-4 border-transparent hover:border-amber-500"
+                          style={linkStyle}
+                        >
+                          <span className="relative z-10 group-hover:translate-x-2 transition-transform duration-200">
+                            {link.label}
+                          </span>
+                        </Link>
+                      )}
                     </div>
                   ))}
                 </nav>
@@ -157,7 +207,6 @@ const Header = () => {
         </div>
       </header>
 
-      {/* Spacer to prevent content from hiding behind fixed header */}
       <div className={`transition-all duration-500 ${isScrolled ? "h-14 md:h-16" : "h-16 md:h-20"}`} />
     </>
   )
