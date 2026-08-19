@@ -1,71 +1,65 @@
 "use client"
 
-import { useState } from "react"
-import PdfViewTabs, { PdfDay } from "./pdf-viewtabs"
-
-type DaySource =
-  | {
-      type: "image"
-      images: string[]
-      download?: string
-    }
-  | {
-      type: "pdf"
-      src: string
-      download?: string
-    }
-
-const daySources: DaySource[] = [
-  {
-    type: "image",
-    images: ["/schedulepdf/day1-agenda.jpg"],
-    download: "/schedulepdf/day1-agenda.pdf",
-  },
-  {
-    type: "image",
-    images: [
-      "/schedulepdf/day2new/day2newfist.jpg",
-      "/schedulepdf/day2new/day2newsecond.jpg",
-    ],
-    download: "/schedulepdf/21st-NOVEMBER-2025.pdf",
-  },
-  {
-    type: "image",
-    images: [
-      "/schedulepdf/day3/day3page1.jpg",
-      "/schedulepdf/day3/day3page2.jpg",
-      "/schedulepdf/day3/day3page3.jpg",
-    ],
-    download: "/schedulepdf/day3-22nd-november-2025.pdf",
-  },
-]
+import { useEffect, useState } from "react"
+import PdfViewTabs from "./pdf-viewtabs"
+import { getScheduleDayPreviews } from "@/service/scheduleDayPreviewService"
+import type { ScheduleDayPreview } from "@/types/scheduleDayPreview-types"
+import { getMediaUrl } from "@/utils/mediaUrl"
 
 export default function PdfViews() {
-  const [activeDay, setActiveDay] = useState<PdfDay>(0)
+  const [days, setDays] = useState<ScheduleDayPreview[]>([])
+  const [activeDay, setActiveDay] = useState(0)
   const [modalImageSrc, setModalImageSrc] = useState<string | null>(null)
+  const [loading, setLoading] = useState(true)
 
-  const currentSource = daySources[activeDay]
-  const isImageDay = currentSource.type === "image"
-  const downloadHref =
-    currentSource.type === "image"
-      ? currentSource.download || currentSource.images[0]
-      : currentSource.download || currentSource.src
+  useEffect(() => {
+    async function fetchDays() {
+      const result = await getScheduleDayPreviews()
+      if (result.success && result.data) {
+        setDays(result.data)
+        setActiveDay(0)
+      }
+      setLoading(false)
+    }
+    fetchDays()
+  }, [])
+
+  const currentDay = days[activeDay]
+  const images = (currentDay?.images || []).map((src) => getMediaUrl(src))
+  const downloadHref = currentDay?.downloadUrl
+    ? getMediaUrl(currentDay.downloadUrl)
+    : images[0]
+
+  const tabs = days.map((day, index) => ({
+    id: index,
+    label: day.label || `DAY ${day.dayNumber}`,
+  }))
+
+  if (loading) {
+    return (
+      <div className="bg-[#FFFAEE] rounded-2xl shadow-lg border border-gray-200 p-4 md:p-6 max-w-4xl mx-auto text-center text-muted-foreground">
+        Loading schedule preview...
+      </div>
+    )
+  }
+
+  if (!days.length) {
+    return (
+      <div className="bg-[#FFFAEE] rounded-2xl shadow-lg border border-gray-200 p-4 md:p-6 max-w-4xl mx-auto text-center text-muted-foreground">
+        Schedule preview is not available yet.
+      </div>
+    )
+  }
 
   return (
     <div className="bg-[#FFFAEE] rounded-2xl shadow-lg border border-gray-200 p-4 md:p-6 max-w-4xl mx-auto">
-      <PdfViewTabs activeDay={activeDay} onChange={setActiveDay} />
+      <PdfViewTabs activeDay={activeDay} onChange={setActiveDay} tabs={tabs} />
 
       <div className="mt-4">
-        <div
-          className={`w-full bg-white border border-gray-200 rounded-xl overflow-hidden shadow-md ${
-            isImageDay
-              ? "p-2 h-[420px] sm:h-[520px] md:h-[650px] overflow-y-auto"
-              : "h-[420px] sm:h-[520px] md:h-[650px]"
-          }`}
-        >
-          {isImageDay ? (
+        <div className="w-full bg-white border border-gray-200 rounded-xl overflow-hidden shadow-md p-2 h-[420px] sm:h-[520px] md:h-[650px] overflow-y-auto">
+          {images.length > 0 ? (
             <div className="space-y-4 h-full overflow-y-auto snap-y snap-mandatory">
-              {currentSource.images.map((src) => (
+              {images.map((src) => (
                 <button
                   key={src}
                   type="button"
@@ -81,27 +75,27 @@ export default function PdfViews() {
               ))}
             </div>
           ) : (
-            <iframe
-              src={currentSource.src}
-              className="w-full h-full"
-              style={{ border: "none" }}
-            />
+            <div className="h-full flex items-center justify-center text-muted-foreground">
+              No images uploaded for this day.
+            </div>
           )}
         </div>
 
-        <div className="mt-3 text-right">
-          <a
-            href={downloadHref}
-            target="_blank"
-            className="text-[#D95E1E] font-semibold underline"
-          >
-            Open / Download
-          </a>
-        </div>
+        {downloadHref && (
+          <div className="mt-3 text-right">
+            <a
+              href={downloadHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="text-[#D95E1E] font-semibold underline"
+            >
+              Open / Download
+            </a>
+          </div>
+        )}
       </div>
 
-      {/* Image modal / lightbox */}
-      {modalImageSrc && (
+      {modalImageSrc && images.length > 0 && (
         <div
           className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4"
           onClick={() => setModalImageSrc(null)}
@@ -119,15 +113,14 @@ export default function PdfViews() {
               ×
             </button>
             <div className="max-h-[90vh] w-full overflow-y-auto space-y-4">
-              {currentSource.type === "image" &&
-                currentSource.images.map((src) => (
-                  <img
-                    key={src}
-                    src={src}
-                    alt="Schedule preview enlarged"
-                    className="w-full h-auto object-contain rounded-lg shadow-2xl bg-white"
-                  />
-                ))}
+              {images.map((src) => (
+                <img
+                  key={src}
+                  src={src}
+                  alt="Schedule preview enlarged"
+                  className="w-full h-auto object-contain rounded-lg shadow-2xl bg-white"
+                />
+              ))}
             </div>
           </div>
         </div>

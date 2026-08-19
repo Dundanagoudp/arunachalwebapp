@@ -1,5 +1,5 @@
 // Minimal type definitions for use-toast.ts compatibility
-import type { ReactNode } from "react"
+import type { ReactElement, ReactNode } from "react"
 
 export interface ToastProps {
   id?: string
@@ -10,4 +10,4 @@ export interface ToastProps {
   onOpenChange?: (open: boolean) => void
 }
 
-export type ToastActionElement = React.ReactElement<any, any> 
+export type ToastActionElement = ReactElement 
